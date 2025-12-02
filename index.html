@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Sustainable Living</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --primary-green: #3a7d44;
+            --primary-green-dark: #2c5e34;
+            --light-green-bg: #e9f3eb; /* Slightly tweaked for better contrast */
+            --text-dark: #222222;
+            --text-light: #555555;
+            --white: #ffffff;
+            --off-white: #f9f9f9;
+            --border-color: #eeeeee;
+            
+            /* Typography */
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Montserrat', sans-serif;
+
+            /* Layout */
+            --container-width: 1200px;
+            --section-spacing: 100px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--text-dark);
+            font-family: var(--font-body); /* Base font */
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography Helpers */
+        h1, h2, h3, .btn, nav a, .logo, .product-price {
+            font-family: var(--font-heading);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        /* Utility Container for centering content on large screens */
+        .container {
+            width: 90%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: var(--white);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 800; /* Extra bold Poppins */
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        /* Animated underline hover effect */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-green);
+            transition: width 0.3s ease-in-out;
+            border-radius: 2px;
+        }
+
+        nav a:hover {
+            color: var(--primary-green);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background-color: var(--light-green-bg);
+            /* Full width background, centered content */
+            padding: var(--section-spacing) 0;
+            display: flex;
+            align-items: center;
+            min-height: 80vh; /* Taller hero area */
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            color: var(--primary-green);
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            max-width: 500px;
+            font-weight: 500;
+        }
+
+        .hero-image-container {
+            height: 550px;
+            border-radius: 24px;
+            overflow: hidden;
+            /* Softer, colored shadow */
+            box-shadow: 0 25px 50px rgba(58, 125, 68, 0.2);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .hero-image-container:hover .hero-image {
+            transform: scale(1.03);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(58, 125, 68, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(58, 125, 68, 0.4);
+        }
+
+        /* --- Product Grid --- */
+        .products-section {
+            padding: var(--section-spacing) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 40px;
+        }
+
+        /* Enhanced Card Design */
+        .product-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left; /* Cleaner left alignment */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            border-color: transparent;
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .product-img-wrapper {
+            height: 280px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: var(--off-white);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-img {
+             transform: scale(1.05);
+        }
+
+        .product-details {
+            /* Flex container for title/price alignment */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+            padding-right: 10px;
+        }
+
+        .product-price {
+            color: var(--primary-green);
+            font-size: 1.25rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .btn-full-width {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px; /* Less rounded for card buttons */
+            font-size: 0.9rem;
+            background-color: var(--light-green-bg);
+            color: var(--primary-green);
+            box-shadow: none;
+        }
+
+        .product-card:hover .btn-full-width {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--primary-green);
+            color: var(--white);
+            text-align: center;
+            padding: 60px 0;
+            margin-top: var(--section-spacing);
+        }
+
+        footer p {
+            font-weight: 500;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+             .hero-image-container {
+                height: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+                min-height: auto;
+            }
+            .hero-grid {
+                grid-template-columns: 1fr; /* Stack vertically */
+                text-align: center;
+                gap: 50px;
+            }
+            .hero-content p {
+                margin: 0 auto 30px auto; /* Center paragraph */
+            }
+            .hero-image-container {
+                height: 350px;
+            }
+            header {
+                padding: 15px 0;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            nav ul {
+                gap: 25px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                flow 🌿
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Journal</a></li>
+                    <li><a href="#">Cart (0)</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <h1>Discover <br>Sustainable Living</h1>
+                <p>Curated eco-friendly products for a balanced, mindful lifestyle. Start your journey today.</p>
+                <a href="#shop" class="btn btn-primary">Explore Collection</a>
+            </div>
+            <div class="hero-image-container">
+                <img src="https://images.unsplash.com/photo-1520302665673-890422463439?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=90" alt="Sustainable plant setting" class="hero-image">
+            </div>
+        </div>
+    </section>
+
+    <section id="shop" class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">New Arrivals</h2>
+                <p>Our latest essentials for a greener home.</p>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1602143407151-01114192003f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Bottle" class="product-img">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">Matte Reusable Bottle</h3>
+                        <span class="product-price">$24.00</span>
+                    </div>
+                    <button class="btn btn-full-width">Add to Cart</button>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1597484661643-2f5fef640dd1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Tote Bag" class="product-img">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">Organic Cotton Market Tote</h3>
+                        <span class="product-price">$18.00</span>
+                    </div>
+                    <button class="btn btn-full-width">Add to Cart</button>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Plant" class="product-img">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">Potted Echeveria Succulent</h3>
+                        <span class="product-price">$22.00</span>
+                    </div>
+                    <button class="btn btn-full-width">Add to Cart</button>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1592914610354-fd354ea45e48?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Bamboo Set" class="product-img">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">Travel Bamboo Utensil Set</h3>
+                        <span class="product-price">$14.50</span>
+                    </div>
+                    <button class="btn btn-full-width">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo" style="color: white; justify-content: center; margin-bottom: 20px;">
+                flow 🌿
+            </div>
+            <p>&copy; 2025 Flow. Designed for a greener future.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Journal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #1b4332; --bg: #f8faf9; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
+        h1,h2 { font-family:'Playfair Display', serif; }
+
+        header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.6); border-radius:100px; z-index:1000; box-shadow:0 15px 35px -10px rgba(0,0,0,0.05); }
+        .nav { display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
+        .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; }
+        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; }
+
+        .container { max-width:1000px; margin:0 auto; padding:160px 20px 50px; }
+        .hero-title { text-align:center; font-size:3.5rem; color:var(--primary); margin-bottom:20px; }
+        .hero-sub { text-align:center; color:#666; margin-bottom:80px; font-size:1.2rem; }
+
+        .blog-grid { display:grid; grid-template-columns:1fr; gap:60px; }
+        
+        .article-card { display:flex; gap:40px; background:white; padding:30px; border-radius:24px; box-shadow:0 10px 30px rgba(0,0,0,0.02); border:1px solid rgba(0,0,0,0.03); transition:0.3s; }
+        .article-card:hover { transform:translateY(-5px); box-shadow:0 20px 40px rgba(0,0,0,0.05); }
+        
+        .article-img { width:40%; min-width:300px; border-radius:16px; overflow:hidden; }
+        .article-img img { width:100%; height:100%; object-fit:cover; transition:0.5s; }
+        .article-card:hover img { transform:scale(1.05); }
+        
+        .article-content { flex:1; display:flex; flex-direction:column; justify-content:center; }
+        .tag { font-size:0.8rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+        .article-title { font-size:2rem; margin-bottom:15px; line-height:1.2; color:var(--text); }
+        .article-preview { color:#666; line-height:1.6; margin-bottom:25px; }
+        .read-link { display:flex; align-items:center; gap:5px; font-weight:700; color:var(--primary); text-decoration:none; transition:0.2s; }
+        .read-link:hover { gap:10px; }
+
+        @media(max-width:900px) {
+            header { min-width:auto; width:95%; top:15px; }
+            .nav-links { display:none; }
+            .article-card { flex-direction:column; gap:20px; }
+            .article-img { width:100%; height:250px; min-width:auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="index.html">Shop</a>
+                <a href="collections.html">Collections</a>
+                <a href="journal.html" class="active">Journal</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <a href="login.html" class="auth-btn">Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="hero-title"> The Flow Journal.</h1>
+        <p class="hero-sub">Notes on sustainability, design, and slow living.</p>
+
+        <div class="blog-grid">
+            <article class="article-card">
+                <div class="article-img">
+                    <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Plants">
+                </div>
+                <div class="article-content">
+                    <span class="tag">Lifestyle</span>
+                    <h2 class="article-title">5 Ways to Reduce Plastic in Your Kitchen Today</h2>
+                    <p class="article-preview">Transitioning to a zero-waste lifestyle doesn't have to be overwhelming. Start with these simple swaps that make a big difference.</p>
+                    <a href="#" class="read-link">Read Story <i data-lucide="arrow-right"></i></a>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-img">
+                    <img src="https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Design">
+                </div>
+                <div class="article-content">
+                    <span class="tag">Design</span>
+                    <h2 class="article-title">The Art of Wabi-Sabi in Modern Interiors</h2>
+                    <p class="article-preview">Embracing imperfection and transience in your home decor can lead to a more peaceful and authentic living space.</p>
+                    <a href="#" class="read-link">Read Story <i data-lucide="arrow-right"></i></a>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
+        sb.auth.getUser().then(({data}) => {
+            if(data.user) document.querySelector('.auth-btn').innerText = "Profile";
+        });
+    </script>
+</body>
+</html>

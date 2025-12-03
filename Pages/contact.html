@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Contact</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #1b4332; --bg: #f8faf9; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
+        h1,h2 { font-family:'Playfair Display', serif; }
+
+        header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.6); border-radius:100px; z-index:1000; box-shadow:0 15px 35px -10px rgba(0,0,0,0.05); }
+        .nav { display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
+        .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; }
+        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; }
+
+        .container { max-width:1000px; margin:0 auto; padding:160px 20px 50px; }
+        .hero { text-align:center; margin-bottom:60px; }
+        .hero h1 { font-size:3.5rem; color:var(--primary); margin-bottom:15px; }
+        
+        .contact-box { background:white; border-radius:30px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.05); display:flex; }
+        
+        .info-side { background:var(--primary); color:white; width:40%; padding:50px; display:flex; flex-direction:column; justify-content:center; }
+        .info-item { margin-bottom:30px; }
+        .info-item h3 { font-size:1.2rem; margin-bottom:10px; font-family:'Outfit', sans-serif; opacity:0.9; }
+        .info-item p { font-size:1rem; opacity:0.8; line-height:1.6; }
+        
+        .form-side { width:60%; padding:50px; }
+        .input-group { margin-bottom:20px; }
+        .input-group label { display:block; margin-bottom:8px; font-weight:600; font-size:0.9rem; color:#555; }
+        .input { width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; outline:none; transition:0.3s; }
+        .input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(58,125,68,0.1); }
+        .submit-btn { width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; margin-top:10px; transition:0.3s; }
+        .submit-btn:hover { background:#2c5e34; }
+
+        @media(max-width:900px) {
+            header { min-width:auto; width:95%; top:15px; }
+            .nav-links { display:none; }
+            .contact-box { flex-direction:column; }
+            .info-side, .form-side { width:100%; padding:30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="index.html">Shop</a>
+                <a href="collections.html">Collections</a>
+                <a href="journal.html">Journal</a>
+                <a href="contact.html" class="active">Contact</a>
+            </div>
+            <a href="login.html" class="auth-btn">Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Get in Touch.</h1>
+            <p>Questions about sustainability? Order inquiries? We're here to help.</p>
+        </div>
+
+        <div class="contact-box">
+            <div class="info-side">
+                <div class="info-item">
+                    <h3>Visit Us</h3>
+                    <p>123 Green Street<br>Portland, OR 97204</p>
+                </div>
+                <div class="info-item">
+                    <h3>Email Us</h3>
+                    <p>hello@flow-shop.com<br>support@flow-shop.com</p>
+                </div>
+                <div class="info-item">
+                    <h3>Call Us</h3>
+                    <p>+1 (555) 123-4567<br>Mon-Fri, 9am - 5pm</p>
+                </div>
+            </div>
+            <div class="form-side">
+                <form onsubmit="event.preventDefault(); alert('Message sent! We will get back to you soon.');">
+                    <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" class="input" placeholder="Jane Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" class="input" placeholder="jane@example.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Message</label>
+                        <textarea class="input" rows="4" placeholder="How can we help?" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
+        sb.auth.getUser().then(({data}) => {
+            if(data.user) document.querySelector('.auth-btn').innerText = "Profile";
+        });
+    </script>
+</body>
+</html>

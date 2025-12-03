@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Collections</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #1b4332; --bg: #f8faf9; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
+        h1,h2 { font-family:'Playfair Display', serif; }
+
+        /* HEADER */
+        header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.6); border-radius:100px; z-index:1000; box-shadow:0 15px 35px -10px rgba(0,0,0,0.05); }
+        .nav { display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
+        .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; }
+        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; }
+
+        .container { max-width:1200px; margin:0 auto; padding:160px 20px 50px; }
+        .page-title { text-align:center; font-size:3.5rem; color:var(--primary); margin-bottom:60px; }
+
+        .collection-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:40px; }
+        
+        .collection-card {
+            position: relative;
+            height: 450px;
+            border-radius: 24px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .collection-card:hover { transform: translateY(-10px); }
+        .collection-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .collection-card:hover img { transform: scale(1.05); }
+        
+        .overlay {
+            position: absolute; bottom:0; left:0; width:100%; padding:40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+        .overlay h2 { font-size: 2rem; margin-bottom: 10px; }
+        .overlay p { font-size: 1rem; opacity: 0.9; margin-bottom: 20px; }
+        .arrow-btn { width: 50px; height: 50px; border-radius: 50%; background: white; color: var(--primary); display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .collection-card:hover .arrow-btn { transform: translateX(10px); }
+
+        @media(max-width:900px) {
+            header { min-width:auto; width:95%; top:15px; }
+            .nav-links { display:none; }
+            .page-title { font-size:2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="index.html">Shop</a>
+                <a href="collections.html" class="active">Collections</a>
+                <a href="journal.html">Journal</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <a href="login.html" class="auth-btn">Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Curated Collections</h1>
+        
+        <div class="collection-grid">
+            <div class="collection-card">
+                <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Living">
+                <div class="overlay">
+                    <h2>Living & Home</h2>
+                    <p>Elevate your space with sustainable decor.</p>
+                    <div class="arrow-btn"><i data-lucide="arrow-right"></i></div>
+                </div>
+            </div>
+
+            <div class="collection-card">
+                <img src="https://images.unsplash.com/photo-1556910103-1c02745a30bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Kitchen">
+                <div class="overlay">
+                    <h2>Zero Waste Kitchen</h2>
+                    <p>Essentials for a plastic-free culinary life.</p>
+                    <div class="arrow-btn"><i data-lucide="arrow-right"></i></div>
+                </div>
+            </div>
+
+            <div class="collection-card">
+                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Self Care">
+                <div class="overlay">
+                    <h2>Organic Self Care</h2>
+                    <p>Natural ingredients for your daily ritual.</p>
+                    <div class="arrow-btn"><i data-lucide="arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
+        sb.auth.getUser().then(({data}) => {
+            if(data.user) document.querySelector('.auth-btn').innerText = "Profile";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Our Story</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #1b4332; --bg: #f8faf9; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
+        h1,h2,h3 { font-family:'Playfair Display', serif; }
+        
+        /* NAVBAR (Consistent) */
+        header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border:1px solid rgba(255,255,255,0.6); box-shadow:0 15px 35px -10px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8); border-radius:100px; z-index:1000; }
+        .nav { display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
+        .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; transition:0.3s; }
+        .auth-btn:hover { background:#2c5e34; }
+
+        /* CONTENT */
+        .hero { text-align:center; padding:180px 20px 100px; }
+        .hero h1 { font-size:4rem; margin-bottom:20px; color:var(--primary); }
+        .hero p { font-size:1.2rem; max-width:700px; margin:0 auto; line-height:1.6; color:#52796f; }
+
+        .section { max-width:1000px; margin:0 auto; padding:60px 20px; }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+        
+        .img-box { border-radius:24px; overflow:hidden; box-shadow:0 20px 40px rgba(45,106,79,0.1); height:500px; }
+        .img-box img { width:100%; height:100%; object-fit:cover; }
+        
+        .text-box h2 { font-size:2.5rem; margin-bottom:20px; }
+        .text-box p { font-size:1.1rem; line-height:1.7; color:#555; margin-bottom:20px; }
+
+        .values { background:white; padding:80px 20px; margin-top:60px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.02); }
+        .values-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:40px; max-width:1000px; margin:0 auto; text-align:center; }
+        .value-card i { color:var(--primary); width:40px; height:40px; margin-bottom:20px; }
+        .value-card h3 { font-size:1.5rem; margin-bottom:10px; }
+        .value-card p { color:#666; line-height:1.5; }
+
+        @media(max-width:900px) {
+            header { min-width:auto; width:95%; top:15px; }
+            .nav-links { display:none; }
+            .grid-2 { grid-template-columns:1fr; }
+            .values-grid { grid-template-columns:1fr; }
+            .hero h1 { font-size:3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <div class="nav-links">
+                <a href="about.html" class="active">About</a>
+                <a href="index.html">Shop</a>
+                <a href="collections.html">Collections</a>
+                <a href="journal.html">Journal</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <a href="login.html" class="auth-btn">Sign In</a>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Our Journey.</h1>
+        <p>We believe that small choices make a big impact. Flow was born out of a desire to make sustainable living accessible, beautiful, and effortless.</p>
+    </div>
+
+    <section class="section">
+        <div class="grid-2">
+            <div class="img-box">
+                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Nature">
+            </div>
+            <div class="text-box">
+                <h2>Designed for the Planet</h2>
+                <p>It started with a simple question: why do eco-friendly products have to look boring? We set out to bridge the gap between aesthetics and ethics.</p>
+                <p>Every product in our collection is curated with a rigorous standard for material sourcing, ethical labor practices, and end-of-life impact. We are not just a shop; we are a movement towards a slower, more intentional way of life.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="values">
+            <div class="values-grid">
+                <div class="value-card">
+                    <i data-lucide="recycle"></i>
+                    <h3>Zero Waste</h3>
+                    <p>Packaging that disappears. Products that last. We prioritize circular design in everything we do.</p>
+                </div>
+                <div class="value-card">
+                    <i data-lucide="heart-handshake"></i>
+                    <h3>Ethical Labor</h3>
+                    <p>We partner exclusively with artisans and manufacturers who pay fair wages and ensure safe working conditions.</p>
+                </div>
+                <div class="value-card">
+                    <i data-lucide="sprout"></i>
+                    <h3>Carbon Neutral</h3>
+                    <p>We offset 100% of our carbon footprint from shipping and operations by planting trees worldwide.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        lucide.createIcons();
+        // Basic Auth Check for UI consistency
+        const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
+        sb.auth.getUser().then(({data}) => {
+            const btn = document.querySelector('.auth-btn');
+            if(data.user) { btn.innerText = "Profile"; btn.href = "index.html"; } // Redirect to shop for profile drawer
+        });
+    </script>
+</body>
+</html>

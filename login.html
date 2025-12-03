@@ -43,6 +43,9 @@
         
         .back-link { display: block; margin-top: 20px; color: #888; font-size: 0.85rem; text-decoration: none; }
         .back-link:hover { color: #333; }
+
+        /* Utility class to hide elements */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -54,10 +57,18 @@
         <div id="errorBox" class="error-msg"></div>
 
         <form id="authForm">
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="email" class="input" placeholder="you@example.com" required>
+            <!-- Username: Always visible now -->
+            <div class="input-group" id="usernameGroup">
+                <label>Username</label>
+                <input type="text" id="username" class="input" placeholder="Your username" required>
             </div>
+
+            <!-- Email: Hidden on Login, Visible on Sign Up -->
+            <div class="input-group hidden" id="emailGroup">
+                <label>Email Address</label>
+                <input type="email" id="email" class="input" placeholder="you@example.com">
+            </div>
+
             <div class="input-group">
                 <label>Password</label>
                 <input type="password" id="password" class="input" placeholder="••••••••" required>
@@ -89,13 +100,30 @@
             document.getElementById('submitBtn').innerText = isLogin ? 'Sign In' : 'Create Account';
             document.getElementById('toggleText').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
             document.getElementById('toggleBtn').innerText = isLogin ? 'Sign Up' : 'Sign In';
+            
+            // Toggle Email field visibility and requirements
+            const emailGroup = document.getElementById('emailGroup');
+            const emailInput = document.getElementById('email');
+            
+            if (isLogin) {
+                // LOGIN MODE: Hide Email
+                emailGroup.classList.add('hidden');
+                emailInput.required = false;
+            } else {
+                // SIGN UP MODE: Show Email
+                emailGroup.classList.remove('hidden');
+                emailInput.required = true;
+            }
+            
             document.getElementById('errorBox').style.display = 'none';
         }
 
         document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            const emailInput = document.getElementById('email').value.trim();
+            
             const btn = document.getElementById('submitBtn');
             const errBox = document.getElementById('errorBox');
 
@@ -106,20 +134,56 @@
             try {
                 let result;
                 if (isLogin) {
-                    result = await sb.auth.signInWithPassword({ email, password });
-                } else {
-                    result = await sb.auth.signUp({ email, password });
-                }
+                    // --- LOG IN WITH USERNAME ---
+                    // 1. Find email associated with username
+                    const { data: profileData, error: profileError } = await sb
+                        .from('profiles')
+                        .select('email')
+                        .eq('username', username)
+                        .single();
 
-                if (result.error) throw result.error;
+                    if (profileError || !profileData) {
+                        throw new Error("Username not found.");
+                    }
 
-                // Success
-                if (!isLogin && !result.data.session) {
-                    // Handling case where email confirmation is required
-                    alert("Account created! Please check your email to confirm.");
+                    // 2. Sign in using the retrieved email
+                    result = await sb.auth.signInWithPassword({ 
+                        email: profileData.email, 
+                        password: password 
+                    });
+
+                    if (result.error) throw result.error;
+                    window.location.href = 'index.html'; 
+
                 } else {
-                    // Logged in successfully
-                    window.location.href = 'index.html';
+                    // --- SIGN UP ---
+                    // 1. Create Auth User
+                    result = await sb.auth.signUp({ email: emailInput, password });
+                    if (result.error) throw result.error;
+
+                    if (result.data.user) {
+                        // 2. Create Profile (Save Username)
+                        const { error: profileError } = await sb
+                            .from('profiles')
+                            .insert([
+                                { 
+                                    id: result.data.user.id, 
+                                    username: username,
+                                    email: emailInput
+                                }
+                            ]);
+                        
+                        if (profileError) {
+                            console.error("Profile creation failed:", profileError);
+                            // Unique constraint error usually means username taken
+                            if(profileError.code === '23505') {
+                                throw new Error("Username already taken.");
+                            }
+                        }
+
+                        alert("Account created! Please check your email to confirm if required.");
+                        window.location.href = 'index.html';
+                    }
                 }
 
             } catch (error) {

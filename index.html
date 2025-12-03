@@ -9,7 +9,7 @@
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
@@ -22,13 +22,149 @@
         .btn:hover { transform:translateY(-2px); box-shadow: 0 8px 16px rgba(58, 125, 68, 0.4); }
         .btn:active { transform: scale(0.98); }
 
-        header { padding:20px 0; position:sticky; top:0; background:rgba(255,255,255,0.95); z-index:50; border-bottom:1px solid #eee; backdrop-filter: blur(10px); }
-        .nav { display:flex; justify-content:space-between; align-items:center; }
-        .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; gap:5px; }
-        .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; font-size:0.9rem; cursor: pointer; position: relative; }
+        /* --- DYNAMIC ISLAND NAVBAR --- */
+        header { 
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: auto; 
+            min-width: 320px; 
+            max-width: 90%; 
+            padding: 10px 15px; 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02); 
+            border-radius: 50px; 
+            z-index: 1000; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideDown {
+            from { top: -80px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
+
+        header:hover {
+            box-shadow: 0 20px 50px rgba(58, 125, 68, 0.15);
+            transform: translateX(-50%) scale(1.02);
+            padding: 12px 25px; /* Slight expansion effect */
+        }
+
+        .nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 30px;
+        }
+
+        .logo { 
+            font-size: 1.4rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            white-space: nowrap;
+            transition: 0.3s;
+        }
         
-        .hero { background:var(--bg); padding:100px 0; border-radius:0 0 40px 40px; margin-bottom:60px; text-align:center; }
+        header:hover .logo {
+            transform: scale(1.05);
+        }
+
+        .nav-links { 
+            display: flex; 
+            gap: 5px; 
+            align-items: center; 
+        }
+
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text); 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            position: relative; 
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Nav Link Hover Effect - Pill Style */
+        .nav-links a:hover {
+            background-color: rgba(58, 125, 68, 0.1);
+            color: var(--primary);
+        }
+
+        /* FLOATING CART BUTTON */
+        .floating-cart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(58, 125, 68, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(58, 125, 68, 0.5);
+        }
+
+        .floating-cart:active {
+            transform: scale(0.95);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Auth Button in Nav */
+        .auth-btn { 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: white; 
+            background: var(--primary); 
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            transition: 0.3s; 
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(58, 125, 68, 0.2);
+        }
+        .auth-btn:hover { 
+            background: #2c5e34; 
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(58, 125, 68, 0.3);
+        }
+        
+        .hero { background:var(--bg); padding:160px 0 100px 0; border-radius:0 0 40px 40px; margin-bottom:60px; text-align:center; }
         .hero h1 { font-size:3.5rem; color:var(--primary); margin-bottom:15px; letter-spacing: -1px; }
         .hero p { font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto; }
 
@@ -204,18 +340,24 @@
         .cart-overlay.open { opacity: 1; pointer-events: auto; }
         
         .user-menu { display: flex; align-items: center; gap: 10px; }
-        .auth-btn { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); background: #e9f3eb; padding: 8px 16px; border-radius: 20px; transition: 0.2s; }
-        .auth-btn:hover { background: var(--primary); color: white; }
 
         @media(max-width:900px) { 
+            header { width: 90%; min-width: auto; padding: 8px 15px; }
             .modal-box { flex-direction: column; height: 95vh; overflow-y: auto; } 
             .detail-left { width: 100%; height: 300px; padding: 20px; }
             .detail-right { width: 100%; padding: 30px; overflow-y: visible; }
             .cart-sidebar { width: 100%; }
+            .nav-links a span { display: none; } /* Hide labels on very small screens if needed */
         }
     </style>
 </head>
 <body>
+
+    <!-- FLOATING CART BUTTON -->
+    <div class="floating-cart" onclick="toggleCart()">
+        <i data-lucide="shopping-cart" style="width:28px; height:28px; color: white;"></i>
+        <span id="cartCount" class="cart-badge">0</span>
+    </div>
 
     <!-- CART SIDEBAR -->
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
@@ -280,20 +422,14 @@
         </div>
     </div>
 
-    <!-- HEADER -->
+    <!-- HEADER: DYNAMIC ISLAND STYLE -->
     <header>
-        <div class="container nav">
+        <div class="nav">
             <div class="logo">flow <i data-lucide="leaf"></i></div>
             <div class="nav-links">
                 <a href="#">Shop</a>
-                <a href="#">Our Story</a>
+                <a href="#">About</a>
                 
-                <!-- Cart Icon -->
-                <a onclick="toggleCart()" style="display:flex; align-items:center; gap:5px;">
-                    <i data-lucide="shopping-cart" style="width:18px;"></i>
-                    <span id="cartCount" style="background:var(--primary); color:white; font-size:0.7rem; padding:2px 6px; border-radius:10px;">0</span>
-                </a>
-
                 <!-- Auth Section -->
                 <div id="authSection" class="user-menu">
                     <!-- Injected via JS -->
@@ -337,12 +473,12 @@
         function updateAuthUI() {
             const authSection = document.getElementById('authSection');
             if (user) {
+                // Fetch profile to show username if possible, else show email
                 authSection.innerHTML = `
-                    <span style="font-size:0.8rem; color:#666;">Hi, ${user.email.split('@')[0]}</span>
                     <span class="auth-btn" onclick="logout()">Logout</span>
                 `;
             } else {
-                authSection.innerHTML = `<a href="login.html" class="auth-btn">Login / Sign Up</a>`;
+                authSection.innerHTML = `<a href="login.html" class="auth-btn">Login</a>`;
             }
         }
 
@@ -352,7 +488,6 @@
         }
 
         async function fetchProducts() {
-            // Fetch everything including description
             const { data, error } = await sb.from('products').select('*').order('id');
             document.getElementById('loader').classList.add('hidden');
             if(!error) {

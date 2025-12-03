@@ -21,6 +21,7 @@
         .btn { padding:12px 25px; border-radius:10px; border:none; font-weight:600; cursor:pointer; background:var(--primary); color:white; transition:0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 12px rgba(58, 125, 68, 0.3); }
         .btn:hover { transform:translateY(-2px); box-shadow: 0 8px 16px rgba(58, 125, 68, 0.4); }
         .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         /* --- DYNAMIC ISLAND NAVBAR --- */
         header { 
@@ -182,7 +183,6 @@
         .overlay.open { opacity: 1; pointer-events: auto; }
 
         /* --- MODAL --- */
-        /* Increased z-index to 2000 to cover navbar */
         .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:3000; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s ease; backdrop-filter:blur(8px); }
         .modal.active { opacity:1; pointer-events:auto; }
         .modal-box { background: white; border-radius: 30px; max-width: 1100px; width: 95%; height: 85vh; box-shadow: 0 40px 80px rgba(0,0,0,0.25); display: flex; overflow: hidden; position: relative; }
@@ -345,11 +345,11 @@
             
             <div class="nav-right">
                 <div class="nav-links">
-                    <a href="Pages/about.html">About</a>
+                    <a href="about.html">About</a>
                     <a href="index.html" class="active">Shop</a>
-                    <a href="Pages/collections.html">Collections</a>
-                    <a href="Pages/journal.html">Journal</a>
-                    <a href="Pages/contact.html">Contact</a>
+                    <a href="collections.html">Collections</a>
+                    <a href="journal.html">Journal</a>
+                    <a href="contact.html">Contact</a>
                 </div>
                 <div id="authSection" class="user-menu"></div>
             </div>
@@ -544,51 +544,22 @@
         }
 
         async function processOrder() {
-            const password = document.getElementById('confirmPassword').value;
-            if(!password) return alert("Password required to confirm order.");
-
-            // 1. Verify Password via Re-Auth
-            const { error: authError } = await sb.auth.signInWithPassword({ 
-                email: user.email, 
-                password: password 
-            });
-
-            if (authError) return alert("Incorrect password. Order not confirmed.");
-
-            // 2. Fetch Username for Order Name
-            const { data: profile } = await sb.from('profiles').select('username').eq('id', user.id).single();
-            const customerName = profile ? profile.username : user.email.split('@')[0];
+            const pw = document.getElementById('confirmPassword').value;
+            if(!pw) return alert("Password required");
+            const { error } = await sb.auth.signInWithPassword({ email: user.email, password: pw });
+            if(error) return alert("Wrong password");
 
             const total = cart.reduce((a, c) => a + c.price * c.qty, 0);
+            const { data: profile } = await sb.from('profiles').select('username').eq('id', user.id).single();
             
-            // 3. Create Order
-            const { data: order, error } = await sb
-                .from('orders')
-                .insert([{ 
-                    customer_name: customerName, 
-                    total_amount: total,
-                    user_id: user.id 
-                }])
-                .select()
-                .single();
-
-            if(error) return alert("Error: " + error.message);
-
-            // 4. Create Items & Deduct Stock
+            const { data: order } = await sb.from('orders').insert([{ customer_name: profile.username, total_amount: total, user_id: user.id }]).select().single();
+            
             for (const item of cart) {
                 await sb.from('order_items').insert([{ order_id: order.id, product_id: item.id, quantity: item.qty, price: item.price }]);
                 const p = products.find(x => x.id === item.id);
-                await sb.from('products').update({ stock: Math.max(0, p.stock - item.qty) }).eq('id', item.id);
+                await sb.from('products').update({ stock: p.stock - item.qty }).eq('id', item.id);
             }
-
-            alert("Order Success!");
-            cart = []; 
-            saveCart(); 
-            updateCartUI(); 
-            closeAllSidebars();
-            fetchProducts(); 
-            loadAccountStats();
-            document.getElementById('confirmPassword').value = ''; // Clear password field
+            alert("Order Success!"); cart = []; saveCart(); updateCartUI(); closeAllSidebars(); fetchProducts(); loadAccountStats();
         }
 
         function addToCart(id) {
@@ -670,22 +641,70 @@
         }
 
         async function postReview() {
-            if (!user) return alert("Please login.");
-            const name = document.getElementById('rName').value;
-            const txt = document.getElementById('rText').value;
-            if(!name || curRating === 0) return alert('Name and Rating required');
-
-            // Verify Purchase using chained query or two steps
-            const { data: orders } = await sb.from('orders').select('id').eq('user_id', user.id);
-            if(!orders || orders.length === 0) return alert("Verified purchase required.");
-            const orderIds = orders.map(o => o.id);
-
-            const { data: items } = await sb.from('order_items').select('id').in('order_id', orderIds).eq('product_id', curId);
+            if (!user) return alert("Please login to post a review.");
             
-            if(!items || items.length === 0) return alert("You must buy this product to review it.");
+            const btn = document.querySelector('.review-form .btn'); // grab the button
+            const originalText = btn.innerText;
+            btn.innerText = "Verifying purchase...";
+            btn.disabled = true;
 
-            await sb.from('reviews').insert([{product_id: curId, user_name: name, rating: curRating, comment: txt}]);
-            loadReviews(curId);
+            try {
+                const name = document.getElementById('rName').value.trim();
+                const txt = document.getElementById('rText').value.trim();
+                
+                if(!name || curRating === 0) throw new Error('Name and Star Rating are required.');
+
+                // 1. Get all orders for this user
+                const { data: orders, error: orderError } = await sb
+                    .from('orders')
+                    .select('id')
+                    .eq('user_id', user.id);
+
+                if (orderError) throw orderError;
+                
+                if (!orders || orders.length === 0) {
+                    throw new Error("You haven't placed any orders yet. Purchase this item to review it.");
+                }
+
+                const orderIds = orders.map(o => o.id);
+
+                // 2. Check if this product exists in those orders
+                const { data: items, error: itemError } = await sb
+                    .from('order_items')
+                    .select('id')
+                    .eq('product_id', curId)
+                    .in('order_id', orderIds)
+                    .limit(1);
+
+                if (itemError) throw itemError;
+
+                if (!items || items.length === 0) {
+                    throw new Error("Verified Purchase Required: You can only review products you have bought.");
+                }
+
+                // 3. Post Review
+                const { error: reviewError } = await sb
+                    .from('reviews')
+                    .insert([{
+                        product_id: curId, 
+                        user_name: name, 
+                        rating: curRating, 
+                        comment: txt
+                    }]);
+
+                if (reviewError) throw reviewError;
+
+                alert("Review posted successfully!");
+                document.getElementById('rText').value = '';
+                rate(0);
+                loadReviews(curId);
+
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>

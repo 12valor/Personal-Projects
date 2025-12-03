@@ -21,6 +21,8 @@
         .btn:hover { opacity:0.9; }
         .btn-outline { background:transparent; color:#555; border:1px solid #ddd; }
         .btn-danger { background:#e74c3c; color:white; padding:5px 15px; font-size:0.8rem; }
+        .btn-edit { background:#f1c40f; color:white; padding:5px 15px; font-size:0.8rem; margin-right: 5px; } /* New Edit Button Style */
+        .btn-cancel { background: #999; margin-left: 10px; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-group { margin-bottom:20px; }
@@ -97,7 +99,7 @@
 
         <!-- INVENTORY VIEW -->
         <div id="viewInventory">
-            <h3 style="margin-bottom:20px;">Add New Product</h3>
+            <h3 style="margin-bottom:20px;" id="formTitle">Add New Product</h3>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Product Name</label>
@@ -118,7 +120,11 @@
                     <input id="newStock" type="number" class="input" placeholder="10" value="10">
                 </div>
             </div>
-            <button class="btn" style="width:100%;" onclick="addProduct()">Add to Inventory</button>
+            
+            <div style="display:flex;">
+                <button id="submitBtn" class="btn" style="flex:1;" onclick="handleFormSubmit()">Add to Inventory</button>
+                <button id="cancelBtn" class="btn btn-cancel hidden" onclick="cancelEdit()">Cancel</button>
+            </div>
 
             <h3 style="margin-top:50px;">Current Inventory</h3>
             <table id="invTable">
@@ -159,6 +165,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
         
         let sb = null;
+        let inventoryData = []; // Store fetched data locally for easy editing access
+        let editingId = null; // Track if we are editing
 
         window.onload = () => {
             lucide.createIcons();
@@ -193,12 +201,14 @@
         // --- INVENTORY LOGIC ---
         async function loadInventory() {
             const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:false});
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
             
-            let lowStockCount = 0;
-
             if(data) {
+                inventoryData = data; // Save to global variable
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+                
+                let lowStockCount = 0;
+                
                 data.forEach(p => {
                     if(p.stock < 5) lowStockCount++;
                     const stockClass = p.stock < 5 ? 'stock-badge stock-low' : 'stock-badge';
@@ -209,7 +219,10 @@
                             <td>${p.name}</td>
                             <td>$${p.price}</td>
                             <td><span class="${stockClass}">${p.stock} units</span></td>
-                            <td><button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td>
+                            <td>
+                                <button class="btn btn-edit" onclick="startEdit(${p.id})">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+                            </td>
                         </tr>
                     `;
                 });
@@ -217,7 +230,41 @@
             }
         }
 
-        async function addProduct() {
+        function startEdit(id) {
+            const product = inventoryData.find(p => p.id === id);
+            if(!product) return;
+
+            // Populate Form
+            document.getElementById('newName').value = product.name;
+            document.getElementById('newImg').value = product.image_url;
+            document.getElementById('newPrice').value = product.price;
+            document.getElementById('newStock').value = product.stock;
+
+            // Switch UI State
+            editingId = id;
+            document.getElementById('formTitle').innerText = 'Edit Product';
+            document.getElementById('submitBtn').innerText = 'Update Product';
+            document.getElementById('submitBtn').style.background = '#f1c40f'; // Yellow for update
+            document.getElementById('cancelBtn').classList.remove('hidden');
+
+            // Scroll to top
+            document.getElementById('dashboard').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('newName').value = '';
+            document.getElementById('newImg').value = '';
+            document.getElementById('newPrice').value = '';
+            document.getElementById('newStock').value = '10';
+
+            document.getElementById('formTitle').innerText = 'Add New Product';
+            document.getElementById('submitBtn').innerText = 'Add to Inventory';
+            document.getElementById('submitBtn').style.background = '#3a7d44'; // Green for add
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        async function handleFormSubmit() {
             const name = document.getElementById('newName').value;
             const price = document.getElementById('newPrice').value;
             const img = document.getElementById('newImg').value;
@@ -225,20 +272,30 @@
 
             if(!name || !price || !stock) return alert('Fill in all fields');
 
-            const { error } = await sb.from('products').insert([{ 
+            const payload = { 
                 name, 
                 price, 
                 image_url: img, 
                 stock: parseInt(stock) 
-            }]);
+            };
+
+            let error;
+
+            if (editingId) {
+                // Update Existing
+                const { error: err } = await sb.from('products').update(payload).eq('id', editingId);
+                error = err;
+            } else {
+                // Create New
+                const { error: err } = await sb.from('products').insert([payload]);
+                error = err;
+            }
             
-            if(error) alert('Error: ' + error.message);
-            else {
-                document.getElementById('newName').value = '';
-                document.getElementById('newPrice').value = '';
-                document.getElementById('newImg').value = '';
-                document.getElementById('newStock').value = '10';
-                loadInventory();
+            if(error) {
+                alert('Error: ' + error.message);
+            } else {
+                cancelEdit(); // Reset form
+                loadInventory(); // Refresh table
             }
         }
 

@@ -8,20 +8,20 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3a7d44; --text: #222; }
+        :root { --primary: #3a7d44; --text: #222; --accent: #f1c40f; --danger: #e74c3c; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
-        h1,h2,button { font-family:'Poppins', sans-serif; }
+        h1,h2,h3,h4,button { font-family:'Poppins', sans-serif; }
         body { background:#f5f5f5; color:var(--text); padding:40px 20px; }
         
-        .container { max-width:1000px; margin:0 auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05); }
+        .container { max-width:1100px; margin:0 auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05); }
         .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:20px; }
         .logo { color:var(--primary); font-weight:800; font-size:1.5rem; display:flex; gap:5px; }
         
         .btn { padding:10px 20px; border-radius:8px; border:none; font-weight:600; cursor:pointer; background:var(--primary); color:white; transition:0.2s; }
         .btn:hover { opacity:0.9; }
         .btn-outline { background:transparent; color:#555; border:1px solid #ddd; }
-        .btn-danger { background:#e74c3c; color:white; padding:5px 15px; font-size:0.8rem; }
-        .btn-edit { background:#f1c40f; color:white; padding:5px 15px; font-size:0.8rem; margin-right: 5px; } 
+        .btn-danger { background:var(--danger); color:white; padding:5px 15px; font-size:0.8rem; }
+        .btn-edit { background:var(--accent); color:white; padding:5px 15px; font-size:0.8rem; margin-right: 5px; } 
         .btn-cancel { background: #999; margin-left: 10px; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -43,21 +43,33 @@
         .login-box { max-width:400px; margin:100px auto; text-align:center; background:white; padding:40px; border-radius:15px; }
 
         /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #eee; }
-        .stat-val { font-size: 1.8rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; }
-        .stat-label { color: #666; font-size: 0.9rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #f8f9fa; padding: 25px; border-radius: 12px; border: 1px solid #eee; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .stat-val { font-size: 2rem; font-weight: 700; color: var(--primary); font-family: 'Poppins', sans-serif; display:block; margin-bottom: 5px; }
+        .stat-label { color: #666; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* Tabs */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #eee; }
-        .tab-btn { padding: 10px 20px; background: none; border: none; font-weight: 600; color: #888; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
-        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .tab-btn { padding: 12px 25px; background: none; border: none; font-weight: 600; color: #888; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: 0.2s; font-size: 1rem; }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
         /* Order Items List */
         .order-items-list { font-size: 0.85rem; color: #555; }
         .order-item-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 4px 0; }
         
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+        /* Analytics Specifics */
+        .analytics-section { margin-top: 30px; }
+        .chart-bar-container { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; margin-bottom: 10px; }
+        .chart-bar-bg { flex: 1; height: 12px; background: #eee; border-radius: 6px; overflow: hidden; }
+        .chart-bar-fill { height: 100%; background: var(--primary); border-radius: 6px; }
+        .rank-badge { width: 24px; height: 24px; background: #333; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; font-weight: bold; }
+        .rank-1 { background: #f1c40f; } 
+        .rank-2 { background: #bdc3c7; }
+        .rank-3 { background: #cd7f32; }
     </style>
 </head>
 <body>
@@ -80,19 +92,23 @@
             </div>
         </div>
 
-        <!-- STATS -->
+        <!-- STATS OVERVIEW -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-val" id="statRev">$0.00</div>
-                <div class="stat-label">Total Revenue</div>
+                <span class="stat-val" id="statRev">$0.00</span>
+                <span class="stat-label">Total Revenue</span>
             </div>
             <div class="stat-card">
-                <div class="stat-val" id="statOrders">0</div>
-                <div class="stat-label">Total Orders</div>
+                <span class="stat-val" id="statOrders">0</span>
+                <span class="stat-label">Total Orders</span>
             </div>
             <div class="stat-card">
-                <div class="stat-val" id="statLowStock" style="color: #e74c3c;">0</div>
-                <div class="stat-label">Low Stock Alerts</div>
+                <span class="stat-val" id="statAOV">$0.00</span>
+                <span class="stat-label">Avg. Order Value</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-val" id="statLowStock" style="color: var(--danger);">0</span>
+                <span class="stat-label">Low Stock Alerts</span>
             </div>
         </div>
 
@@ -100,13 +116,14 @@
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('inventory')">Inventory</button>
             <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+            <button class="tab-btn" onclick="switchTab('analytics')">Analytics</button>
         </div>
 
-        <!-- INVENTORY VIEW -->
+        <!-- TAB 1: INVENTORY VIEW -->
         <div id="viewInventory">
             <div class="toolbar">
                 <h3>Product Inventory</h3>
-                <button class="btn" onclick="showAddForm()">+ Add New Product</button>
+                <button class="btn" onclick="showAddForm()">+ Add Product</button>
             </div>
 
             <!-- ADD/EDIT FORM (Hidden by default) -->
@@ -124,7 +141,6 @@
                     </div>
                 </div>
                 
-                <!-- Description Field -->
                 <div class="form-group">
                     <label>Description</label>
                     <textarea id="newDesc" class="input" placeholder="Product details..."></textarea>
@@ -161,7 +177,7 @@
             </table>
         </div>
 
-        <!-- ORDERS VIEW -->
+        <!-- TAB 2: ORDERS VIEW -->
         <div id="viewOrders" class="hidden">
             <h3>Recent Orders</h3>
             <table id="ordersTable">
@@ -177,10 +193,37 @@
                 <tbody id="ordersBody"></tbody>
             </table>
         </div>
+
+        <!-- TAB 3: ANALYTICS VIEW -->
+        <div id="viewAnalytics" class="hidden">
+            <div class="form-grid">
+                <!-- Top Products -->
+                <div style="background:white; border:1px solid #eee; padding:25px; border-radius:12px;">
+                    <h3 style="margin-bottom:20px;">Best Sellers</h3>
+                    <div id="topProductsList">
+                        <p style="color:#999;">No sales data available yet.</p>
+                    </div>
+                </div>
+
+                <!-- Stock Health -->
+                <div style="background:white; border:1px solid #eee; padding:25px; border-radius:12px;">
+                    <h3 style="margin-bottom:20px;">Stock Health</h3>
+                    <table style="width:100%; border-collapse:collapse; margin-top:0;">
+                        <thead>
+                            <tr>
+                                <th style="padding:10px 0;">Product</th>
+                                <th style="padding:10px 0; text-align:right;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockHealthBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- CREDENTIALS ---
         const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
         
@@ -198,24 +241,28 @@
             if(pass === 'admin123') {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
-                loadInventory();
-                loadOrders();
+                loadAllData();
             } else {
                 alert('Incorrect password');
             }
+        }
+
+        async function loadAllData() {
+            await loadInventory();
+            await loadOrdersAndAnalytics();
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
 
-            if(tab === 'inventory') {
-                document.getElementById('viewInventory').classList.remove('hidden');
-                document.getElementById('viewOrders').classList.add('hidden');
-            } else {
-                document.getElementById('viewInventory').classList.add('hidden');
-                document.getElementById('viewOrders').classList.remove('hidden');
-            }
+            document.getElementById('viewInventory').classList.add('hidden');
+            document.getElementById('viewOrders').classList.add('hidden');
+            document.getElementById('viewAnalytics').classList.add('hidden');
+
+            if(tab === 'inventory') document.getElementById('viewInventory').classList.remove('hidden');
+            else if(tab === 'orders') document.getElementById('viewOrders').classList.remove('hidden');
+            else document.getElementById('viewAnalytics').classList.remove('hidden');
         }
 
         const toBase64 = file => new Promise((resolve, reject) => {
@@ -232,14 +279,18 @@
             if(data) {
                 inventoryData = data; 
                 const tbody = document.getElementById('tableBody');
+                const stockBody = document.getElementById('stockHealthBody');
                 tbody.innerHTML = '';
+                stockBody.innerHTML = '';
                 
                 let lowStockCount = 0;
                 
                 data.forEach(p => {
-                    if(p.stock < 5) lowStockCount++;
-                    const stockClass = p.stock < 5 ? 'stock-badge stock-low' : 'stock-badge';
+                    const isLow = p.stock < 5;
+                    if(isLow) lowStockCount++;
+                    const stockClass = isLow ? 'stock-badge stock-low' : 'stock-badge';
                     
+                    // Main Inventory Table
                     tbody.innerHTML += `
                         <tr>
                             <td><img src="${p.image_url}"></td>
@@ -252,13 +303,27 @@
                             </td>
                         </tr>
                     `;
+
+                    // Stock Health Widget
+                    if(isLow) {
+                        stockBody.innerHTML += `
+                            <tr>
+                                <td style="padding:8px 0; border-bottom:1px dashed #eee;">${p.name}</td>
+                                <td style="padding:8px 0; text-align:right; border-bottom:1px dashed #eee;">
+                                    <span style="color:${p.stock === 0 ? '#e74c3c' : '#f39c12'}; font-weight:700;">
+                                        ${p.stock === 0 ? 'Out of Stock' : 'Low ('+p.stock+')'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 });
                 document.getElementById('statLowStock').innerText = lowStockCount;
+                if(stockBody.innerHTML === '') stockBody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:15px; color:#999;">Inventory looks healthy!</td></tr>';
             }
         }
 
         function showAddForm() {
-            // Reset form for new entry
             cancelEdit();
             document.getElementById('productFormContainer').classList.remove('hidden');
             document.getElementById('productFormContainer').scrollIntoView({behavior: 'smooth'});
@@ -268,16 +333,13 @@
             const product = inventoryData.find(p => p.id === id);
             if(!product) return;
 
-            // Populate Form
             document.getElementById('newName').value = product.name;
             document.getElementById('newPrice').value = product.price;
             document.getElementById('newStock').value = product.stock;
             document.getElementById('newDesc').value = product.description || '';
-            
             document.getElementById('existingImgUrl').value = product.image_url;
             document.getElementById('newImgFile').value = '';
 
-            // Switch UI State
             editingId = id;
             document.getElementById('formTitle').innerText = 'Edit Product';
             document.getElementById('submitBtn').innerText = 'Update Product';
@@ -313,42 +375,19 @@
             if(!name || !price || !stock) return alert('Fill in name, price and stock fields');
 
             let finalImgUrl = existingImg;
-            
             if (fileInput.files.length > 0) {
-                try {
-                    finalImgUrl = await toBase64(fileInput.files[0]);
-                } catch (e) {
-                    console.error(e);
-                    return alert("Error processing image file");
-                }
+                try { finalImgUrl = await toBase64(fileInput.files[0]); } 
+                catch (e) { return alert("Error processing image file"); }
             }
-            
             if (!finalImgUrl) return alert("Please upload an image");
 
-            const payload = { 
-                name, 
-                price, 
-                image_url: finalImgUrl, 
-                stock: parseInt(stock),
-                description: desc 
-            };
+            const payload = { name, price, image_url: finalImgUrl, stock: parseInt(stock), description: desc };
 
-            let error;
-
-            if (editingId) {
-                const { error: err } = await sb.from('products').update(payload).eq('id', editingId);
-                error = err;
-            } else {
-                const { error: err } = await sb.from('products').insert([payload]);
-                error = err;
-            }
+            if (editingId) await sb.from('products').update(payload).eq('id', editingId);
+            else await sb.from('products').insert([payload]);
             
-            if(error) {
-                alert('Error: ' + error.message);
-            } else {
-                cancelEdit(); 
-                loadInventory(); 
-            }
+            cancelEdit(); 
+            loadInventory(); 
         }
 
         async function deleteProduct(id) {
@@ -358,24 +397,23 @@
             }
         }
 
-        // --- ORDERS LOGIC ---
-        async function loadOrders() {
+        // --- ORDERS & ANALYTICS LOGIC ---
+        async function loadOrdersAndAnalytics() {
             const { data: orders } = await sb.from('orders').select('*').order('created_at', {ascending:false});
             const { data: items } = await sb.from('order_items').select('*, products(name)');
             
+            // 1. Process Orders List
             const tbody = document.getElementById('ordersBody');
             tbody.innerHTML = '';
-
             let totalRev = 0;
 
             if(orders && orders.length > 0) {
                 orders.forEach(o => {
                     totalRev += o.total_amount;
-                    
                     const myItems = items.filter(i => i.order_id === o.id);
                     let itemsHtml = `<div class="order-items-list">`;
                     myItems.forEach(i => {
-                        const pName = i.products ? i.products.name : 'Unknown Product';
+                        const pName = i.products ? i.products.name : 'Unknown';
                         itemsHtml += `<div class="order-item-row"><span>${pName} x${i.quantity}</span><span>$${i.price}</span></div>`;
                     });
                     itemsHtml += `</div>`;
@@ -394,8 +432,54 @@
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No orders yet</td></tr>';
             }
 
+            // 2. Update Basic Stats
             document.getElementById('statRev').innerText = '$' + totalRev.toFixed(2);
             document.getElementById('statOrders').innerText = orders ? orders.length : 0;
+            const aov = orders.length > 0 ? (totalRev / orders.length) : 0;
+            document.getElementById('statAOV').innerText = '$' + aov.toFixed(2);
+
+            // 3. Process Analytics (Top Products)
+            const productSales = {};
+            items.forEach(i => {
+                if(!i.products) return;
+                const pid = i.product_id;
+                const pName = i.products.name;
+                if(!productSales[pid]) productSales[pid] = { name: pName, qty: 0, revenue: 0 };
+                productSales[pid].qty += i.quantity;
+                productSales[pid].revenue += (i.quantity * i.price);
+            });
+
+            // Sort by Quantity Sold
+            const sortedProducts = Object.values(productSales).sort((a,b) => b.qty - a.qty).slice(0, 5);
+            const topContainer = document.getElementById('topProductsList');
+            
+            if(sortedProducts.length > 0) {
+                topContainer.innerHTML = '';
+                const maxQty = sortedProducts[0].qty; // For bar chart scaling
+
+                sortedProducts.forEach((p, index) => {
+                    const barWidth = (p.qty / maxQty) * 100;
+                    const rankClass = index === 0 ? 'rank-1' : (index === 1 ? 'rank-2' : (index === 2 ? 'rank-3' : ''));
+                    
+                    topContainer.innerHTML += `
+                        <div style="margin-bottom:15px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:600; font-size:0.9rem;">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="rank-badge ${rankClass}">${index + 1}</span>
+                                    <span>${p.name}</span>
+                                </div>
+                                <span>${p.qty} sold</span>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="chart-bar-bg">
+                                    <div class="chart-bar-fill" style="width: ${barWidth}%"></div>
+                                </div>
+                                <span style="min-width:60px; text-align:right; font-weight:700;">$${p.revenue.toFixed(0)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
         }
 
         function logout() {

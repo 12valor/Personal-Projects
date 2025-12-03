@@ -3,323 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flow | Sustainable Living</title>
-    
-    <!-- SUPABASE & ICONS -->
+    <title>Flow | Shop</title>
+    <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- FONTS -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-
     <style>
-        /* --- CORE STYLES --- */
-        :root { --primary: #3a7d44; --text-dark: #222; --bg-light: #e9f3eb; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        h1, h2, h3, button { font-family: 'Poppins', sans-serif; }
-        body { background: white; color: var(--text-dark); overflow-x: hidden; }
+        :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
+        h1,h2,h3,button { font-family:'Poppins', sans-serif; }
+        body { color:var(--text); padding-bottom:50px; }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .hidden { display: none !important; }
-        .btn { padding: 10px 25px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; }
-        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+        .hidden { display:none!important; }
+        .btn { padding:10px 25px; border-radius:50px; border:none; font-weight:700; cursor:pointer; background:var(--primary); color:white; transition:0.2s; }
+        .btn:hover { transform:translateY(-2px); opacity:0.9; }
 
-        /* --- HEADER & HERO --- */
-        header { padding: 20px 0; position: sticky; top: 0; background: rgba(255,255,255,0.95); z-index: 50; border-bottom: 1px solid #eee; }
-        .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        header { padding:20px 0; position:sticky; top:0; background:rgba(255,255,255,0.95); z-index:50; border-bottom:1px solid #eee; }
+        .nav { display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; gap:5px; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; margin-left:20px; font-size:0.9rem; }
+
+        .hero { background:var(--bg); padding:80px 0; border-radius:0 0 30px 30px; margin-bottom:50px; text-align:center; }
+        .hero h1 { font-size:3rem; color:var(--primary); margin-bottom:10px; }
+
+        .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:30px; }
+        .card { border:1px solid #eee; padding:15px; border-radius:15px; transition:0.3s; cursor:pointer; }
+        .card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.05); }
+        .card img { width:100%; height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
+        .card-title { font-weight:700; font-size:1.1rem; }
+        .card-price { color:var(--primary); font-weight:700; display:block; margin:5px 0; }
         
-        .hero { background: var(--bg-light); padding: 60px 0; border-radius: 0 0 30px 30px; margin-bottom: 50px; }
-        .hero h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
-
-        /* --- PRODUCT GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; padding-bottom: 50px; }
-        .card { border: 1px solid #eee; border-radius: 15px; padding: 15px; transition: 0.3s; background: white; cursor: pointer; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .card img { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-        .card-price { color: var(--primary); font-weight: 700; display: block; margin: 5px 0; }
-        .stars-display { color: #f1c40f; font-size: 0.9rem; }
-
-        /* --- PRODUCT DETAILS MODAL --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: white; width: 90%; max-width: 800px; height: 85vh; border-radius: 20px; display: flex; overflow: hidden; position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: white; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10; border-radius: 50%; width: 35px; height: 35px; }
+        /* Modal Styles */
+        .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(2px); }
+        .modal.active { opacity:1; pointer-events:auto; }
         
-        /* Modal Split Layout */
-        .modal-left { width: 45%; background: #f9f9f9; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .modal-left img { width: 100%; max-height: 350px; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply; }
-        .modal-right { width: 55%; padding: 30px; overflow-y: auto; }
-
-        /* Reviews Section */
-        .review-section { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
-        .review-item { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .review-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 5px; }
-        .star-input { font-size: 1.5rem; color: #ddd; cursor: pointer; transition: 0.2s; }
-        .star-input.active { color: #f1c40f; }
+        /* Config Box */
+        .modal-box { background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
+        .config-input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; }
         
-        /* Config Modal (Small) */
-        .config-box { background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .config-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        /* Product Detail Modal */
+        .detail-modal { width:90%; max-width:900px; height:85vh; padding:0; display:flex; overflow:hidden; position:relative; }
+        .detail-left { width:50%; background:#f9f9f9; padding:30px; display:flex; align-items:center; justify-content:center; }
+        .detail-left img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
+        .detail-right { width:50%; padding:40px; overflow-y:auto; }
+        .close-btn { position:absolute; top:15px; right:15px; background:white; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; font-size:1.2rem; }
 
-        @media (max-width: 768px) {
-            .modal-content { flex-direction: column; height: 95vh; overflow-y: auto; }
-            .modal-left, .modal-right { width: 100%; padding: 20px; }
-            .modal-left { height: 300px; }
-        }
+        /* Review Styles */
+        .reviews { margin-top:30px; padding-top:20px; border-top:1px solid #eee; }
+        .star-widget { font-size:1.5rem; color:#ddd; cursor:pointer; margin:10px 0; }
+        .star-widget span:hover, .star-widget span.active { color:#f1c40f; }
+        .review-item { background:#f8f8f8; padding:15px; border-radius:8px; margin-bottom:10px; }
+        
+        @media(max-width:768px) { .detail-modal { flex-direction:column; height:95vh; overflow-y:scroll; } .detail-left, .detail-right { width:100%; height:auto; } }
     </style>
 </head>
 <body>
 
-    <!-- 1. CONFIG MODAL (If no keys) -->
-    <div id="configModal" class="modal">
-        <div class="config-box">
-            <h2>Connect Supabase ⚡</h2>
-            <p style="margin: 10px 0; font-size: 0.9rem;">Enter your project details to enable the database.</p>
-            <input id="supaUrl" class="config-input" placeholder="Project URL">
-            <input id="supaKey" class="config-input" placeholder="Anon Public Key">
-            <button class="btn" onclick="saveConfig()">Connect</button>
-        </div>
-    </div>
-
-    <!-- 2. PRODUCT DETAIL MODAL -->
-    <div id="productModal" class="modal" onclick="if(event.target === this) closeProductModal()">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeProductModal()">&times;</button>
-            
-            <div class="modal-left">
-                <img id="modalImg" src="" alt="Product">
-            </div>
-            
-            <div class="modal-right">
-                <h2 id="modalTitle" style="font-size: 2rem; margin-bottom: 5px;">Product Name</h2>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                    <span id="modalPrice" style="font-size: 1.5rem; color: var(--primary); font-weight: 700;">$0.00</span>
-                    <div id="modalAvgStars" class="stars-display"></div>
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-box detail-modal">
+            <button class="close-btn" onclick="closeModal('productModal')">&times;</button>
+            <div class="detail-left"><img id="dImg" src=""></div>
+            <div class="detail-right">
+                <h2 id="dName" style="font-size:2rem; margin-bottom:5px;"></h2>
+                <div style="display:flex; gap:15px; align-items:center; margin-bottom:20px;">
+                    <span id="dPrice" style="color:var(--primary); font-size:1.5rem; font-weight:700;"></span>
+                    <span id="dStars" style="color:#f1c40f;"></span>
                 </div>
+                <button class="btn" style="width:100%;">Add to Cart</button>
 
-                <button class="btn" style="width: 100%; margin-bottom: 30px;">Add to Cart (Coming Soon)</button>
-
-                <!-- Reviews -->
-                <div class="review-section">
-                    <h3>Customer Reviews</h3>
-                    
-                    <!-- Write Review Form -->
-                    <div style="background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <h4 style="margin-bottom: 10px;">Write a Review</h4>
-                        <input id="reviewName" class="config-input" placeholder="Your Name" style="margin-top:0;">
-                        <div id="starWidget" style="margin: 10px 0;">
-                            <span class="star-input" onclick="setRating(1)">★</span>
-                            <span class="star-input" onclick="setRating(2)">★</span>
-                            <span class="star-input" onclick="setRating(3)">★</span>
-                            <span class="star-input" onclick="setRating(4)">★</span>
-                            <span class="star-input" onclick="setRating(5)">★</span>
+                <div class="reviews">
+                    <h3>Reviews</h3>
+                    <!-- Review Form -->
+                    <div style="background:white; border:1px solid #eee; padding:15px; border-radius:8px; margin:15px 0;">
+                        <input id="rName" class="config-input" style="margin-top:0" placeholder="Your Name">
+                        <div class="star-widget" id="starWidget">
+                            <span onclick="rate(1)">★</span><span onclick="rate(2)">★</span><span onclick="rate(3)">★</span><span onclick="rate(4)">★</span><span onclick="rate(5)">★</span>
                         </div>
-                        <textarea id="reviewComment" class="config-input" placeholder="Your experience..." rows="3"></textarea>
-                        <button class="btn" onclick="submitReview()" style="font-size: 0.8rem; padding: 8px 20px;">Post Review</button>
+                        <textarea id="rText" class="config-input" placeholder="Review..." rows="2"></textarea>
+                        <button class="btn" style="font-size:0.8rem;" onclick="postReview()">Post Review</button>
                     </div>
-
                     <!-- Reviews List -->
-                    <div id="reviewsList">
-                        <!-- Injected via JS -->
-                    </div>
+                    <div id="rList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- Main Navigation (Admin Link Removed) -->
     <header>
-        <div class="container nav-flex">
+        <div class="container nav">
             <div class="logo">flow <i data-lucide="leaf"></i></div>
-            <button class="btn" style="background:white; color:var(--text-dark); border:1px solid #ddd;" onclick="localStorage.clear(); location.reload()">Reset Config</button>
+            <div class="nav-links">
+                <a href="#">Shop</a>
+                <a href="#">About</a>
+                <a href="#">Cart (0)</a>
+            </div>
         </div>
     </header>
 
+    <!-- Main Content -->
     <div class="container">
-        <section class="hero">
-            <div style="text-align: center;">
-                <h1>Sustainable Living</h1>
-                <p>Click on any product to see reviews and details.</p>
-            </div>
-        </section>
-
-        <div id="loader" style="text-align:center; padding:40px;">Loading products...</div>
-        <div id="productGrid" class="grid"></div>
+        <div class="hero">
+            <h1>Sustainable Living</h1>
+            <p>Curated eco-friendly products. Click items to review.</p>
+        </div>
+        <div id="loader" style="text-align:center;">Loading products...</div>
+        <div id="grid" class="grid"></div>
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- Logic -->
     <script>
-        let supabase = null;
-        let products = [];
-        let currentProductId = null;
-        let currentRating = 0;
+        // --- EMBEDDED CREDENTIALS ---
+        const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
 
-        // --- INIT ---
-        window.addEventListener('DOMContentLoaded', () => {
+        let sb = null, products = [], curId = null, curRating = 0;
+
+        window.onload = () => {
             lucide.createIcons();
-            const url = localStorage.getItem('supabase_url');
-            const key = localStorage.getItem('supabase_key');
+            // Initialize Supabase immediately with hardcoded keys
+            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            fetchProducts();
+        };
 
-            if (url && key) {
-                initSupabase(url, key);
-            } else {
-                document.getElementById('configModal').classList.add('active');
-            }
-        });
-
-        function saveConfig() {
-            const url = document.getElementById('supaUrl').value;
-            const key = document.getElementById('supaKey').value;
-            if(!url || !key) return alert("Please enter details");
-            localStorage.setItem('supabase_url', url);
-            localStorage.setItem('supabase_key', key);
-            initSupabase(url, key);
-            document.getElementById('configModal').classList.remove('active');
-        }
-
-        function initSupabase(url, key) {
-            try {
-                supabase = window.supabase.createClient(url, key);
-                fetchProducts();
-            } catch(e) {
-                alert("Supabase Error: " + e.message);
-            }
-        }
-
-        // --- FETCH PRODUCTS ---
         async function fetchProducts() {
-            const { data, error } = await supabase.from('products').select('*');
+            const { data, error } = await sb.from('products').select('*');
             document.getElementById('loader').classList.add('hidden');
-            
-            if (error) {
-                document.getElementById('productGrid').innerHTML = `<p style="color:red">Error: ${error.message}</p>`;
-                return;
-            }
-
-            products = data;
-            renderGrid();
-        }
-
-        function renderGrid() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            
-            products.forEach(p => {
-                const el = document.createElement('div');
-                el.className = 'card';
-                el.onclick = () => openProductModal(p);
-                el.innerHTML = `
-                    <img src="${p.image_url}" alt="${p.name}">
-                    <div class="card-title">${p.name}</div>
-                    <span class="card-price">$${p.price.toFixed(2)}</span>
-                    <div class="stars-display" style="color: #ccc; font-size: 0.8rem;">Click to view details</div>
-                `;
-                grid.appendChild(el);
-            });
-        }
-
-        // --- PRODUCT MODAL ---
-        async function openProductModal(product) {
-            currentProductId = product.id;
-            
-            // Fill Info
-            document.getElementById('modalImg').src = product.image_url;
-            document.getElementById('modalTitle').innerText = product.name;
-            document.getElementById('modalPrice').innerText = '$' + product.price.toFixed(2);
-            document.getElementById('productModal').classList.add('active');
-
-            // Reset Form
-            document.getElementById('reviewName').value = '';
-            document.getElementById('reviewComment').value = '';
-            setRating(0);
-            
-            // Load Reviews
-            fetchReviews(product.id);
-        }
-
-        function closeProductModal() {
-            document.getElementById('productModal').classList.remove('active');
-        }
-
-        // --- REVIEWS LOGIC ---
-        async function fetchReviews(productId) {
-            const list = document.getElementById('reviewsList');
-            list.innerHTML = 'Loading reviews...';
-
-            // Query 'reviews' table linked by product_id
-            const { data, error } = await supabase
-                .from('reviews')
-                .select('*')
-                .eq('product_id', productId)
-                .order('created_at', { ascending: false });
-
-            if(error) {
-                list.innerHTML = 'Error loading reviews.';
-                return;
-            }
-
-            if(data.length === 0) {
-                list.innerHTML = '<p style="color:#999; font-style:italic;">No reviews yet. Be the first!</p>';
-                document.getElementById('modalAvgStars').innerHTML = '';
-                return;
-            }
-
-            // Calc Average
-            const avg = data.reduce((acc, r) => acc + r.rating, 0) / data.length;
-            document.getElementById('modalAvgStars').innerHTML = '★'.repeat(Math.round(avg)) + ` <span style="color:#666">(${data.length})</span>`;
-
-            // Render List
-            list.innerHTML = '';
-            data.forEach(r => {
-                const item = document.createElement('div');
-                item.className = 'review-item';
-                item.innerHTML = `
-                    <div class="review-header">
-                        <strong>${r.user_name}</strong>
-                        <span>${new Date(r.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div style="color:#f1c40f; margin-bottom:5px;">${'★'.repeat(r.rating)}</div>
-                    <p style="font-size:0.9rem; color:#444;">${r.comment || ''}</p>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        // --- ADD REVIEW ---
-        function setRating(n) {
-            currentRating = n;
-            const stars = document.querySelectorAll('#starWidget .star-input');
-            stars.forEach((s, i) => {
-                s.classList.toggle('active', i < n);
-            });
-        }
-
-        async function submitReview() {
-            const name = document.getElementById('reviewName').value;
-            const comment = document.getElementById('reviewComment').value;
-
-            if(!name || currentRating === 0) {
-                alert("Please add a name and a star rating.");
-                return;
-            }
-
-            // Insert into 'reviews' table
-            const { error } = await supabase.from('reviews').insert([{
-                product_id: currentProductId,
-                user_name: name,
-                rating: currentRating,
-                comment: comment
-            }]);
-
-            if(error) {
-                alert("Error: " + error.message);
+            if(!error) {
+                products = data;
+                const grid = document.getElementById('grid');
+                grid.innerHTML = '';
+                if(data.length === 0) grid.innerHTML = '<p>No products found.</p>';
+                data.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="card" onclick="openProduct(${p.id})">
+                            <img src="${p.image_url}">
+                            <div class="card-title">${p.name}</div>
+                            <span class="card-price">$${p.price}</span>
+                        </div>`;
+                });
             } else {
-                fetchReviews(currentProductId); // Reload list
-                // Clear form
-                document.getElementById('reviewComment').value = '';
-                alert("Review Posted!");
+                document.getElementById('grid').innerHTML = '<p style="color:red">Error loading products.</p>';
             }
+        }
+
+        async function openProduct(id) {
+            curId = id;
+            const p = products.find(x => x.id === id);
+            document.getElementById('dImg').src = p.image_url;
+            document.getElementById('dName').innerText = p.name;
+            document.getElementById('dPrice').innerText = '$' + p.price;
+            document.getElementById('productModal').classList.add('active');
+            rate(0); document.getElementById('rName').value=''; document.getElementById('rText').value='';
+            loadReviews(id);
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function rate(n) {
+            curRating = n;
+            Array.from(document.getElementById('starWidget').children).forEach((s,i) => {
+                s.className = i < n ? 'active' : '';
+            });
+        }
+
+        async function loadReviews(pid) {
+            const list = document.getElementById('rList');
+            list.innerHTML = 'Loading...';
+            const { data } = await sb.from('reviews').select('*').eq('product_id', pid).order('created_at',{ascending:false});
+            list.innerHTML = '';
+            if(data && data.length > 0) {
+                const avg = data.reduce((a,b)=>a+b.rating,0)/data.length;
+                document.getElementById('dStars').innerHTML = '★'.repeat(Math.round(avg));
+                data.forEach(r => {
+                    list.innerHTML += `<div class="review-item"><strong>${r.user_name}</strong> <span style="color:#f1c40f">${'★'.repeat(r.rating)}</span><br>${r.comment}</div>`;
+                });
+            } else {
+                document.getElementById('dStars').innerHTML = 'No ratings yet';
+                list.innerHTML = '<p style="color:#888;font-style:italic">No reviews yet.</p>';
+            }
+        }
+
+        async function postReview() {
+            const name = document.getElementById('rName').value;
+            const txt = document.getElementById('rText').value;
+            if(!name || curRating === 0) return alert('Name and Rating required');
+            await sb.from('reviews').insert([{product_id: curId, user_name: name, rating: curRating, comment: txt}]);
+            loadReviews(curId);
         }
     </script>
 </body>

@@ -21,7 +21,7 @@
         .btn:hover { opacity:0.9; }
         .btn-outline { background:transparent; color:#555; border:1px solid #ddd; }
         .btn-danger { background:#e74c3c; color:white; padding:5px 15px; font-size:0.8rem; }
-        .btn-edit { background:#f1c40f; color:white; padding:5px 15px; font-size:0.8rem; margin-right: 5px; } /* New Edit Button Style */
+        .btn-edit { background:#f1c40f; color:white; padding:5px 15px; font-size:0.8rem; margin-right: 5px; } 
         .btn-cancel { background: #999; margin-left: 10px; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -105,9 +105,12 @@
                     <label>Product Name</label>
                     <input id="newName" class="input" placeholder="e.g. Bamboo Toothbrush">
                 </div>
+                <!-- CHANGED: File Input for Image -->
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input id="newImg" class="input" placeholder="https://...">
+                    <label>Product Image</label>
+                    <input type="file" id="newImgFile" class="input" accept="image/*">
+                    <!-- Hidden input to store existing URL when editing -->
+                    <input type="hidden" id="existingImgUrl">
                 </div>
             </div>
             <div class="form-grid">
@@ -165,8 +168,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
         
         let sb = null;
-        let inventoryData = []; // Store fetched data locally for easy editing access
-        let editingId = null; // Track if we are editing
+        let inventoryData = []; 
+        let editingId = null;
 
         window.onload = () => {
             lucide.createIcons();
@@ -198,12 +201,20 @@
             }
         }
 
+        // --- HELPER: Convert File to Base64 ---
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
         // --- INVENTORY LOGIC ---
         async function loadInventory() {
             const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:false});
             
             if(data) {
-                inventoryData = data; // Save to global variable
+                inventoryData = data; 
                 const tbody = document.getElementById('tableBody');
                 tbody.innerHTML = '';
                 
@@ -236,57 +247,74 @@
 
             // Populate Form
             document.getElementById('newName').value = product.name;
-            document.getElementById('newImg').value = product.image_url;
             document.getElementById('newPrice').value = product.price;
             document.getElementById('newStock').value = product.stock;
+            
+            // Store existing image URL in hidden input, since we can't set file input value
+            document.getElementById('existingImgUrl').value = product.image_url;
+            document.getElementById('newImgFile').value = ''; // Reset file input
 
             // Switch UI State
             editingId = id;
-            document.getElementById('formTitle').innerText = 'Edit Product';
+            document.getElementById('formTitle').innerText = 'Edit Product (Upload new image to replace)';
             document.getElementById('submitBtn').innerText = 'Update Product';
-            document.getElementById('submitBtn').style.background = '#f1c40f'; // Yellow for update
+            document.getElementById('submitBtn').style.background = '#f1c40f'; 
             document.getElementById('cancelBtn').classList.remove('hidden');
 
-            // Scroll to top
             document.getElementById('dashboard').scrollIntoView({behavior: 'smooth'});
         }
 
         function cancelEdit() {
             editingId = null;
             document.getElementById('newName').value = '';
-            document.getElementById('newImg').value = '';
             document.getElementById('newPrice').value = '';
             document.getElementById('newStock').value = '10';
+            document.getElementById('newImgFile').value = '';
+            document.getElementById('existingImgUrl').value = '';
 
             document.getElementById('formTitle').innerText = 'Add New Product';
             document.getElementById('submitBtn').innerText = 'Add to Inventory';
-            document.getElementById('submitBtn').style.background = '#3a7d44'; // Green for add
+            document.getElementById('submitBtn').style.background = '#3a7d44'; 
             document.getElementById('cancelBtn').classList.add('hidden');
         }
 
         async function handleFormSubmit() {
             const name = document.getElementById('newName').value;
             const price = document.getElementById('newPrice').value;
-            const img = document.getElementById('newImg').value;
             const stock = document.getElementById('newStock').value;
+            const fileInput = document.getElementById('newImgFile');
+            const existingImg = document.getElementById('existingImgUrl').value;
 
-            if(!name || !price || !stock) return alert('Fill in all fields');
+            if(!name || !price || !stock) return alert('Fill in name, price and stock fields');
+
+            // Handle Image: Prefer new file, fallback to existing URL (edit mode), then alert if neither
+            let finalImgUrl = existingImg;
+            
+            if (fileInput.files.length > 0) {
+                // Convert file to Base64 string
+                try {
+                    finalImgUrl = await toBase64(fileInput.files[0]);
+                } catch (e) {
+                    console.error(e);
+                    return alert("Error processing image file");
+                }
+            }
+            
+            if (!finalImgUrl) return alert("Please upload an image");
 
             const payload = { 
                 name, 
                 price, 
-                image_url: img, 
+                image_url: finalImgUrl, 
                 stock: parseInt(stock) 
             };
 
             let error;
 
             if (editingId) {
-                // Update Existing
                 const { error: err } = await sb.from('products').update(payload).eq('id', editingId);
                 error = err;
             } else {
-                // Create New
                 const { error: err } = await sb.from('products').insert([payload]);
                 error = err;
             }
@@ -294,8 +322,8 @@
             if(error) {
                 alert('Error: ' + error.message);
             } else {
-                cancelEdit(); // Reset form
-                loadInventory(); // Refresh table
+                cancelEdit(); 
+                loadInventory(); 
             }
         }
 
@@ -308,9 +336,7 @@
 
         // --- ORDERS LOGIC ---
         async function loadOrders() {
-            // Fetch orders
             const { data: orders } = await sb.from('orders').select('*').order('created_at', {ascending:false});
-            // Fetch order items with product details
             const { data: items } = await sb.from('order_items').select('*, products(name)');
             
             const tbody = document.getElementById('ordersBody');
@@ -322,7 +348,6 @@
                 orders.forEach(o => {
                     totalRev += o.total_amount;
                     
-                    // Filter items for this specific order
                     const myItems = items.filter(i => i.order_id === o.id);
                     let itemsHtml = `<div class="order-items-list">`;
                     myItems.forEach(i => {
@@ -345,7 +370,6 @@
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No orders yet</td></tr>';
             }
 
-            // Update Stats
             document.getElementById('statRev').innerText = '$' + totalRev.toFixed(2);
             document.getElementById('statOrders').innerText = orders ? orders.length : 0;
         }

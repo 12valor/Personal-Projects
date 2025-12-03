@@ -3,493 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flow | Sustainable Living (Supabase Edition)</title>
+    <title>Flow | Sustainable Living</title>
     
-    <!-- SUPABASE JS LIBRARY (CDN) -->
+    <!-- SUPABASE & ICONS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- FONTS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-
-    <!-- ICONS -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* --- CSS VARIABLES & RESET --- */
-        :root {
-            --primary: #3a7d44;
-            --primary-dark: #2c5e34;
-            --bg-light: #e9f3eb;
-            --text-dark: #222;
-            --text-light: #666;
-            --white: #fff;
-            --font-head: 'Poppins', sans-serif;
-            --font-body: 'Montserrat', sans-serif;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-body); color: var(--text-dark); background: var(--white); overflow-x: hidden; }
-        h1, h2, h3, button, .logo { font-family: var(--font-head); }
+        /* --- CORE STYLES --- */
+        :root { --primary: #3a7d44; --text-dark: #222; --bg-light: #e9f3eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        h1, h2, h3, button { font-family: 'Poppins', sans-serif; }
+        body { background: white; color: var(--text-dark); overflow-x: hidden; }
         
-        /* --- UTILS --- */
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .btn { padding: 12px 30px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: var(--white); }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
         .hidden { display: none !important; }
+        .btn { padding: 10px 25px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
 
-        /* --- HEADER --- */
-        header { padding: 20px 0; position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); z-index: 50; border-bottom: 1px solid #eee; }
+        /* --- HEADER & HERO --- */
+        header { padding: 20px 0; position: sticky; top: 0; background: rgba(255,255,255,0.95); z-index: 50; border-bottom: 1px solid #eee; }
         .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .nav-links { display: flex; gap: 30px; list-style: none; }
-        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
-        .nav-links a:hover { color: var(--primary); }
-        .icon-btn { background: none; border: none; cursor: pointer; position: relative; }
-        .badge { position: absolute; top: -5px; right: -5px; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; }
-
-        /* --- HERO --- */
-        .hero { background: var(--bg-light); padding: 80px 0; border-radius: 0 0 30px 30px; }
-        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-        .hero h1 { font-size: 3.5rem; line-height: 1.1; color: var(--primary); margin-bottom: 20px; }
-        .hero p { font-size: 1.1rem; color: var(--text-light); margin-bottom: 30px; max-width: 450px; }
-        .hero-img { width: 100%; height: 400px; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(58,125,68,0.15); }
-
-        /* --- PRODUCTS --- */
-        .products { padding: 80px 0; }
-        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 5px; cursor: pointer; }
         
-        .card { border: 1px solid #eee; border-radius: 15px; padding: 15px; transition: 0.3s; background: white; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-color: transparent; }
-        .card-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; background: #f9f9f9; }
-        .card-info { padding-top: 15px; }
-        .card-title { font-weight: 700; margin-bottom: 5px; font-size: 1.1rem; }
-        .card-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; display: block; margin-bottom: 10px; }
-        .btn-full { width: 100%; padding: 10px; border-radius: 10px; background: var(--bg-light); color: var(--primary); }
-        .btn-full:hover { background: var(--primary); color: white; }
+        .hero { background: var(--bg-light); padding: 60px 0; border-radius: 0 0 30px 30px; margin-bottom: 50px; }
+        .hero h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
 
-        /* --- ADMIN PANEL --- */
-        .admin-panel { padding: 60px 0; max-width: 800px; margin: 0 auto; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
-        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        .admin-table th { text-align: left; padding: 15px; background: #f5f5f5; font-size: 0.9rem; }
-        .admin-table td { padding: 15px; border-bottom: 1px solid #eee; }
-        .btn-delete { color: #e74c3c; background: none; border: none; cursor: pointer; font-weight: 600; }
+        /* --- PRODUCT GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; padding-bottom: 50px; }
+        .card { border: 1px solid #eee; border-radius: 15px; padding: 15px; transition: 0.3s; background: white; cursor: pointer; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .card img { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+        .card-price { color: var(--primary); font-weight: 700; display: block; margin: 5px 0; }
+        .stars-display { color: #f1c40f; font-size: 0.9rem; }
 
-        /* --- CART SIDEBAR --- */
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 100; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        .sidebar.active { right: 0; }
-        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
-        .cart-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-footer { padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
-        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; }
-        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+        /* --- PRODUCT DETAILS MODAL --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: white; width: 90%; max-width: 800px; height: 85vh; border-radius: 20px; display: flex; overflow: hidden; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: white; border: none; font-size: 1.5rem; cursor: pointer; z-index: 10; border-radius: 50%; width: 35px; height: 35px; }
+        
+        /* Modal Split Layout */
+        .modal-left { width: 45%; background: #f9f9f9; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .modal-left img { width: 100%; max-height: 350px; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply; }
+        .modal-right { width: 55%; padding: 30px; overflow-y: auto; }
 
-        /* --- CONFIG MODAL --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: flex; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
-        .input-group { margin: 20px 0; text-align: left; }
-        .status-dot { width: 10px; height: 10px; background: #ddd; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .status-dot.connected { background: #2ecc71; }
+        /* Reviews Section */
+        .review-section { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .review-item { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .review-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 5px; }
+        .star-input { font-size: 1.5rem; color: #ddd; cursor: pointer; transition: 0.2s; }
+        .star-input.active { color: #f1c40f; }
+        
+        /* Config Modal (Small) */
+        .config-box { background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .config-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
 
         @media (max-width: 768px) {
-            .hero-grid { grid-template-columns: 1fr; text-align: center; }
-            .sidebar { width: 100%; }
+            .modal-content { flex-direction: column; height: 95vh; overflow-y: auto; }
+            .modal-left, .modal-right { width: 100%; padding: 20px; }
+            .modal-left { height: 300px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- CONFIGURATION MODAL (Shown if no keys) -->
-    <div id="configModal" class="modal hidden">
-        <div class="modal-content">
-            <h2 style="color: var(--primary);">Setup Supabase ⚡</h2>
-            <p style="margin-top: 10px; color: #666; font-size: 0.9rem;">
-                To make this Database work, create a project at <b>supabase.com</b> and paste your credentials below.
-            </p>
-            <div class="input-group">
-                <label>Project URL</label>
-                <input type="text" id="supabaseUrl" class="form-input" placeholder="https://xyz.supabase.co">
-            </div>
-            <div class="input-group">
-                <label>Anon Public Key</label>
-                <input type="text" id="supabaseKey" class="form-input" placeholder="eyJhbGciOiJIUzI1...">
-            </div>
-            <button onclick="saveConfig()" class="btn btn-primary" style="width: 100%;">Connect Database</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #999;">
-                Create table 'products' (id, name, price, image_url)
-            </p>
+    <!-- 1. CONFIG MODAL (If no keys) -->
+    <div id="configModal" class="modal">
+        <div class="config-box">
+            <h2>Connect Supabase ⚡</h2>
+            <p style="margin: 10px 0; font-size: 0.9rem;">Enter your project details to enable the database.</p>
+            <input id="supaUrl" class="config-input" placeholder="Project URL">
+            <input id="supaKey" class="config-input" placeholder="Anon Public Key">
+            <button class="btn" onclick="saveConfig()">Connect</button>
         </div>
     </div>
 
-    <!-- HEADER -->
+    <!-- 2. PRODUCT DETAIL MODAL -->
+    <div id="productModal" class="modal" onclick="if(event.target === this) closeProductModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProductModal()">&times;</button>
+            
+            <div class="modal-left">
+                <img id="modalImg" src="" alt="Product">
+            </div>
+            
+            <div class="modal-right">
+                <h2 id="modalTitle" style="font-size: 2rem; margin-bottom: 5px;">Product Name</h2>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <span id="modalPrice" style="font-size: 1.5rem; color: var(--primary); font-weight: 700;">$0.00</span>
+                    <div id="modalAvgStars" class="stars-display"></div>
+                </div>
+
+                <button class="btn" style="width: 100%; margin-bottom: 30px;">Add to Cart (Coming Soon)</button>
+
+                <!-- Reviews -->
+                <div class="review-section">
+                    <h3>Customer Reviews</h3>
+                    
+                    <!-- Write Review Form -->
+                    <div style="background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <h4 style="margin-bottom: 10px;">Write a Review</h4>
+                        <input id="reviewName" class="config-input" placeholder="Your Name" style="margin-top:0;">
+                        <div id="starWidget" style="margin: 10px 0;">
+                            <span class="star-input" onclick="setRating(1)">★</span>
+                            <span class="star-input" onclick="setRating(2)">★</span>
+                            <span class="star-input" onclick="setRating(3)">★</span>
+                            <span class="star-input" onclick="setRating(4)">★</span>
+                            <span class="star-input" onclick="setRating(5)">★</span>
+                        </div>
+                        <textarea id="reviewComment" class="config-input" placeholder="Your experience..." rows="3"></textarea>
+                        <button class="btn" onclick="submitReview()" style="font-size: 0.8rem; padding: 8px 20px;">Post Review</button>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div id="reviewsList">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
     <header>
         <div class="container nav-flex">
-            <div class="logo" onclick="switchView('shop')">
-                flow <i data-lucide="leaf"></i>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a onclick="switchView('shop')">Shop</a></li>
-                    <li><a onclick="toggleAdmin()">Admin</a></li>
-                    <li>
-                        <button class="icon-btn" onclick="toggleCart()">
-                            <i data-lucide="shopping-bag"></i>
-                            <span class="badge" id="cartCount">0</span>
-                        </button>
-                    </li>
-                    <li id="dbStatus" title="DB Connection Status" style="display: flex; align-items: center;">
-                        <span class="status-dot" id="statusDot"></span>
-                    </li>
-                </ul>
-            </nav>
+            <div class="logo">flow <i data-lucide="leaf"></i></div>
+            <button class="btn" style="background:white; color:var(--text-dark); border:1px solid #ddd;" onclick="localStorage.clear(); location.reload()">Reset Config</button>
         </div>
     </header>
 
-    <!-- SHOP VIEW -->
-    <div id="shopView">
+    <div class="container">
         <section class="hero">
-            <div class="container hero-grid">
-                <div>
-                    <h1>Discover <br> Sustainable Living</h1>
-                    <p>Curated eco-friendly products for a balanced, mindful lifestyle. Connected to real data.</p>
-                    <button class="btn btn-primary" onclick="scrollToProducts()">Explore Collection</button>
-                </div>
-                <img src="https://images.unsplash.com/photo-1520302665673-890422463439?ixlib=rb-4.0.3&w=800&q=80" class="hero-img" alt="Hero">
+            <div style="text-align: center;">
+                <h1>Sustainable Living</h1>
+                <p>Click on any product to see reviews and details.</p>
             </div>
         </section>
 
-        <section class="products container" id="productsSection">
-            <h2 class="section-title">New Arrivals</h2>
-            <div id="loading" style="text-align: center; color: #999;">Loading products from Supabase...</div>
-            <div class="grid" id="productGrid">
-                <!-- Products injected here -->
-            </div>
-        </section>
+        <div id="loader" style="text-align:center; padding:40px;">Loading products...</div>
+        <div id="productGrid" class="grid"></div>
     </div>
 
-    <!-- ADMIN VIEW -->
-    <div id="adminView" class="container admin-panel hidden">
-        <div class="admin-header">
-            <h2>Admin Dashboard</h2>
-            <button onclick="switchView('shop')" class="btn" style="border: 1px solid #ddd;">Exit Admin</button>
-        </div>
-
-        <!-- Admin Login (Simple) -->
-        <div id="adminLogin">
-            <h3>Enter Admin Password</h3>
-            <div class="form-group" style="margin-top: 15px;">
-                <input type="password" id="adminPass" class="form-input" placeholder="Password (admin123)">
-            </div>
-            <button onclick="checkAdmin()" class="btn btn-primary">Login</button>
-        </div>
-
-        <!-- Admin Content (Protected) -->
-        <div id="adminContent" class="hidden">
-            <div style="background: #f9f9f9; padding: 25px; border-radius: 15px;">
-                <h3 style="margin-bottom: 20px;">Add New Product</h3>
-                <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" id="newName" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label>Price ($)</label>
-                    <input type="number" id="newPrice" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="text" id="newImage" class="form-input" placeholder="https://...">
-                </div>
-                <button onclick="addProduct()" class="btn btn-primary">Add Product to DB</button>
-            </div>
-
-            <h3 style="margin-top: 40px;">Current Inventory</h3>
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="adminTableBody">
-                    <!-- Rows -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- CART SIDEBAR -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleCart()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="cart-header">
-            <h3>Your Cart</h3>
-            <button onclick="toggleCart()" style="background:none; border:none; font-size: 1.5rem; cursor:pointer;">&times;</button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <!-- Cart Items -->
-        </div>
-        <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; margin-bottom: 20px;">
-                <span>Total</span>
-                <span id="cartTotal">$0.00</span>
-            </div>
-            <button class="btn btn-primary" style="width: 100%;">Checkout</button>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT -->
     <script>
-        // --- STATE & CONFIG ---
         let supabase = null;
-        let cart = [];
         let products = [];
-        
+        let currentProductId = null;
+        let currentRating = 0;
+
         // --- INIT ---
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            
-            // Check for saved keys
             const url = localStorage.getItem('supabase_url');
             const key = localStorage.getItem('supabase_key');
-            
+
             if (url && key) {
                 initSupabase(url, key);
             } else {
-                document.getElementById('configModal').classList.remove('hidden');
+                document.getElementById('configModal').classList.add('active');
             }
         });
 
-        // --- SUPABASE SETUP ---
         function saveConfig() {
-            const url = document.getElementById('supabaseUrl').value;
-            const key = document.getElementById('supabaseKey').value;
-            
-            if(!url || !key) return alert("Please enter both URL and Key");
-            
+            const url = document.getElementById('supaUrl').value;
+            const key = document.getElementById('supaKey').value;
+            if(!url || !key) return alert("Please enter details");
             localStorage.setItem('supabase_url', url);
             localStorage.setItem('supabase_key', key);
-            
             initSupabase(url, key);
-            document.getElementById('configModal').classList.add('hidden');
+            document.getElementById('configModal').classList.remove('active');
         }
 
         function initSupabase(url, key) {
             try {
                 supabase = window.supabase.createClient(url, key);
-                document.getElementById('statusDot').classList.add('connected');
                 fetchProducts();
-            } catch (err) {
-                console.error("Supabase Init Error", err);
-                alert("Invalid Supabase Config");
+            } catch(e) {
+                alert("Supabase Error: " + e.message);
             }
         }
 
-        // --- DATA FETCHING ---
+        // --- FETCH PRODUCTS ---
         async function fetchProducts() {
-            if (!supabase) return;
+            const { data, error } = await supabase.from('products').select('*');
+            document.getElementById('loader').classList.add('hidden');
             
-            document.getElementById('loading').style.display = 'block';
-            
-            // Select from 'products' table
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            document.getElementById('loading').style.display = 'none';
-
             if (error) {
-                console.error(error);
-                document.getElementById('productGrid').innerHTML = `<p style="color:red">Error: ${error.message}. <br>Make sure table 'products' exists and RLS is off.</p>`;
-            } else {
-                products = data || [];
-                renderShop();
-                renderAdminTable();
-            }
-        }
-
-        async function addProduct() {
-            const name = document.getElementById('newName').value;
-            const price = parseFloat(document.getElementById('newPrice').value);
-            const image_url = document.getElementById('newImage').value;
-
-            if (!name || !price) return alert("Please fill details");
-
-            const { data, error } = await supabase
-                .from('products')
-                .insert([{ name, price, image_url }])
-                .select();
-
-            if (error) {
-                alert("Error adding: " + error.message);
-            } else {
-                // Clear form
-                document.getElementById('newName').value = '';
-                document.getElementById('newPrice').value = '';
-                document.getElementById('newImage').value = '';
-                
-                // Refresh
-                fetchProducts();
-                alert("Product Added!");
-            }
-        }
-
-        async function deleteProduct(id) {
-            if(!confirm("Delete this item?")) return;
-
-            const { error } = await supabase
-                .from('products')
-                .delete()
-                .eq('id', id);
-
-            if (error) alert("Error deleting: " + error.message);
-            else fetchProducts();
-        }
-
-        // --- UI RENDERING ---
-        function renderShop() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            
-            if(products.length === 0) {
-                grid.innerHTML = '<p>No products in database yet. Go to Admin to add some.</p>';
+                document.getElementById('productGrid').innerHTML = `<p style="color:red">Error: ${error.message}</p>`;
                 return;
             }
 
+            products = data;
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            
             products.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <img src="${p.image_url || 'https://via.placeholder.com/300'}" class="card-img" alt="${p.name}">
-                    <div class="card-info">
-                        <div class="card-title">${p.name}</div>
-                        <span class="card-price">$${p.price.toFixed(2)}</span>
-                        <button class="btn btn-full" onclick="addToCart(${p.id})">Add to Cart</button>
+                const el = document.createElement('div');
+                el.className = 'card';
+                el.onclick = () => openProductModal(p);
+                el.innerHTML = `
+                    <img src="${p.image_url}" alt="${p.name}">
+                    <div class="card-title">${p.name}</div>
+                    <span class="card-price">$${p.price.toFixed(2)}</span>
+                    <div class="stars-display" style="color: #ccc; font-size: 0.8rem;">Click to view details</div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        // --- PRODUCT MODAL ---
+        async function openProductModal(product) {
+            currentProductId = product.id;
+            
+            // Fill Info
+            document.getElementById('modalImg').src = product.image_url;
+            document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('modalPrice').innerText = '$' + product.price.toFixed(2);
+            document.getElementById('productModal').classList.add('active');
+
+            // Reset Form
+            document.getElementById('reviewName').value = '';
+            document.getElementById('reviewComment').value = '';
+            setRating(0);
+            
+            // Load Reviews
+            fetchReviews(product.id);
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        // --- REVIEWS LOGIC ---
+        async function fetchReviews(productId) {
+            const list = document.getElementById('reviewsList');
+            list.innerHTML = 'Loading reviews...';
+
+            // Query 'reviews' table linked by product_id
+            const { data, error } = await supabase
+                .from('reviews')
+                .select('*')
+                .eq('product_id', productId)
+                .order('created_at', { ascending: false });
+
+            if(error) {
+                list.innerHTML = 'Error loading reviews.';
+                return;
+            }
+
+            if(data.length === 0) {
+                list.innerHTML = '<p style="color:#999; font-style:italic;">No reviews yet. Be the first!</p>';
+                document.getElementById('modalAvgStars').innerHTML = '';
+                return;
+            }
+
+            // Calc Average
+            const avg = data.reduce((acc, r) => acc + r.rating, 0) / data.length;
+            document.getElementById('modalAvgStars').innerHTML = '★'.repeat(Math.round(avg)) + ` <span style="color:#666">(${data.length})</span>`;
+
+            // Render List
+            list.innerHTML = '';
+            data.forEach(r => {
+                const item = document.createElement('div');
+                item.className = 'review-item';
+                item.innerHTML = `
+                    <div class="review-header">
+                        <strong>${r.user_name}</strong>
+                        <span>${new Date(r.created_at).toLocaleDateString()}</span>
                     </div>
+                    <div style="color:#f1c40f; margin-bottom:5px;">${'★'.repeat(r.rating)}</div>
+                    <p style="font-size:0.9rem; color:#444;">${r.comment || ''}</p>
                 `;
-                grid.appendChild(card);
+                list.appendChild(item);
             });
         }
 
-        function renderAdminTable() {
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
-
-            products.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><img src="${p.image_url}" style="width:40px; height:40px; border-radius:4px; object-fit:cover;"></td>
-                    <td>${p.name}</td>
-                    <td>$${p.price}</td>
-                    <td><button class="btn-delete" onclick="deleteProduct(${p.id})">Delete</button></td>
-                `;
-                tbody.appendChild(tr);
+        // --- ADD REVIEW ---
+        function setRating(n) {
+            currentRating = n;
+            const stars = document.querySelectorAll('#starWidget .star-input');
+            stars.forEach((s, i) => {
+                s.classList.toggle('active', i < n);
             });
         }
 
-        // --- CART LOGIC ---
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
-            const existing = cart.find(item => item.id === id);
-            
-            if(existing) existing.qty++;
-            else cart.push({ ...product, qty: 1 });
-            
-            updateCartUI();
-            toggleCart(true); // Open cart
-        }
+        async function submitReview() {
+            const name = document.getElementById('reviewName').value;
+            const comment = document.getElementById('reviewComment').value;
 
-        function updateCartUI() {
-            const itemsDiv = document.getElementById('cartItems');
-            itemsDiv.innerHTML = '';
-            let total = 0;
-            let count = 0;
+            if(!name || currentRating === 0) {
+                alert("Please add a name and a star rating.");
+                return;
+            }
 
-            cart.forEach(item => {
-                total += item.price * item.qty;
-                count += item.qty;
-                
-                itemsDiv.innerHTML += `
-                    <div class="cart-item">
-                        <img src="${item.image_url}" alt="img">
-                        <div style="flex:1">
-                            <div style="font-weight:600">${item.name}</div>
-                            <div style="color:var(--primary)">$${item.price} x ${item.qty}</div>
-                        </div>
-                    </div>
-                `;
-            });
+            // Insert into 'reviews' table
+            const { error } = await supabase.from('reviews').insert([{
+                product_id: currentProductId,
+                user_name: name,
+                rating: currentRating,
+                comment: comment
+            }]);
 
-            document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
-            document.getElementById('cartCount').innerText = count;
-        }
-
-        // --- NAVIGATION ---
-        function toggleCart(forceOpen = false) {
-            const sb = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if(forceOpen || !sb.classList.contains('active')) {
-                sb.classList.add('active');
-                overlay.classList.add('active');
+            if(error) {
+                alert("Error: " + error.message);
             } else {
-                sb.classList.remove('active');
-                overlay.classList.remove('active');
+                fetchReviews(currentProductId); // Reload list
+                // Clear form
+                document.getElementById('reviewComment').value = '';
+                alert("Review Posted!");
             }
-        }
-
-        function switchView(viewName) {
-            if(viewName === 'shop') {
-                document.getElementById('shopView').classList.remove('hidden');
-                document.getElementById('adminView').classList.add('hidden');
-            } else {
-                document.getElementById('shopView').classList.add('hidden');
-                document.getElementById('adminView').classList.remove('hidden');
-            }
-        }
-
-        function toggleAdmin() {
-            switchView('admin');
-        }
-
-        function checkAdmin() {
-            const pass = document.getElementById('adminPass').value;
-            if(pass === 'admin123') {
-                document.getElementById('adminLogin').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                // Auto seed prompt if empty
-                if(products.length === 0) {
-                   if(confirm("Database is empty. Want to add example data?")) seedData();
-                }
-            } else {
-                alert("Wrong password");
-            }
-        }
-
-        // Helper to quick start
-        async function seedData() {
-            const seeds = [
-                { name: "Matte Reusable Bottle", price: 24.00, image_url: "https://images.unsplash.com/photo-1602143407151-01114192003f?w=500" },
-                { name: "Organic Cotton Tote", price: 18.00, image_url: "https://images.unsplash.com/photo-1597484661643-2f5fef640dd1?w=500" },
-                { name: "Potted Echeveria", price: 22.00, image_url: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500" }
-            ];
-            
-            for(let s of seeds) {
-                await supabase.from('products').insert([s]);
-            }
-            fetchProducts();
-        }
-
-        function scrollToProducts() {
-            document.getElementById('productsSection').scrollIntoView({behavior: 'smooth'});
         }
     </script>
 </body>

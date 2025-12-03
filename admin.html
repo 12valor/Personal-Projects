@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #222; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
+        h1,h2,button { font-family:'Poppins', sans-serif; }
+        body { background:#f5f5f5; color:var(--text); padding:40px 20px; }
+        
+        .container { max-width:800px; margin:0 auto; background:white; padding:40px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.05); }
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; border-bottom:1px solid #eee; padding-bottom:20px; }
+        .logo { color:var(--primary); font-weight:800; font-size:1.5rem; display:flex; gap:5px; }
+        
+        .btn { padding:12px 25px; border-radius:8px; border:none; font-weight:600; cursor:pointer; background:var(--primary); color:white; transition:0.2s; }
+        .btn:hover { opacity:0.9; }
+        .btn-outline { background:transparent; color:#555; border:1px solid #ddd; }
+        .btn-danger { background:#e74c3c; color:white; padding:5px 15px; font-size:0.8rem; }
+
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; margin-bottom:8px; font-weight:600; font-size:0.9rem; }
+        .input { width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; }
+
+        table { width:100%; border-collapse:collapse; margin-top:30px; }
+        th { text-align:left; padding:15px; background:#f9f9f9; border-bottom:2px solid #eee; font-size:0.9rem; }
+        td { padding:15px; border-bottom:1px solid #eee; }
+        td img { width:40px; height:40px; object-fit:cover; border-radius:4px; }
+
+        .hidden { display:none; }
+        .login-box { max-width:400px; margin:100px auto; text-align:center; background:white; padding:40px; border-radius:15px; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="loginScreen" class="login-box">
+        <div class="logo" style="justify-content:center; margin-bottom:20px;">flow <i data-lucide="leaf"></i></div>
+        <h2>Admin Access</h2>
+        <p style="margin-bottom:20px; color:#666;">Enter password to manage store.</p>
+        <input type="password" id="password" class="input" placeholder="Password (hint: admin123)" style="margin-bottom:20px;">
+        <button class="btn" style="width:100%;" onclick="checkLogin()">Login</button>
+        <a href="index.html" style="display:block; margin-top:20px; color:#999; text-decoration:none; font-size:0.9rem;">&larr; Back to Shop</a>
+    </div>
+
+    <!-- 2. DASHBOARD (Protected) -->
+    <div id="dashboard" class="container hidden">
+        <div class="header">
+            <div class="logo">flow <span style="color:#222; font-weight:400;">| Admin</span></div>
+            <div>
+                <a href="index.html" class="btn btn-outline" style="text-decoration:none; margin-right:10px;">View Shop</a>
+                <button class="btn btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:40px;">
+            <!-- Add Form -->
+            <div style="flex:1;">
+                <h3 style="margin-bottom:20px;">Add Product</h3>
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input id="newName" class="input" placeholder="e.g. Bamboo Toothbrush">
+                </div>
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input id="newPrice" type="number" class="input" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input id="newImg" class="input" placeholder="https://...">
+                </div>
+                <button class="btn" style="width:100%;" onclick="addProduct()">Add to Inventory</button>
+            </div>
+        </div>
+
+        <h3 style="margin-top:50px;">Current Inventory</h3>
+        <table id="invTable">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let sb = null;
+
+        // Init
+        window.onload = () => {
+            lucide.createIcons();
+            // Check for credentials
+            const url = localStorage.getItem('sb_url');
+            const key = localStorage.getItem('sb_key');
+            
+            if(url && key) {
+                sb = window.supabase.createClient(url, key);
+            } else {
+                alert("Please configure Supabase on the main Shop page first!");
+                window.location.href = 'index.html';
+            }
+        };
+
+        function checkLogin() {
+            const pass = document.getElementById('password').value;
+            if(pass === 'admin123') {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadInventory();
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        async function loadInventory() {
+            const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:false});
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if(data) {
+                data.forEach(p => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><img src="${p.image_url}"></td>
+                            <td>${p.name}</td>
+                            <td>$${p.price}</td>
+                            <td><button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button></td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        async function addProduct() {
+            const name = document.getElementById('newName').value;
+            const price = document.getElementById('newPrice').value;
+            const img = document.getElementById('newImg').value;
+
+            if(!name || !price) return alert('Fill in all fields');
+
+            const { error } = await sb.from('products').insert([{ name, price, image_url: img }]);
+            
+            if(error) alert('Error: ' + error.message);
+            else {
+                document.getElementById('newName').value = '';
+                document.getElementById('newPrice').value = '';
+                document.getElementById('newImg').value = '';
+                loadInventory();
+            }
+        }
+
+        async function deleteProduct(id) {
+            if(confirm('Delete this product?')) {
+                await sb.from('products').delete().eq('id', id);
+                loadInventory();
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>

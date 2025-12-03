@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow | Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
+        h1,h2,h3,button { font-family:'Poppins', sans-serif; }
+        body { background-color: #f3f4f6; color: var(--text); height: 100vh; display: flex; align-items: center; justify-content: center; }
+
+        .auth-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo { font-size: 2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 0.9rem; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #444; }
+        .input { width: 100%; padding: 12px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; transition: 0.2s; }
+        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.1); }
+
+        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 1rem; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(58, 125, 68, 0.3); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .toggle-text { margin-top: 20px; font-size: 0.9rem; color: #666; }
+        .toggle-link { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+        .toggle-link:hover { text-decoration: underline; }
+
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-bottom: 15px; display: none; background: #fef2f2; padding: 10px; border-radius: 8px; border: 1px solid #fee2e2; }
+        
+        .back-link { display: block; margin-top: 20px; color: #888; font-size: 0.85rem; text-decoration: none; }
+        .back-link:hover { color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="logo">flow <i data-lucide="leaf"></i></div>
+        <p class="subtitle" id="pageTitle">Welcome back to sustainable living.</p>
+
+        <div id="errorBox" class="error-msg"></div>
+
+        <form id="authForm">
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="email" class="input" placeholder="you@example.com" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" class="input" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Sign In</button>
+        </form>
+
+        <p class="toggle-text">
+            <span id="toggleText">Don't have an account?</span> 
+            <span class="toggle-link" onclick="toggleMode()" id="toggleBtn">Sign Up</span>
+        </p>
+        
+        <a href="index.html" class="back-link">&larr; Back to Shop</a>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let isLogin = true;
+
+        function toggleMode() {
+            isLogin = !isLogin;
+            document.getElementById('pageTitle').innerText = isLogin ? 'Welcome back to sustainable living.' : 'Join the movement today.';
+            document.getElementById('submitBtn').innerText = isLogin ? 'Sign In' : 'Create Account';
+            document.getElementById('toggleText').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
+            document.getElementById('toggleBtn').innerText = isLogin ? 'Sign Up' : 'Sign In';
+            document.getElementById('errorBox').style.display = 'none';
+        }
+
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('submitBtn');
+            const errBox = document.getElementById('errorBox');
+
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+            errBox.style.display = 'none';
+
+            try {
+                let result;
+                if (isLogin) {
+                    result = await sb.auth.signInWithPassword({ email, password });
+                } else {
+                    result = await sb.auth.signUp({ email, password });
+                }
+
+                if (result.error) throw result.error;
+
+                // Success
+                if (!isLogin && !result.data.session) {
+                    // Handling case where email confirmation is required
+                    alert("Account created! Please check your email to confirm.");
+                } else {
+                    // Logged in successfully
+                    window.location.href = 'index.html';
+                }
+
+            } catch (error) {
+                errBox.innerText = error.message;
+                errBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = isLogin ? 'Sign In' : 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>

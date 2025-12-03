@@ -9,189 +9,208 @@
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
         h1,h2,h3,button { font-family:'Poppins', sans-serif; }
-        body { color:var(--text); padding-bottom:50px; }
+        body { color:var(--text); padding-bottom:50px; background-color: #fcfcfc; }
         
         .container { max-width:1200px; margin:0 auto; padding:0 20px; }
         .hidden { display:none!important; }
-        .btn { padding:10px 25px; border-radius:50px; border:none; font-weight:700; cursor:pointer; background:var(--primary); color:white; transition:0.2s; }
-        .btn:hover { transform:translateY(-2px); opacity:0.9; }
+        .btn { padding:12px 25px; border-radius:10px; border:none; font-weight:600; cursor:pointer; background:var(--primary); color:white; transition:0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 4px 12px rgba(58, 125, 68, 0.3); }
+        .btn:hover { transform:translateY(-2px); box-shadow: 0 8px 16px rgba(58, 125, 68, 0.4); }
+        .btn:active { transform: scale(0.98); }
 
-        header { padding:20px 0; position:sticky; top:0; background:rgba(255,255,255,0.95); z-index:50; border-bottom:1px solid #eee; }
+        header { padding:20px 0; position:sticky; top:0; background:rgba(255,255,255,0.95); z-index:50; border-bottom:1px solid #eee; backdrop-filter: blur(10px); }
         .nav { display:flex; justify-content:space-between; align-items:center; }
         .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; gap:5px; }
-        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; margin-left:20px; font-size:0.9rem; cursor: pointer; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; font-size:0.9rem; cursor: pointer; position: relative; }
+        
+        .hero { background:var(--bg); padding:100px 0; border-radius:0 0 40px 40px; margin-bottom:60px; text-align:center; }
+        .hero h1 { font-size:3.5rem; color:var(--primary); margin-bottom:15px; letter-spacing: -1px; }
+        .hero p { font-size: 1.1rem; color: #666; max-width: 600px; margin: 0 auto; }
 
-        .hero { background:var(--bg); padding:80px 0; border-radius:0 0 30px 30px; margin-bottom:50px; text-align:center; }
-        .hero h1 { font-size:3rem; color:var(--primary); margin-bottom:10px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:40px; }
 
-        .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:30px; }
-
-        /* --- NEW CARD DESIGN --- */
+        /* --- CARD DESIGN --- */
         .card {
             --font-color: #323232;
             --font-color-sub: #666;
             --bg-color: #fff;
             --main-color: #323232;
-            --main-focus: #3a7d44; /* Changed to match theme green */
+            --main-focus: #3a7d44;
             width: 100%;
-            height: 380px; /* Adjusted height to fit content */
+            height: 400px;
             background: var(--bg-color);
             border: 2px solid var(--main-color);
             box-shadow: 4px 4px var(--main-color);
             border-radius: 5px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             padding: 20px;
             gap: 10px;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .card:hover {
-             transform: translateY(-3px);
-        }
-
-        .card:last-child {
-            justify-content: flex-end;
-        }
+        .card:hover { transform: translateY(-4px); box-shadow: 6px 6px var(--main-color); }
 
         .card-img {
             transition: all 0.5s;
             display: flex;
             justify-content: center;
-            height: 140px;
+            height: 150px;
             overflow: hidden;
             border-radius: 4px;
+            background: #f8f8f8;
         }
 
-        .card-img .img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* Removed the specific cactus CSS drawing to support real images */
-        }
+        .card-img .img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
 
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            text-align: left;
-            color: var(--font-color);
-            margin-top: 5px;
-            line-height: 1.2;
-        }
+        .card-title { font-size: 18px; font-weight: 700; color: var(--font-color); margin-top: 5px; line-height: 1.2; }
+        .card-subtitle { font-size: 13px; color: var(--font-color-sub); flex-grow: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; line-height: 1.4; }
+        .card-divider { width: 100%; border: 1px solid #eee; margin: 5px 0; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .card-price { font-size: 20px; font-weight: 600; color: var(--font-color); }
+        .card-btn { height: 35px; width: 35px; background: var(--bg-color); border: 2px solid var(--main-color); border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; cursor: pointer; }
+        .card-btn svg { width: 18px; height: 18px; fill: var(--main-color); transition: all 0.3s; }
+        .card-btn:hover { border-color: var(--main-focus); background: var(--main-focus); }
+        .card-btn:hover svg { fill: white; }
 
-        .card-subtitle {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--font-color-sub);
-            flex-grow: 1; /* Pushes footer down */
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-        }
-
-        .card-divider {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 50px;
-            margin: 5px 0;
-        }
-
-        .card-footer {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-price {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--font-color);
-        }
-
-        .card-price span {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--font-color-sub);
-        }
-
-        .card-btn {
-            height: 35px;
-            background: var(--bg-color);
-            border: 2px solid var(--main-color);
-            border-radius: 5px;
-            padding: 0 15px;
-            transition: all 0.3s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--main-color);
-            transition: all 0.3s;
-        }
-
-        .card-btn:hover {
-            border: 2px solid var(--main-focus);
-        }
-
-        .card-btn:hover svg {
-            fill: var(--main-focus);
-        }
-
-        .card-btn:active {
-            transform: translateY(3px);
-        }
-
-        /* Modal Styles */
-        .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(2px); }
+        /* --- PREMIUM MODAL STYLES --- */
+        .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s ease; backdrop-filter:blur(5px); }
         .modal.active { opacity:1; pointer-events:auto; }
         
-        /* Product Detail Modal */
-        .modal-box { background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
-        .config-input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; }
-        .detail-modal { width:90%; max-width:900px; height:85vh; padding:0; display:flex; overflow:hidden; position:relative; }
-        .detail-left { width:50%; background:#f9f9f9; padding:30px; display:flex; align-items:center; justify-content:center; }
-        .detail-left img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
-        .detail-right { width:50%; padding:40px; overflow-y:auto; }
-        .close-btn { position:absolute; top:15px; right:15px; background:white; border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; font-size:1.2rem; }
+        .modal-box { 
+            background: white; 
+            border-radius: 24px; 
+            max-width: 1000px; 
+            width: 95%; 
+            height: 85vh; /* Fixed height for consistent layout */
+            max-height: 700px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
 
-        /* Review Styles */
-        .reviews { margin-top:30px; padding-top:20px; border-top:1px solid #eee; }
-        .star-widget { font-size:1.5rem; color:#ddd; cursor:pointer; margin:10px 0; }
-        .star-widget span:hover, .star-widget span.active { color:#f1c40f; }
-        .review-item { background:#f8f8f8; padding:15px; border-radius:8px; margin-bottom:10px; }
+        .detail-left { 
+            width: 50%; 
+            background-color: #f3f4f6; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 40px; 
+        }
         
-        /* CART SIDEBAR STYLES */
-        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 200; box-shadow: -5px 0 30px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .detail-left img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15)); /* Premium floating effect */
+            mix-blend-mode: multiply;
+        }
+
+        .detail-right { 
+            width: 50%; 
+            padding: 50px 40px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column;
+        }
+
+        .close-btn { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background: rgba(0,0,0,0.05); 
+            border: none; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            font-size: 1.5rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.2s;
+            z-index: 10;
+            color: #555;
+        }
+        .close-btn:hover { background: rgba(0,0,0,0.1); color: #000; }
+
+        /* Detail Typography */
+        #dName { font-size: 2.5rem; font-weight: 800; color: #1a1a1a; margin-bottom: 10px; line-height: 1.1; letter-spacing: -1px; }
+        #dPrice { font-size: 1.8rem; color: var(--primary); font-weight: 700; }
+        #dDesc { font-size: 1rem; line-height: 1.6; color: #555; margin-bottom: 25px; }
+        
+        /* Stock Badge */
+        .modal-stock-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: #f0fdf4;
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            align-self: flex-start;
+        }
+        .modal-stock-badge.low { background: #fef2f2; color: #ef4444; }
+
+        /* Add Button */
+        #addBtn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Reviews Section */
+        .reviews { margin-top: auto; padding-top: 30px; border-top: 1px solid #eaeaea; }
+        .reviews h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; }
+        
+        .review-form { background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #eee; }
+        .config-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e5e7eb; border-radius: 8px; background: white; font-family: inherit; }
+        .config-input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+        
+        .star-widget { font-size: 1.5rem; color: #d1d5db; cursor: pointer; margin-bottom: 10px; }
+        .star-widget span:hover, .star-widget span.active { color: #facc15; }
+        
+        .review-item { padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
+        .review-item:last-child { border-bottom: none; }
+        
+        /* CART SIDEBAR */
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 200; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
         .cart-sidebar.open { right: 0; }
-        .cart-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #f9f9f9; }
-        .cart-item { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; align-items: center; }
+        .cart-header { padding: 25px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .cart-header h3 { font-size: 1.5rem; font-weight: 700; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 25px; }
+        .cart-footer { padding: 30px; border-top: 1px solid #eee; background: #f9fafb; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #f3f4f6; padding-bottom: 20px; align-items: center; }
         .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-        .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: 0.2s; }
-        .qty-btn:hover { background: #f0f0f0; border-color: #bbb; }
-        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
-        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: 0.2s; }
+        .qty-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 10px; border: 1px solid #eee; }
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(2px); }
         .cart-overlay.open { opacity: 1; pointer-events: auto; }
         
-        @media(max-width:768px) { 
-            .detail-modal { flex-direction:column; height:95vh; overflow-y:scroll; } 
-            .detail-left, .detail-right { width:100%; height:auto; } 
+        .user-menu { display: flex; align-items: center; gap: 10px; }
+        .auth-btn { font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); background: #e9f3eb; padding: 8px 16px; border-radius: 20px; transition: 0.2s; }
+        .auth-btn:hover { background: var(--primary); color: white; }
+
+        @media(max-width:900px) { 
+            .modal-box { flex-direction: column; height: 95vh; overflow-y: auto; } 
+            .detail-left { width: 100%; height: 300px; padding: 20px; }
+            .detail-right { width: 100%; padding: 30px; overflow-y: visible; }
             .cart-sidebar { width: 100%; }
         }
     </style>
@@ -203,105 +222,149 @@
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3>Your Cart</h3>
-            <button class="close-btn" style="position:static; width:auto; height:auto; border-radius:0;" onclick="toggleCart()">&times;</button>
+            <button class="close-btn" style="position:static; width:35px; height:35px;" onclick="toggleCart()">&times;</button>
         </div>
-        <div class="cart-items" id="cartItemsContainer">
-            <!-- Items injected here -->
-        </div>
+        <div class="cart-items" id="cartItemsContainer"></div>
         <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:700;">
-                <span>Total:</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:700; font-size:1.2rem;">
+                <span>Total</span>
                 <span id="cartTotal">$0.00</span>
             </div>
-            <button class="btn" style="width:100%;" onclick="checkout()">Checkout</button>
+            <button class="btn" style="width:100%; padding: 15px;" onclick="checkout()">Secure Checkout</button>
         </div>
     </div>
 
-    <!-- Product Detail Modal -->
+    <!-- HIGH-LEVEL PRODUCT MODAL -->
     <div id="productModal" class="modal">
-        <div class="modal-box detail-modal">
+        <div class="modal-box">
             <button class="close-btn" onclick="closeModal('productModal')">&times;</button>
-            <div class="detail-left"><img id="dImg" src=""></div>
+            
+            <div class="detail-left">
+                <img id="dImg" src="" alt="Product">
+            </div>
+            
             <div class="detail-right">
-                <h2 id="dName" style="font-size:2rem; margin-bottom:5px;"></h2>
-                <div style="display:flex; gap:15px; align-items:center; margin-bottom:10px;">
-                    <span id="dPrice" style="color:var(--primary); font-size:1.5rem; font-weight:700;"></span>
-                    <span id="dStars" style="color:#f1c40f;"></span>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h2 id="dName">Product Name</h2>
+                        <div id="dStockBadge" class="modal-stock-badge">In Stock</div>
+                    </div>
+                    <span id="dPrice">$0.00</span>
                 </div>
-                <!-- Stock Display in Modal -->
-                <p id="dStock" style="margin-bottom: 20px; font-weight: 500; color: #666;">Checking stock...</p>
+
+                <div style="display:flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                    <div id="dStars" style="color:#facc15; display:flex;"></div>
+                    <span style="font-size: 0.9rem; color: #888; font-weight: 500;">(Customer Reviews)</span>
+                </div>
+
+                <!-- Description Field -->
+                <p id="dDesc">No description available.</p>
                 
-                <button id="addBtn" class="btn" style="width:100%;" onclick="addToCart(curId)">Add to Cart</button>
+                <button id="addBtn" class="btn" onclick="addToCart(curId)">
+                    <i data-lucide="shopping-bag" style="width:20px;"></i> Add to Cart
+                </button>
 
                 <div class="reviews">
-                    <h3>Reviews</h3>
-                    <!-- Review Form -->
-                    <div style="background:white; border:1px solid #eee; padding:15px; border-radius:8px; margin:15px 0;">
+                    <h3>Customer Reviews</h3>
+                    <div class="review-form">
                         <input id="rName" class="config-input" style="margin-top:0" placeholder="Your Name">
                         <div class="star-widget" id="starWidget">
                             <span onclick="rate(1)">★</span><span onclick="rate(2)">★</span><span onclick="rate(3)">★</span><span onclick="rate(4)">★</span><span onclick="rate(5)">★</span>
                         </div>
-                        <textarea id="rText" class="config-input" placeholder="Review..." rows="2"></textarea>
-                        <button class="btn" style="font-size:0.8rem;" onclick="postReview()">Post Review</button>
+                        <textarea id="rText" class="config-input" placeholder="Share your thoughts..." rows="2"></textarea>
+                        <button class="btn" style="font-size:0.85rem; padding: 10px 20px;" onclick="postReview()">Post Review</button>
                     </div>
-                    <!-- Reviews List -->
                     <div id="rList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Navigation -->
+    <!-- HEADER -->
     <header>
         <div class="container nav">
             <div class="logo">flow <i data-lucide="leaf"></i></div>
             <div class="nav-links">
                 <a href="#">Shop</a>
-                <a href="#">About</a>
-                <!-- Updated Cart Link -->
-                <a onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</a>
+                <a href="#">Our Story</a>
+                
+                <!-- Cart Icon -->
+                <a onclick="toggleCart()" style="display:flex; align-items:center; gap:5px;">
+                    <i data-lucide="shopping-cart" style="width:18px;"></i>
+                    <span id="cartCount" style="background:var(--primary); color:white; font-size:0.7rem; padding:2px 6px; border-radius:10px;">0</span>
+                </a>
+
+                <!-- Auth Section -->
+                <div id="authSection" class="user-menu">
+                    <!-- Injected via JS -->
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <div class="container">
         <div class="hero">
-            <h1>Sustainable Living</h1>
-            <p>Curated eco-friendly products. Click items to review.</p>
+            <h1>Sustainable Living.</h1>
+            <p>Curated eco-friendly essentials for a balanced, mindful lifestyle.</p>
         </div>
-        <div id="loader" style="text-align:center;">Loading products...</div>
+        <div id="loader" style="text-align:center; padding: 40px; color: #888;">Loading collection...</div>
         <div id="grid" class="grid"></div>
     </div>
 
-    <!-- Logic -->
+    <!-- LOGIC -->
     <script>
         const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
 
         let sb = null, products = [], curId = null, curRating = 0;
         let cart = JSON.parse(localStorage.getItem('flow_cart')) || [];
+        let user = null;
 
-        window.onload = () => {
+        window.onload = async () => {
             lucide.createIcons();
             sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
+            // CHECK AUTH STATE
+            const { data } = await sb.auth.getUser();
+            user = data.user;
+            updateAuthUI();
+
             fetchProducts();
             updateCartUI(); 
         };
 
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            if (user) {
+                authSection.innerHTML = `
+                    <span style="font-size:0.8rem; color:#666;">Hi, ${user.email.split('@')[0]}</span>
+                    <span class="auth-btn" onclick="logout()">Logout</span>
+                `;
+            } else {
+                authSection.innerHTML = `<a href="login.html" class="auth-btn">Login / Sign Up</a>`;
+            }
+        }
+
+        async function logout() {
+            await sb.auth.signOut();
+            window.location.reload();
+        }
+
         async function fetchProducts() {
+            // Fetch everything including description
             const { data, error } = await sb.from('products').select('*').order('id');
             document.getElementById('loader').classList.add('hidden');
             if(!error) {
                 products = data;
                 const grid = document.getElementById('grid');
                 grid.innerHTML = '';
-                if(data.length === 0) grid.innerHTML = '<p>No products found.</p>';
+                if(data.length === 0) grid.innerHTML = '<p style="text-align:center; width:100%;">No products found.</p>';
                 
                 data.forEach(p => {
-                    const subtitle = p.stock > 0 
+                    const subtitle = p.description || (p.stock > 0 
                         ? `Eco-friendly sustainable choice. Only ${p.stock} units left in stock!` 
-                        : `Currently out of stock. Please check back later for updates.`;
+                        : `Currently out of stock. Please check back later.`);
 
                     grid.innerHTML += `
                     <div class="card" onclick="openProduct(${p.id})">
@@ -329,27 +392,29 @@
             document.getElementById('dImg').src = p.image_url;
             document.getElementById('dName').innerText = p.name;
             document.getElementById('dPrice').innerText = '$' + p.price;
+            document.getElementById('dDesc').innerText = p.description || "No specific details available for this product.";
             
-            const stockEl = document.getElementById('dStock');
+            const badge = document.getElementById('dStockBadge');
             const addBtn = document.getElementById('addBtn');
             
             if (p.stock > 0) {
-                stockEl.innerText = `Only ${p.stock} left in stock`;
-                stockEl.style.color = '#666';
+                badge.innerText = `In Stock (${p.stock})`;
+                badge.className = 'modal-stock-badge';
                 addBtn.disabled = false;
-                addBtn.innerText = "Add to Cart";
                 addBtn.style.opacity = "1";
                 addBtn.style.cursor = "pointer";
+                addBtn.innerHTML = `<i data-lucide="shopping-bag" style="width:20px; margin-right:5px;"></i> Add to Cart`;
             } else {
-                stockEl.innerText = `Out of Stock`;
-                stockEl.style.color = '#e74c3c';
+                badge.innerText = `Out of Stock`;
+                badge.className = 'modal-stock-badge low';
                 addBtn.disabled = true;
-                addBtn.innerText = "Sold Out";
                 addBtn.style.opacity = "0.5";
                 addBtn.style.cursor = "not-allowed";
+                addBtn.innerHTML = `Sold Out`;
             }
 
             document.getElementById('productModal').classList.add('active');
+            lucide.createIcons(); // Refresh icons inside modal
             rate(0); document.getElementById('rName').value=''; document.getElementById('rText').value='';
             loadReviews(id);
         }
@@ -383,6 +448,13 @@
         async function checkout() {
             if(cart.length === 0) return alert("Your cart is empty!");
             
+            if (!user) {
+                if(confirm("You must be logged in to checkout. Go to login page?")) {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
+
             const name = prompt("Please enter your name to confirm order:");
             if(!name) return;
 
@@ -418,6 +490,13 @@
         }
 
         function addToCart(id) {
+            if (!user) {
+                if(confirm("Guests cannot add items to cart. Would you like to login?")) {
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
+
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
 
@@ -434,7 +513,6 @@
             
             saveCart();
             updateCartUI();
-            // Removed closeModal since we can add from card directly now
             toggleCart(); 
         }
 
@@ -457,7 +535,7 @@
             let total = 0;
 
             if(cart.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px;">Your cart is empty.</p>';
+                container.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:#999;"><i data-lucide="shopping-bag" style="width:40px; height:40px; margin-bottom:10px; opacity:0.3;"></i><p>Your cart is empty.</p></div>';
             }
 
             cart.forEach(item => {
@@ -466,16 +544,16 @@
                     <div class="cart-item">
                         <img src="${item.image_url}" alt="img">
                         <div style="flex:1">
-                            <div style="font-weight:600; font-size:0.9rem;">${item.name}</div>
+                            <div style="font-weight:600; font-size:0.9rem; margin-bottom:4px;">${item.name}</div>
                             <div style="color:var(--primary); font-weight:700;">$${item.price}</div>
                             <div class="qty-controls">
                                 <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                                <span>${item.qty}</span>
+                                <span style="font-weight:600; font-size:0.9rem;">${item.qty}</span>
                                 <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
                             </div>
                         </div>
-                        <button onclick="removeFromCart(${item.id})" style="border:none; background:none; color:#e74c3c; cursor:pointer;" title="Remove Item">
-                            <i data-lucide="trash-2" style="width:18px; height:18px;"></i>
+                        <button onclick="removeFromCart(${item.id})" style="border:none; background:none; color:#ef4444; cursor:pointer; padding:5px;" title="Remove Item">
+                            <i data-lucide="trash-2" style="width:18px;"></i>
                         </button>
                     </div>
                 `;
@@ -494,18 +572,37 @@
 
         async function loadReviews(pid) {
             const list = document.getElementById('rList');
-            list.innerHTML = 'Loading...';
+            list.innerHTML = '<p style="color:#888; font-style:italic;">Loading reviews...</p>';
             const { data } = await sb.from('reviews').select('*').eq('product_id', pid).order('created_at',{ascending:false});
             list.innerHTML = '';
+            
+            const starsContainer = document.getElementById('dStars');
+            
             if(data && data.length > 0) {
                 const avg = data.reduce((a,b)=>a+b.rating,0)/data.length;
-                document.getElementById('dStars').innerHTML = '★'.repeat(Math.round(avg));
+                const roundedAvg = Math.round(avg);
+                
+                // Render Stars in Header
+                let starsHtml = '';
+                for(let i=0; i<5; i++) {
+                    starsHtml += `<i data-lucide="star" style="width:16px; fill:${i < roundedAvg ? '#facc15' : 'none'}; stroke:${i < roundedAvg ? 'none' : '#d1d5db'}"></i>`;
+                }
+                starsContainer.innerHTML = starsHtml;
+                lucide.createIcons();
+
                 data.forEach(r => {
-                    list.innerHTML += `<div class="review-item"><strong>${r.user_name}</strong> <span style="color:#f1c40f">${'★'.repeat(r.rating)}</span><br>${r.comment}</div>`;
+                    list.innerHTML += `
+                    <div class="review-item">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <strong style="font-size:0.9rem;">${r.user_name}</strong>
+                            <span style="color:#facc15; font-size:0.8rem;">${'★'.repeat(r.rating)}</span>
+                        </div>
+                        <p style="font-size:0.9rem; color:#444; line-height:1.4;">${r.comment}</p>
+                    </div>`;
                 });
             } else {
-                document.getElementById('dStars').innerHTML = 'No ratings yet';
-                list.innerHTML = '<p style="color:#888;font-style:italic">No reviews yet.</p>';
+                starsContainer.innerHTML = '<span style="color:#9ca3af; font-size:0.9rem;">No ratings yet</span>';
+                list.innerHTML = '<p style="color:#9ca3af; font-style:italic;">No reviews yet. Be the first!</p>';
             }
         }
 

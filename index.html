@@ -24,7 +24,7 @@
         header { padding:20px 0; position:sticky; top:0; background:rgba(255,255,255,0.95); z-index:50; border-bottom:1px solid #eee; }
         .nav { display:flex; justify-content:space-between; align-items:center; }
         .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; gap:5px; }
-        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; margin-left:20px; font-size:0.9rem; }
+        .nav-links a { text-decoration:none; color:var(--text); font-weight:600; margin-left:20px; font-size:0.9rem; cursor: pointer; }
 
         .hero { background:var(--bg); padding:80px 0; border-radius:0 0 30px 30px; margin-bottom:50px; text-align:center; }
         .hero h1 { font-size:3rem; color:var(--primary); margin-bottom:10px; }
@@ -40,11 +40,9 @@
         .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(2px); }
         .modal.active { opacity:1; pointer-events:auto; }
         
-        /* Config Box */
+        /* Product Detail Modal */
         .modal-box { background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
         .config-input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; }
-        
-        /* Product Detail Modal */
         .detail-modal { width:90%; max-width:900px; height:85vh; padding:0; display:flex; overflow:hidden; position:relative; }
         .detail-left { width:50%; background:#f9f9f9; padding:30px; display:flex; align-items:center; justify-content:center; }
         .detail-left img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
@@ -57,10 +55,47 @@
         .star-widget span:hover, .star-widget span.active { color:#f1c40f; }
         .review-item { background:#f8f8f8; padding:15px; border-radius:8px; margin-bottom:10px; }
         
-        @media(max-width:768px) { .detail-modal { flex-direction:column; height:95vh; overflow-y:scroll; } .detail-left, .detail-right { width:100%; height:auto; } }
+        /* CART SIDEBAR STYLES */
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 200; box-shadow: -5px 0 30px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .cart-sidebar.open { right: 0; }
+        .cart-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-footer { padding: 20px; border-top: 1px solid #eee; background: #f9f9f9; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; align-items: center; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: 0.2s; }
+        .qty-btn:hover { background: #f0f0f0; border-color: #bbb; }
+        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 150; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .cart-overlay.open { opacity: 1; pointer-events: auto; }
+        
+        @media(max-width:768px) { 
+            .detail-modal { flex-direction:column; height:95vh; overflow-y:scroll; } 
+            .detail-left, .detail-right { width:100%; height:auto; } 
+            .cart-sidebar { width: 100%; }
+        }
     </style>
 </head>
 <body>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-btn" style="position:static; width:auto; height:auto; border-radius:0;" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <!-- Items injected here -->
+        </div>
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:700;">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn" style="width:100%;" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
 
     <!-- Product Detail Modal -->
     <div id="productModal" class="modal">
@@ -73,7 +108,8 @@
                     <span id="dPrice" style="color:var(--primary); font-size:1.5rem; font-weight:700;"></span>
                     <span id="dStars" style="color:#f1c40f;"></span>
                 </div>
-                <button class="btn" style="width:100%;">Add to Cart</button>
+                <!-- Updated Add to Cart Button -->
+                <button class="btn" style="width:100%;" onclick="addToCart(curId)">Add to Cart</button>
 
                 <div class="reviews">
                     <h3>Reviews</h3>
@@ -93,14 +129,15 @@
         </div>
     </div>
 
-    <!-- Main Navigation (Admin Link Removed) -->
+    <!-- Main Navigation -->
     <header>
         <div class="container nav">
             <div class="logo">flow <i data-lucide="leaf"></i></div>
             <div class="nav-links">
                 <a href="#">Shop</a>
                 <a href="#">About</a>
-                <a href="#">Cart (0)</a>
+                <!-- Updated Cart Link -->
+                <a onclick="toggleCart()">Cart (<span id="cartCount">0</span>)</a>
             </div>
         </div>
     </header>
@@ -122,12 +159,13 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
 
         let sb = null, products = [], curId = null, curRating = 0;
+        let cart = JSON.parse(localStorage.getItem('flow_cart')) || [];
 
         window.onload = () => {
             lucide.createIcons();
-            // Initialize Supabase immediately with hardcoded keys
             sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             fetchProducts();
+            updateCartUI(); // Init cart
         };
 
         async function fetchProducts() {
@@ -164,6 +202,101 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+        // --- CART LOGIC ---
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('open');
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if(item) {
+                item.qty += change;
+                if(item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        function checkout() {
+            if(cart.length === 0) return alert("Your cart is empty!");
+            alert("Thank you for your purchase! (Demo)");
+            cart = [];
+            saveCart();
+            updateCartUI();
+            toggleCart();
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            closeModal('productModal');
+            toggleCart(); // Open sidebar to show item added
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+            updateCartUI();
+        }
+
+        function saveCart() {
+            localStorage.setItem('flow_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            // Update Count
+            const count = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cartCount').innerText = count;
+
+            // Update List
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+            let total = 0;
+
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px;">Your cart is empty.</p>';
+            }
+
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.image_url}" alt="img">
+                        <div style="flex:1">
+                            <div style="font-weight:600; font-size:0.9rem;">${item.name}</div>
+                            <div style="color:var(--primary); font-weight:700;">$${item.price}</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" style="border:none; background:none; color:#e74c3c; cursor:pointer;" title="Remove Item">
+                            <i data-lucide="trash-2" style="width:18px; height:18px;"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            // Re-render icons for new cart items
+            lucide.createIcons();
+            document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
+        }
+
+        // --- REVIEW LOGIC ---
         function rate(n) {
             curRating = n;
             Array.from(document.getElementById('starWidget').children).forEach((s,i) => {

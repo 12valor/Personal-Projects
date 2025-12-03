@@ -35,6 +35,8 @@
         .card img { width:100%; height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
         .card-title { font-weight:700; font-size:1.1rem; }
         .card-price { color:var(--primary); font-weight:700; display:block; margin:5px 0; }
+        .stock-label { font-size: 0.8rem; color: #666; background: #f0f0f0; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+        .out-of-stock { color: #e74c3c; background: #fadbd8; }
         
         /* Modal Styles */
         .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(2px); }
@@ -104,12 +106,15 @@
             <div class="detail-left"><img id="dImg" src=""></div>
             <div class="detail-right">
                 <h2 id="dName" style="font-size:2rem; margin-bottom:5px;"></h2>
-                <div style="display:flex; gap:15px; align-items:center; margin-bottom:20px;">
+                <div style="display:flex; gap:15px; align-items:center; margin-bottom:10px;">
                     <span id="dPrice" style="color:var(--primary); font-size:1.5rem; font-weight:700;"></span>
                     <span id="dStars" style="color:#f1c40f;"></span>
                 </div>
+                <!-- Stock Display in Modal -->
+                <p id="dStock" style="margin-bottom: 20px; font-weight: 500; color: #666;">Checking stock...</p>
+                
                 <!-- Updated Add to Cart Button -->
-                <button class="btn" style="width:100%;" onclick="addToCart(curId)">Add to Cart</button>
+                <button id="addBtn" class="btn" style="width:100%;" onclick="addToCart(curId)">Add to Cart</button>
 
                 <div class="reviews">
                     <h3>Reviews</h3>
@@ -169,19 +174,26 @@
         };
 
         async function fetchProducts() {
-            const { data, error } = await sb.from('products').select('*');
+            const { data, error } = await sb.from('products').select('*').order('id');
             document.getElementById('loader').classList.add('hidden');
             if(!error) {
                 products = data;
                 const grid = document.getElementById('grid');
                 grid.innerHTML = '';
                 if(data.length === 0) grid.innerHTML = '<p>No products found.</p>';
+                
                 data.forEach(p => {
+                    // Logic to display stock status
+                    const stockHtml = p.stock > 0 
+                        ? `<span class="stock-label">In Stock: ${p.stock}</span>` 
+                        : `<span class="stock-label out-of-stock">Out of Stock</span>`;
+                        
                     grid.innerHTML += `
                         <div class="card" onclick="openProduct(${p.id})">
                             <img src="${p.image_url}">
                             <div class="card-title">${p.name}</div>
                             <span class="card-price">$${p.price}</span>
+                            ${stockHtml}
                         </div>`;
                 });
             } else {
@@ -192,9 +204,31 @@
         async function openProduct(id) {
             curId = id;
             const p = products.find(x => x.id === id);
+            
             document.getElementById('dImg').src = p.image_url;
             document.getElementById('dName').innerText = p.name;
             document.getElementById('dPrice').innerText = '$' + p.price;
+            
+            // Stock Logic for Modal
+            const stockEl = document.getElementById('dStock');
+            const addBtn = document.getElementById('addBtn');
+            
+            if (p.stock > 0) {
+                stockEl.innerText = `Only ${p.stock} left in stock`;
+                stockEl.style.color = '#666';
+                addBtn.disabled = false;
+                addBtn.innerText = "Add to Cart";
+                addBtn.style.opacity = "1";
+                addBtn.style.cursor = "pointer";
+            } else {
+                stockEl.innerText = `Out of Stock`;
+                stockEl.style.color = '#e74c3c';
+                addBtn.disabled = true;
+                addBtn.innerText = "Sold Out";
+                addBtn.style.opacity = "0.5";
+                addBtn.style.cursor = "not-allowed";
+            }
+
             document.getElementById('productModal').classList.add('active');
             rate(0); document.getElementById('rName').value=''; document.getElementById('rText').value='';
             loadReviews(id);
@@ -210,7 +244,14 @@
 
         function updateQty(id, change) {
             const item = cart.find(i => i.id === id);
+            const product = products.find(p => p.id === id);
+
             if(item) {
+                // Prevent increasing qty beyond stock
+                if (change > 0 && item.qty >= product.stock) {
+                    return alert(`Sorry, only ${product.stock} available!`);
+                }
+                
                 item.qty += change;
                 if(item.qty <= 0) {
                     removeFromCart(id);
@@ -221,18 +262,58 @@
             }
         }
 
-        function checkout() {
+        async function checkout() {
             if(cart.length === 0) return alert("Your cart is empty!");
-            alert("Thank you for your purchase! (Demo)");
+            
+            const name = prompt("Please enter your name to confirm order:");
+            if(!name) return;
+
+            // 1. Create Order
+            const total = cart.reduce((a, c) => a + c.price * c.qty, 0);
+            
+            const { data: order, error: orderError } = await sb
+                .from('orders')
+                .insert([{ customer_name: name, total_amount: total }])
+                .select()
+                .single();
+
+            if(orderError) return alert("Checkout Failed: " + orderError.message);
+
+            // 2. Save Items & Update Stock
+            // We process items one by one to ensure stock is deducted
+            for (const item of cart) {
+                // Add to order_items table
+                await sb.from('order_items').insert([{
+                    order_id: order.id,
+                    product_id: item.id,
+                    quantity: item.qty,
+                    price: item.price
+                }]);
+
+                // Deduct stock from products table
+                const product = products.find(p => p.id === item.id);
+                const newStock = Math.max(0, product.stock - item.qty);
+                
+                await sb.from('products').update({ stock: newStock }).eq('id', item.id);
+            }
+
+            alert("Order Placed Successfully!");
             cart = [];
             saveCart();
             updateCartUI();
             toggleCart();
+            fetchProducts(); // Refresh UI to show new stock levels
         }
 
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
+
+            // Check Stock
+            const currentQtyInCart = existing ? existing.qty : 0;
+            if (currentQtyInCart + 1 > product.stock) {
+                return alert("Cannot add more. We are out of stock!");
+            }
 
             if(existing) {
                 existing.qty++;
@@ -243,7 +324,7 @@
             saveCart();
             updateCartUI();
             closeModal('productModal');
-            toggleCart(); // Open sidebar to show item added
+            toggleCart(); 
         }
 
         function removeFromCart(id) {

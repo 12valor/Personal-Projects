@@ -29,21 +29,79 @@
         .hero { background:var(--bg); padding:80px 0; border-radius:0 0 30px 30px; margin-bottom:50px; text-align:center; }
         .hero h1 { font-size:3rem; color:var(--primary); margin-bottom:10px; }
 
-        .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:30px; }
-        .card { border:1px solid #eee; padding:15px; border-radius:15px; transition:0.3s; cursor:pointer; }
-        .card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.05); }
-        .card img { width:100%; height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
-        .card-title { font-weight:700; font-size:1.1rem; }
-        .card-price { color:var(--primary); font-weight:700; display:block; margin:5px 0; }
-        .stock-label { font-size: 0.8rem; color: #666; background: #f0f0f0; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; }
-        .out-of-stock { color: #e74c3c; background: #fadbd8; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:40px; }
+
+        /* --- NEW CARD DESIGN --- */
+        .card {
+            /* Adapted from your request */
+            width: 100%; /* Changed from fixed 190px to fit grid */
+            height: 320px; /* Increased height to fit product images */
+            padding: 0.8rem;
+            /* Using a green gradient so the white text is visible */
+            background: linear-gradient(145deg, rgba(58, 125, 68, 0.9), rgba(44, 94, 52, 0.95)); 
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            border-bottom: 3px solid rgba(255, 255, 255, 0.440);
+            border-left: 2px rgba(255, 255, 255, 0.545) outset;
+            box-shadow: -20px 20px 30px rgba(0, 0, 0, 0.15); /* Softened shadow */
+            transform: skewX(6deg); /* 10deg is a bit extreme for a grid, dialed to 6deg */
+            transition: .4s;
+            overflow: hidden;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: skew(0deg) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .align {
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-self: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .red { width: 10px; height: 10px; border-radius: 50%; background-color: #ff605c; box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.280); }
+        .yellow { width: 10px; height: 10px; border-radius: 50%; background-color: #ffbd44; box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.280); }
+        .green { width: 10px; height: 10px; border-radius: 50%; background-color: #00ca4e; box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.280); }
+
+        .card img { 
+            width: 100%; 
+            height: 160px; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .card-price {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #d4edda; /* Light green text */
+        }
+
+        .stock-label { font-size: 0.8rem; color: #fff; background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: auto; align-self: flex-start; }
+        .out-of-stock { color: #ffcccc; background: rgba(255, 0, 0, 0.3); }
         
         /* Modal Styles */
         .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:100; display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; backdrop-filter:blur(2px); }
         .modal.active { opacity:1; pointer-events:auto; }
         
         /* Product Detail Modal */
-        .modal-box { background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; }
+        .modal-box { background:white; padding:30px; border-radius:15px; max-width:400px; width:90%; text-align:center; color: #333; }
         .config-input { width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; }
         .detail-modal { width:90%; max-width:900px; height:85vh; padding:0; display:flex; overflow:hidden; position:relative; }
         .detail-left { width:50%; background:#f9f9f9; padding:30px; display:flex; align-items:center; justify-content:center; }
@@ -58,7 +116,7 @@
         .review-item { background:#f8f8f8; padding:15px; border-radius:8px; margin-bottom:10px; }
         
         /* CART SIDEBAR STYLES */
-        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 200; box-shadow: -5px 0 30px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 200; box-shadow: -5px 0 30px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; color: #222; }
         .cart-sidebar.open { right: 0; }
         .cart-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
@@ -113,12 +171,10 @@
                 <!-- Stock Display in Modal -->
                 <p id="dStock" style="margin-bottom: 20px; font-weight: 500; color: #666;">Checking stock...</p>
                 
-                <!-- Updated Add to Cart Button -->
                 <button id="addBtn" class="btn" style="width:100%;" onclick="addToCart(curId)">Add to Cart</button>
 
                 <div class="reviews">
                     <h3>Reviews</h3>
-                    <!-- Review Form -->
                     <div style="background:white; border:1px solid #eee; padding:15px; border-radius:8px; margin:15px 0;">
                         <input id="rName" class="config-input" style="margin-top:0" placeholder="Your Name">
                         <div class="star-widget" id="starWidget">
@@ -127,7 +183,6 @@
                         <textarea id="rText" class="config-input" placeholder="Review..." rows="2"></textarea>
                         <button class="btn" style="font-size:0.8rem;" onclick="postReview()">Post Review</button>
                     </div>
-                    <!-- Reviews List -->
                     <div id="rList"></div>
                 </div>
             </div>
@@ -159,7 +214,6 @@
 
     <!-- Logic -->
     <script>
-        // --- EMBEDDED CREDENTIALS ---
         const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
 
@@ -170,7 +224,7 @@
             lucide.createIcons();
             sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             fetchProducts();
-            updateCartUI(); // Init cart
+            updateCartUI(); 
         };
 
         async function fetchProducts() {
@@ -183,13 +237,18 @@
                 if(data.length === 0) grid.innerHTML = '<p>No products found.</p>';
                 
                 data.forEach(p => {
-                    // Logic to display stock status
                     const stockHtml = p.stock > 0 
                         ? `<span class="stock-label">In Stock: ${p.stock}</span>` 
                         : `<span class="stock-label out-of-stock">Out of Stock</span>`;
                         
+                    // Inserted User's Card Design Structure
                     grid.innerHTML += `
                         <div class="card" onclick="openProduct(${p.id})">
+                            <div class="align">
+                                <span class="red"></span>
+                                <span class="yellow"></span>
+                                <span class="green"></span>
+                            </div>
                             <img src="${p.image_url}">
                             <div class="card-title">${p.name}</div>
                             <span class="card-price">$${p.price}</span>
@@ -209,7 +268,6 @@
             document.getElementById('dName').innerText = p.name;
             document.getElementById('dPrice').innerText = '$' + p.price;
             
-            // Stock Logic for Modal
             const stockEl = document.getElementById('dStock');
             const addBtn = document.getElementById('addBtn');
             
@@ -236,7 +294,6 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        // --- CART LOGIC ---
         function toggleCart() {
             document.getElementById('cartSidebar').classList.toggle('open');
             document.getElementById('cartOverlay').classList.toggle('open');
@@ -247,7 +304,6 @@
             const product = products.find(p => p.id === id);
 
             if(item) {
-                // Prevent increasing qty beyond stock
                 if (change > 0 && item.qty >= product.stock) {
                     return alert(`Sorry, only ${product.stock} available!`);
                 }
@@ -268,7 +324,6 @@
             const name = prompt("Please enter your name to confirm order:");
             if(!name) return;
 
-            // 1. Create Order
             const total = cart.reduce((a, c) => a + c.price * c.qty, 0);
             
             const { data: order, error: orderError } = await sb
@@ -279,10 +334,7 @@
 
             if(orderError) return alert("Checkout Failed: " + orderError.message);
 
-            // 2. Save Items & Update Stock
-            // We process items one by one to ensure stock is deducted
             for (const item of cart) {
-                // Add to order_items table
                 await sb.from('order_items').insert([{
                     order_id: order.id,
                     product_id: item.id,
@@ -290,10 +342,8 @@
                     price: item.price
                 }]);
 
-                // Deduct stock from products table
                 const product = products.find(p => p.id === item.id);
                 const newStock = Math.max(0, product.stock - item.qty);
-                
                 await sb.from('products').update({ stock: newStock }).eq('id', item.id);
             }
 
@@ -302,14 +352,13 @@
             saveCart();
             updateCartUI();
             toggleCart();
-            fetchProducts(); // Refresh UI to show new stock levels
+            fetchProducts();
         }
 
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
 
-            // Check Stock
             const currentQtyInCart = existing ? existing.qty : 0;
             if (currentQtyInCart + 1 > product.stock) {
                 return alert("Cannot add more. We are out of stock!");
@@ -338,11 +387,9 @@
         }
 
         function updateCartUI() {
-            // Update Count
             const count = cart.reduce((acc, item) => acc + item.qty, 0);
             document.getElementById('cartCount').innerText = count;
 
-            // Update List
             const container = document.getElementById('cartItemsContainer');
             container.innerHTML = '';
             let total = 0;
@@ -372,12 +419,10 @@
                 `;
             });
 
-            // Re-render icons for new cart items
             lucide.createIcons();
             document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
         }
 
-        // --- REVIEW LOGIC ---
         function rate(n) {
             curRating = n;
             Array.from(document.getElementById('starWidget').children).forEach((s,i) => {

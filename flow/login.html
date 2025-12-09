@@ -23,7 +23,10 @@
         .input { width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-family: inherit; font-size: 1rem; background: #f9f9f9; display: block; }
         .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2); }
         .back-link { position: absolute; top: 40px; right: 40px; text-decoration: none; color: #888; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        
         .forgot-link { display: block; text-align: right; font-size: 0.85rem; color: var(--primary); text-decoration: none; margin-top: -10px; margin-bottom: 20px; font-weight: 500; cursor: pointer; }
+        .forgot-link:hover { text-decoration: underline; }
+
         .hidden { display: none; }
         @media (max-width: 900px) { .left-panel { display: none; } .right-panel { max-width: 100%; } }
     </style>
@@ -159,14 +162,21 @@
                     window.location.href = 'index.html';
 
                 } else if(mode === 'reset') {
+                    // DYNAMIC REDIRECT FIX:
+                    // Calculates current folder url and appends the filename
+                    // Example: http://127.0.0.1:5500/flow/login.html -> http://127.0.0.1:5500/flow/update-password.html
+                    const currentUrl = window.location.href;
+                    const folderUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+                    const redirectUrl = folderUrl + '/update-password.html';
+
                     const { error } = await sb.auth.resetPasswordForEmail(em, {
-                        // FIXED: Redirects to root update-password.html
-                        redirectTo: window.location.origin + '/update-password.html', 
+                        redirectTo: redirectUrl, 
                     });
                     if(error) throw error;
                     success.innerText = "Password reset link sent to your email!";
                     success.style.display = 'block';
                 }
+
             } catch(e) { 
                 err.innerText = e.message; 
                 err.style.display = 'block'; 

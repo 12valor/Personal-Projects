@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow | Shop</title>
+    <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
@@ -80,141 +83,63 @@
         .modal-stock-badge.low { background: #fef2f2; color: #ef4444; }
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #323232; color: white; padding: 12px 30px; border-radius: 50px; opacity: 0; pointer-events: none; transition: 0.4s; z-index: 5000; font-weight: 600; display: flex; gap: 10px; }
         .toast.show { opacity: 1; bottom: 110px; pointer-events: auto; }
-
-        /* --- ACCOUNT SIDEBAR REVAMP --- */
-        .account-sidebar { 
-            position: fixed; top: 0; left: 0; width: 420px; height: 100%; 
-            background: #fff; z-index: 2000; box-shadow: 10px 0 50px rgba(0,0,0,0.1); 
-            transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; 
-            transform: translateX(-100%); 
-        }
+        
+        /* ACCOUNT SIDEBAR */
+        .account-sidebar { position: fixed; top: 0; left: 0; width: 420px; height: 100%; background: #fff; z-index: 2000; box-shadow: 10px 0 50px rgba(0,0,0,0.1); transition: 0.4s; display: flex; flex-direction: column; transform: translateX(-100%); }
         .account-sidebar.open { transform: translateX(0); }
-        
-        /* New Green Header */
-        .ac-header { 
-            background: #3a7d44; color: white; padding: 40px 30px; 
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        
-        /* Avatar Styles */
-        .ac-avatar-container { position: relative; width: 80px; height: 80px; cursor: pointer; margin-bottom: 5px; }
-        .ac-avatar { 
-            width: 100%; height: 100%; border-radius: 50%; background: rgba(255,255,255,0.2); 
-            display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; 
-            object-fit: cover; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s;
-        }
-        .ac-avatar:hover { border-color: white; opacity: 0.9; }
-        .ac-avatar-icon { position: absolute; bottom: 0; right: 0; background: white; color: #3a7d44; border-radius: 50%; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-
-        .ac-name { font-size: 1.5rem; font-weight: 800; line-height: 1.2; margin: 0; }
-        .ac-email { font-size: 0.9rem; opacity: 0.8; margin: 0; }
-
-        /* Stats Grid */
+        .ac-header { background: #3a7d44; color: white; padding: 40px 30px; }
+        .ac-avatar-container { position: relative; width: 80px; height: 80px; margin-bottom: 10px; cursor: pointer; }
+        .ac-avatar { width: 100%; height: 100%; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 2px solid rgba(255,255,255,0.3); overflow: hidden; }
+        .ac-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .ac-avatar-icon { position: absolute; bottom: 0; right: 0; background: white; color: #3a7d44; border-radius: 50%; padding: 4px; }
         .ac-stats { display: flex; gap: 15px; margin-top: 15px; }
-        .ac-stat-card { 
-            background: rgba(255, 255, 255, 0.15); padding: 15px; border-radius: 12px; flex: 1; 
-            backdrop-filter: blur(5px);
-        }
-        .ac-stat-val { font-size: 1.25rem; font-weight: 800; display: block; margin-bottom: 2px; }
-        .ac-stat-lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; font-weight: 600; }
+        .ac-stat-card { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; flex: 1; }
+        .ac-body { flex: 1; padding: 30px; background: #fcfcfc; }
+        .ac-footer { padding: 30px; }
+        .order-history-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee; }
 
-        /* Order History */
-        .ac-body { flex: 1; overflow-y: auto; padding: 30px; background: #fcfcfc; }
-        .ac-section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: #222; }
-        
-        .order-history-item { 
-            background: white; border: 1px solid #eee; border-radius: 12px; padding: 20px; 
-            margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: 0.2s; 
+        @media(max-width:900px) { 
+            header { min-width: auto; width: 95%; padding: 8px 15px; top: 15px; }
+            .nav-links { display: none; } 
+            .modal-box { flex-direction: column; height: 100%; border-radius: 0; }
+            .detail-left, .detail-right { width: 100%; }
+            .cart-sidebar, .account-sidebar { width: 100%; }
         }
-        .order-history-item:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        
-        .oh-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .oh-id { color: #888; font-size: 0.9rem; font-weight: 500; }
-        .oh-date { color: #aaa; font-size: 0.85rem; }
-        .oh-total { color: #3a7d44; font-weight: 800; font-size: 1.3rem; }
-
-        .ac-footer { padding: 30px; background: white; border-top: 1px solid #eee; }
-        .sign-out-btn { 
-            background-color: #ef4444; color: white; width: 100%; padding: 15px; 
-            border-radius: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; 
-        }
-        .sign-out-btn:hover { background-color: #dc2626; }
-
-        @media(max-width:900px) { header { min-width: auto; width: 95%; padding: 8px 15px; top: 15px; } .nav-links { display: none; } .modal-box { flex-direction: column; height: 100%; border-radius: 0; } .detail-left, .detail-right { width: 100%; } .cart-sidebar, .account-sidebar { width: 100%; } }
     </style>
 </head>
 <body>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="toast">
-        <i data-lucide="check-circle" style="width:20px; color:#4ade80;"></i>
-        <span id="toastMsg">Added to cart</span>
-    </div>
-
-    <!-- FLOATING CART -->
-    <div class="floating-cart" onclick="toggleCart()">
-        <i data-lucide="shopping-cart" style="width:30px; height:30px; color: white;"></i>
-        <span id="cartCount" class="cart-badge">0</span>
-    </div>
-
-    <!-- SHARED OVERLAY -->
+    <div id="toast" class="toast"><i data-lucide="check-circle" style="width:20px; color:#4ade80;"></i><span id="toastMsg">Added to cart</span></div>
+    <div class="floating-cart" onclick="toggleCart()"><i data-lucide="shopping-cart" style="width:30px; height:30px; color: white;"></i><span id="cartCount" class="cart-badge">0</span></div>
     <div class="overlay" id="mainOverlay" onclick="closeAllSidebars()"></div>
 
-    <!-- RIGHT: CART SIDEBAR -->
+    <!-- CART SIDEBAR -->
     <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>Your Bag</h3>
-            <button class="close-btn" style="position:static; box-shadow:none; border:1px solid #eee;" onclick="toggleCart()"><i data-lucide="x"></i></button>
-        </div>
+        <div class="cart-header"><h3>Your Bag</h3><button class="close-btn" style="position:static;" onclick="toggleCart()"><i data-lucide="x"></i></button></div>
         <div class="cart-items" id="cartItemsContainer"></div>
         <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <span style="color:#888;">Subtotal</span>
-                <span id="cartTotal" style="font-weight:700; font-size:1.4rem;">$0.00</span>
-            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:700; font-size:1.2rem;"><span>Total</span><span id="cartTotal">$0.00</span></div>
             <button class="btn" style="width:100%; padding: 18px; font-size:1.1rem;" onclick="initCheckout()">Checkout Now</button>
         </div>
     </div>
 
-    <!-- LEFT: ACCOUNT SIDEBAR -->
+    <!-- ACCOUNT SIDEBAR -->
     <div class="account-sidebar" id="accountSidebar">
         <div class="ac-header">
-            <!-- Hidden File Input for Avatar Upload -->
             <input type="file" id="avatarInput" hidden accept="image/*" onchange="uploadAvatar(this)">
-            
             <div class="ac-avatar-container" onclick="document.getElementById('avatarInput').click()">
-                <!-- Default content or image will be set by JS -->
                 <div id="acAvatar" class="ac-avatar"><i data-lucide="user"></i></div>
                 <div class="ac-avatar-icon"><i data-lucide="edit-2" style="width:12px; height:12px;"></i></div>
             </div>
-            
-            <div class="ac-profile-info">
-                <h2 id="acName" class="ac-name">Guest</h2>
-                <p id="acEmail" class="ac-email">Please login</p>
-            </div>
-            
+            <h2 id="acName" style="font-size:1.5rem; margin:0;">Guest</h2>
+            <p id="acEmail" style="font-size:0.9rem; opacity:0.8; margin:0;">Please login</p>
             <div class="ac-stats">
-                <div class="ac-stat-card">
-                    <span class="ac-stat-val" id="totalSpent">$0.00</span>
-                    <span class="ac-stat-lbl">Total Spent</span>
-                </div>
-                <div class="ac-stat-card">
-                    <span class="ac-stat-val" id="totalOrders">0</span>
-                    <span class="ac-stat-lbl">Orders</span>
-                </div>
+                <div class="ac-stat-card"><span class="ac-stat-val" style="font-weight:800; display:block;" id="totalSpent">$0.00</span><span style="font-size:0.7rem; text-transform:uppercase;">Spent</span></div>
+                <div class="ac-stat-card"><span class="ac-stat-val" style="font-weight:800; display:block;" id="totalOrders">0</span><span style="font-size:0.7rem; text-transform:uppercase;">Orders</span></div>
             </div>
         </div>
-        
-        <div class="ac-body">
-            <h3 class="ac-section-title">Order History</h3>
-            <div id="orderHistoryList">
-                <p style="color:#999; font-style:italic;">No orders found.</p>
-            </div>
-        </div>
-
-        <div class="ac-footer">
-            <button class="sign-out-btn" onclick="logout()">Sign Out</button>
-        </div>
+        <div class="ac-body"><h3 style="font-weight:800; margin-bottom:20px;">Order History</h3><div id="orderHistoryList" style="color:#999; font-style:italic;">No orders found.</div></div>
+        <div class="ac-footer"><button class="btn" style="width:100%; background:#ef4444;" onclick="logout()">Sign Out</button></div>
     </div>
 
     <!-- CHECKOUT MODAL -->
@@ -223,7 +148,7 @@
             <button class="close-btn" onclick="closeModal('checkoutModal')"><i data-lucide="x"></i></button>
             <h3 style="margin-bottom:20px; text-align:center;">Confirm Purchase</h3>
             <p style="margin-bottom:20px; text-align:center; color:#666;">Enter password to confirm order of <span id="checkoutTotalDisplay" style="font-weight:700; color:var(--primary);"></span>.</p>
-            <input type="password" id="confirmPassword" class="config-input" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:20px;" placeholder="Password">
+            <input type="password" id="confirmPassword" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:20px;" placeholder="Password">
             <button class="btn" style="width:100%;" onclick="processOrder()">Confirm & Pay</button>
         </div>
     </div>
@@ -234,7 +159,7 @@
             <button class="close-btn" onclick="closeModal('productModal')"><i data-lucide="x"></i></button>
             <div class="detail-left"><img id="dImg" src=""></div>
             <div class="detail-right">
-                <h2 id="dName" style="font-size:2.8rem; line-height:1.1; margin-bottom:10px; color:var(--text);">Product Name</h2>
+                <h2 id="dName" style="font-size:2.8rem; line-height:1.1; margin-bottom:10px;">Product</h2>
                 <div style="display:flex; align-items:center; gap:15px; margin-bottom:25px;">
                     <span id="dPrice" style="font-size:1.8rem; color:var(--primary); font-weight:700;">$0.00</span>
                     <span id="dStockBadge" class="modal-stock-badge">In Stock</span>
@@ -298,98 +223,21 @@
             if(user) loadAccountStats();
         };
 
-        // --- ACCOUNT & PROFILE LOGIC ---
-        function updateAuthUI() {
-            const authSection = document.getElementById('authSection');
-            if (user) authSection.innerHTML = `<span class="auth-btn" onclick="toggleAccount()">Profile</span>`;
-            else authSection.innerHTML = `<a href="login.html" class="auth-btn">Sign In</a>`;
-        }
-
-        async function loadAccountStats() {
-            // Get Profile (Avatar + Username)
-            const { data: profile } = await sb.from('profiles').select('username, avatar_url').eq('id', user.id).single();
-            const username = profile ? profile.username : user.email.split('@')[0];
-            
-            document.getElementById('acName').innerText = username;
-            document.getElementById('acEmail').innerText = user.email;
-
-            // Set Avatar if exists
-            const avatarEl = document.getElementById('acAvatar');
-            if (profile && profile.avatar_url) {
-                avatarEl.innerHTML = `<img src="${profile.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-                avatarEl.style.backgroundColor = 'transparent';
-                avatarEl.style.border = '2px solid white';
-            }
-
-            // Get Orders
-            const { data: orders } = await sb.from('orders').select('*').eq('user_id', user.id).order('created_at', {ascending: false});
-            
-            if (orders) {
-                const totalSpent = orders.reduce((acc, order) => acc + order.total_amount, 0);
-                document.getElementById('totalSpent').innerText = '$' + totalSpent.toFixed(2);
-                document.getElementById('totalOrders').innerText = orders.length;
-
-                const list = document.getElementById('orderHistoryList');
-                if (orders.length > 0) {
-                    list.innerHTML = '';
-                    orders.forEach(o => {
-                        list.innerHTML += `
-                        <div class="order-history-item">
-                            <div class="oh-row">
-                                <span class="oh-id">Order #${o.id}</span>
-                                <span class="oh-date">${new Date(o.created_at).toLocaleDateString()}</span>
-                            </div>
-                            <div class="oh-row">
-                                <span style="font-size:0.8rem; color:#666;">${o.status || 'Pending'}</span>
-                                <span class="oh-total">$${o.total_amount.toFixed(2)}</span>
-                            </div>
-                        </div>`;
-                    });
-                }
-            }
-        }
-
-        // --- AVATAR UPLOAD ---
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        async function uploadAvatar(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                try {
-                    const base64Img = await toBase64(file);
-                    
-                    // Update Profile in DB
-                    const { error } = await sb.from('profiles').update({ avatar_url: base64Img }).eq('id', user.id);
-                    
-                    if (error) throw error;
-                    
-                    // Update UI immediately
-                    const avatarEl = document.getElementById('acAvatar');
-                    avatarEl.innerHTML = `<img src="${base64Img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-                    avatarEl.style.backgroundColor = 'transparent';
-                    avatarEl.style.border = '2px solid white';
-                    
-                    showToast("Profile picture updated");
-                } catch (e) {
-                    alert("Error uploading image: " + e.message);
-                }
-            }
-        }
-
-        // --- COMMON UI LOGIC ---
         function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+        
+        function updateAuthUI() {
+            const s = document.getElementById('authSection');
+            // FIXED: Point to sibling login.html
+            if (user) s.innerHTML = `<span class="auth-btn" onclick="toggleAccount()">Profile</span>`;
+            else s.innerHTML = `<a href="login.html" class="auth-btn">Sign In</a>`;
+        }
+
         async function logout() { await sb.auth.signOut(); window.location.reload(); }
         function closeAllSidebars() { document.getElementById('cartSidebar').classList.remove('open'); document.getElementById('accountSidebar').classList.remove('open'); document.getElementById('checkoutModal').classList.remove('active'); document.getElementById('mainOverlay').classList.remove('open'); }
         function toggleCart() { closeAllSidebars(); document.getElementById('cartSidebar').classList.add('open'); document.getElementById('mainOverlay').classList.add('open'); }
         function toggleAccount() { closeAllSidebars(); document.getElementById('accountSidebar').classList.add('open'); document.getElementById('mainOverlay').classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); if(id === 'checkoutModal') closeAllSidebars(); else document.getElementById('mainOverlay').classList.remove('open'); }
 
-        // --- PRODUCT & CART LOGIC ---
         async function fetchProducts() {
             const { data, error } = await sb.from('products').select('*').order('id');
             document.getElementById('loader').classList.add('hidden');
@@ -398,11 +246,12 @@
                 const grid = document.getElementById('grid');
                 grid.innerHTML = '';
                 data.forEach(p => {
+                    const desc = p.description || "Premium sustainable product.";
                     grid.innerHTML += `
                     <div class="card" onclick="openProduct(${p.id})">
                         <div class="card-img"><img src="${p.image_url}" class="img" alt="${p.name}"></div>
                         <div class="card-title">${p.name}</div>
-                        <div class="card-subtitle">${p.description || "Premium sustainable product."}</div>
+                        <div class="card-subtitle">${desc}</div>
                         <hr class="card-divider">
                         <div class="card-footer">
                             <div class="card-price">$${p.price}</div>
@@ -434,6 +283,61 @@
             document.getElementById('productModal').classList.add('active');
             rate(0); document.getElementById('rName').value=''; document.getElementById('rText').value='';
             loadReviews(id);
+        }
+
+        async function loadAccountStats() {
+            const { data: profile } = await sb.from('profiles').select('username, avatar_url').eq('id', user.id).single();
+            const username = profile ? profile.username : user.email.split('@')[0];
+            
+            document.getElementById('acName').innerText = username;
+            document.getElementById('acEmail').innerText = user.email;
+
+            // Set Avatar if exists
+            const avatarEl = document.getElementById('acAvatar');
+            if (profile && profile.avatar_url) {
+                avatarEl.innerHTML = `<img src="${profile.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                avatarEl.style.backgroundColor = 'transparent';
+                avatarEl.style.border = '2px solid white';
+            }
+
+            const { data: orders } = await sb.from('orders').select('*').eq('user_id', user.id).order('created_at', {ascending: false});
+            if (orders) {
+                const total = orders.reduce((a, b) => a + b.total_amount, 0);
+                document.getElementById('totalSpent').innerText = '$' + total.toFixed(2);
+                document.getElementById('totalOrders').innerText = orders.length;
+                const list = document.getElementById('orderHistoryList');
+                if (orders.length > 0) {
+                    list.innerHTML = '';
+                    orders.forEach(o => {
+                        list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px dashed #eee; margin-bottom:10px;"><span>#${o.id} <small style="color:#999;">${new Date(o.created_at).toLocaleDateString()}</small></span><strong>$${o.total_amount.toFixed(2)}</strong></div>`;
+                    });
+                }
+            }
+        }
+
+        // --- AVATAR UPLOAD ---
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        async function uploadAvatar(input) {
+            if (input.files && input.files[0]) {
+                try {
+                    const base64Img = await toBase64(input.files[0]);
+                    const { error } = await sb.from('profiles').update({ avatar_url: base64Img }).eq('id', user.id);
+                    if (error) throw error;
+                    
+                    const avatarEl = document.getElementById('acAvatar');
+                    avatarEl.innerHTML = `<img src="${base64Img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                    avatarEl.style.backgroundColor = 'transparent';
+                    avatarEl.style.border = '2px solid white';
+                    
+                    showToast("Profile updated");
+                } catch (e) { alert(e.message); }
+            }
         }
 
         function addToCart(id) {

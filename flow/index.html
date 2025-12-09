@@ -400,7 +400,7 @@
             if (user) {
                 authSection.innerHTML = `<span class="auth-btn" onclick="toggleAccount()">Profile</span>`;
             } else {
-                authSection.innerHTML = `<a href="Pages/login.html" class="auth-btn">Sign In</a>`;
+                authSection.innerHTML = `<a href="login.html" class="auth-btn">Sign In</a>`;
             }
         }
 
@@ -563,7 +563,7 @@
         }
 
         function addToCart(id) {
-            if (!user) { if(confirm("Please login to shop.")) window.location.href = 'Pages/login.html'; return; }
+            if (!user) { if(confirm("Please login to shop.")) window.location.href = 'login.html'; return; }
             const p = products.find(x => x.id === id);
             const existing = cart.find(x => x.id === id);
             if ((existing?.qty || 0) + 1 > p.stock) return alert("Out of stock!");

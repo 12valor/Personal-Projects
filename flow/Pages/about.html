@@ -13,17 +13,104 @@
         body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
         h1,h2,h3 { font-family:'Playfair Display', serif; }
         
-        /* NAVBAR (Consistent) */
-        header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border:1px solid rgba(255,255,255,0.6); box-shadow:0 15px 35px -10px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8); border-radius:100px; z-index:1000; }
-        .nav { display:flex; justify-content:space-between; align-items:center; }
-        .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
-        .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
-        .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
-        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
-        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; transition:0.3s; }
-        .auth-btn:hover { background:#2c5e34; }
+        /* --- NAVBAR (Identical to Index) --- */
+        header { 
+            position: fixed; 
+            top: 25px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: auto; 
+            min-width: 650px; 
+            max-width: 95%; 
+            padding: 10px 20px; /* MATCHED */
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%); 
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            box-shadow: 
+                0 15px 35px -10px rgba(0, 0, 0, 0.05), 
+                0 5px 15px -5px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255,255,255,0.8); 
+            border-radius: 100px; 
+            z-index: 1000; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
-        /* CONTENT */
+        @keyframes slideDown {
+            from { top: -100px; opacity: 0; }
+            to { top: 25px; opacity: 1; }
+        }
+
+        header:hover {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 40px -10px rgba(45, 106, 79, 0.15);
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .nav { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo { 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding-left: 10px; /* MATCHED */
+            text-decoration: none; 
+            letter-spacing: -0.03em;
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+
+        .nav-links { 
+            display: flex; 
+            background: rgba(0,0,0,0.03); 
+            padding: 5px; 
+            border-radius: 30px; 
+            align-items: center;
+        }
+
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text); 
+            font-weight: 500; 
+            font-size: 0.9rem; 
+            padding: 8px 18px; /* MATCHED */
+            border-radius: 25px; 
+            transition: all 0.3s ease; 
+            display: inline-flex; 
+            align-items: center; 
+            height: 36px; /* MATCHED */
+        }
+
+        .nav-links a:hover, .nav-links a.active { 
+            color: var(--primary); 
+            background: white; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+
+        .auth-btn { 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: white; 
+            background: var(--primary); 
+            padding: 0 24px; /* MATCHED */
+            height: 46px;    /* MATCHED */
+            display: flex;   
+            align-items: center; 
+            border-radius: 30px; 
+            margin-left: 15px;
+            transition: 0.3s; 
+            box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2); 
+            text-decoration: none;
+        }
+        .auth-btn:hover { background: #235c42; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(45, 106, 79, 0.3); }
+
+
+        /* --- CONTENT STYLES --- */
         .hero { text-align:center; padding:180px 20px 100px; }
         .hero h1 { font-size:4rem; margin-bottom:20px; color:var(--primary); }
         .hero p { font-size:1.2rem; max-width:700px; margin:0 auto; line-height:1.6; color:#52796f; }
@@ -56,14 +143,16 @@
 
     <header>
         <div class="nav">
-            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <a href="../index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            
             <div class="nav-links">
                 <a href="about.html" class="active">About</a>
-                <a href="index.html">Shop</a>
+                <a href="../index.html">Shop</a>
                 <a href="collections.html">Collections</a>
                 <a href="journal.html">Journal</a>
                 <a href="contact.html">Contact</a>
             </div>
+            
             <a href="login.html" class="auth-btn">Sign In</a>
         </div>
     </header>
@@ -110,11 +199,17 @@
 
     <script>
         lucide.createIcons();
-        // Basic Auth Check for UI consistency
+        
+        // Basic Auth Check
         const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
+        
         sb.auth.getUser().then(({data}) => {
             const btn = document.querySelector('.auth-btn');
-            if(data.user) { btn.innerText = "Profile"; btn.href = "index.html"; } // Redirect to shop for profile drawer
+            if(data.user) { 
+                btn.innerText = "Profile"; 
+                // FIXED: Directs to main index where the profile logic lives
+                btn.href = "../index.html"; 
+            }
         });
     </script>
 </body>

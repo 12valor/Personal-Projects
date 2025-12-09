@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3a7d44; --text: #222; --accent: #f1c40f; --danger: #e74c3c; }
+        :root { --primary: #3a7d44; --text: #222; --accent: #f1c40f; --danger: #e74c3c; --blue: #3498db; --green: #2ecc71; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
         h1,h2,h3,h4,button { font-family:'Poppins', sans-serif; }
         body { background:#f5f5f5; color:var(--text); padding:40px 20px; }
@@ -33,12 +33,26 @@
 
         .form-container { background: #f9f9f9; padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #eee; }
 
+        /* Tables & Search */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 20px; }
+        .search-box { position: relative; width: 300px; }
+        .search-input { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; border-radius: 50px; font-size: 0.9rem; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; color: #888; }
+
         table { width:100%; border-collapse:collapse; margin-top:20px; }
         th { text-align:left; padding:15px; background:#f9f9f9; border-bottom:2px solid #eee; font-size:0.9rem; }
         td { padding:15px; border-bottom:1px solid #eee; vertical-align: middle; }
         td img { width:40px; height:40px; object-fit:cover; border-radius:4px; }
+        
         .stock-badge { background: #e9f3eb; color: var(--primary); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
         .stock-low { background: #fadbd8; color: #c0392b; }
+
+        /* Order Status Styling */
+        .status-select { padding: 5px 10px; border-radius: 20px; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; appearance: none; -webkit-appearance: none; text-align: center; width: 110px; }
+        .status-Pending { background: #fef9e7; color: #f1c40f; border: 1px solid #f1c40f; }
+        .status-Shipped { background: #ebf5fb; color: #3498db; border: 1px solid #3498db; }
+        .status-Delivered { background: #eafaf1; color: #2ecc71; border: 1px solid #2ecc71; }
+        .status-Cancelled { background: #fdedec; color: #e74c3c; border: 1px solid #e74c3c; }
 
         .hidden { display:none; }
         .login-box { max-width:400px; margin:100px auto; text-align:center; background:white; padding:40px; border-radius:15px; }
@@ -60,8 +74,6 @@
         .order-items-list { font-size: 0.85rem; color: #555; }
         .order-item-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 4px 0; }
         
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-
         /* Analytics Specifics */
         .analytics-section { margin-top: 30px; }
         .chart-bar-container { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; margin-bottom: 10px; }
@@ -71,9 +83,15 @@
         .rank-1 { background: #f1c40f; } 
         .rank-2 { background: #bdc3c7; }
         .rank-3 { background: #cd7f32; }
+        
+        /* Toast for updates */
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #333; color: white; padding: 12px 24px; border-radius: 50px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 5000; }
+        .toast.show { opacity: 1; bottom: 50px; }
     </style>
 </head>
 <body>
+
+    <div id="toast" class="toast">Update Saved</div>
 
     <div id="loginScreen" class="login-box">
         <div class="logo" style="justify-content:center; margin-bottom:20px;">flow <i data-lucide="leaf"></i></div>
@@ -81,14 +99,14 @@
         <p style="margin-bottom:20px; color:#666;">Enter password to manage store.</p>
         <input type="password" id="password" class="input" placeholder="Password (hint: admin123)" style="margin-bottom:20px;">
         <button class="btn" style="width:100%;" onclick="checkLogin()">Login</button>
-        <a href="../index.html" style="display:block; margin-top:20px; color:#999; text-decoration:none; font-size:0.9rem;">&larr; Back to Shop</a>
+        <a href="index.html" style="display:block; margin-top:20px; color:#999; text-decoration:none; font-size:0.9rem;">&larr; Back to Shop</a>
     </div>
 
     <div id="dashboard" class="container hidden">
         <div class="header">
             <div class="logo">flow <span style="color:#222; font-weight:400;">| Admin</span></div>
             <div>
-                <a href="../index.html" class="btn btn-outline" style="text-decoration:none; margin-right:10px;">View Shop</a>
+                <a href="index.html" class="btn btn-outline" style="text-decoration:none; margin-right:10px;">View Shop</a>
                 <button class="btn btn-outline" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -124,7 +142,13 @@
         <div id="viewInventory">
             <div class="toolbar">
                 <h3>Product Inventory</h3>
-                <button class="btn" onclick="showAddForm()">+ Add Product</button>
+                <div style="display:flex; gap:10px;">
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search products..." onkeyup="filterInventory(this.value)">
+                    </div>
+                    <button class="btn" onclick="showAddForm()">+ Add Product</button>
+                </div>
             </div>
 
             <!-- ADD/EDIT FORM (Hidden by default) -->
@@ -180,7 +204,13 @@
 
         <!-- TAB 2: ORDERS VIEW -->
         <div id="viewOrders" class="hidden">
-            <h3>Recent Orders</h3>
+            <div class="toolbar">
+                <h3>Recent Orders</h3>
+                <div class="search-box">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search orders..." onkeyup="filterOrders(this.value)">
+                </div>
+            </div>
             <table id="ordersTable">
                 <thead>
                     <tr>
@@ -189,6 +219,7 @@
                         <th>Date</th>
                         <th>Items Bought</th>
                         <th>Total</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody"></tbody>
@@ -230,6 +261,7 @@
         
         let sb = null;
         let inventoryData = []; 
+        let ordersData = [];
         let editingId = null;
 
         window.onload = () => {
@@ -266,6 +298,13 @@
             else document.getElementById('viewAnalytics').classList.remove('hidden');
         }
 
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -276,52 +315,61 @@
         // --- INVENTORY LOGIC ---
         async function loadInventory() {
             const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:false});
-            
             if(data) {
                 inventoryData = data; 
-                const tbody = document.getElementById('tableBody');
-                const stockBody = document.getElementById('stockHealthBody');
-                tbody.innerHTML = '';
-                stockBody.innerHTML = '';
-                
-                let lowStockCount = 0;
-                
-                data.forEach(p => {
-                    const isLow = p.stock < 5;
-                    if(isLow) lowStockCount++;
-                    const stockClass = isLow ? 'stock-badge stock-low' : 'stock-badge';
-                    
-                    // Main Inventory Table
-                    tbody.innerHTML += `
+                renderInventory(data);
+                renderStockHealth(data);
+            }
+        }
+
+        function renderInventory(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(p => {
+                const stockClass = p.stock < 5 ? 'stock-badge stock-low' : 'stock-badge';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${p.image_url}"></td>
+                        <td>${p.name}</td>
+                        <td>$${p.price}</td>
+                        <td><span class="${stockClass}">${p.stock} units</span></td>
+                        <td>
+                            <button class="btn btn-edit" onclick="startEdit(${p.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderStockHealth(data) {
+            const stockBody = document.getElementById('stockHealthBody');
+            stockBody.innerHTML = '';
+            let lowStockCount = 0;
+            
+            data.forEach(p => {
+                if(p.stock < 5) {
+                    lowStockCount++;
+                    stockBody.innerHTML += `
                         <tr>
-                            <td><img src="${p.image_url}"></td>
-                            <td>${p.name}</td>
-                            <td>$${p.price}</td>
-                            <td><span class="${stockClass}">${p.stock} units</span></td>
-                            <td>
-                                <button class="btn btn-edit" onclick="startEdit(${p.id})">Edit</button>
-                                <button class="btn btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+                            <td style="padding:8px 0; border-bottom:1px dashed #eee;">${p.name}</td>
+                            <td style="padding:8px 0; text-align:right; border-bottom:1px dashed #eee;">
+                                <span style="color:${p.stock === 0 ? '#e74c3c' : '#f39c12'}; font-weight:700;">
+                                    ${p.stock === 0 ? 'Out of Stock' : 'Low ('+p.stock+')'}
+                                </span>
                             </td>
                         </tr>
                     `;
+                }
+            });
+            document.getElementById('statLowStock').innerText = lowStockCount;
+            if(stockBody.innerHTML === '') stockBody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:15px; color:#999;">Inventory looks healthy!</td></tr>';
+        }
 
-                    // Stock Health Widget
-                    if(isLow) {
-                        stockBody.innerHTML += `
-                            <tr>
-                                <td style="padding:8px 0; border-bottom:1px dashed #eee;">${p.name}</td>
-                                <td style="padding:8px 0; text-align:right; border-bottom:1px dashed #eee;">
-                                    <span style="color:${p.stock === 0 ? '#e74c3c' : '#f39c12'}; font-weight:700;">
-                                        ${p.stock === 0 ? 'Out of Stock' : 'Low ('+p.stock+')'}
-                                    </span>
-                                </td>
-                            </tr>
-                        `;
-                    }
-                });
-                document.getElementById('statLowStock').innerText = lowStockCount;
-                if(stockBody.innerHTML === '') stockBody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:15px; color:#999;">Inventory looks healthy!</td></tr>';
-            }
+        function filterInventory(val) {
+            const filtered = inventoryData.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+            renderInventory(filtered);
         }
 
         function showAddForm() {
@@ -389,57 +437,106 @@
             
             cancelEdit(); 
             loadInventory(); 
+            showToast("Product saved");
         }
 
         async function deleteProduct(id) {
             if(confirm('Delete this product?')) {
                 await sb.from('products').delete().eq('id', id);
                 loadInventory();
+                showToast("Product deleted");
             }
         }
 
-        // --- ORDERS & ANALYTICS LOGIC ---
+        // --- ORDERS LOGIC ---
         async function loadOrdersAndAnalytics() {
             const { data: orders } = await sb.from('orders').select('*').order('created_at', {ascending:false});
             const { data: items } = await sb.from('order_items').select('*, products(name)');
             
-            // 1. Process Orders List
-            const tbody = document.getElementById('ordersBody');
-            tbody.innerHTML = '';
+            ordersData = orders; // Save globally for filtering
             let totalRev = 0;
 
             if(orders && orders.length > 0) {
+                // Attach items to orders for easier rendering
                 orders.forEach(o => {
                     totalRev += o.total_amount;
-                    const myItems = items.filter(i => i.order_id === o.id);
-                    let itemsHtml = `<div class="order-items-list">`;
-                    myItems.forEach(i => {
-                        const pName = i.products ? i.products.name : 'Unknown';
-                        itemsHtml += `<div class="order-item-row"><span>${pName} x${i.quantity}</span><span>$${i.price}</span></div>`;
-                    });
-                    itemsHtml += `</div>`;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>#${o.id}</td>
-                            <td style="font-weight:600">${o.customer_name}</td>
-                            <td style="color:#666; font-size:0.85rem;">${new Date(o.created_at).toLocaleDateString()}</td>
-                            <td>${itemsHtml}</td>
-                            <td style="color:var(--primary); font-weight:700;">$${o.total_amount.toFixed(2)}</td>
-                        </tr>
-                    `;
+                    o.items = items.filter(i => i.order_id === o.id);
                 });
+                renderOrders(orders);
             } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No orders yet</td></tr>';
+                document.getElementById('ordersBody').innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No orders yet</td></tr>';
             }
 
-            // 2. Update Basic Stats
+            // Update Stats
             document.getElementById('statRev').innerText = '$' + totalRev.toFixed(2);
             document.getElementById('statOrders').innerText = orders ? orders.length : 0;
             const aov = orders.length > 0 ? (totalRev / orders.length) : 0;
             document.getElementById('statAOV').innerText = '$' + aov.toFixed(2);
 
-            // 3. Process Analytics (Top Products)
+            // Process Analytics
+            processAnalytics(items);
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersBody');
+            tbody.innerHTML = '';
+            
+            orders.forEach(o => {
+                let itemsHtml = `<div class="order-items-list">`;
+                o.items.forEach(i => {
+                    const pName = i.products ? i.products.name : 'Unknown';
+                    itemsHtml += `<div class="order-item-row"><span>${pName} x${i.quantity}</span><span>$${i.price}</span></div>`;
+                });
+                itemsHtml += `</div>`;
+
+                const status = o.status || 'Pending'; // Default fallback
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>#${o.id}</td>
+                        <td style="font-weight:600">${o.customer_name}</td>
+                        <td style="color:#666; font-size:0.85rem;">${new Date(o.created_at).toLocaleDateString()}</td>
+                        <td>${itemsHtml}</td>
+                        <td style="color:var(--primary); font-weight:700;">$${o.total_amount.toFixed(2)}</td>
+                        <td>
+                            <select class="status-select status-${status}" onchange="updateStatus(${o.id}, this)">
+                                <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Shipped" ${status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="Cancelled" ${status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function updateStatus(orderId, selectEl) {
+            const newStatus = selectEl.value;
+            
+            // Update class for color coding
+            selectEl.className = `status-select status-${newStatus}`;
+            
+            const { error } = await sb.from('orders').update({ status: newStatus }).eq('id', orderId);
+            
+            if(error) {
+                alert("Failed to update status");
+                console.error(error);
+            } else {
+                showToast(`Order #${orderId} marked as ${newStatus}`);
+            }
+        }
+
+        function filterOrders(val) {
+            const lower = val.toLowerCase();
+            const filtered = ordersData.filter(o => 
+                o.customer_name.toLowerCase().includes(lower) || 
+                String(o.id).includes(lower)
+            );
+            renderOrders(filtered);
+        }
+
+        function processAnalytics(items) {
             const productSales = {};
             items.forEach(i => {
                 if(!i.products) return;
@@ -450,13 +547,12 @@
                 productSales[pid].revenue += (i.quantity * i.price);
             });
 
-            // Sort by Quantity Sold
             const sortedProducts = Object.values(productSales).sort((a,b) => b.qty - a.qty).slice(0, 5);
             const topContainer = document.getElementById('topProductsList');
             
             if(sortedProducts.length > 0) {
                 topContainer.innerHTML = '';
-                const maxQty = sortedProducts[0].qty; // For bar chart scaling
+                const maxQty = sortedProducts[0].qty;
 
                 sortedProducts.forEach((p, index) => {
                     const barWidth = (p.qty / maxQty) * 100;

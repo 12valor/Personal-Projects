@@ -4,86 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow | Login</title>
-    <link rel="icon" type="image/png" href="images/icon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3a7d44; --text: #222; --bg: #e9f3eb; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat', sans-serif; }
-        h1,h2,h3,button { font-family:'Poppins', sans-serif; }
-        body { background-color: #f3f4f6; color: var(--text); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        :root { --primary: #2d6a4f; --text: #1b4332; --bg: #f8faf9; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Outfit', sans-serif; height: 100vh; display: flex; background: var(--bg); overflow: hidden; }
 
-        .auth-container {
-            background: white;
+        /* SPLIT LAYOUT */
+        .split-screen { display: flex; width: 100%; height: 100%; }
+        
+        /* LEFT SIDE: IMAGE */
+        .left-panel {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+            color: white;
+        }
+        
+        .left-panel::after {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(to bottom, rgba(45, 106, 79, 0.3), rgba(27, 67, 50, 0.7));
+            z-index: 1;
         }
 
-        .logo { font-size: 2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; font-size: 0.9rem; }
+        .brand-content { position: relative; z-index: 2; }
+        .brand-logo { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .brand-quote { font-size: 1.5rem; font-weight: 300; line-height: 1.4; max-width: 80%; }
 
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #444; }
-        .input { width: 100%; padding: 12px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; transition: 0.2s; }
-        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.1); }
+        /* RIGHT SIDE: FORM */
+        .right-panel {
+            flex: 1;
+            max-width: 600px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+        }
 
-        .btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; font-size: 1rem; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(58, 125, 68, 0.3); }
+        .auth-container { width: 100%; max-width: 380px; }
+        
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 40px; font-size: 1rem; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #444; letter-spacing: 0.5px; }
+        .input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            font-family: inherit; 
+            font-size: 1rem;
+            transition: 0.3s; 
+            background: #f9f9f9;
+        }
+        .input:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 4px 12px rgba(45, 106, 79, 0.1); }
+
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-size: 1rem; 
+            margin-top: 10px; 
+            box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(45, 106, 79, 0.3); }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        .toggle-text { margin-top: 20px; font-size: 0.9rem; color: #666; }
-        .toggle-link { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+        .toggle-text { margin-top: 30px; font-size: 0.9rem; color: #666; text-align: center; }
+        .toggle-link { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; transition: 0.2s; }
         .toggle-link:hover { text-decoration: underline; }
 
-        .error-msg { color: #ef4444; font-size: 0.85rem; margin-bottom: 15px; display: none; background: #fef2f2; padding: 10px; border-radius: 8px; border: 1px solid #fee2e2; }
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-bottom: 20px; display: none; background: #fef2f2; padding: 12px; border-radius: 8px; border: 1px solid #fee2e2; display: flex; align-items: center; gap: 8px; }
         
-        .back-link { display: block; margin-top: 20px; color: #888; font-size: 0.85rem; text-decoration: none; }
-        .back-link:hover { color: #333; }
+        .back-link { 
+            position: absolute; top: 40px; right: 40px; 
+            text-decoration: none; color: #888; font-weight: 600; font-size: 0.9rem; transition: 0.2s; 
+            display: flex; align-items: center; gap: 5px;
+        }
+        .back-link:hover { color: var(--primary); transform: translateX(-3px); }
 
-        /* Utility class to hide elements */
         .hidden { display: none; }
+
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            .left-panel { display: none; }
+            .right-panel { max-width: 100%; }
+            .back-link { top: 20px; right: 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="auth-container">
-        <div class="logo">flow <i data-lucide="leaf"></i></div>
-        <p class="subtitle" id="pageTitle">Welcome back to sustainable living.</p>
-
-        <div id="errorBox" class="error-msg"></div>
-
-        <form id="authForm">
-            <!-- Username: Always visible now -->
-            <div class="input-group" id="usernameGroup">
-                <label>Username</label>
-                <input type="text" id="username" class="input" placeholder="Your username" required>
+    <div class="split-screen">
+        <!-- LEFT: BRANDING -->
+        <div class="left-panel">
+            <div class="brand-content">
+                <div class="brand-logo">flow <i data-lucide="leaf"></i></div>
             </div>
-
-            <!-- Email: Hidden on Login, Visible on Sign Up -->
-            <div class="input-group hidden" id="emailGroup">
-                <label>Email Address</label>
-                <input type="email" id="email" class="input" placeholder="you@example.com">
+            <div class="brand-content">
+                <p class="brand-quote">"Sustainable living isn't just a choice, it's a lifestyle designed for the future."</p>
             </div>
+        </div>
 
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="password" class="input" placeholder="••••••••" required>
+        <!-- RIGHT: FORM -->
+        <div class="right-panel">
+            <a href="../index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
+
+            <div class="auth-container">
+                <h2 id="headingTitle">Welcome Back</h2>
+                <p class="subtitle" id="subTitle">Please enter your details to sign in.</p>
+
+                <div id="errorBox" class="error-msg" style="display:none;">
+                    <i data-lucide="alert-circle" style="width:16px;"></i> <span id="errorText"></span>
+                </div>
+
+                <form id="authForm">
+                    <!-- Username: Always visible -->
+                    <div class="input-group" id="usernameGroup">
+                        <label>Username</label>
+                        <input type="text" id="username" class="input" placeholder="e.g. flow_user" required>
+                    </div>
+
+                    <!-- Email: Hidden on Login -->
+                    <div class="input-group hidden" id="emailGroup">
+                        <label>Email Address</label>
+                        <input type="email" id="email" class="input" placeholder="you@example.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="password" class="input" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="submitBtn">Sign In</button>
+                </form>
+
+                <p class="toggle-text">
+                    <span id="toggleText">Don't have an account?</span> 
+                    <span class="toggle-link" onclick="toggleMode()" id="toggleBtn">Sign Up</span>
+                </p>
             </div>
-            
-            <button type="submit" class="btn" id="submitBtn">Sign In</button>
-        </form>
-
-        <p class="toggle-text">
-            <span id="toggleText">Don't have an account?</span> 
-            <span class="toggle-link" onclick="toggleMode()" id="toggleBtn">Sign Up</span>
-        </p>
-        
-        <a href="index.html" class="back-link">&larr; Back to Shop</a>
+        </div>
     </div>
 
     <script>
@@ -97,26 +175,33 @@
 
         function toggleMode() {
             isLogin = !isLogin;
-            document.getElementById('pageTitle').innerText = isLogin ? 'Welcome back to sustainable living.' : 'Join the movement today.';
+            
+            // Update Text
+            document.getElementById('headingTitle').innerText = isLogin ? 'Welcome Back' : 'Create Account';
+            document.getElementById('subTitle').innerText = isLogin ? 'Please enter your details to sign in.' : 'Join us for a sustainable future.';
             document.getElementById('submitBtn').innerText = isLogin ? 'Sign In' : 'Create Account';
             document.getElementById('toggleText').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
             document.getElementById('toggleBtn').innerText = isLogin ? 'Sign Up' : 'Sign In';
             
-            // Toggle Email field visibility and requirements
+            // Toggle Email Visibility
             const emailGroup = document.getElementById('emailGroup');
             const emailInput = document.getElementById('email');
             
             if (isLogin) {
-                // LOGIN MODE: Hide Email
                 emailGroup.classList.add('hidden');
                 emailInput.required = false;
             } else {
-                // SIGN UP MODE: Show Email
                 emailGroup.classList.remove('hidden');
                 emailInput.required = true;
             }
             
             document.getElementById('errorBox').style.display = 'none';
+        }
+
+        function showError(msg) {
+            const box = document.getElementById('errorBox');
+            document.getElementById('errorText').innerText = msg;
+            box.style.display = 'flex';
         }
 
         document.getElementById('authForm').addEventListener('submit', async (e) => {
@@ -133,63 +218,50 @@
             errBox.style.display = 'none';
 
             try {
-                let result;
                 if (isLogin) {
-                    // --- LOG IN WITH USERNAME ---
-                    // 1. Find email associated with username
+                    // --- LOG IN FLOW ---
                     const { data: profileData, error: profileError } = await sb
                         .from('profiles')
                         .select('email')
                         .eq('username', username)
                         .single();
 
-                    if (profileError || !profileData) {
-                        throw new Error("Username not found.");
-                    }
+                    if (profileError || !profileData) throw new Error("Username not found.");
 
-                    // 2. Sign in using the retrieved email
-                    result = await sb.auth.signInWithPassword({ 
+                    const { error } = await sb.auth.signInWithPassword({ 
                         email: profileData.email, 
                         password: password 
                     });
 
-                    if (result.error) throw result.error;
-                    window.location.href = 'index.html'; 
+                    if (error) throw error;
+                    window.location.href = '../index.html'; 
 
                 } else {
-                    // --- SIGN UP ---
-                    // 1. Create Auth User
-                    result = await sb.auth.signUp({ email: emailInput, password });
-                    if (result.error) throw result.error;
+                    // --- SIGN UP FLOW ---
+                    const { data, error } = await sb.auth.signUp({ email: emailInput, password });
+                    if (error) throw error;
 
-                    if (result.data.user) {
-                        // 2. Create Profile (Save Username)
+                    if (data.user) {
                         const { error: profileError } = await sb
                             .from('profiles')
-                            .insert([
-                                { 
-                                    id: result.data.user.id, 
-                                    username: username,
-                                    email: emailInput
-                                }
-                            ]);
+                            .insert([{ 
+                                id: data.user.id, 
+                                username: username,
+                                email: emailInput
+                            }]);
                         
                         if (profileError) {
-                            console.error("Profile creation failed:", profileError);
-                            // Unique constraint error usually means username taken
-                            if(profileError.code === '23505') {
-                                throw new Error("Username already taken.");
-                            }
+                            if(profileError.code === '23505') throw new Error("Username already taken.");
+                            else console.error(profileError);
                         }
 
-                        alert("Account created! Please check your email to confirm if required.");
-                        window.location.href = 'index.html';
+                        alert("Account created! Please check your email to confirm.");
+                        window.location.href = '../index.html';
                     }
                 }
 
             } catch (error) {
-                errBox.innerText = error.message;
-                errBox.style.display = 'block';
+                showError(error.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = isLogin ? 'Sign In' : 'Create Account';

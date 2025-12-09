@@ -47,7 +47,6 @@
                 
                 <form id="authForm">
                     <div class="input-group" id="usernameGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Username</label><input type="text" id="username" class="input" required></div>
-                    <!-- Email is hidden on Login, but visible on Sign Up AND Reset Password -->
                     <div class="input-group hidden" id="emailGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Email Address</label><input type="email" id="email" class="input"></div>
                     <div class="input-group" id="passwordGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Password</label><input type="password" id="password" class="input" required></div>
                     
@@ -67,11 +66,10 @@
         lucide.createIcons();
         const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
         
-        let mode = 'login'; // 'login', 'signup', 'reset'
+        let mode = 'login'; 
 
         function toggleMode() {
-            if(mode === 'reset') return toggleReset(); // If in reset, go back to login first
-            
+            if(mode === 'reset') return toggleReset();
             mode = mode === 'login' ? 'signup' : 'login';
             updateUI();
         }
@@ -94,7 +92,6 @@
             const userInput = document.getElementById('username');
             const passInput = document.getElementById('password');
 
-            // Reset Errors/Success
             document.getElementById('errorBox').style.display = 'none';
             document.getElementById('successBox').style.display = 'none';
 
@@ -169,7 +166,8 @@
 
                 } else if(mode === 'reset') {
                     const { error } = await sb.auth.resetPasswordForEmail(em, {
-                        redirectTo: window.location.origin + '/Pages/update-password.html', // Optional redirect
+                        // UPDATED: Now points to Pages/update-password.html
+                        redirectTo: window.location.origin + '/Pages/update-password.html', 
                     });
                     if(error) throw error;
                     success.innerText = "Password reset link sent to your email!";

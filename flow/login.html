@@ -6,266 +6,80 @@
     <title>Flow | Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2d6a4f; --text: #1b4332; --bg: #f8faf9; }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Outfit', sans-serif; height: 100vh; display: flex; background: var(--bg); overflow: hidden; }
-
-        /* SPLIT LAYOUT */
         .split-screen { display: flex; width: 100%; height: 100%; }
-        
-        /* LEFT SIDE: IMAGE */
-        .left-panel {
-            flex: 1;
-            background: url('https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 40px;
-            color: white;
-        }
-        
-        .left-panel::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: linear-gradient(to bottom, rgba(45, 106, 79, 0.3), rgba(27, 67, 50, 0.7));
-            z-index: 1;
-        }
-
+        .left-panel { flex: 1; background: url('https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 40px; color: white; }
+        .left-panel::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(45, 106, 79, 0.3), rgba(27, 67, 50, 0.7)); z-index: 1; }
         .brand-content { position: relative; z-index: 2; }
         .brand-logo { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .brand-quote { font-size: 1.5rem; font-weight: 300; line-height: 1.4; max-width: 80%; }
-
-        /* RIGHT SIDE: FORM */
-        .right-panel {
-            flex: 1;
-            max-width: 600px;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            position: relative;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-        }
-
+        .right-panel { flex: 1; max-width: 600px; background: white; display: flex; align-items: center; justify-content: center; padding: 40px; position: relative; box-shadow: -10px 0 30px rgba(0,0,0,0.05); }
         .auth-container { width: 100%; max-width: 380px; }
-        
         h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 40px; font-size: 1rem; }
-
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #444; letter-spacing: 0.5px; }
-        .input { 
-            width: 100%; 
-            padding: 14px 16px; 
-            border: 1px solid #e0e0e0; 
-            border-radius: 12px; 
-            font-family: inherit; 
-            font-size: 1rem;
-            transition: 0.3s; 
-            background: #f9f9f9;
-        }
-        .input:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 4px 12px rgba(45, 106, 79, 0.1); }
-
-        .btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 50px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            font-size: 1rem; 
-            margin-top: 10px; 
-            box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2);
-        }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(45, 106, 79, 0.3); }
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
-
-        .toggle-text { margin-top: 30px; font-size: 0.9rem; color: #666; text-align: center; }
-        .toggle-link { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; transition: 0.2s; }
-        .toggle-link:hover { text-decoration: underline; }
-
-        .error-msg { color: #ef4444; font-size: 0.85rem; margin-bottom: 20px; display: none; background: #fef2f2; padding: 12px; border-radius: 8px; border: 1px solid #fee2e2; display: flex; align-items: center; gap: 8px; }
-        
-        .back-link { 
-            position: absolute; top: 40px; right: 40px; 
-            text-decoration: none; color: #888; font-weight: 600; font-size: 0.9rem; transition: 0.2s; 
-            display: flex; align-items: center; gap: 5px;
-        }
-        .back-link:hover { color: var(--primary); transform: translateX(-3px); }
-
+        .input-group { margin-bottom: 20px; }
+        .input { width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-family: inherit; font-size: 1rem; background: #f9f9f9; display: block; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2); }
+        .back-link { position: absolute; top: 40px; right: 40px; text-decoration: none; color: #888; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
         .hidden { display: none; }
-
-        /* Mobile Responsive */
-        @media (max-width: 900px) {
-            .left-panel { display: none; }
-            .right-panel { max-width: 100%; }
-            .back-link { top: 20px; right: 20px; }
-        }
+        @media (max-width: 900px) { .left-panel { display: none; } .right-panel { max-width: 100%; } }
     </style>
 </head>
 <body>
-
     <div class="split-screen">
-        <!-- LEFT: BRANDING -->
         <div class="left-panel">
-            <div class="brand-content">
-                <div class="brand-logo">flow <i data-lucide="leaf"></i></div>
-            </div>
-            <div class="brand-content">
-                <p class="brand-quote">"Sustainable living isn't just a choice, it's a lifestyle designed for the future."</p>
-            </div>
+            <div class="brand-content"><div class="brand-logo">flow <i data-lucide="leaf"></i></div></div>
+            <div class="brand-content"><p style="font-size:1.5rem; font-weight:300;">"Sustainable living isn't just a choice, it's a lifestyle."</p></div>
         </div>
-
-        <!-- RIGHT: FORM -->
         <div class="right-panel">
             <a href="../index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
-
             <div class="auth-container">
                 <h2 id="headingTitle">Welcome Back</h2>
-                <p class="subtitle" id="subTitle">Please enter your details to sign in.</p>
-
-                <div id="errorBox" class="error-msg" style="display:none;">
-                    <i data-lucide="alert-circle" style="width:16px;"></i> <span id="errorText"></span>
-                </div>
-
+                <p style="color:#666; margin-bottom:40px;" id="subTitle">Please enter your details.</p>
+                <div id="errorBox" style="color:#ef4444; margin-bottom:20px; display:none;"></div>
                 <form id="authForm">
-                    <!-- Username: Always visible -->
-                    <div class="input-group" id="usernameGroup">
-                        <label>Username</label>
-                        <input type="text" id="username" class="input" placeholder="e.g. flow_user" required>
-                    </div>
-
-                    <!-- Email: Hidden on Login -->
-                    <div class="input-group hidden" id="emailGroup">
-                        <label>Email Address</label>
-                        <input type="email" id="email" class="input" placeholder="you@example.com">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="password" class="input" placeholder="••••••••" required>
-                    </div>
-                    
+                    <div class="input-group" id="usernameGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Username</label><input type="text" id="username" class="input" required></div>
+                    <div class="input-group hidden" id="emailGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Email</label><input type="email" id="email" class="input"></div>
+                    <div class="input-group"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Password</label><input type="password" id="password" class="input" required></div>
                     <button type="submit" class="btn" id="submitBtn">Sign In</button>
                 </form>
-
-                <p class="toggle-text">
-                    <span id="toggleText">Don't have an account?</span> 
-                    <span class="toggle-link" onclick="toggleMode()" id="toggleBtn">Sign Up</span>
-                </p>
+                <p style="text-align:center; margin-top:30px; font-size:0.9rem; color:#666;"><span id="toggleText">New here?</span> <span onclick="toggleMode()" style="color:var(--primary); font-weight:700; cursor:pointer;">Sign Up</span></p>
             </div>
         </div>
     </div>
-
     <script>
         lucide.createIcons();
-        
-        const SUPABASE_URL = 'https://rbjxpbogrjlfdqpirbyj.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs';
-        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
         let isLogin = true;
-
         function toggleMode() {
             isLogin = !isLogin;
-            
-            // Update Text
             document.getElementById('headingTitle').innerText = isLogin ? 'Welcome Back' : 'Create Account';
-            document.getElementById('subTitle').innerText = isLogin ? 'Please enter your details to sign in.' : 'Join us for a sustainable future.';
             document.getElementById('submitBtn').innerText = isLogin ? 'Sign In' : 'Create Account';
-            document.getElementById('toggleText').innerText = isLogin ? "Don't have an account?" : "Already have an account?";
-            document.getElementById('toggleBtn').innerText = isLogin ? 'Sign Up' : 'Sign In';
-            
-            // Toggle Email Visibility
-            const emailGroup = document.getElementById('emailGroup');
-            const emailInput = document.getElementById('email');
-            
-            if (isLogin) {
-                emailGroup.classList.add('hidden');
-                emailInput.required = false;
-            } else {
-                emailGroup.classList.remove('hidden');
-                emailInput.required = true;
-            }
-            
-            document.getElementById('errorBox').style.display = 'none';
+            document.getElementById('emailGroup').classList.toggle('hidden');
+            document.getElementById('email').required = !isLogin;
         }
-
-        function showError(msg) {
-            const box = document.getElementById('errorBox');
-            document.getElementById('errorText').innerText = msg;
-            box.style.display = 'flex';
-        }
-
         document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const emailInput = document.getElementById('email').value.trim();
-            
-            const btn = document.getElementById('submitBtn');
-            const errBox = document.getElementById('errorBox');
-
-            btn.disabled = true;
-            btn.innerText = 'Processing...';
-            errBox.style.display = 'none';
-
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            const em = document.getElementById('email').value.trim();
+            const err = document.getElementById('errorBox');
             try {
-                if (isLogin) {
-                    // --- LOG IN FLOW ---
-                    const { data: profileData, error: profileError } = await sb
-                        .from('profiles')
-                        .select('email')
-                        .eq('username', username)
-                        .single();
-
-                    if (profileError || !profileData) throw new Error("Username not found.");
-
-                    const { error } = await sb.auth.signInWithPassword({ 
-                        email: profileData.email, 
-                        password: password 
-                    });
-
-                    if (error) throw error;
-                    window.location.href = '../index.html'; 
-
+                if(isLogin) {
+                    const { data } = await sb.from('profiles').select('email').eq('username', u).single();
+                    if(!data) throw new Error("User not found");
+                    const { error } = await sb.auth.signInWithPassword({ email: data.email, password: p });
+                    if(error) throw error;
+                    window.location.href = '../index.html';
                 } else {
-                    // --- SIGN UP FLOW ---
-                    const { data, error } = await sb.auth.signUp({ email: emailInput, password });
-                    if (error) throw error;
-
-                    if (data.user) {
-                        const { error: profileError } = await sb
-                            .from('profiles')
-                            .insert([{ 
-                                id: data.user.id, 
-                                username: username,
-                                email: emailInput
-                            }]);
-                        
-                        if (profileError) {
-                            if(profileError.code === '23505') throw new Error("Username already taken.");
-                            else console.error(profileError);
-                        }
-
-                        alert("Account created! Please check your email to confirm.");
-                        window.location.href = '../index.html';
-                    }
+                    const { data, error } = await sb.auth.signUp({ email: em, password: p });
+                    if(error) throw error;
+                    if(data.user) await sb.from('profiles').insert([{ id: data.user.id, username: u, email: em }]);
+                    window.location.href = '../index.html';
                 }
-
-            } catch (error) {
-                showError(error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = isLogin ? 'Sign In' : 'Create Account';
-            }
+            } catch(e) { err.innerText = e.message; err.style.display = 'block'; }
         });
     </script>
 </body>

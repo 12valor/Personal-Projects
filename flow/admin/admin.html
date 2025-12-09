@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow | Admin</title>
+    <link rel="icon" type="image/png" href="../images/icon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -80,14 +81,14 @@
         <p style="margin-bottom:20px; color:#666;">Enter password to manage store.</p>
         <input type="password" id="password" class="input" placeholder="Password (hint: admin123)" style="margin-bottom:20px;">
         <button class="btn" style="width:100%;" onclick="checkLogin()">Login</button>
-        <a href="index.html" style="display:block; margin-top:20px; color:#999; text-decoration:none; font-size:0.9rem;">&larr; Back to Shop</a>
+        <a href="../index.html" style="display:block; margin-top:20px; color:#999; text-decoration:none; font-size:0.9rem;">&larr; Back to Shop</a>
     </div>
 
     <div id="dashboard" class="container hidden">
         <div class="header">
             <div class="logo">flow <span style="color:#222; font-weight:400;">| Admin</span></div>
             <div>
-                <a href="index.html" class="btn btn-outline" style="text-decoration:none; margin-right:10px;">View Shop</a>
+                <a href="../index.html" class="btn btn-outline" style="text-decoration:none; margin-right:10px;">View Shop</a>
                 <button class="btn btn-outline" onclick="logout()">Logout</button>
             </div>
         </div>

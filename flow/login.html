@@ -23,6 +23,10 @@
         .input { width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; font-family: inherit; font-size: 1rem; background: #f9f9f9; display: block; }
         .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2); }
         .back-link { position: absolute; top: 40px; right: 40px; text-decoration: none; color: #888; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        
+        .forgot-link { display: block; text-align: right; font-size: 0.85rem; color: var(--primary); text-decoration: none; margin-top: -10px; margin-bottom: 20px; font-weight: 500; cursor: pointer; }
+        .forgot-link:hover { text-decoration: underline; }
+
         .hidden { display: none; }
         @media (max-width: 900px) { .left-panel { display: none; } .right-panel { max-width: 100%; } }
     </style>
@@ -34,52 +38,148 @@
             <div class="brand-content"><p style="font-size:1.5rem; font-weight:300;">"Sustainable living isn't just a choice, it's a lifestyle."</p></div>
         </div>
         <div class="right-panel">
-            <a href="index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
+            <a href="../index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
             <div class="auth-container">
                 <h2 id="headingTitle">Welcome Back</h2>
                 <p style="color:#666; margin-bottom:40px;" id="subTitle">Please enter your details.</p>
                 <div id="errorBox" style="color:#ef4444; margin-bottom:20px; display:none;"></div>
+                <div id="successBox" style="color:#16a34a; margin-bottom:20px; display:none;"></div>
+                
                 <form id="authForm">
                     <div class="input-group" id="usernameGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Username</label><input type="text" id="username" class="input" required></div>
-                    <div class="input-group hidden" id="emailGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Email</label><input type="email" id="email" class="input"></div>
-                    <div class="input-group"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Password</label><input type="password" id="password" class="input" required></div>
+                    <!-- Email is hidden on Login, but visible on Sign Up AND Reset Password -->
+                    <div class="input-group hidden" id="emailGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Email Address</label><input type="email" id="email" class="input"></div>
+                    <div class="input-group" id="passwordGroup"><label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:8px;">Password</label><input type="password" id="password" class="input" required></div>
+                    
+                    <span class="forgot-link" id="forgotBtn" onclick="toggleReset()">Forgot Password?</span>
+                    
                     <button type="submit" class="btn" id="submitBtn">Sign In</button>
                 </form>
-                <p style="text-align:center; margin-top:30px; font-size:0.9rem; color:#666;"><span id="toggleText">New here?</span> <span onclick="toggleMode()" style="color:var(--primary); font-weight:700; cursor:pointer;">Sign Up</span></p>
+                
+                <p style="text-align:center; margin-top:30px; font-size:0.9rem; color:#666;" id="switchText">
+                    <span id="toggleText">New here?</span> <span onclick="toggleMode()" style="color:var(--primary); font-weight:700; cursor:pointer;" id="toggleBtn">Sign Up</span>
+                </p>
+                <p style="text-align:center; margin-top:30px; font-size:0.9rem; color:var(--primary); font-weight:700; cursor:pointer; display:none;" id="cancelResetBtn" onclick="toggleReset()">Back to Login</p>
             </div>
         </div>
     </div>
     <script>
         lucide.createIcons();
         const sb = window.supabase.createClient('https://rbjxpbogrjlfdqpirbyj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJianhwYm9ncmpsZmRxcGlyYnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3MDU1OTksImV4cCI6MjA4MDI4MTU5OX0.0dEtjUKYBMO2m-JwSAvwTA-9kZB7e6asrhTULlHevjs');
-        let isLogin = true;
+        
+        let mode = 'login'; // 'login', 'signup', 'reset'
+
         function toggleMode() {
-            isLogin = !isLogin;
-            document.getElementById('headingTitle').innerText = isLogin ? 'Welcome Back' : 'Create Account';
-            document.getElementById('submitBtn').innerText = isLogin ? 'Sign In' : 'Create Account';
-            document.getElementById('emailGroup').classList.toggle('hidden');
-            document.getElementById('email').required = !isLogin;
+            if(mode === 'reset') return toggleReset(); // If in reset, go back to login first
+            
+            mode = mode === 'login' ? 'signup' : 'login';
+            updateUI();
         }
+
+        function toggleReset() {
+            mode = mode === 'reset' ? 'login' : 'reset';
+            updateUI();
+        }
+
+        function updateUI() {
+            const heading = document.getElementById('headingTitle');
+            const btn = document.getElementById('submitBtn');
+            const emailGroup = document.getElementById('emailGroup');
+            const userGroup = document.getElementById('usernameGroup');
+            const passGroup = document.getElementById('passwordGroup');
+            const forgotBtn = document.getElementById('forgotBtn');
+            const switchText = document.getElementById('switchText');
+            const cancelReset = document.getElementById('cancelResetBtn');
+            const emailInput = document.getElementById('email');
+            const userInput = document.getElementById('username');
+            const passInput = document.getElementById('password');
+
+            // Reset Errors/Success
+            document.getElementById('errorBox').style.display = 'none';
+            document.getElementById('successBox').style.display = 'none';
+
+            if (mode === 'login') {
+                heading.innerText = 'Welcome Back';
+                btn.innerText = 'Sign In';
+                emailGroup.classList.add('hidden');
+                userGroup.classList.remove('hidden');
+                passGroup.classList.remove('hidden');
+                forgotBtn.style.display = 'block';
+                switchText.style.display = 'block';
+                cancelReset.style.display = 'none';
+                
+                emailInput.required = false;
+                userInput.required = true;
+                passInput.required = true;
+            } else if (mode === 'signup') {
+                heading.innerText = 'Create Account';
+                btn.innerText = 'Sign Up';
+                emailGroup.classList.remove('hidden');
+                userGroup.classList.remove('hidden');
+                passGroup.classList.remove('hidden');
+                forgotBtn.style.display = 'none';
+                switchText.style.display = 'block';
+                cancelReset.style.display = 'none';
+
+                emailInput.required = true;
+                userInput.required = true;
+                passInput.required = true;
+                document.getElementById('toggleText').innerText = "Already have an account?";
+                document.getElementById('toggleBtn').innerText = "Sign In";
+            } else if (mode === 'reset') {
+                heading.innerText = 'Reset Password';
+                btn.innerText = 'Send Reset Link';
+                emailGroup.classList.remove('hidden');
+                userGroup.classList.add('hidden');
+                passGroup.classList.add('hidden');
+                forgotBtn.style.display = 'none';
+                switchText.style.display = 'none';
+                cancelReset.style.display = 'block';
+
+                emailInput.required = true;
+                userInput.required = false;
+                passInput.required = false;
+            }
+        }
+
         document.getElementById('authForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value;
             const em = document.getElementById('email').value.trim();
             const err = document.getElementById('errorBox');
+            const success = document.getElementById('successBox');
+            
+            err.style.display = 'none';
+            success.style.display = 'none';
+
             try {
-                if(isLogin) {
+                if(mode === 'login') {
                     const { data } = await sb.from('profiles').select('email').eq('username', u).single();
                     if(!data) throw new Error("User not found");
                     const { error } = await sb.auth.signInWithPassword({ email: data.email, password: p });
                     if(error) throw error;
-                    window.location.href = 'index.html';
-                } else {
+                    window.location.href = '../index.html';
+                
+                } else if(mode === 'signup') {
                     const { data, error } = await sb.auth.signUp({ email: em, password: p });
                     if(error) throw error;
                     if(data.user) await sb.from('profiles').insert([{ id: data.user.id, username: u, email: em }]);
-                    window.location.href = 'index.html';
+                    window.location.href = '../index.html';
+
+                } else if(mode === 'reset') {
+                    const { error } = await sb.auth.resetPasswordForEmail(em, {
+                        redirectTo: window.location.origin + '/Pages/update-password.html', // Optional redirect
+                    });
+                    if(error) throw error;
+                    success.innerText = "Password reset link sent to your email!";
+                    success.style.display = 'block';
                 }
-            } catch(e) { err.innerText = e.message; err.style.display = 'block'; }
+
+            } catch(e) { 
+                err.innerText = e.message; 
+                err.style.display = 'block'; 
+            }
         });
     </script>
 </body>

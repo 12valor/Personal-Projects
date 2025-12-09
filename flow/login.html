@@ -38,7 +38,7 @@
             <div class="brand-content"><p style="font-size:1.5rem; font-weight:300;">"Sustainable living isn't just a choice, it's a lifestyle."</p></div>
         </div>
         <div class="right-panel">
-            <a href="../index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
+            <a href="index.html" class="back-link"><i data-lucide="arrow-left" style="width:16px;"></i> Back to Shop</a>
             <div class="auth-container">
                 <h2 id="headingTitle">Welcome Back</h2>
                 <p style="color:#666; margin-bottom:40px;" id="subTitle">Please enter your details.</p>
@@ -156,18 +156,17 @@
                     if(!data) throw new Error("User not found");
                     const { error } = await sb.auth.signInWithPassword({ email: data.email, password: p });
                     if(error) throw error;
-                    window.location.href = '../index.html';
+                    window.location.href = 'index.html';
                 
                 } else if(mode === 'signup') {
                     const { data, error } = await sb.auth.signUp({ email: em, password: p });
                     if(error) throw error;
                     if(data.user) await sb.from('profiles').insert([{ id: data.user.id, username: u, email: em }]);
-                    window.location.href = '../index.html';
+                    window.location.href = 'index.html';
 
                 } else if(mode === 'reset') {
                     const { error } = await sb.auth.resetPasswordForEmail(em, {
-                        // UPDATED: Now points to Pages/update-password.html
-                        redirectTo: window.location.origin + '/Pages/update-password.html', 
+                        redirectTo: window.location.origin + '/update-password.html', 
                     });
                     if(error) throw error;
                     success.innerText = "Password reset link sent to your email!";

@@ -4,60 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow | Contact</title>
-    <link rel="icon" type="image/png" href="../images/icon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3a7d44; --text: #1b4332; --bg: #f8faf9; }
+        :root { --primary: #2d6a4f; --primary-dark: #1b4332; --text: #1b4332; --bg: #f8faf9; --white: #ffffff; }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { color:var(--text); background:var(--bg); font-family:'Outfit', sans-serif; padding-bottom:80px; }
-        h1,h2 { font-family:'Playfair Display', serif; }
+        h1,h2,h3 { font-family:'Playfair Display', serif; }
 
+        /* NAVBAR */
         header { position:fixed; top:25px; left:50%; transform:translateX(-50%); width:auto; min-width:650px; max-width:95%; padding:10px 15px; background:rgba(255,255,255,0.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.6); border-radius:100px; z-index:1000; box-shadow:0 15px 35px -10px rgba(0,0,0,0.05); }
         .nav { display:flex; justify-content:space-between; align-items:center; }
         .logo { font-size:1.6rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; padding-left:15px; text-decoration:none; }
         .nav-links { display:flex; background:rgba(0,0,0,0.03); padding:5px; border-radius:30px; }
         .nav-links a { text-decoration:none; color:var(--text); font-weight:500; font-size:0.9rem; padding:8px 20px; border-radius:25px; transition:0.3s; }
-        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; }
-        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; }
+        .nav-links a:hover, .nav-links a.active { color:var(--primary); background:white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .auth-btn { font-size:0.85rem; font-weight:600; cursor:pointer; color:white; background:var(--primary); padding:10px 24px; border-radius:30px; margin-left:15px; text-decoration:none; transition: 0.3s; }
+        .auth-btn:hover { background: var(--primary-dark); box-shadow: 0 4px 15px rgba(45, 106, 79, 0.3); }
 
-        .container { max-width:1000px; margin:0 auto; padding:160px 20px 50px; }
+        .container { max-width:1100px; margin:0 auto; padding:160px 20px 50px; }
+        
         .hero { text-align:center; margin-bottom:60px; }
-        .hero h1 { font-size:3.5rem; color:var(--primary); margin-bottom:15px; }
+        .hero h1 { font-size:4rem; color:var(--primary); margin-bottom:15px; letter-spacing: -1px; }
+        .hero p { font-size: 1.1rem; color: #666; max-width: 500px; margin: 0 auto; line-height: 1.6; }
         
-        .contact-box { background:white; border-radius:30px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.05); display:flex; }
+        .contact-card { 
+            background: white; 
+            border-radius: 30px; 
+            overflow: hidden; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); 
+            display: flex; 
+            border: 1px solid rgba(0,0,0,0.02);
+            min-height: 600px;
+        }
         
-        .info-side { background:var(--primary); color:white; width:40%; padding:50px; display:flex; flex-direction:column; justify-content:center; }
-        .info-item { margin-bottom:30px; }
-        .info-item h3 { font-size:1.2rem; margin-bottom:10px; font-family:'Outfit', sans-serif; opacity:0.9; }
-        .info-item p { font-size:1rem; opacity:0.8; line-height:1.6; }
+        /* LEFT SIDE: INFO */
+        .info-side { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+            width: 40%; 
+            padding: 60px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-side::before {
+            content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px;
+            background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(40px);
+        }
+
+        .info-content h3 { font-size: 2rem; margin-bottom: 30px; color: white; }
         
-        .form-side { width:60%; padding:50px; }
-        .input-group { margin-bottom:20px; }
-        .input-group label { display:block; margin-bottom:8px; font-weight:600; font-size:0.9rem; color:#555; }
-        .input { width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; outline:none; transition:0.3s; }
-        .input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(58,125,68,0.1); }
+        .info-item { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 30px; }
+        .info-icon { background: rgba(255,255,255,0.2); padding: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .info-text h4 { font-family: 'Outfit', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
+        .info-text p { font-size: 1.1rem; line-height: 1.5; font-weight: 300; }
+
+        .social-links { display: flex; gap: 15px; margin-top: auto; }
+        .social-btn { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: 0.3s; cursor: pointer; }
+        .social-btn:hover { background: white; color: var(--primary); border-color: white; }
+
+        /* RIGHT SIDE: FORM */
+        .form-side { width: 60%; padding: 60px; background: white; display: flex; flex-direction: column; justify-content: center; }
         
-        .submit-btn { width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; margin-top:10px; transition:0.3s; }
-        .submit-btn:hover { background:#2c5e34; }
+        .form-header { margin-bottom: 30px; }
+        .form-header h2 { font-size: 2rem; color: var(--text); margin-bottom: 10px; }
+        .form-header p { color: #888; }
+
+        .input-group { margin-bottom: 25px; position: relative; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #555; letter-spacing: 0.5px; }
+        .input { 
+            width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 12px; 
+            font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; background: #fcfcfc; color: var(--text);
+        }
+        .input:focus { border-color: var(--primary); background: white; box-shadow: 0 4px 12px rgba(45, 106, 79, 0.1); }
+        textarea.input { resize: vertical; min-height: 120px; }
+        
+        .submit-btn { 
+            width: 100%; padding: 16px; background: var(--primary); color: white; border: none; 
+            border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(45, 106, 79, 0.2);
+        }
+        .submit-btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(45, 106, 79, 0.3); }
         .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* Success Message Style */
-        .success-message { display:none; background:#dcfce7; color:#166534; padding:15px; border-radius:8px; margin-bottom:20px; text-align:center; font-weight:500; }
+        .success-message { display:none; background:#ecfdf5; color:#047857; padding:15px; border-radius:12px; margin-bottom:20px; text-align:center; font-weight:500; border: 1px solid #a7f3d0; }
 
         @media(max-width:900px) {
             header { min-width:auto; width:95%; top:15px; }
             .nav-links { display:none; }
-            .contact-box { flex-direction:column; }
-            .info-side, .form-side { width:100%; padding:30px; }
+            .contact-card { flex-direction:column; }
+            .info-side, .form-side { width:100%; padding: 40px 30px; }
+            .info-side { min-height: auto; }
+            .hero h1 { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="nav">
-            <a href="index.html" class="logo">flow <i data-lucide="leaf"></i></a>
+            <a href="../index.html" class="logo">flow <i data-lucide="leaf"></i></a>
             <div class="nav-links">
                 <a href="about.html">About</a>
                 <a href="../index.html">Shop</a>
@@ -68,34 +118,62 @@
             <a href="login.html" class="auth-btn">Sign In</a>
         </div>
     </header>
+
     <div class="container">
         <div class="hero">
             <h1>Get in Touch.</h1>
-            <p>Questions about sustainability? Order inquiries? We're here to help.</p>
+            <p>Questions about sustainability? Custom orders? We'd love to hear from you.</p>
         </div>
 
-        <div class="contact-box">
+        <div class="contact-card">
             <div class="info-side">
-                <div class="info-item">
-                    <h3>Visit Us</h3>
-                    <p>123 Green Street<br>Portland, OR 97204</p>
+                <div class="info-content">
+                    <h3>Contact Info</h3>
+                    
+                    <div class="info-item">
+                        <div class="info-icon"><i data-lucide="map-pin" color="white"></i></div>
+                        <div class="info-text">
+                            <h4>Visit Us</h4>
+                            <p>123 Green Street<br>Portland, OR 97204</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i data-lucide="mail" color="white"></i></div>
+                        <div class="info-text">
+                            <h4>Email Us</h4>
+                            <p>hello@flow-shop.com<br>support@flow-shop.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i data-lucide="phone" color="white"></i></div>
+                        <div class="info-text">
+                            <h4>Call Us</h4>
+                            <p>+1 (555) 123-4567<br>Mon-Fri, 9am - 5pm</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <h3>Email Us</h3>
-                    <p>evangelista.agdiaz@gmail.com<br>support@flow-shop.com</p>
-                </div>
-                <div class="info-item">
-                    <h3>Call Us</h3>
-                    <p>+1 (555) 123-4567<br>Mon-Fri, 9am - 5pm</p>
+
+                <div class="social-links">
+                    <div class="social-btn"><i data-lucide="instagram" size="18"></i></div>
+                    <div class="social-btn"><i data-lucide="twitter" size="18"></i></div>
+                    <div class="social-btn"><i data-lucide="facebook" size="18"></i></div>
                 </div>
             </div>
+
             <div class="form-side">
+                <div class="form-header">
+                    <h2>Send a Message</h2>
+                    <p>We typically reply within 24 hours.</p>
+                </div>
+
                 <div id="successMsg" class="success-message">
-                    Thank you! Your message has been sent successfully.
+                    <i data-lucide="check-circle" style="vertical-align: middle; margin-right: 5px; width: 18px;"></i>
+                    Message sent successfully!
                 </div>
 
                 <form id="contactForm" onsubmit="sendEmail(event)">
-                    <!-- Hidden configuration for FormSubmit -->
                     <input type="hidden" name="_subject" value="New Contact Message from Flow Shop">
                     <input type="hidden" name="_captcha" value="false">
 
@@ -109,7 +187,7 @@
                     </div>
                     <div class="input-group">
                         <label>Message</label>
-                        <textarea name="message" class="input" rows="4" placeholder="How can we help?" required></textarea>
+                        <textarea name="message" class="input" placeholder="How can we help?" required></textarea>
                     </div>
                     <button type="submit" id="submitBtn" class="submit-btn">Send Message</button>
                 </form>
@@ -134,7 +212,6 @@
             const btn = document.getElementById('submitBtn');
             const msg = document.getElementById('successMsg');
             
-            // UI Feedback
             const originalText = btn.innerText;
             btn.innerText = 'Sending...';
             btn.disabled = true;
@@ -142,7 +219,6 @@
             const formData = new FormData(form);
 
             try {
-                // Using FormSubmit's AJAX endpoint
                 const response = await fetch("https://formsubmit.co/ajax/evangelista.agdiaz@gmail.com", {
                     method: "POST",
                     body: formData

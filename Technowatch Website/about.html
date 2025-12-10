@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Technowatch</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff',       // Primary Blue
+                            dark: '#0f172a',       // Dark Blue/Slate
+                            cleanblue: '#3b82f6',  // Lighter Blue
+                            accent: '#0ea5e9',     // Sky Blue
+                            text: '#334155',       // Blue-Grey Text
+                            light: '#f0f9ff',      // Very Light Blue tint background
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -10px rgba(0, 123, 255, 0.1)',
+                        'clean-glow': '0 10px 40px -10px rgba(0, 0, 0, 0.1)', /* Clean grey shadow */
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    letterSpacing: {
+                        'tighter-custom': '-0.05em',
+                    },
+                    fontSize: {
+                        '10xl': '10rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #ffffff; color: #334155; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .rounded-xl-custom { border-radius: 1.5rem; }
+        
+        .big-condensed-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800; 
+            letter-spacing: -0.05em; 
+            line-height: 0.85;
+        }
+
+        #tech-bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 150%; 
+            pointer-events: none; z-index: -1; opacity: 0.08; 
+            color: #007bff; will-change: transform; transition: transform 0.1s linear;
+        }
+    </style>
+</head>
+<body class="antialiased relative bg-white">
+
+    <svg id="tech-bg-pattern" viewBox="0 0 1440 1024" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+            <path d="M100 0 V1024 M300 0 V1024 M500 0 V1024 M700 0 V1024 M900 0 V1024 M1100 0 V1024 M1300 0 V1024" opacity="0.5"/>
+            <path d="M0 100 H1440 M0 300 H1440 M0 500 H1440 M0 700 H1440 M0 900 H1440" opacity="0.5"/>
+            <path d="M100 100 L300 300 M300 100 L100 300 M500 300 L700 500 M700 300 L500 500 M900 500 L1100 700 M1100 500 L900 700"/>
+            <circle cx="100" cy="100" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="500" cy="500" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="700" cy="700" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="900" cy="900" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="1100" cy="100" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="1300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <path d="M100 500 H200 V600 H300" stroke-width="3"/>
+            <path d="M1300 500 H1200 V400 H1100" stroke-width="3"/>
+            <path d="M700 100 V200 H800 V300" stroke-width="3"/>
+        </g>
+    </svg>
+
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white shadow-lg border border-slate-100 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 ease-out transform hover:scale-[1.002] w-fit max-w-[95%]" id="navbar">
+            <a href="index.html#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html#home" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="#" class="px-3 py-2 text-sm font-bold font-sans text-brand-blue bg-blue-50 rounded-lg transition-all whitespace-nowrap">About Us</a>
+                <a href="index.html#news" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">News</a>
+                <a href="index.html#events" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Events</a>
+                <a href="index.html#projects" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="index.html#members" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Members</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html#join" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap">
+                    Join Us
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html#home" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="#" class="text-2xl font-heading font-bold text-brand-blue mobile-link">About Us</a>
+        <a href="index.html#news" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">News</a>
+        <a href="index.html#projects" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Projects</a>
+        <a href="index.html#join" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Join Us</a>
+    </div>
+
+    <section class="pt-40 pb-20 px-6 relative" id="about-intro">
+        
+        <div class="container mx-auto max-w-4xl text-center relative z-10">
+            <div class="flex flex-col items-center reveal pt-4">
+                <h1 class="big-condensed-text text-[4rem] md:text-[6rem] text-slate-900 mb-8">
+                    ABOUT <br>
+                    <span class="text-brand-blue" id="hero-toggle" data-value="US">US</span>
+                </h1>
+                <div class="space-y-6 relative max-w-2xl mx-auto">
+                    <i class="fa-solid fa-quote-left text-3xl text-sky-200 absolute -top-6 -left-8 -z-10"></i>
+                    <p class="font-sans text-slate-600 text-base leading-relaxed font-medium">
+                        Technowatch is a student-driven tech organization from TUP-Visayas, powered by passionate Computer Engineering Technology students.
+                    </p>
+                    <p class="font-sans text-slate-500 text-base leading-relaxed">
+                        We are dedicated to transforming ideas into impactful hardware and software solutions that resonate with our community and drive technological advancement at TUPV.
+                    </p>
+                </div>
+                
+                <div class="relative w-full h-[400px] mt-16 perspective-1000 bg-transparent" id="carousel-container">
+                    
+                    <div class="carousel-item absolute top-1/2 left-1/2 w-[70%] md:w-[60%] h-[300px] rounded-xl border border-white/20 shadow-2xl shadow-slate-200/50 transition-all duration-700 ease-in-out overflow-hidden bg-slate-900 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a782?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    </div>
+                    
+                    <div class="carousel-item absolute top-1/2 left-1/2 w-[70%] md:w-[60%] h-[300px] rounded-xl border border-white/20 shadow-2xl shadow-slate-200/50 transition-all duration-700 ease-in-out overflow-hidden bg-slate-900 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    </div>
+                    
+                    <div class="carousel-item absolute top-1/2 left-1/2 w-[70%] md:w-[60%] h-[300px] rounded-xl border border-white/20 shadow-2xl shadow-slate-200/50 transition-all duration-700 ease-in-out overflow-hidden bg-slate-900 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    </div>
+                    
+                    <div class="carousel-item absolute top-1/2 left-1/2 w-[70%] md:w-[60%] h-[300px] rounded-xl border border-white/20 shadow-2xl shadow-slate-200/50 transition-all duration-700 ease-in-out overflow-hidden bg-slate-900 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    </div>
+                    
+                    <div class="carousel-item absolute top-1/2 left-1/2 w-[70%] md:w-[60%] h-[300px] rounded-xl border border-white/20 shadow-2xl shadow-slate-200/50 transition-all duration-700 ease-in-out overflow-hidden bg-slate-900 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c54be3852f33?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section class="py-24 px-6 relative" id="community-objectives">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="grid lg:grid-cols-2 gap-20 items-start">
+                <div class="reveal">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="w-8 h-1 bg-brand-blue rounded-full"></span>
+                        <span class="text-brand-blue font-bold tracking-widest text-xs uppercase">Since 2023</span>
+                    </div>
+                    <h2 class="text-4xl font-bold font-heading text-slate-900 mb-6">Our Community</h2>
+                    <div class="font-sans text-slate-600 space-y-6 leading-relaxed">
+                        <p>
+                            Technowatch was founded by a group of passionate students who saw a need for a collaborative space dedicated to hands-on technology. We started with just a few microcontrollers and one big idea: to create a community where any student, regardless of skill level, could come to learn, build, and innovate.
+                        </p>
+                        <p>
+                            From our first simple power supply to today's complex AI models, our club has grown into a thriving hub for TUP-V's best designers, developers, and engineers—all driven by a shared curiosity and a passion for building what's next.
+                        </p>
+                    </div>
+                    <div class="mt-8 h-[250px] rounded-xl-custom overflow-hidden shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="reveal pt-8" style="transition-delay: 150ms;">
+                    <h2 class="text-4xl font-bold font-heading text-slate-900 mb-10">Our Objectives</h2>
+                    <ul class="space-y-10 relative">
+                        <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-200 -z-10"></div>
+                        <li class="flex items-start gap-6 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white border-4 border-sky-50 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 relative z-10">
+                                <span class="w-3 h-3 bg-brand-blue rounded-full"></span>
+                            </div>
+                            <div class="pt-1">
+                                <h4 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-blue transition-colors">Cutting-Edge Workshops</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">Provide workshops on in-demand technologies to ensure members stay ahead of the curve.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white border-4 border-sky-50 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 relative z-10">
+                                <span class="w-3 h-3 bg-brand-blue rounded-full"></span>
+                            </div>
+                            <div class="pt-1">
+                                <h4 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-blue transition-colors">Team-Based Projects</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">Facilitate ambitious projects from concept to completion, fostering real-world collaboration.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white border-4 border-sky-50 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 relative z-10">
+                                <span class="w-3 h-3 bg-brand-blue rounded-full"></span>
+                            </div>
+                            <div class="pt-1">
+                                <h4 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-blue transition-colors">Networking Events</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">Host insightful tech talks with industry professionals to bridge the gap between school and career.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white border-4 border-sky-50 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300 relative z-10">
+                                <span class="w-3 h-3 bg-brand-blue rounded-full"></span>
+                            </div>
+                            <div class="pt-1">
+                                <h4 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-blue transition-colors">Culture of Mentorship</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">Promote a robust culture of mentorship and peer-to-peer learning within the organization.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 relative overflow-hidden">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center mb-24">
+                <div class="reveal">
+                    <h2 class="big-condensed-text text-[6rem] md:text-[9rem] text-slate-900 leading-[0.8]">OUR</h2>
+                    <h2 class="big-condensed-text text-[6rem] md:text-[9rem] text-brand-blue leading-[0.8] shuffle-text" data-value="VISION">VISION</h2>
+                </div>
+                <div class="flex flex-col gap-8 reveal" style="transition-delay: 100ms;">
+                    <div class="flex gap-5 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-rocket text-2xl text-brand-blue"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold font-heading text-slate-900 mb-2">Future-Ready Innovators</h3>
+                            <p class="font-sans text-slate-600 text-base leading-relaxed">
+                                To be the leading student organization that cultivates a new generation of tech leaders and innovators, equipped with the skills to tackle future challenges.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="flex flex-col gap-8 order-last lg:order-first reveal" style="transition-delay: 200ms;">
+                    <div class="flex gap-5 items-start">
+                        <div class="flex-shrink-0 w-12 h-12 bg-brand-blue rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                            <i class="fa-solid fa-laptop-code text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold font-heading text-slate-900 mb-2">Skill Development</h3>
+                            <p class="font-sans text-slate-600 text-base leading-relaxed">
+                                To bridge the gap between academia and industry by offering practical workshops, training, and real-world project experiences in hardware and software.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal text-right lg:text-left">
+                    <h2 class="big-condensed-text text-[6rem] md:text-[9rem] text-slate-900 leading-[0.8]">OUR</h2>
+                    <h2 class="big-condensed-text text-[6rem] md:text-[9rem] text-brand-blue leading-[0.8] shuffle-text" data-value="MISSION">MISSION</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-slate-50/50">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-5xl font-bold font-heading text-slate-900 mb-6">What We Focus On</h2>
+                <p class="text-slate-500 font-sans max-w-2xl mx-auto">Our club is a playground for technological exploration. We dive deep into various high-demand fields.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl-custom shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all border border-slate-100 group">
+                    <div class="w-14 h-14 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center text-2xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">AI & Machine Learning</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Building intelligent systems that learn and adapt.</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl-custom shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all border border-slate-100 group">
+                    <div class="w-14 h-14 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center text-2xl mb-6 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-wifi"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">IoT & Microcontrollers</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Creating smart, connected devices with Arduino, ESP32, and Raspberry Pi.</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl-custom shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all border border-slate-100 group">
+                    <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">Software & Web Dev</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Crafting modern applications and websites with today's top frameworks.</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl-custom shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all border border-slate-100 group lg:col-start-1 lg:col-end-2 xl:col-auto">
+                    <div class="w-14 h-14 rounded-full bg-blue-50 text-brand-blue flex items-center justify-center text-2xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">Robotics & Hardware</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Designing and building functional robots from the ground up.</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-8 rounded-xl-custom shadow-sm hover:shadow-lg hover:-translate-y-2 transition-all border border-slate-100 group lg:col-start-2 lg:col-span-2 xl:col-auto">
+                    <div class="w-14 h-14 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-3">UI/UX Design</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Focusing on user-centric design to make technology intuitive and beautiful.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 border-t border-slate-100">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">What Drives Us</span>
+                <h2 class="text-5xl font-bold font-heading text-slate-900">Our Core Values</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 reveal">
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-white border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:border-brand-blue transition-all duration-500 shadow-sm">
+                        <i class="fa-regular fa-lightbulb text-3xl text-slate-700 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-2">Innovation</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">We encourage creative thinking and aren't afraid to tackle complex, novel problems.</p>
+                </div>
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-white border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:border-brand-blue transition-all duration-500 shadow-sm">
+                        <i class="fa-solid fa-people-group text-3xl text-slate-700 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-2">Collaboration</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">We believe the best ideas are built together. Teamwork is at the heart of everything.</p>
+                </div>
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-white border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:border-brand-blue transition-all duration-500 shadow-sm">
+                        <i class="fa-solid fa-book-open text-3xl text-slate-700 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-2">Learning</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">We are committed to continuous, hands-on learning, skill-sharing, and mentorship.</p>
+                </div>
+                <div class="text-center group">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-white border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:border-brand-blue transition-all duration-500 shadow-sm">
+                        <i class="fa-solid fa-heart text-3xl text-slate-700 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading text-slate-900 mb-2">Community</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">We foster an inclusive and supportive environment where all members feel welcome.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 px-6 bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="grid lg:grid-cols-3 gap-10 items-end reveal">
+                <div class="flex flex-col group">
+                    <div class="w-full h-[400px] bg-white rounded-xl-custom overflow-hidden mb-5 relative shadow-soft">
+                            <img src="images/pfp1.png" 
+                                alt="President" 
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale group-hover:grayscale-0">
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-bold text-slate-900 font-heading mb-1">Rex Romero, MCECE</h4>
+                        <p class="text-brand-blue font-bold font-sans text-xs tracking-widest uppercase">Club Advisor</p>
+                    </div>
+                </div>
+
+                <div class="text-center mb-12 lg:mb-0 flex flex-col items-center justify-center h-full pb-8 order-first lg:order-none">
+                    <h2 class="big-condensed-text text-[4rem] md:text-[5rem] text-slate-900 mb-6">
+                        MEET THE <br><span class="text-brand-blue">LEADERS</span>
+                    </h2>
+                    <p class="text-slate-500 font-sans text-base leading-relaxed max-w-xs mx-auto">
+                        Guiding our vision, these officers oversee the operations and strategic direction of Technowatch.
+                    </p>
+                </div>
+
+                <div class="flex flex-col group">
+                    <div class="w-full h-[400px] bg-white rounded-xl-custom overflow-hidden mb-5 relative shadow-soft">
+                            <img src="images/pfp1.png" 
+                                alt="Vice President" 
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale group-hover:grayscale-0">
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-bold text-slate-900 font-heading mb-1">Ian Benedict Depasucat</h4>
+                        <p class="text-brand-blue font-bold font-sans text-xs tracking-widest uppercase">Club President</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-slate-600 pt-20 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="index.html" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="index.html#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="index.html#news" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="index.html#projects" class="hover:text-brand-blue transition-colors">Projects</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-400 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans transition-transform duration-300">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    You are viewing the <strong>About Us</strong> page. Learn more about our vision and officers here! 🚀
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-md"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Navbar & Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() { mobileMenu.classList.toggle('translate-x-full'); document.body.classList.toggle('overflow-hidden'); }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Scroll Reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Chatbot Logic
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            if (chatWidget.classList.contains('scale-0')) {
+                chatWidget.classList.remove('scale-0'); chatWidget.classList.add('scale-100'); chatToggleBtn.classList.remove('animate-bounce');
+            } else {
+                chatWidget.classList.remove('scale-100'); chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end animate-fade-up';
+            userDiv.innerHTML = `<div class="bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]">${msg}</div>`;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start animate-fade-up';
+                botDiv.innerHTML = `<div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">Thanks for reaching out! We are Technowatch.</div>`;
+                chatMessages.appendChild(botDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        });
+
+        // Parallax Background
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const techBg = document.getElementById('tech-bg-pattern');
+            if (techBg) {
+                techBg.style.transform = `translateY(${scrollY * -0.15}px)`;
+            }
+        });
+
+        // -----------------------------------------------------------------
+        // ANIMATION MASTER LOGIC
+        // -----------------------------------------------------------------
+        
+        // 1. Image Carousel
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        let currentOffset = 0;
+
+        function updateCarousel() {
+            carouselItems.forEach((item, index) => {
+                const totalItems = carouselItems.length;
+                let position = (index - currentOffset) % totalItems;
+                if (position < 0) position += totalItems;
+                
+                if (position === 0) {
+                    item.style.zIndex = 20;
+                    item.style.opacity = '1';
+                    item.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                } else if (position === 1) {
+                    item.style.zIndex = 10;
+                    item.style.opacity = '0.6';
+                    item.style.transform = 'translate(15%, -50%) scale(0.85)'; 
+                } else if (position === totalItems - 1) {
+                    item.style.zIndex = 10;
+                    item.style.opacity = '0.6';
+                    item.style.transform = 'translate(-115%, -50%) scale(0.85)';
+                } else {
+                    item.style.zIndex = 0;
+                    item.style.opacity = '0';
+                    item.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                }
+            });
+        }
+
+        // 2. Text Scramble Logic
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+        
+        function scrambleText(target) {
+            let iterations = 0;
+            const originalText = target.dataset.value;
+            
+            // Optimization
+            const rect = target.getBoundingClientRect();
+            if(rect.top > window.innerHeight || rect.bottom < 0) return;
+
+            const interval = setInterval(() => {
+                target.innerText = originalText.split("")
+                    .map((letter, index) => {
+                        if(index < iterations) {
+                            return originalText[index];
+                        }
+                        return letters[Math.floor(Math.random() * 46)];
+                    })
+                    .join("");
+                
+                if(iterations >= originalText.length) { 
+                    clearInterval(interval);
+                }
+                
+                iterations += 1 / 3; 
+            }, 30);
+        }
+
+        // 3. Hero Text Toggle Logic (US <-> TECHNOWATCH)
+        const heroText = document.getElementById('hero-toggle');
+        const heroWords = ["US", "TECHNOWATCH"];
+        let heroIndex = 0;
+
+        function toggleHeroText() {
+            heroIndex = (heroIndex + 1) % heroWords.length;
+            heroText.dataset.value = heroWords[heroIndex];
+            scrambleText(heroText);
+        }
+
+        // 4. Master Shuffle Function
+        function masterShuffle() {
+            // Shuffle Images
+            currentOffset = (currentOffset + 1) % carouselItems.length;
+            updateCarousel();
+
+            // Shuffle Vision/Mission Text
+            const textTargets = document.querySelectorAll('.shuffle-text');
+            textTargets.forEach(el => scrambleText(el));
+
+            // Shuffle Main Hero Text
+            toggleHeroText();
+        }
+
+        // Initialize
+        updateCarousel();
+
+        // Run every 2 seconds
+        setInterval(masterShuffle, 2000);
+
+    </script>
+</body>
+</html>

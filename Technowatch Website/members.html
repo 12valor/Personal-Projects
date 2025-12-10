@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members | Technowatch</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff',       
+                            dark: '#0f172a',       
+                            cleanblue: '#3b82f6',  
+                            accent: '#0ea5e9',     
+                            text: '#334155',       
+                            light: '#f0f9ff',      
+                        }
+                    },
+                    backgroundImage: {
+                        'grid-pattern-light': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+')",
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'marquee': 'marquee 30s linear infinite',
+                        'marquee-reverse': 'marqueeReverse 30s linear infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        },
+                        marqueeReverse: {
+                            '0%': { transform: 'translateX(-50%)' },
+                            '100%': { transform: 'translateX(0)' },
+                        }
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #ffffff; color: #334155; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+        
+        /* Sticky Parallax Header Logic */
+        .sticky-header { position: sticky; top: 120px; height: fit-content; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
+        
+        .text-outline-dark {
+            -webkit-text-stroke: 2px rgba(15, 23, 42, 0.1);
+            color: transparent;
+        }
+        
+        .text-gradient-blue {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(to right, #007bff, #0ea5e9);
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white/90 backdrop-blur-md shadow-lg border border-slate-100 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 w-fit max-w-[95%]" id="navbar">
+            <a href="index.html#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html#home" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="about.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">About Us</a>
+                <a href="news.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">News</a>
+                <a href="index.html#events" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Events</a>
+                <a href="index.html#projects" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="#" class="px-3 py-2 text-sm font-bold font-sans text-brand-blue bg-blue-50 rounded-lg transition-all whitespace-nowrap">Members</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html#join" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap">
+                    Join Us
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html#home" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="about.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">About Us</a>
+        <a href="#" class="text-2xl font-heading font-bold text-brand-blue mobile-link">News</a>
+        <a href="index.html#projects" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Projects</a>
+        <a href="index.html#join" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Join Us</a>
+    </div>
+
+    <section class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-white">
+        <div class="absolute inset-0 bg-grid-pattern-light opacity-30"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-blue/10 rounded-full blur-[150px] animate-pulse"></div>
+
+        <div class="absolute top-10 left-10 w-2 h-2 bg-brand-blue/50 rounded-full animate-bounce"></div>
+        <div class="absolute bottom-20 right-20 w-3 h-3 bg-brand-accent/50 rounded-full animate-bounce delay-700"></div>
+
+        <div class="container relative z-10 text-center px-6 pt-20">
+            <div class="inline-block mb-6 px-4 py-1 border border-brand-blue/30 rounded-full bg-blue-50 text-brand-blue text-xs font-bold tracking-[0.2em] animate-fade-up">
+                EST. 2023
+            </div>
+            <h1 class="text-[5rem] md:text-[9rem] font-heading font-bold leading-none mb-6 animate-fade-up text-slate-900" style="animation-delay: 0.2s;">
+                THE <br>
+                <span class="text-gradient-blue">NETWORK</span>
+            </h1>
+            <p class="font-sans text-slate-500 text-lg max-w-2xl mx-auto animate-fade-up" style="animation-delay: 0.4s;">
+                The architects, engineers, and visionaries behind the future of TUP-Visayas.
+            </p>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+            <span class="text-[10px] uppercase tracking-widest text-slate-400">Scroll to Connect</span>
+            <div class="w-px h-12 bg-gradient-to-b from-slate-400 to-transparent"></div>
+        </div>
+    </section>
+
+    <section class="relative py-32 px-6 bg-slate-50 border-t border-slate-100">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex flex-col lg:flex-row gap-16">
+                <div class="lg:w-1/3">
+                    <div class="sticky-header">
+                        <h2 class="text-6xl md:text-8xl font-heading font-bold text-slate-200 lg:text-outline-dark leading-none mb-4">
+                            THE <br> PILLARS
+                        </h2>
+                        <h3 class="text-3xl font-heading font-bold text-slate-900 mb-6">Faculty Advisors</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed max-w-xs">
+                            Guiding our path with wisdom and technical expertise. The backbone of the Technowatch curriculum and vision.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lg:w-2/3 flex flex-col gap-6">
+                    
+                    <div class="group relative bg-white rounded-2xl p-1 border border-slate-200 hover:border-brand-blue/50 transition-all duration-500 reveal shadow-sm hover:shadow-md">
+                        <div class="bg-slate-50 rounded-xl p-8 flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border-2 border-slate-300 group-hover:border-brand-blue transition-colors">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-heading font-bold text-slate-900">Rex Romero, MCECE</h4>
+                                <p class="text-brand-blue text-sm font-sans font-bold uppercase tracking-wider">Program Head</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group relative bg-white rounded-2xl p-1 border border-slate-200 hover:border-brand-blue/50 transition-all duration-500 reveal shadow-sm hover:shadow-md" style="transition-delay: 100ms;">
+                        <div class="bg-slate-50 rounded-xl p-8 flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border-2 border-slate-300 group-hover:border-brand-blue transition-colors">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-heading font-bold text-slate-900">Jonathan Mandia</h4>
+                                <p class="text-slate-500 text-sm font-sans font-bold uppercase tracking-wider">Professor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group relative bg-white rounded-2xl p-1 border border-slate-200 hover:border-brand-blue/50 transition-all duration-500 reveal shadow-sm hover:shadow-md" style="transition-delay: 200ms;">
+                        <div class="bg-slate-50 rounded-xl p-8 flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border-2 border-slate-300 group-hover:border-brand-blue transition-colors">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-heading font-bold text-slate-900">Gyro Madrona</h4>
+                                <p class="text-slate-500 text-sm font-sans font-bold uppercase tracking-wider">Professor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group relative bg-white rounded-2xl p-1 border border-slate-200 hover:border-brand-blue/50 transition-all duration-500 reveal shadow-sm hover:shadow-md" style="transition-delay: 300ms;">
+                        <div class="bg-slate-50 rounded-xl p-8 flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border-2 border-slate-300 group-hover:border-brand-blue transition-colors">
+                                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-heading font-bold text-slate-900">Julius Vistar</h4>
+                                <p class="text-slate-500 text-sm font-sans font-bold uppercase tracking-wider">Professor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group relative bg-white rounded-2xl p-1 border border-slate-200 hover:border-brand-blue/50 transition-all duration-500 reveal shadow-sm hover:shadow-md" style="transition-delay: 400ms;">
+                        <div class="bg-slate-50 rounded-xl p-8 flex items-center gap-6">
+                            <div class="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border-2 border-slate-300 group-hover:border-brand-blue transition-colors">
+                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            </div>
+                            <div>
+                                <h4 class="text-2xl font-heading font-bold text-slate-900">Rodelin Tolentino</h4>
+                                <p class="text-slate-500 text-sm font-sans font-bold uppercase tracking-wider">Professor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-pattern-light opacity-30"></div>
+
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="text-center mb-24 reveal">
+                <h2 class="text-5xl font-heading font-bold text-slate-900 mb-4">CORE COMMAND</h2>
+                <div class="w-24 h-1 bg-brand-blue mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-start-2 lg:row-span-2 reveal">
+                    <div class="h-full bg-white border border-slate-200 rounded-3xl overflow-hidden group relative shadow-xl hover:shadow-brand-blue/20 transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-blue/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop" class="w-full h-[400px] object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="p-8 absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white/90 to-transparent z-20">
+                            <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">President</span>
+                            <h3 class="text-3xl font-heading font-bold text-slate-900">Ian Benedict Depasucat</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Martin Soliva</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Vice President</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Rosshelle Alvarez</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Secretary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Mica Galapia</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Treasurer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Harold Perez</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">P.I.O.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Rica Galagate</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Auditor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Ernie Ogahayon</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Asst. Secretary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="reveal">
+                    <div class="bg-white border border-slate-200 p-6 rounded-2xl hover:border-brand-blue/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1974&auto=format&fit=crop" class="w-16 h-16 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <div>
+                                <h4 class="text-xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Byron Mojica</h4>
+                                <p class="text-slate-500 text-xs font-bold uppercase">Asst. Treasurer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-brand-blue relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        
+        <div class="container mx-auto relative z-10 text-center mb-12">
+            <h2 class="text-9xl font-heading font-bold text-blue-900/20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap select-none">CREATIVE MINDS</h2>
+            <h3 class="text-4xl font-heading font-bold text-white relative">THE CREATIVES</h3>
+        </div>
+
+        <div class="flex animate-marquee gap-6 mb-6 w-max hover:[animation-play-state:paused]">
+             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Onyx Villamor</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Janyn Secuelan</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Elvic Pitogo</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Angelo Portodo</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Onyx Villamor</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Janyn Secuelan</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex animate-marquee-reverse gap-6 w-max hover:[animation-play-state:paused]">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">AG Evangelista</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Jehan Chavez</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Jerow Amelo</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">AG Evangelista</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-72 flex items-center gap-4 flex-shrink-0">
+                <div class="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 font-heading text-lg">Jehan Chavez</h4>
+                    <p class="text-xs text-brand-blue font-bold uppercase">Creative</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-slate-50 relative overflow-hidden">
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 text-[10rem] md:text-[15rem] font-heading font-bold text-slate-200 pointer-events-none select-none whitespace-nowrap parallax-text z-0">
+            LEADERS
+        </div>
+
+        <div class="container mx-auto max-w-6xl relative z-10">
+            <div class="text-center mb-24 reveal">
+                <h2 class="text-4xl font-heading font-bold text-slate-900">THE REPRESENTATIVES</h2>
+                <p class="text-slate-500 mt-4">The voice of every year level.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 items-start">
+                
+                <div class="reveal group text-center mt-0 md:mt-12">
+                    <div class="relative w-full h-[450px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-left transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                            <h4 class="text-2xl font-heading font-bold text-white">Rogelio Pamposa III</h4>
+                            <span class="text-brand-blue text-sm font-bold uppercase tracking-widest">2nd Year Rep</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal group text-center mt-0 md:mt-0">
+                    <div class="relative w-full h-[450px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-left transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                            <h4 class="text-2xl font-heading font-bold text-white">Ellyssa Tombale</h4>
+                            <span class="text-brand-blue text-sm font-bold uppercase tracking-widest">3rd Year Rep</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal group text-center mt-0 md:mt-12">
+                    <div class="relative w-full h-[450px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-left transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                            <h4 class="text-2xl font-heading font-bold text-white">Yuri Mahilum</h4>
+                            <span class="text-brand-blue text-sm font-bold uppercase tracking-widest">4th Year Rep</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-slate-900 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj4xPC90ZXh0Pjwvc3ZnPg=='); mask-image: radial-gradient(circle, black 40%, transparent 100%);"></div>
+
+        <div class="container mx-auto max-w-4xl relative z-10 text-center">
+            <div class="reveal">
+                <h2 class="text-[8rem] md:text-[12rem] font-heading font-bold text-slate-800 leading-none select-none opacity-30 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">100+</h2>
+                <h2 class="text-5xl md:text-6xl font-heading font-bold text-white relative z-10 mb-8">THE HEART & SOUL</h2>
+                <p class="text-slate-300 text-lg md:text-xl font-sans leading-relaxed max-w-2xl mx-auto">
+                    We are S09, T09, and F09. A diverse collective of over 100 students united by a single passion for technology and a curiosity to build the future together.
+                </p>
+                <div class="mt-12">
+                    <a href="index.html#join" class="inline-block px-8 py-4 border border-brand-blue text-brand-blue font-bold rounded-full hover:bg-brand-blue hover:text-white transition-all duration-300">Become One of Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-slate-600 pt-20 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="index.html" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="index.html#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="news.html" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="index.html#projects" class="hover:text-brand-blue transition-colors">Projects</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-400 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans transition-transform duration-300">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    Meet the team behind Technowatch! How can I help? 🤖
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-md"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Navbar & Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() { mobileMenu.classList.toggle('translate-x-full'); document.body.classList.toggle('overflow-hidden'); }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Scroll Reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Chatbot
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            if (chatWidget.classList.contains('scale-0')) {
+                chatWidget.classList.remove('scale-0'); chatWidget.classList.add('scale-100'); chatToggleBtn.classList.remove('animate-bounce');
+            } else {
+                chatWidget.classList.remove('scale-100'); chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end animate-fade-up';
+            userDiv.innerHTML = `<div class="bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]">${msg}</div>`;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start animate-fade-up';
+                botDiv.innerHTML = `<div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">Thanks for reaching out! We are Technowatch.</div>`;
+                chatMessages.appendChild(botDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        });
+
+        // Parallax Text Effect
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const parallaxText = document.querySelector('.parallax-text');
+            if(parallaxText) {
+                parallaxText.style.transform = `translate(-50%, ${scrollY * 0.2}px)`;
+            }
+        });
+    </script>
+</body>
+</html>

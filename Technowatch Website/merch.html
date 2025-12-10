@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merch | Technowatch</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff',       
+                            dark: '#0f172a',       
+                            cleanblue: '#3b82f6',  
+                            accent: '#0ea5e9',     
+                            text: '#334155',       
+                            light: '#f0f9ff',      
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 60px -15px rgba(0, 123, 255, 0.15)',
+                        'hover-lift': '0 30px 60px -10px rgba(0, 123, 255, 0.25)',
+                        'modal': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz4KPC9zdmc+')",
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.8s cubic-bezier(0.2, 1, 0.2, 1) forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    },
+                    letterSpacing: {
+                        'tighter-custom': '-0.05em',
+                    },
+                    fontSize: {
+                        '10xl': '10rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #ffffff; color: #334155; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+        
+        /* Smooth Reveal on Scroll */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 1, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .big-condensed-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800; 
+            letter-spacing: -0.05em; 
+            line-height: 0.85;
+        }
+
+        /* Fixed Background Pattern for Parallax Context */
+        #tech-bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 150%; 
+            pointer-events: none; z-index: -1; opacity: 0.08; 
+            will-change: transform; transition: transform 0.1s linear;
+        }
+
+        /* 3D Holographic Tilt */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; 
+            will-change: transform;
+        }
+        
+        .tilt-content {
+            transform: translateZ(30px);
+        }
+
+        /* Modern Modal Transitions */
+        #modal-overlay { transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        #modal-content { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-in-out; }
+        
+        .modal-open #modal-overlay { opacity: 1; pointer-events: auto; }
+        .modal-open #modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        
+        .modal-closed #modal-overlay { opacity: 0; pointer-events: none; }
+        .modal-closed #modal-content { transform: scale(0.9) translateY(20px); opacity: 0; }
+
+        /* Button Shine Effect */
+        .btn-modern { position: relative; overflow: hidden; }
+        .btn-modern::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%); transition: transform 0.6s ease;
+        }
+        .btn-modern:hover::after { transform: translateX(100%); }
+
+    </style>
+</head>
+<body class="antialiased relative bg-white">
+
+    <!-- Parallax Background SVG -->
+    <svg id="tech-bg-pattern" viewBox="0 0 1440 1024" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#007bff;stop-opacity:0.05" />
+                <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+            </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grad1)" />
+        <circle cx="100" cy="100" r="2" fill="#007bff" opacity="0.1"/>
+        <circle cx="1340" cy="500" r="2" fill="#007bff" opacity="0.1"/>
+        <circle cx="720" cy="800" r="400" fill="url(#grad1)" opacity="0.3" filter="url(#blurMe)"/>
+    </svg>
+
+    <!-- Navbar -->
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white/80 backdrop-blur-lg shadow-lg border border-white/50 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 w-fit max-w-[95%]" id="navbar">
+            <a href="index.html#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html#home" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="about.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">About Us</a>
+                <a href="news.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">News</a>
+                <a href="index.html#events" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Events</a>
+                <a href="index.html#projects" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="index.html#members" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Members</a>
+                <a href="#" class="px-3 py-2 text-sm font-bold font-sans text-brand-blue bg-blue-50 rounded-lg transition-all whitespace-nowrap">Merch</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html#join" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-600 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap btn-modern">
+                    Join Us
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html#home" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="about.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">About Us</a>
+        <a href="news.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">News</a>
+        <a href="index.html#events" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Events</a>
+        <a href="#" class="text-2xl font-heading font-bold text-brand-blue mobile-link">Merch</a>
+        <a href="index.html#join" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Join Us</a>
+    </div>
+
+    <!-- HERO SECTION (Mouse Parallax) -->
+    <section class="pt-40 pb-20 px-6 relative overflow-hidden bg-white" id="hero-section">
+        <!-- Floating Elements (Parallax Targets) -->
+        <div class="absolute inset-0 bg-grid-pattern opacity-30 parallax-layer" data-speed="0.5"></div>
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-blue/5 rounded-full blur-[100px] animate-pulse parallax-layer" data-speed="-0.2"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-400/5 rounded-full blur-[100px] animate-pulse animation-delay-2000 parallax-layer" data-speed="0.3"></div>
+        
+        <!-- Floating Geometric Shapes -->
+        <div class="absolute top-32 left-20 w-8 h-8 border-2 border-brand-blue rounded-full animate-float parallax-layer" data-speed="0.8"></div>
+        <div class="absolute bottom-40 right-32 w-12 h-12 bg-blue-100/50 rotate-45 rounded-xl animate-float-delayed parallax-layer" data-speed="-0.6"></div>
+
+        <div class="container mx-auto max-w-5xl text-center relative z-10">
+            <div class="flex flex-col items-center reveal pt-4">
+                <div class="inline-block mb-4 px-4 py-1 border border-brand-blue/30 rounded-full bg-blue-50 text-brand-blue text-xs font-bold tracking-[0.2em] animate-fade-up">
+                    OFFICIAL COLLECTION 2025
+                </div>
+                <h1 class="big-condensed-text text-[5rem] md:text-[8rem] text-slate-900 mb-6 leading-[0.85] parallax-layer" data-speed="0.1">
+                    GEAR <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-cyan-400 shuffle-text" data-value="UP">UP</span>
+                </h1>
+                <p class="font-sans text-slate-500 text-lg max-w-xl mx-auto animate-fade-up" style="animation-delay: 0.2s;">
+                    Wear the innovation. Premium apparel and accessories designed for the modern engineer.
+                </p>
+                
+                <div class="mt-10 animate-fade-up" style="animation-delay: 0.3s;">
+                    <i class="fa-solid fa-arrow-down text-brand-blue text-2xl animate-bounce"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT 1: TECHNWATCH SHIRT (3D Tilt Clean) -->
+    <section class="py-24 px-6 relative">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- 3D Tilt Card -->
+                <div class="relative group reveal perspective-1000 tilt-card-container">
+                    <!-- Soft Glow Background -->
+                    <div class="absolute inset-0 bg-brand-blue/5 rounded-3xl transform scale-95 group-hover:scale-105 transition-transform duration-500"></div>
+                    
+                    <!-- The Card -->
+                    <div class="relative h-[550px] bg-white rounded-2xl overflow-hidden shadow-soft group-hover:shadow-hover-lift transition-all duration-300 z-10 tilt-card border border-slate-100">
+                        
+                        <!-- Image -->
+                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1780&auto=format&fit=crop" 
+                             alt="Technowatch Shirt" 
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 tilt-content">
+                        
+                        <!-- Clean Glass Overlay -->
+                        <div class="absolute bottom-0 left-0 w-full bg-white/80 backdrop-blur-md border-t border-white/50 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] tilt-content">
+                            <h4 class="font-heading font-bold text-xl text-slate-900 mb-2">Technowatch Official Tee</h4>
+                            <div class="flex justify-between text-xs font-mono text-slate-500">
+                                <span>100% Cotton</span>
+                                <span>Silk Screen</span>
+                                <span>Regular Fit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Price Tag -->
+                    <div class="absolute top-6 right-6 bg-white/90 backdrop-blur text-slate-900 font-bold font-heading text-lg px-4 py-2 rounded-lg shadow-lg z-30 tilt-content border border-slate-100">
+                        ₱350
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div class="reveal" style="transition-delay: 200ms;">
+                    <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">Signature Series</span>
+                    <h2 class="text-5xl font-heading font-bold text-slate-900 mb-6">WHITE <br> SIGNATURE TEE</h2>
+                    <p class="text-slate-500 text-lg mb-8 leading-relaxed">
+                        Represent the organization with our signature white tee. Featuring the classic Technowatch emblem, designed for comfort during long coding sessions and lab works. Minimalist design for maximum versatility.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="openModal('technowatch-shirt')" class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-brand-blue transition-all shadow-lg btn-modern">
+                            Pre-Order Now
+                        </button>
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> In Stock
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCT 2: COMPTECH SHIRT (3D Tilt Clean) -->
+    <section class="py-24 px-6 bg-slate-50 border-t border-slate-100">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Details -->
+                <div class="order-2 lg:order-1 reveal">
+                    <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">Department Merch</span>
+                    <h2 class="text-5xl font-heading font-bold text-slate-900 mb-6">COMPTECH <br> DRI-FIT JERSEY</h2>
+                    <p class="text-slate-500 text-lg mb-8 leading-relaxed">
+                        The official uniform of the Computer Engineering Technology department. Sleek black design with modern circuitry aesthetics sublimated on premium breathable fabric.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="openModal('comptech-shirt')" class="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-brand-blue transition-all shadow-lg btn-modern">
+                            Pre-Order Now
+                        </button>
+                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                             <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span> Batch 1 Closing Soon
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Image Container -->
+                <div class="order-1 lg:order-2 relative group reveal perspective-1000 tilt-card-container" style="transition-delay: 200ms;">
+                    <div class="absolute inset-0 bg-slate-200/50 rounded-3xl transform scale-95 group-hover:scale-105 transition-transform duration-500"></div>
+                    
+                    <div class="relative h-[550px] bg-white rounded-2xl overflow-hidden shadow-soft group-hover:shadow-hover-lift transition-all duration-300 z-10 tilt-card border border-slate-100">
+                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1887&auto=format&fit=crop" 
+                             alt="Comptech Shirt" 
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 tilt-content">
+                        
+                        <div class="absolute bottom-0 left-0 w-full bg-white/80 backdrop-blur-md border-t border-white/50 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] tilt-content">
+                            <h4 class="font-heading font-bold text-xl text-slate-900 mb-2">Comptech Dept. Jersey</h4>
+                            <div class="flex justify-between text-xs font-mono text-slate-500">
+                                <span>Dri-Fit</span>
+                                <span>Sublimated</span>
+                                <span>Sport Fit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="absolute top-6 left-6 bg-white/90 backdrop-blur text-slate-900 font-bold font-heading text-lg px-4 py-2 rounded-lg shadow-lg z-30 tilt-content border border-slate-100">
+                        ₱400
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCESSORIES GRID (Pins) -->
+    <section class="py-32 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-pattern opacity-20 parallax-layer" data-speed="0.2"></div>
+        
+        <div class="container mx-auto max-w-5xl relative z-10">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl font-bold font-heading text-slate-900">ACCESSORIES</h2>
+                <p class="text-slate-500 mt-2">Small details, big statement.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Item 3 -->
+                <div onclick="openModal('technowatch-pin')" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft hover:shadow-hover-lift hover:-translate-y-2 transition-all duration-500 group reveal cursor-pointer">
+                    <div class="h-64 bg-slate-50 rounded-2xl overflow-hidden relative mb-6 group-hover:ring-4 ring-brand-blue/10 transition-all">
+                        <img src="https://images.unsplash.com/photo-1615235066413-d3013d368070?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 bg-white/80 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Pin</div>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <h4 class="text-2xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Technowatch Pin</h4>
+                            <p class="text-slate-500 text-sm font-mono">Enamel • Magnetic Back</p>
+                        </div>
+                        <span class="text-2xl font-heading font-bold text-brand-blue">₱150</span>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div onclick="openModal('comptech-pin')" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft hover:shadow-hover-lift hover:-translate-y-2 transition-all duration-500 group reveal cursor-pointer" style="transition-delay: 100ms;">
+                    <div class="h-64 bg-slate-50 rounded-2xl overflow-hidden relative mb-6 group-hover:ring-4 ring-brand-blue/10 transition-all">
+                        <img src="https://images.unsplash.com/photo-1633525403728-77d23461542d?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 bg-white/80 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">Pin</div>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <h4 class="text-2xl font-heading font-bold text-slate-900 group-hover:text-brand-blue transition-colors">Comptech Pin</h4>
+                            <p class="text-slate-500 text-sm font-mono">Matte Finish • Locking Clasp</p>
+                        </div>
+                        <span class="text-2xl font-heading font-bold text-brand-blue">₱150</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL CONTAINER -->
+    <div id="modal-container" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none modal-closed">
+        <!-- Backdrop -->
+        <div id="modal-overlay" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
+        
+        <!-- Modal Card -->
+        <div id="modal-content" class="relative bg-white w-full max-w-lg rounded-3xl shadow-modal p-8 z-10 mx-4 border border-white/50">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Dynamic Content -->
+            <div class="flex gap-6 mb-8">
+                <div class="w-28 h-28 rounded-2xl bg-slate-100 flex-shrink-0 overflow-hidden shadow-inner">
+                    <img id="modal-img" src="" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 id="modal-title" class="text-2xl font-heading font-bold text-slate-900 mb-1">Product Name</h3>
+                    <p id="modal-price" class="text-brand-blue font-bold text-xl mb-2">₱0.00</p>
+                    <p id="modal-desc" class="text-sm text-slate-500 leading-relaxed">Product description goes here.</p>
+                </div>
+            </div>
+
+            <!-- Form Inputs -->
+            <form onsubmit="event.preventDefault(); alert('Pre-order submitted! We will contact you soon.'); closeModal();">
+                
+                <!-- Size Selector (Hidden for Pins) -->
+                <div id="size-selector" class="mb-6">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Select Size</label>
+                    <div class="flex gap-3">
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="size" value="S" class="peer sr-only">
+                            <div class="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 hover:border-brand-blue transition-all shadow-sm">S</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="size" value="M" class="peer sr-only">
+                            <div class="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 hover:border-brand-blue transition-all shadow-sm">M</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="size" value="L" class="peer sr-only">
+                            <div class="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 hover:border-brand-blue transition-all shadow-sm">L</div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="size" value="XL" class="peer sr-only">
+                            <div class="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 peer-checked:bg-slate-900 peer-checked:text-white peer-checked:border-slate-900 hover:border-brand-blue transition-all shadow-sm">XL</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="mb-8">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Quantity</label>
+                    <div class="flex items-center border border-slate-200 rounded-xl w-fit overflow-hidden shadow-sm">
+                        <button type="button" class="w-12 h-12 text-slate-500 hover:bg-slate-50 hover:text-brand-blue transition-colors" onclick="this.nextElementSibling.stepDown()">-</button>
+                        <input type="number" min="1" value="1" class="w-12 text-center text-slate-900 font-bold focus:outline-none">
+                        <button type="button" class="w-12 h-12 text-slate-500 hover:bg-slate-50 hover:text-brand-blue transition-colors" onclick="this.previousElementSibling.stepUp()">+</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-blue text-white py-4 rounded-xl font-bold hover:bg-blue-600 shadow-lg hover:shadow-blue-500/30 transition-all btn-modern">
+                    Confirm Pre-Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white text-slate-600 pt-20 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="index.html" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="index.html#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="news.html" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Merch</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-400 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans transition-transform duration-300">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    Welcome to the <strong>Merch Store</strong>! 🛍️
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-md"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Navbar & Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() { mobileMenu.classList.toggle('translate-x-full'); document.body.classList.toggle('overflow-hidden'); }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Scroll Reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Text Scramble
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+        function scrambleText(target) {
+            let iterations = 0;
+            const originalText = target.dataset.value;
+            const interval = setInterval(() => {
+                target.innerText = originalText.split("")
+                    .map((letter, index) => {
+                        if(index < iterations) return originalText[index];
+                        return letters[Math.floor(Math.random() * 46)];
+                    })
+                    .join("");
+                if(iterations >= originalText.length) clearInterval(interval);
+                iterations += 1 / 3; 
+            }, 30);
+        }
+        const textTargets = document.querySelectorAll('.shuffle-text');
+        textTargets.forEach(el => scrambleText(el));
+
+        // Chatbot
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            if (chatWidget.classList.contains('scale-0')) {
+                chatWidget.classList.remove('scale-0'); chatWidget.classList.add('scale-100'); chatToggleBtn.classList.remove('animate-bounce');
+            } else {
+                chatWidget.classList.remove('scale-100'); chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end animate-fade-up';
+            userDiv.innerHTML = `<div class="bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]">${msg}</div>`;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start animate-fade-up';
+                botDiv.innerHTML = `<div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">Looking for a specific size?</div>`;
+                chatMessages.appendChild(botDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        });
+
+        // --- NEW FEATURES: PARALLAX, TILT, MODAL ---
+
+        // 1. Mouse Parallax for Hero
+        document.addEventListener('mousemove', (e) => {
+            const layers = document.querySelectorAll('.parallax-layer');
+            layers.forEach(layer => {
+                const speed = layer.getAttribute('data-speed');
+                const x = (window.innerWidth - e.pageX * speed) / 100;
+                const y = (window.innerHeight - e.pageY * speed) / 100;
+                layer.style.transform = `translateX(${x}px) translateY(${y}px)`;
+            });
+        });
+
+        // 2. 3D Tilt Effect
+        const tiltContainers = document.querySelectorAll('.tilt-card-container');
+        tiltContainers.forEach(container => {
+            const card = container.querySelector('.tilt-card');
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Calculate rotation (limit to +/- 10 deg)
+                const xRotation = -((y - rect.height/2) / rect.height * 20);
+                const yRotation = (x - rect.width/2) / rect.width * 20;
+                
+                card.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        });
+
+        // 3. Dynamic Modals
+        const modalContainer = document.getElementById('modal-container');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalPrice = document.getElementById('modal-price');
+        const modalDesc = document.getElementById('modal-desc');
+        const sizeSelector = document.getElementById('size-selector');
+
+        const products = {
+            'technowatch-shirt': {
+                title: 'Technowatch Official Tee',
+                price: '₱350.00',
+                desc: 'Premium cotton, silk screen print. The standard issue for every member.',
+                img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1780&auto=format&fit=crop',
+                hasSize: true
+            },
+            'comptech-shirt': {
+                title: 'Comptech Dept Shirt',
+                price: '₱400.00',
+                desc: 'Full sublimation dri-fit jersey. Designed for comfort and style.',
+                img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1887&auto=format&fit=crop',
+                hasSize: true
+            },
+            'technowatch-pin': {
+                title: 'Technowatch Pin',
+                price: '₱150.00',
+                desc: 'Die-cast enamel pin with magnetic backing. 1.5 inch diameter.',
+                img: 'https://images.unsplash.com/photo-1615235066413-d3013d368070?q=80&w=1974&auto=format&fit=crop',
+                hasSize: false
+            },
+            'comptech-pin': {
+                title: 'Comptech Pin',
+                price: '₱150.00',
+                desc: 'Matte finish metal pin. Perfect for lanyards and bags.',
+                img: 'https://images.unsplash.com/photo-1633525403728-77d23461542d?q=80&w=2070&auto=format&fit=crop',
+                hasSize: false
+            }
+        };
+
+        function openModal(productId) {
+            const product = products[productId];
+            if(!product) return;
+
+            modalTitle.innerText = product.title;
+            modalPrice.innerText = product.price;
+            modalDesc.innerText = product.desc;
+            modalImg.src = product.img;
+            
+            // Show/Hide Size Selector
+            if(product.hasSize) {
+                sizeSelector.style.display = 'block';
+            } else {
+                sizeSelector.style.display = 'none';
+            }
+
+            modalContainer.classList.remove('modal-closed');
+            modalContainer.classList.add('modal-open');
+        }
+
+        function closeModal() {
+            modalContainer.classList.remove('modal-open');
+            modalContainer.classList.add('modal-closed');
+        }
+
+    </script>
+</body>
+</html>

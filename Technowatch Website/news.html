@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsroom | Technowatch</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff',       // Primary Blue
+                            dark: '#0f172a',       // Dark Blue/Slate
+                            cleanblue: '#3b82f6',  // Lighter Blue
+                            accent: '#0ea5e9',     // Sky Blue
+                            text: '#334155',       // Blue-Grey Text
+                            light: '#f0f9ff',      // Very Light Blue tint background
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -10px rgba(0, 123, 255, 0.1)',
+                        'tech-glow': '0 0 15px rgba(0, 123, 255, 0.2)',
+                        'card-shadow': '0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.6s ease-out forwards',
+                        'scan': 'scanDown 1.5s linear infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scanDown: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        }
+                    },
+                    letterSpacing: {
+                        'tighter-custom': '-0.05em',
+                    },
+                    fontSize: {
+                        '10xl': '10rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #ffffff; color: #334155; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .rounded-xl-custom { border-radius: 1.5rem; }
+        
+        .big-condensed-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800; 
+            letter-spacing: -0.05em; 
+            line-height: 0.85;
+        }
+
+        #tech-bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 150%; 
+            pointer-events: none; z-index: -1; opacity: 0.08; 
+            color: #007bff; will-change: transform; transition: transform 0.1s linear;
+        }
+
+        /* TECH CORNER HUD STYLES (News Section) */
+        .tech-card-corners::before, .tech-card-corners::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            transition: all 0.3s ease; opacity: 0; border-color: #007bff;
+        }
+        .tech-card-corners::before { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+        .tech-card-corners::after { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+        
+        .tech-card:hover .tech-card-corners::before,
+        .tech-card:hover .tech-card-corners::after { opacity: 1; width: 30px; height: 30px; }
+
+        .tech-card-corners-inverse::before, .tech-card-corners-inverse::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            transition: all 0.3s ease; opacity: 0; border-color: #007bff;
+        }
+        .tech-card-corners-inverse::before { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
+        .tech-card-corners-inverse::after { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
+
+        .tech-card:hover .tech-card-corners-inverse::before,
+        .tech-card:hover .tech-card-corners-inverse::after { opacity: 1; width: 30px; height: 30px; }
+
+        /* CAROUSEL ANIMATIONS */
+        .highlight-slide {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .highlight-slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .highlight-slide.active .stagger-1 { animation: fadeUp 0.6s 0.1s forwards; opacity: 0; }
+        .highlight-slide.active .stagger-2 { animation: fadeUp 0.6s 0.2s forwards; opacity: 0; }
+        .highlight-slide.active .stagger-3 { animation: fadeUp 0.6s 0.3s forwards; opacity: 0; }
+        .highlight-slide.active .stagger-4 { animation: fadeUp 0.6s 0.4s forwards; opacity: 0; }
+
+    </style>
+</head>
+<body class="antialiased relative bg-white">
+
+    <svg id="tech-bg-pattern" viewBox="0 0 1440 1024" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+            <path d="M100 0 V1024 M300 0 V1024 M500 0 V1024 M700 0 V1024 M900 0 V1024 M1100 0 V1024 M1300 0 V1024" opacity="0.5"/>
+            <path d="M0 100 H1440 M0 300 H1440 M0 500 H1440 M0 700 H1440 M0 900 H1440" opacity="0.5"/>
+            <path d="M100 100 L300 300 M300 100 L100 300 M500 300 L700 500 M700 300 L500 500 M900 500 L1100 700 M1100 500 L900 700"/>
+            <circle cx="100" cy="100" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="500" cy="500" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="700" cy="700" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="900" cy="900" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="1100" cy="100" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="1300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <path d="M100 500 H200 V600 H300" stroke-width="3"/>
+            <path d="M1300 500 H1200 V400 H1100" stroke-width="3"/>
+            <path d="M700 100 V200 H800 V300" stroke-width="3"/>
+        </g>
+    </svg>
+
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white shadow-lg border border-slate-100 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 ease-out transform hover:scale-[1.002] w-fit max-w-[95%]" id="navbar">
+            <a href="index.html#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html#home" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="about.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">About Us</a>
+                <a href="#" class="px-3 py-2 text-sm font-bold font-sans text-brand-blue bg-blue-50 rounded-lg transition-all whitespace-nowrap">News</a>
+                <a href="index.html#events" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Events</a>
+                <a href="index.html#projects" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="index.html#members" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Members</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html#join" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap">
+                    Join Us
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html#home" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="about.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">About Us</a>
+        <a href="#" class="text-2xl font-heading font-bold text-brand-blue mobile-link">News</a>
+        <a href="index.html#projects" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Projects</a>
+        <a href="index.html#join" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Join Us</a>
+    </div>
+
+    <section class="pt-40 pb-16 px-6 relative" id="news-intro">
+        <div class="container mx-auto max-w-5xl text-center relative z-10">
+            <div class="flex flex-col items-center reveal pt-4">
+                <h1 class="big-condensed-text text-[4rem] md:text-[6rem] text-slate-900 mb-6 leading-none">
+                    <span id="hero-line-1" class="block shuffle-text" data-value="LATEST">LATEST</span>
+                    <span id="hero-line-2" class="text-brand-blue block shuffle-text" data-value="UPDATES">UPDATES</span>
+                </h1>
+                <p class="font-sans text-slate-500 text-base leading-relaxed max-w-2xl mt-6">
+                    Stay connected with the pulse of Technowatch. From workshops to hackathons, here is what’s happening in our community.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 pb-20">
+        <div class="container mx-auto max-w-7xl">
+            <div class="reveal">
+                <div class="relative bg-white rounded-2xl shadow-xl shadow-slate-200 border border-slate-100 overflow-hidden group tech-card">
+                    <div class="absolute inset-0 z-20 pointer-events-none p-2 tech-card-corners"></div>
+                    <div class="absolute inset-0 z-20 pointer-events-none p-2 tech-card-corners-inverse"></div>
+
+                    <div class="grid lg:grid-cols-2 relative z-10">
+                        <div class="relative h-[400px] lg:h-auto overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" 
+                                 alt="Featured News" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/30 to-transparent -translate-y-full group-hover:animate-scan z-10 pointer-events-none"></div>
+                            <div class="absolute top-6 left-6 bg-brand-blue text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg z-20">
+                                Featured
+                            </div>
+                        </div>
+                        <div class="p-10 lg:p-16 flex flex-col justify-center bg-white group-hover:bg-blue-50/30 transition-colors">
+                            <div class="flex items-center gap-3 mb-4 text-sm text-slate-400 font-sans">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>November 22, 2025</span>
+                                <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                <span>Workshops</span>
+                            </div>
+                            <h2 class="text-4xl font-heading font-bold text-slate-900 mb-6 leading-tight group-hover:text-brand-blue transition-colors">
+                                Technowatch Hosts Annual 'Code & Connect' Hackathon at TUPV
+                            </h2>
+                            <p class="text-slate-600 font-sans leading-relaxed mb-8">
+                                Over 100 Computer Engineering students gathered this weekend for our biggest event of the year. Teams competed to build innovative IoT solutions for campus sustainability.
+                            </p>
+                            <a href="#" class="inline-flex items-center gap-2 text-brand-blue font-bold font-sans hover:gap-4 transition-all">
+                                Read Full Story <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 pb-24 bg-white border-t border-b border-slate-100">
+        <div class="container mx-auto max-w-7xl py-10">
+            <div class="flex items-center justify-between mb-12 reveal">
+                <div>
+                    <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">What's Happening</span>
+                    <h2 class="text-4xl font-bold font-heading text-slate-900">Club News</h2>
+                </div>
+                <div class="hidden md:flex gap-2">
+                    <button class="slider-dot w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-blue-200" onclick="prevBatch()"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="slider-dot w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-blue-200" onclick="nextBatch()"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="relative overflow-hidden reveal" id="news-slider-container">
+                <div id="news-track" class="flex transition-all duration-700 ease-out w-full">
+                    <div class="min-w-full w-full flex-shrink-0 grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-1 news-batch">
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0 animate-fade-up" style="animation-delay: 0.1s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Recruitment</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Oct 30, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">New Officer Elections Results</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">Congratulations to the newly elected executive board for the 2025-2026 academic year.</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0 animate-fade-up" style="animation-delay: 0.2s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Tech</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Oct 25, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">Workshop: Intro to Arduino</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">Join us this Friday at the CpE Lab for a hands-on session with Arduino microcontrollers.</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0 animate-fade-up" style="animation-delay: 0.3s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Projects</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Oct 15, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">Project Spotlight: Smart Campus</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">A look into the 'Smart Campus' thesis project developed by our senior members.</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="min-w-full w-full flex-shrink-0 grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-1 news-batch">
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0" style="animation-delay: 0.1s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Partnership</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Sep 20, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">New Industry Partnership</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">Technowatch is proud to partner with local tech firms to provide internship opportunities.</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0" style="animation-delay: 0.2s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Events</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Sep 10, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">General Assembly 2025</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">Recap of our General Assembly. It was great seeing fresh faces ready to innovate!</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                        <article class="bg-white rounded-xl shadow-sm hover:shadow-tech-glow hover:-translate-y-2 transition-all duration-500 border border-slate-100 overflow-hidden group tech-card flex flex-col h-full relative opacity-0" style="animation-delay: 0.3s;">
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners"></div>
+                            <div class="absolute inset-0 z-20 pointer-events-none p-1.5 tech-card-corners-inverse"></div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-400/40 to-transparent -translate-y-full group-hover:animate-scan z-10"></div>
+                                <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-slate-700 z-20">Achievement</div>
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col bg-white relative z-10">
+                                <span class="text-xs text-slate-400 font-sans mb-3 block">Aug 30, 2025</span>
+                                <h3 class="text-xl font-bold font-heading text-slate-900 mb-3 group-hover:text-brand-blue transition-colors">Regional Robotics Champions</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-1">Our robotics team took home the gold at the Western Visayas Tech Summit.</p>
+                                <a href="#" class="text-sm font-bold text-brand-blue flex items-center gap-2 group/link">Read More <i class="fa-solid fa-chevron-right text-xs transition-transform group-hover/link:translate-x-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt-24 pb-56 px-6 bg-blue-50 relative overflow-hidden">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            
+            <div class="text-center mb-16 reveal">
+                <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">Excellence in Action</span>
+                <h2 class="text-5xl font-bold font-heading text-slate-900 mb-4">Student Highlights</h2>
+                <p class="text-slate-500 text-sm font-sans max-w-2xl mx-auto">
+                    Celebrating the innovative projects and academic achievements of our top performing members.
+                </p>
+            </div>
+
+            <div class="relative max-w-5xl mx-auto h-[600px] reveal" id="highlight-carousel">
+                
+                <button onclick="prevHighlight()" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-16 z-30 w-12 h-12 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-brand-blue shadow-lg hover:scale-110 transition-all">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button onclick="nextHighlight()" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-16 z-30 w-12 h-12 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-brand-blue shadow-lg hover:scale-110 transition-all">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <div class="highlight-slide active" data-index="0">
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-card-shadow h-full flex flex-col">
+                        <div class="relative h-[350px] md:h-[400px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-1000 hover:scale-105">
+                            <div class="absolute top-6 left-6 bg-white/95 backdrop-blur text-brand-blue text-xs font-bold px-4 py-1.5 rounded shadow-sm stagger-1">
+                                FEATURED PROJECT
+                            </div>
+                        </div>
+                        <div class="p-8 md:p-12 flex-1 flex flex-col justify-center">
+                            <div class="flex flex-col md:flex-row md:items-center gap-6 mb-6 border-b border-slate-100 pb-6 stagger-2">
+                                <div class="flex items-center gap-4">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2000&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-white shadow-md object-cover">
+                                    <div>
+                                        <h3 class="text-2xl font-bold font-heading text-slate-900">Mark Jayson Cruz</h3>
+                                        <p class="text-slate-500 text-sm font-sans font-medium">4th Year • Comp. Tech.</p>
+                                    </div>
+                                </div>
+                                <div class="md:ml-auto">
+                                    <span class="bg-green-50 text-green-700 px-4 py-2 rounded-full text-xs font-bold border border-green-100">Best Thesis 2025</span>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-slate-800 mb-4 stagger-3">Automated Hydroponics System via IoT</h4>
+                            <p class="text-slate-500 text-base leading-relaxed mb-8 stagger-3">
+                                Designed and prototyped a fully automated agricultural system that monitors pH levels, temperature, and nutrient flow in real-time using Arduino and Firebase.
+                            </p>
+                            <div class="flex gap-2 flex-wrap stagger-4">
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">IoT</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">C++</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Firebase</span>
+                            </div>
+                        </div>
+                        <div class="h-1.5 bg-slate-100 w-full mt-auto">
+                            <div class="h-full bg-brand-blue animate-progress origin-left"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-slide" data-index="1">
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-card-shadow h-full flex flex-col">
+                        <div class="relative h-[350px] md:h-[400px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-1000 hover:scale-105">
+                            <div class="absolute top-6 left-6 bg-white/95 backdrop-blur text-brand-blue text-xs font-bold px-4 py-1.5 rounded shadow-sm stagger-1">
+                                DESIGN AWARD
+                            </div>
+                        </div>
+                        <div class="p-8 md:p-12 flex-1 flex flex-col justify-center">
+                            <div class="flex flex-col md:flex-row md:items-center gap-6 mb-6 border-b border-slate-100 pb-6 stagger-2">
+                                <div class="flex items-center gap-4">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-white shadow-md object-cover">
+                                    <div>
+                                        <h3 class="text-2xl font-bold font-heading text-slate-900">Sarah Lee</h3>
+                                        <p class="text-slate-500 text-sm font-sans font-medium">3rd Year • Comp. Tech.</p>
+                                    </div>
+                                </div>
+                                <div class="md:ml-auto">
+                                    <span class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-xs font-bold border border-blue-100">1st Runner Up</span>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-slate-800 mb-4 stagger-3">Accessibility First: Campus Nav App</h4>
+                            <p class="text-slate-500 text-base leading-relaxed mb-8 stagger-3">
+                                Created a high-fidelity prototype for a mobile application helping visually impaired students navigate the TUPV campus using audio cues and haptic feedback.
+                            </p>
+                            <div class="flex gap-2 flex-wrap stagger-4">
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">UI/UX</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Figma</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Prototyping</span>
+                            </div>
+                        </div>
+                        <div class="h-1.5 bg-slate-100 w-full mt-auto"></div>
+                    </div>
+                </div>
+
+                <div class="highlight-slide" data-index="2">
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-card-shadow h-full flex flex-col">
+                        <div class="relative h-[350px] md:h-[400px] flex-shrink-0 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=1998&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-1000 hover:scale-105">
+                            <div class="absolute top-6 left-6 bg-white/95 backdrop-blur text-brand-blue text-xs font-bold px-4 py-1.5 rounded shadow-sm stagger-1">
+                                HACKATHON WINNERS
+                            </div>
+                        </div>
+                        <div class="p-8 md:p-12 flex-1 flex flex-col justify-center">
+                            <div class="flex flex-col md:flex-row md:items-center gap-6 mb-6 border-b border-slate-100 pb-6 stagger-2">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 rounded-full border-2 border-white shadow-md bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-400">CN</div>
+                                    <div>
+                                        <h3 class="text-2xl font-bold font-heading text-slate-900">Team CyberNodes</h3>
+                                        <p class="text-slate-500 text-sm font-sans font-medium">Mixed Year Levels</p>
+                                    </div>
+                                </div>
+                                <div class="md:ml-auto">
+                                    <span class="bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-xs font-bold border border-purple-100">National Finalists</span>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-slate-800 mb-4 stagger-3">SecureGrid: Blockchain Voting</h4>
+                            <p class="text-slate-500 text-base leading-relaxed mb-8 stagger-3">
+                                Developed a decentralized voting system prototype ensuring transparency and security for student council elections, praised for its robust backend architecture.
+                            </p>
+                            <div class="flex gap-2 flex-wrap stagger-4">
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Blockchain</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Python</span>
+                                <span class="px-4 py-1.5 bg-slate-100 text-xs text-slate-600 rounded-full font-bold border border-slate-200">Security</span>
+                            </div>
+                        </div>
+                        <div class="h-1.5 bg-slate-100 w-full mt-auto"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-slate-600 pt-12 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="index.html" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="index.html#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="index.html#projects" class="hover:text-brand-blue transition-colors">Projects</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-400 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans transition-transform duration-300">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    Welcome to the <strong>Newsroom</strong>! Check out our latest events and updates. 📰
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-md"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Navbar & Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() { mobileMenu.classList.toggle('translate-x-full'); document.body.classList.toggle('overflow-hidden'); }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Scroll Reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Chatbot Logic
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            if (chatWidget.classList.contains('scale-0')) {
+                chatWidget.classList.remove('scale-0'); chatWidget.classList.add('scale-100'); chatToggleBtn.classList.remove('animate-bounce');
+            } else {
+                chatWidget.classList.remove('scale-100'); chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end animate-fade-up';
+            userDiv.innerHTML = `<div class="bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]">${msg}</div>`;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start animate-fade-up';
+                botDiv.innerHTML = `<div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">Thanks for reaching out! We are Technowatch.</div>`;
+                chatMessages.appendChild(botDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        });
+
+        // Parallax Background
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const techBg = document.getElementById('tech-bg-pattern');
+            if (techBg) {
+                techBg.style.transform = `translateY(${scrollY * -0.15}px)`;
+            }
+        });
+
+        // -----------------------------------------------------------------
+        // TEXT SCRAMBLE LOGIC
+        // -----------------------------------------------------------------
+        
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+        
+        function scrambleText(target) {
+            let iterations = 0;
+            const originalText = target.dataset.value;
+            
+            const interval = setInterval(() => {
+                target.innerText = originalText.split("")
+                    .map((letter, index) => {
+                        if(index < iterations) {
+                            return originalText[index];
+                        }
+                        return letters[Math.floor(Math.random() * 46)];
+                    })
+                    .join("");
+                
+                if(iterations >= originalText.length) { 
+                    clearInterval(interval);
+                }
+                
+                iterations += 1 / 3; 
+            }, 30);
+        }
+
+        // Hero Cycle Logic
+        const heroLine1 = document.getElementById('hero-line-1');
+        const heroLine2 = document.getElementById('hero-line-2');
+        
+        const heroPhrases = [
+            { top: "LATEST", bottom: "UPDATES" },
+            { top: "CLUB", bottom: "NEWS" },
+            { top: "STUDENT", bottom: "HIGHLIGHTS" }
+        ];
+        
+        let phraseIndex = 0;
+
+        function cycleHeroText() {
+            phraseIndex = (phraseIndex + 1) % heroPhrases.length;
+            
+            heroLine1.dataset.value = heroPhrases[phraseIndex].top;
+            heroLine2.dataset.value = heroPhrases[phraseIndex].bottom;
+            
+            scrambleText(heroLine1);
+            scrambleText(heroLine2);
+        }
+
+        setInterval(cycleHeroText, 4000);
+        scrambleText(heroLine1);
+        scrambleText(heroLine2);
+
+
+        // -----------------------------------------------------------------
+        // BATCH SLIDER LOGIC (NEWS SECTION)
+        // -----------------------------------------------------------------
+        let currentBatch = 0;
+        const totalBatches = 2; 
+        const track = document.getElementById('news-track');
+        const dots = document.querySelectorAll('.slider-dot');
+
+        function updateSliderUI() {
+            track.style.transform = `translateX(-${currentBatch * 100}%)`;
+            track.classList.add('blur-sm');
+            setTimeout(() => track.classList.remove('blur-sm'), 400);
+
+            if(dots.length) {
+                dots.forEach((dot, index) => {
+                    if(index === currentBatch) {
+                        dot.classList.remove('bg-slate-200', 'hover:bg-brand-blue/50');
+                        dot.classList.add('bg-brand-blue', 'ring-4', 'ring-blue-100');
+                    } else {
+                        dot.classList.add('bg-slate-200', 'hover:bg-brand-blue/50');
+                        dot.classList.remove('bg-brand-blue', 'ring-4', 'ring-blue-100');
+                    }
+                });
+            }
+
+            const currentBatchEl = track.children[currentBatch];
+            const cards = currentBatchEl.querySelectorAll('.tech-card');
+            
+            cards.forEach((card, index) => {
+                card.classList.remove('animate-fade-up');
+                card.classList.add('opacity-0'); 
+                void card.offsetWidth; 
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.remove('opacity-0');
+                card.classList.add('animate-fade-up');
+            });
+        }
+
+        function nextBatch() {
+            currentBatch = (currentBatch + 1) % totalBatches;
+            updateSliderUI();
+        }
+
+        function prevBatch() {
+            currentBatch = (currentBatch - 1 + totalBatches) % totalBatches;
+            updateSliderUI();
+        }
+
+        function goToBatch(index) {
+            currentBatch = index;
+            updateSliderUI();
+        }
+
+        let sliderInterval = setInterval(nextBatch, 7000);
+        const sliderContainer = document.getElementById('news-slider-container');
+        sliderContainer.addEventListener('mouseenter', () => clearInterval(sliderInterval));
+        sliderContainer.addEventListener('mouseleave', () => sliderInterval = setInterval(nextBatch, 7000));
+
+        const firstBatchCards = track.children[0].querySelectorAll('.tech-card');
+        firstBatchCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.remove('opacity-0');
+            card.classList.add('animate-fade-up');
+        });
+
+        // -----------------------------------------------------------------
+        // STUDENT HIGHLIGHT CAROUSEL LOGIC
+        // -----------------------------------------------------------------
+        let currentHighlight = 0;
+        const highlightSlides = document.querySelectorAll('.highlight-slide');
+        const totalHighlights = highlightSlides.length;
+        let highlightInterval;
+
+        function updateHighlightUI() {
+            highlightSlides.forEach((slide, index) => {
+                const progressBar = slide.querySelector('.animate-progress');
+                if(index === currentHighlight) {
+                    slide.classList.add('active');
+                    if(progressBar) {
+                        progressBar.style.animation = 'none';
+                        void progressBar.offsetWidth;
+                        progressBar.style.animation = 'progressFill 7s linear infinite';
+                    }
+                } else {
+                    slide.classList.remove('active');
+                    if(progressBar) progressBar.style.animation = 'none';
+                }
+            });
+        }
+
+        function nextHighlight() {
+            currentHighlight = (currentHighlight + 1) % totalHighlights;
+            updateHighlightUI();
+        }
+
+        function prevHighlight() {
+            currentHighlight = (currentHighlight - 1 + totalHighlights) % totalHighlights;
+            updateHighlightUI();
+        }
+
+        function startHighlightTimer() {
+            clearInterval(highlightInterval);
+            highlightInterval = setInterval(nextHighlight, 7000);
+        }
+
+        updateHighlightUI();
+        startHighlightTimer();
+
+        const highlightContainer = document.getElementById('highlight-carousel');
+        highlightContainer.addEventListener('mouseenter', () => {
+            clearInterval(highlightInterval);
+            const activeBar = highlightContainer.querySelector('.active .animate-progress');
+            if(activeBar) activeBar.style.animationPlayState = 'paused';
+        });
+        
+        highlightContainer.addEventListener('mouseleave', () => {
+            startHighlightTimer();
+            const activeBar = highlightContainer.querySelector('.active .animate-progress');
+            if(activeBar) activeBar.style.animationPlayState = 'running';
+        });
+
+    </script>
+</body>
+</html>

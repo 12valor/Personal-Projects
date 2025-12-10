@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events | Technowatch</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff',       // Primary Blue
+                            dark: '#0f172a',       // Dark Blue/Slate
+                            cleanblue: '#3b82f6',  // Lighter Blue
+                            accent: '#0ea5e9',     // Sky Blue
+                            text: '#334155',       // Blue-Grey Text
+                            light: '#f0f9ff',      // Very Light Blue tint background
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -10px rgba(0, 123, 255, 0.1)',
+                        'tech-glow': '0 0 15px rgba(0, 123, 255, 0.2)',
+                        'card-shadow': '0 10px 30px -5px rgba(0, 0, 0, 0.05)',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.6s ease-out forwards',
+                        'scan': 'scanDown 1.5s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scanDown: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        }
+                    },
+                    letterSpacing: {
+                        'tighter-custom': '-0.05em',
+                    },
+                    fontSize: {
+                        '10xl': '10rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #ffffff; color: #334155; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .rounded-xl-custom { border-radius: 1.5rem; }
+        
+        .big-condensed-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 800; 
+            letter-spacing: -0.05em; 
+            line-height: 0.85;
+        }
+
+        #tech-bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 150%; 
+            pointer-events: none; z-index: -1; opacity: 0.08; 
+            color: #007bff; will-change: transform; transition: transform 0.1s linear;
+        }
+
+        /* TECH CARD STYLES */
+        .tech-card-corners::before, .tech-card-corners::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            transition: all 0.3s ease; opacity: 0; border-color: #007bff;
+        }
+        .tech-card-corners::before { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+        .tech-card-corners::after { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+        
+        .tech-card:hover .tech-card-corners::before,
+        .tech-card:hover .tech-card-corners::after { opacity: 1; width: 30px; height: 30px; }
+
+        .tech-card-corners-inverse::before, .tech-card-corners-inverse::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            transition: all 0.3s ease; opacity: 0; border-color: #007bff;
+        }
+        .tech-card-corners-inverse::before { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
+        .tech-card-corners-inverse::after { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
+
+        .tech-card:hover .tech-card-corners-inverse::before,
+        .tech-card:hover .tech-card-corners-inverse::after { opacity: 1; width: 30px; height: 30px; }
+
+        /* TIMELINE STYLES */
+        .timeline-line {
+            position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #e2e8f0;
+        }
+        @media (min-width: 768px) {
+            .timeline-line { left: 50%; transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body class="antialiased relative bg-white">
+
+    <svg id="tech-bg-pattern" viewBox="0 0 1440 1024" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+            <path d="M100 0 V1024 M300 0 V1024 M500 0 V1024 M700 0 V1024 M900 0 V1024 M1100 0 V1024 M1300 0 V1024" opacity="0.5"/>
+            <path d="M0 100 H1440 M0 300 H1440 M0 500 H1440 M0 700 H1440 M0 900 H1440" opacity="0.5"/>
+            <circle cx="100" cy="100" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="500" cy="500" r="8" fill="currentColor" opacity="0.8"/>
+            <circle cx="1300" cy="300" r="8" fill="currentColor" opacity="0.8"/>
+            <path d="M100 500 H200 V600 H300" stroke-width="3"/>
+            <path d="M1300 500 H1200 V400 H1100" stroke-width="3"/>
+        </g>
+    </svg>
+
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white shadow-lg border border-slate-100 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 ease-out transform hover:scale-[1.002] w-fit max-w-[95%]" id="navbar">
+            <a href="index.html#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html#home" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="about.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">About Us</a>
+                <a href="news.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">News</a>
+                <a href="even.html" class="px-3 py-2 text-sm font-bold font-sans text-brand-blue bg-blue-50 rounded-lg transition-all whitespace-nowrap">Events</a>
+                <a href="projects.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="members.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Members</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html#join" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap">
+                    Join Us
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html#home" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="about.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">About Us</a>
+        <a href="news.html" class="text-2xl font-heading font-bold text-brand-blue mobile-link">News</a>
+        <a href="#" class="text-2xl font-heading font-bold text-brand-blue mobile-link">Events</a>
+        <a href="index.html#projects" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Projects</a>
+        <a href="index.html#join" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Join Us</a>
+    </div>
+
+    <section class="pt-40 pb-16 px-6 relative" id="events-intro">
+        <div class="container mx-auto max-w-5xl text-center relative z-10">
+            <div class="flex flex-col items-center reveal pt-4">
+                <h1 class="big-condensed-text text-[4rem] md:text-[6rem] text-slate-900 mb-6">
+                    UPCOMING <br>
+                    <span class="text-brand-blue shuffle-text" data-value="EVENTS">EVENTS</span>
+                </h1>
+                <p class="font-sans text-slate-500 text-base leading-relaxed max-w-2xl">
+                    Don't miss out on workshops, seminars, and meetups. Mark your calendars and get ready to level up your skills.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 pb-24">
+        <div class="container mx-auto max-w-7xl">
+            <div class="reveal">
+                <div class="relative bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden group tech-card">
+                    
+                    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-blue/20 rounded-full blur-[120px] -z-10"></div>
+
+                    <div class="absolute inset-0 z-20 pointer-events-none p-4 tech-card-corners"></div>
+                    <div class="absolute inset-0 z-20 pointer-events-none p-4 tech-card-corners-inverse"></div>
+
+                    <div class="grid lg:grid-cols-2 items-center relative z-10">
+                        <div class="p-10 lg:p-16 flex flex-col justify-center text-white">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="bg-brand-blue text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider animate-pulse">Registration Open</span>
+                                <span class="text-slate-400 text-sm font-sans">December 18, 2025</span>
+                            </div>
+                            <h2 class="text-5xl md:text-6xl font-heading font-bold mb-6 leading-none">
+                                TECHNOWATCH <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">SUMMIT 2025</span>
+                            </h2>
+                            <p class="text-slate-400 font-sans leading-relaxed mb-10 max-w-lg">
+                                The biggest gathering of Computer Engineering students in Visayas. Join us for a day of innovation, coding challenges, and industry talks.
+                            </p>
+                            
+                            <div class="grid grid-cols-4 gap-4 mb-10 max-w-md">
+                                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <span id="days" class="block text-3xl font-bold font-heading text-white">00</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-slate-500">Days</span>
+                                </div>
+                                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <span id="hours" class="block text-3xl font-bold font-heading text-white">00</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-slate-500">Hours</span>
+                                </div>
+                                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <span id="minutes" class="block text-3xl font-bold font-heading text-white">00</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-slate-500">Mins</span>
+                                </div>
+                                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl text-center backdrop-blur-sm">
+                                    <span id="seconds" class="block text-3xl font-bold font-heading text-brand-accent">00</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-slate-500">Secs</span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <button class="bg-brand-blue text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30">Register Now</button>
+                                <button class="bg-transparent border border-slate-600 text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-white/10 transition-all">View Schedule</button>
+                            </div>
+                        </div>
+                        
+                        <div class="relative h-[400px] lg:h-[600px] overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" 
+                                 alt="Tech Event" 
+                                 class="w-full h-full object-cover object-center opacity-80 group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/50 to-transparent"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-6 pb-24 bg-slate-50 relative">
+        <div class="container mx-auto max-w-4xl py-16 relative z-10">
+            
+            <div class="text-center mb-16 reveal">
+                <h3 class="text-3xl font-bold font-heading text-slate-900">Upcoming Schedule</h3>
+                <p class="text-slate-500 text-sm mt-2">Stay updated with our calendar of activities.</p>
+            </div>
+
+            <div class="relative">
+                <div class="timeline-line"></div>
+
+                <div class="relative pl-12 md:pl-0 mb-12 reveal">
+                    <div class="absolute left-[11px] md:left-1/2 top-0 w-5 h-5 bg-white border-4 border-brand-blue rounded-full transform md:-translate-x-1/2 z-10 shadow-md"></div>
+                    
+                    <div class="md:w-1/2 md:pr-12 md:text-right">
+                        <span class="text-brand-blue font-bold text-xs tracking-widest block mb-1">NOV 28, 2025</span>
+                        <h4 class="text-xl font-bold font-heading text-slate-900">Arduino Advanced Workshop</h4>
+                        <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                            Deep dive into sensor integration and wireless communication modules. Bring your kits!
+                        </p>
+                        <div class="mt-3 inline-flex items-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-location-dot"></i> CpE Laboratory 2
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative pl-12 md:pl-0 mb-12 reveal">
+                    <div class="absolute left-[11px] md:left-1/2 top-0 w-5 h-5 bg-white border-4 border-slate-300 rounded-full transform md:-translate-x-1/2 z-10 shadow-md"></div>
+                    
+                    <div class="md:w-1/2 md:ml-auto md:pl-12">
+                        <span class="text-slate-400 font-bold text-xs tracking-widest block mb-1">DEC 05, 2025</span>
+                        <h4 class="text-xl font-bold font-heading text-slate-900">Cybersecurity Awareness Talk</h4>
+                        <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                            Guest speaker from the industry will discuss modern threats and ethical hacking basics.
+                        </p>
+                        <div class="mt-3 inline-flex items-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-location-dot"></i> Audio Visual Room
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative pl-12 md:pl-0 mb-12 reveal">
+                    <div class="absolute left-[11px] md:left-1/2 top-0 w-5 h-5 bg-white border-4 border-slate-300 rounded-full transform md:-translate-x-1/2 z-10 shadow-md"></div>
+                    
+                    <div class="md:w-1/2 md:pr-12 md:text-right">
+                        <span class="text-slate-400 font-bold text-xs tracking-widest block mb-1">DEC 15, 2025</span>
+                        <h4 class="text-xl font-bold font-heading text-slate-900">Year-End General Assembly</h4>
+                        <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                            Celebrating our achievements for the year, awarding outstanding members, and holiday party.
+                        </p>
+                        <div class="mt-3 inline-flex items-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-location-dot"></i> University Gym
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="py-24 px-6 bg-white border-t border-slate-100">
+        <div class="container mx-auto max-w-7xl relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-bold font-heading text-slate-900 mb-4">Past Events</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+                <div class="group relative h-64 rounded-xl overflow-hidden cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h4 class="text-white font-bold text-lg">Tech Expo 2024</h4>
+                    </div>
+                </div>
+                <div class="group relative h-64 rounded-xl overflow-hidden cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h4 class="text-white font-bold text-lg">Team Building</h4>
+                    </div>
+                </div>
+                <div class="group relative h-64 rounded-xl overflow-hidden cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h4 class="text-white font-bold text-lg">Startup Weekend</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-slate-600 pt-20 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="index.html" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="index.html#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="about.html" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="news.html" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Events</a></li>
+                        <li><a href="index.html#projects" class="hover:text-brand-blue transition-colors">Projects</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-400 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans transition-transform duration-300">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    Viewing <strong>Events</strong>. Don't miss the Tech Summit! 📅
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 shadow-md"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Navbar & Mobile Menu
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() { mobileMenu.classList.toggle('translate-x-full'); document.body.classList.toggle('overflow-hidden'); }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Scroll Reveal
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('active'); } });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Chatbot
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            if (chatWidget.classList.contains('scale-0')) {
+                chatWidget.classList.remove('scale-0'); chatWidget.classList.add('scale-100'); chatToggleBtn.classList.remove('animate-bounce');
+            } else {
+                chatWidget.classList.remove('scale-100'); chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex justify-end animate-fade-up';
+            userDiv.innerHTML = `<div class="bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]">${msg}</div>`;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'flex justify-start animate-fade-up';
+                botDiv.innerHTML = `<div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">Thanks for reaching out! We are Technowatch.</div>`;
+                chatMessages.appendChild(botDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        });
+
+        // Text Scramble Logic
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+        
+        function scrambleText(target) {
+            let iterations = 0;
+            const originalText = target.dataset.value;
+            
+            const interval = setInterval(() => {
+                target.innerText = originalText.split("")
+                    .map((letter, index) => {
+                        if(index < iterations) {
+                            return originalText[index];
+                        }
+                        return letters[Math.floor(Math.random() * 46)];
+                    })
+                    .join("");
+                
+                if(iterations >= originalText.length) { 
+                    clearInterval(interval);
+                }
+                
+                iterations += 1 / 3; 
+            }, 30);
+        }
+
+        // Initial Trigger
+        const textTargets = document.querySelectorAll('.shuffle-text');
+        textTargets.forEach(el => scrambleText(el));
+
+        // COUNTDOWN TIMER LOGIC
+        const targetDate = new Date("Dec 18, 2025 00:00:00").getTime();
+
+        const countdownInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days < 10 ? "0" + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? "0" + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? "0" + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? "0" + seconds : seconds;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>

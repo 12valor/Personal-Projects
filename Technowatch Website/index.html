@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technowatch | TUP-Visayas</title>
+    <meta name="description" content="The official organization of Computer Engineering Technology students at TUP-Visayas.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        heading: ['Rajdhani', 'sans-serif'], 
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#007bff', 
+                            dark: '#0f172a',
+                            text: '#334155',
+                            light: '#f8f9fa',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'card': '0 4px 20px rgba(0,0,0,0.05)',
+                        'glow': '0 0 20px rgba(0, 123, 255, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        body {
+            background-color: #f8f9fa; 
+            color: #334155;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Rajdhani', sans-serif; 
+            text-transform: uppercase; 
+        }
+
+        /* Tech Background Pattern */
+        .bg-dot-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* --- INVISIBLE SCROLLBAR STYLING --- */
+        
+        /* 1. Hide scrollbar for Chrome, Safari and Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            background: transparent;
+        }
+
+        /* 2. Hide scrollbar for IE, Edge and Firefox */
+        html, body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* --- MODERN CARD STYLES --- */
+        .modern-card {
+            background: white;
+            border-radius: 0.75rem; 
+            border: 1px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .modern-card:hover {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transform: translateY(-10px) scale(1.02);
+            border-color: transparent;
+            box-shadow: 0 20px 40px -5px rgba(0, 123, 255, 0.4);
+        }
+
+        .modern-card:hover h3,
+        .modern-card:hover p,
+        .modern-card:hover .card-link {
+            color: white;
+        }
+
+        .icon-box {
+            transition: all 0.5s ease;
+        }
+        .modern-card:hover .icon-box {
+            background-color: white;
+            color: #007bff;
+            transform: rotateY(180deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .modern-card:hover .btn-primary {
+            background-color: white;
+            color: #007bff;
+            border-color: white;
+        }
+
+        /* Project Card Hover Effects */
+        .project-card {
+            transition: all 0.3s ease;
+        }
+        .project-card:hover .project-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .project-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* News Card Hover */
+        .news-card {
+            transition: all 0.2s ease;
+        }
+        .news-card:hover {
+            background-color: #f8fafc;
+            border-left-width: 6px;
+        }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Chat Widget Animations */
+        #chat-widget {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        .scale-0 {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .scale-100 {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- STACK ANIMATION STYLES --- */
+        .stack-item {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .stack-item.active { z-index: 10; opacity: 1; transform: translateY(0) scale(1); }
+        .stack-item.next { z-index: 5; opacity: 1; transform: translateY(12px) scale(0.96); filter: brightness(0.9); }
+        .stack-item.exit { z-index: 20; opacity: 0; transform: translateY(-120%) rotate(-3deg); }
+        .stack-item.hidden-stack { z-index: 0; opacity: 0; transform: translateY(24px) scale(0.92); }
+    </style>
+</head>
+<body class="antialiased relative bg-slate-50">
+
+    <div class="fixed top-0 left-0 w-full z-50 flex justify-center pt-6 px-2 transition-all duration-300" id="navbar-container">
+        <nav class="bg-white shadow-lg border border-slate-100 rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-center gap-6 md:gap-10 transition-all duration-500 ease-out transform hover:scale-[1.002] w-fit max-w-[95%]" id="navbar">
+            <a href="#home" class="flex-shrink-0 group">
+                <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="hidden lg:flex items-center gap-1 xl:gap-2">
+                <a href="index.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Home</a>
+                <a href="about.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all whitespace-nowrap">About Us</a>
+                <a href="news.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">News</a>
+                <a href="even.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Events</a>
+                <a href="projects.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Projects</a>
+                <a href="members.html" class="px-3 py-2 text-sm font-bold font-sans text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded-lg transition-all">Members</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="merch.html" class="hidden lg:block px-6 py-2.5 bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 whitespace-nowrap">
+                    Store
+                </a>
+                <button class="lg:hidden text-slate-800 p-2" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-6 lg:hidden" id="mobile-menu">
+        <button class="absolute top-8 right-8 text-slate-800" id="close-menu-btn">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+        <a href="index.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Home</a>
+        <a href="about.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">About Us</a>
+        <a href="news.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">News</a>
+        <a href="even.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Events</a>
+        <a href="projects.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Projects</a>
+        <a href="members.html" class="text-2xl font-heading font-bold text-slate-800 mobile-link hover:text-brand-blue transition-colors">Members</a>
+        <a href="merch.html" class="px-8 py-3 bg-brand-blue text-white text-lg font-bold font-sans rounded-full shadow-lg mobile-link mt-4">Store</a>
+    </div>
+
+    <section id="home" class="relative min-h-screen w-full flex items-center overflow-hidden bg-white pt-20">
+        <div class="absolute top-0 right-0 w-[55%] h-full bg-blue-50/60 -skew-x-12 origin-bottom-right z-0 overflow-hidden border-l-4 border-white shadow-2xl">
+            <div class="w-full h-full skew-x-12 scale-125 origin-center relative">
+                <img src="heroimages/1.jpg" class="stack-item active" alt="Hero Image 1" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop'">
+                <img src="heroimages/2.jpg" class="stack-item next" alt="Hero Image 2" onerror="this.src='https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop'">
+                <img src="heroimages/3.jpg" class="stack-item hidden-stack" alt="Hero Image 3" onerror="this.src='https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=2070&auto=format&fit=crop'">
+                <img src="heroimages/4.jpg" class="stack-item hidden-stack" alt="Hero Image 4" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop'">
+                <div class="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/10 pointer-events-none"></div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-cyan-50 rounded-full blur-3xl opacity-50 z-0"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center gap-12 xl:gap-20">
+                <div class="w-full lg:w-1/2 text-center lg:text-left pt-10 lg:pt-0">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-brand-blue text-xs font-bold font-sans tracking-widest uppercase mb-6 reveal backdrop-blur-sm bg-white/80">
+                        <span class="w-2 h-2 rounded-full bg-brand-blue animate-pulse"></span>
+                        TUP-Visayas
+                    </div>
+                    
+                    <h1 class="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-slate-900 reveal tracking-tight drop-shadow-sm h-[160px] md:h-[180px] lg:h-[220px] flex flex-col justify-center" style="transition-delay: 100ms;">
+                        <span id="hero-text-top" class="block min-h-[1.1em]">
+                            ONE MIND
+                        </span>
+                        
+                        <span class="text-brand-blue relative inline-block">
+                            <span id="hero-text-bot" class="block min-h-[1.1em]">
+                                ONE GRIND
+                            </span>
+                        </span>
+                    </h1>
+
+                    <p class="font-sans text-slate-500 text-lg md:text-xl mb-10 leading-relaxed reveal max-w-xl mx-auto lg:mx-0 bg-white/50 backdrop-blur-sm p-2 rounded-lg" style="transition-delay: 200ms;">
+                        Technowatch is the premier student organization bridging hardware, software, and community at TUP-Visayas.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 reveal" style="transition-delay: 300ms;">
+                        <a href="about.html" class="px-8 py-4 bg-brand-blue hover:bg-blue-600 text-white font-bold font-sans rounded-full transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 hover:-translate-y-1">
+                            About Us
+                        </a>
+                        <a href="merch.html" class="px-8 py-4 bg-white border border-slate-200 text-slate-600 hover:text-brand-blue hover:border-blue-200 font-bold font-sans rounded-full transition-all hover:shadow-lg hover:-translate-y-1">
+                            Store
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden lg:block w-1/2"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="info" class="py-16 bg-dot-pattern relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-white via-transparent to-white pointer-events-none"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-3 gap-6">
+                
+                <div class="modern-card p-6 flex flex-col items-start reveal group">
+                    <div class="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-slate-900/80 z-10"></div>
+                        <img src="images/pfp1.png" alt="Team" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="relative z-10 flex flex-col h-full items-start w-full">
+                        <div class="icon-box w-16 h-16 rounded-xl bg-blue-50 text-brand-blue mb-6 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3 transition-colors">About Us</h3>
+                        <p class="text-slate-500 leading-relaxed mb-6 font-sans text-sm transition-colors">
+                            Technowatch is a student-driven tech organization from TUP-Visayas, powered by passionate Computer Engineering Technology students. We explore innovation, develop projects, and build a community where learning and creativity thrive.
+                        </p>
+                        <a href="members.html" class="card-link mt-auto flex items-center gap-2 font-bold text-xs text-slate-400 transition-colors">
+                            Meet the Team <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="modern-card p-6 flex flex-col items-start reveal group" style="transition-delay: 100ms;">
+                    <div class="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-slate-900/80 z-10"></div>
+                        <img src="images/pfp1.png" alt="Tech" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="relative z-10 flex flex-col h-full items-start w-full">
+                        <div class="icon-box w-16 h-16 rounded-xl bg-blue-50 text-brand-blue mb-6 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3 transition-colors">What We Do</h3>
+                        <p class="text-slate-500 leading-relaxed mb-6 font-sans text-sm transition-colors">
+                            We engage in hands-on tech activities—robotics, coding, electronics, research, digital design, and system development—while helping students sharpen real-world skills that go beyond the classroom.
+                        </p>
+                        <a href="projects.html" class="card-link mt-auto flex items-center gap-2 font-bold text-xs text-slate-400 transition-colors">
+                            View Projects <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="modern-card p-6 flex flex-col items-start reveal group" style="transition-delay: 200ms;">
+                    <div class="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <div class="absolute inset-0 bg-slate-900/80 z-10"></div>
+                        <img src="images/pfp1.png" alt="Future" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="relative z-10 flex flex-col h-full items-start w-full">
+                        <div class="icon-box w-16 h-16 rounded-xl bg-blue-50 text-brand-blue mb-6 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3 transition-colors">Our Purpose</h3>
+                        <p class="text-slate-500 leading-relaxed mb-6 font-sans text-sm transition-colors">
+                            To inspire future innovators, promote technical excellence, and create a supportive space where every member can grow, collaborate, and lead.
+                        </p>
+                        <a href="index.html" class="btn-primary w-full py-3 border border-brand-blue text-brand-blue font-bold text-center rounded-lg hover:bg-brand-blue hover:text-white transition-all text-sm">
+                            Join Our Mission
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="news" class="py-20 bg-white border-y border-slate-100 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-96 h-96 bg-blue-50 rounded-bl-full blur-3xl opacity-40 pointer-events-none"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-end mb-10 reveal">
+                <div>
+                    <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">Latest Updates</span>
+                    <h2 class="text-4xl font-bold text-slate-900">News & Announcements</h2>
+                </div>
+                <a href="#" class="text-sm font-bold text-slate-500 hover:text-brand-blue transition-colors mt-4 sm:mt-0 flex items-center gap-2">
+                    View All <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 reveal h-auto lg:h-[480px]">
+                
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+                    <div class="md:col-span-1 md:row-span-2 relative group overflow-hidden rounded-2xl shadow-md h-[300px] md:h-full">
+                        <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Main News">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-6">
+                            <span class="bg-brand-blue text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">HIGHLIGHT</span>
+                            <h3 class="text-white font-bold text-xl leading-tight mb-2 group-hover:text-blue-200 transition-colors">Technowatch Team Wins Regional Innovation Hackathon</h3>
+                            <p class="text-slate-300 text-xs line-clamp-2 mb-4">Our student delegation secured 1st place with their "Smart Flood Monitoring System".</p>
+                            <a href="#" class="text-white text-xs font-bold hover:underline">Read More</a>
+                        </div>
+                    </div>
+                    <div class="relative group overflow-hidden rounded-2xl shadow-md h-[230px] md:h-auto bg-white border border-slate-100 flex flex-col">
+                        <div class="h-32 overflow-hidden relative">
+                             <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Sub News">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col justify-center">
+                             <span class="text-brand-blue text-[10px] font-bold uppercase mb-1">Workshop</span>
+                             <h4 class="font-bold text-slate-800 text-sm leading-snug mb-1 group-hover:text-brand-blue transition-colors">Arduino Basics: A Hands-on Session</h4>
+                             <span class="text-slate-400 text-[10px]">Nov 25, 2025</span>
+                        </div>
+                    </div>
+                    <div class="relative group overflow-hidden rounded-2xl shadow-md h-[230px] md:h-auto bg-white border border-slate-100 flex flex-col">
+                        <div class="h-32 overflow-hidden relative">
+                             <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Sub News">
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col justify-center">
+                             <span class="text-purple-600 text-[10px] font-bold uppercase mb-1">Community</span>
+                             <h4 class="font-bold text-slate-800 text-sm leading-snug mb-1 group-hover:text-brand-blue transition-colors">Tech Talk: The Future of AI in Engineering</h4>
+                             <span class="text-slate-400 text-[10px]">Dec 02, 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col h-[480px] relative overflow-hidden">
+                    <div class="absolute inset-0 bg-slate-50/50 bg-dot-pattern opacity-50 pointer-events-none"></div>
+
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100 relative z-10">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-regular fa-bell text-brand-blue"></i> Notice Board
+                        </h3>
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                    </div>
+
+                    <div class="flex-grow overflow-y-auto pr-2 space-y-3 custom-scrollbar relative z-10">
+                        
+                        <a href="#" class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white hover:shadow-soft transition-all duration-300 group border border-transparent hover:border-slate-100 bg-white/40">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center text-lg group-hover:scale-110 transition-transform group-hover:bg-brand-blue group-hover:text-white">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold text-slate-400">NOV 15</span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span class="text-[9px] font-bold text-brand-blue uppercase tracking-wider">Academic</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700 group-hover:text-brand-blue transition-colors leading-snug">General Assembly @ Engg Hall</h4>
+                            </div>
+                        </a>
+
+                        <a href="#" class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white hover:shadow-soft transition-all duration-300 group border border-transparent hover:border-slate-100 bg-white/40">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg group-hover:scale-110 transition-transform group-hover:bg-amber-500 group-hover:text-white">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold text-slate-400">NOV 10</span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span class="text-[9px] font-bold text-amber-600 uppercase tracking-wider">Finance</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700 group-hover:text-amber-600 transition-colors leading-snug">Membership Fee Collection Deadline</h4>
+                            </div>
+                        </a>
+
+                        <a href="#" class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white hover:shadow-soft transition-all duration-300 group border border-transparent hover:border-slate-100 bg-white/40">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg group-hover:scale-110 transition-transform group-hover:bg-purple-600 group-hover:text-white">
+                                <i class="fa-brands fa-discord"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold text-slate-400">OCT 28</span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span class="text-[9px] font-bold text-purple-600 uppercase tracking-wider">Socials</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700 group-hover:text-purple-600 transition-colors leading-snug">New Discord Server Launch</h4>
+                            </div>
+                        </a>
+
+                         <a href="#" class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white hover:shadow-soft transition-all duration-300 group border border-transparent hover:border-slate-100 bg-white/40">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-lg group-hover:scale-110 transition-transform group-hover:bg-green-600 group-hover:text-white">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-[10px] font-bold text-slate-400">OCT 20</span>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                    <span class="text-[9px] font-bold text-green-600 uppercase tracking-wider">Event</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-700 group-hover:text-green-600 transition-colors leading-snug">Freshmen Orientation Day</h4>
+                            </div>
+                        </a>
+
+                    </div>
+
+                    <div class="pt-4 mt-auto relative z-10">
+                        <button class="w-full py-2.5 text-xs font-bold text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-brand-blue transition-colors shadow-sm">
+                            View All Notices
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="py-28 bg-slate-50 bg-dot-pattern">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-5xl font-bold text-[#0f172a] mb-4">Built by <span class="text-brand-blue">Technowatch</span></h2>
+                <p class="text-slate-500 text-xl font-sans max-w-2xl mx-auto">Showcasing the ingenuity of TUPV Computer Engineering students.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="project-card group bg-white rounded-3xl overflow-hidden shadow-card hover:shadow-2xl reveal relative border border-slate-100 h-[420px] flex flex-col">
+                    <div class="h-[220px] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover" alt="Data Viz">
+                        <div class="absolute top-4 left-4 flex gap-2">
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#Python</span>
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#React</span>
+                        </div>
+                        <div class="project-overlay absolute inset-0 bg-brand-blue/90 opacity-0 transition-all duration-300 flex items-center justify-center translate-y-4">
+                            <a href="#" class="px-6 py-2 bg-white text-brand-blue font-bold rounded-full hover:scale-105 transition-transform shadow-lg">View Case Study</a>
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h4 class="font-bold text-2xl text-slate-800 mb-3 group-hover:text-brand-blue transition-colors">TUPV Analytics</h4>
+                        <p class="text-slate-500 text-sm font-sans leading-relaxed mb-6">Real-time student population dashboard visualizing department demographics.</p>
+                        <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 font-sans uppercase tracking-wider">
+                            <span>Data Science</span>
+                            <span>2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card group bg-white rounded-3xl overflow-hidden shadow-card hover:shadow-2xl reveal relative border border-slate-100 h-[420px] flex flex-col" style="transition-delay: 100ms;">
+                    <div class="h-[220px] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hardware">
+                        <div class="absolute top-4 left-4 flex gap-2">
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#Arduino</span>
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#IoT</span>
+                        </div>
+                        <div class="project-overlay absolute inset-0 bg-brand-blue/90 opacity-0 transition-all duration-300 flex items-center justify-center translate-y-4">
+                            <a href="#" class="px-6 py-2 bg-white text-brand-blue font-bold rounded-full hover:scale-105 transition-transform shadow-lg">View Case Study</a>
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h4 class="font-bold text-2xl text-slate-800 mb-3 group-hover:text-brand-blue transition-colors">Smart Campus IoT</h4>
+                        <p class="text-slate-500 text-sm font-sans leading-relaxed mb-6">Automated energy monitoring system with motion sensors deployed in labs.</p>
+                        <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 font-sans uppercase tracking-wider">
+                            <span>Hardware</span>
+                            <span>2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card group bg-white rounded-3xl overflow-hidden shadow-card hover:shadow-2xl reveal relative border border-slate-100 h-[420px] flex flex-col" style="transition-delay: 200ms;">
+                    <div class="h-[220px] overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover" alt="App">
+                        <div class="absolute top-4 left-4 flex gap-2">
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#Flutter</span>
+                             <span class="bg-white/90 backdrop-blur text-slate-800 px-3 py-1 rounded-full text-xs font-bold font-sans shadow-sm">#Firebase</span>
+                        </div>
+                        <div class="project-overlay absolute inset-0 bg-brand-blue/90 opacity-0 transition-all duration-300 flex items-center justify-center translate-y-4">
+                            <a href="#" class="px-6 py-2 bg-white text-brand-blue font-bold rounded-full hover:scale-105 transition-transform shadow-lg">View Case Study</a>
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-grow">
+                        <h4 class="font-bold text-2xl text-slate-800 mb-3 group-hover:text-brand-blue transition-colors">Technowatch App</h4>
+                        <p class="text-slate-500 text-sm font-sans leading-relaxed mb-6">The official mobile companion for event registrations and organization updates.</p>
+                        <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 font-sans uppercase tracking-wider">
+                            <span>Mobile Dev</span>
+                            <span>2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-16">
+                <a href="#" class="inline-block px-8 py-4 border border-slate-300 text-slate-700 font-bold font-sans rounded-full hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all hover:-translate-y-1">
+                    View All Projects
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="relative py-32 bg-fixed bg-cover bg-center" style="background-image: url('images/background.jpg');">
+        <div class="absolute inset-0 bg-slate-900/80"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                
+                <div class="md:w-1/2 text-white reveal">
+                    <span class="text-brand-blue font-bold tracking-widest text-sm uppercase mb-2 block">Get in Touch</span>
+                    <h2 class="text-5xl font-bold font-heading mb-6 text-white">Let's Build The Future Together</h2>
+                    <p class="text-slate-300 text-lg font-sans leading-relaxed mb-8">
+                        Have a project in mind, want to partner with us, or just curious about what we do? 
+                        Reach out to the team. We are always looking for new collaborators and challenges.
+                    </p>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-brand-blue text-xl">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-white">Visit Us</h5>
+                                <p class="text-slate-400 text-sm">CpE Department, TUP-Visayas, Talisay City</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:w-1/2 flex flex-col gap-4 w-full max-w-md reveal" style="transition-delay: 200ms">
+                    <a href="#" class="group flex items-center justify-between p-6 bg-white shadow-lg border border-slate-100 rounded-2xl hover:border-brand-blue/50 transition-all hover:scale-[1.02]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center text-white text-xl">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </div>
+                            <div class="text-left">
+                                <h5 class="font-bold text-slate-800">Message on Facebook</h5>
+                                <p class="text-slate-500 text-sm group-hover:text-brand-blue transition-colors">@technowatch.tupv</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 group-hover:text-brand-blue transition-colors"></i>
+                    </a>
+
+                    <a href="mailto:contact@technowatch.org" class="group flex items-center justify-between p-6 bg-white shadow-lg border border-slate-100 rounded-2xl hover:border-brand-blue/50 transition-all hover:scale-[1.02]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center text-white text-xl">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="text-left">
+                                <h5 class="font-bold text-slate-800">Send us an Email</h5>
+                                <p class="text-slate-500 text-sm group-hover:text-brand-blue transition-colors">contact@technowatch.org</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 group-hover:text-brand-blue transition-colors"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="partners" class="min-h-screen flex flex-col justify-center bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto px-6 text-center">
+            <span class="text-brand-blue font-bold tracking-widest text-xs uppercase mb-2 block">Collaboration</span>
+            <h2 class="text-3xl font-bold text-slate-800 mb-10 font-heading">Our Partners</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 items-center justify-items-center opacity-80 reveal">
+                    <img src="partners/p1.png" alt="Partner 1" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+1'">
+                    <img src="partners/p2.png" alt="Partner 2" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+2'">
+                    <img src="partners/p3.png" alt="Partner 3" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+3'">
+                    <img src="partners/p4.png" alt="Partner 4" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+4'">
+                    <img src="partners/p5.png" alt="Partner 5" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+5'">
+                    <img src="partners/p6.png" alt="Partner 6" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+6'">
+                    <img src="partners/p7.png" alt="Partner 4" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+4'">
+                    <img src="partners/p8.png" alt="Partner 5" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+5'">
+                    <img src="partners/p9.png" alt="Partner 6" class="partner-logo h-32 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200x150/ccc/666?text=PARTNER+6'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white text-slate-600 pt-20 pb-10 relative overflow-hidden border-t border-slate-200">
+        <div class="absolute top-10 right-10 text-[15rem] font-bold font-heading text-slate-50 pointer-events-none select-none leading-none">
+            TUPV
+        </div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid md:grid-cols-12 gap-12 mb-16">
+                <div class="md:col-span-4">
+                    <a href="#" class="inline-block mb-6">
+                        <img src="logo/logo.png" alt="Technowatch" class="h-12 w-auto object-contain">
+                    </a>
+                    <p class="text-slate-500 text-sm leading-relaxed font-sans mb-6 max-w-xs">
+                        Empowering the next generation of Computer Engineers at TUP-Visayas through technology, innovation, and brotherhood.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-discord"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-brand-blue hover:text-white transition-all"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">EXPLORE</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#home" class="hover:text-brand-blue transition-colors">Home</a></li>
+                        <li><a href="#info" class="hover:text-brand-blue transition-colors">About Us</a></li>
+                        <li><a href="#news" class="hover:text-brand-blue transition-colors">Newsroom</a></li>
+                        <li><a href="#projects" class="hover:text-brand-blue transition-colors">Projects</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Officers</a></li>
+                    </ul>
+                </div>
+                 <div class="md:col-span-2">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">RESOURCES</h4>
+                    <ul class="space-y-3 text-sm font-sans">
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Student Handbook</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Lab Schedule</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Thesis Repository</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Brand Assets</a></li>
+                    </ul>
+                </div>
+                <div class="md:col-span-4">
+                    <h4 class="font-bold mb-6 text-slate-900 font-heading text-lg tracking-wider">STAY UPDATED</h4>
+                    <p class="text-slate-500 text-sm mb-4 font-sans">Get the latest tech news and event invites directly to your inbox.</p>
+                    <form class="flex flex-col gap-3">
+                        <input type="email" placeholder="Enter your email" class="w-full bg-slate-50 border border-slate-200 text-slate-800 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all font-sans text-sm">
+                        <button class="w-full bg-brand-blue text-white font-bold font-sans py-3 rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-200">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-sans">
+                <p>&copy; 2025 Technowatch TUPV. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-brand-blue transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-brand-blue transition-colors">Code of Conduct</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chat-toggle-btn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand-blue text-white rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 hover:bg-blue-600 transition-all z-50 animate-bounce">
+        <i class="fa-solid fa-robot"></i>
+    </button>
+
+    <div id="chat-widget" class="fixed bottom-24 right-8 w-80 bg-white rounded-2xl shadow-2xl origin-bottom-right z-50 overflow-hidden border border-slate-200 flex flex-col scale-0 font-sans">
+        <div class="bg-brand-blue p-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm leading-none">TechnoBot</h4>
+                    <span class="text-blue-100 text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Online</span>
+                </div>
+            </div>
+            <button id="close-chat" class="text-white/80 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div id="chat-messages" class="h-80 overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            <div class="flex justify-start">
+                <div class="bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100">
+                    Hello! I'm the Technowatch assistant. Ask me about <strong>joining</strong>, <strong>events</strong>, or our <strong>projects</strong>! 👋
+                </div>
+            </div>
+        </div>
+        <form id="chat-form" class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-brand-blue focus:bg-white transition-colors text-slate-700">
+            <button type="submit" class="w-9 h-9 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md hover:scale-105 transform">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // --- Navigation Logic ---
+        const navbar = document.getElementById('navbar');
+        const navContainer = document.getElementById('navbar-container');
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 50) {
+                navbar.classList.add('py-2', 'px-6');
+                navbar.classList.remove('py-3', 'px-8');
+            } else {
+                navbar.classList.remove('py-2', 'px-6');
+                navbar.classList.add('py-3', 'px-8');
+            }
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                navContainer.style.transform = 'translateY(-150%)';
+            } else {
+                navContainer.style.transform = 'translateY(0)';
+            }
+            lastScrollY = currentScrollY;
+        });
+
+        // --- Mobile Menu ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            document.body.classList.toggle('overflow-hidden');
+        }
+        mobileBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+        // --- Scroll Animations ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // --- HERO STACK ANIMATION ---
+        const stackItems = document.querySelectorAll('.stack-item');
+        let currentIndex = 0;
+
+        function rotateStack() {
+            const total = stackItems.length;
+            const currentCard = stackItems[currentIndex];
+            currentCard.classList.remove('active');
+            currentCard.classList.add('exit');
+            const nextIndex = (currentIndex + 1) % total;
+            const nextCard = stackItems[nextIndex];
+            nextCard.classList.remove('next');
+            nextCard.classList.add('active');
+            const followingIndex = (currentIndex + 2) % total;
+            const followingCard = stackItems[followingIndex];
+            followingCard.classList.remove('hidden-stack', 'exit'); 
+            followingCard.classList.add('next');
+            setTimeout(() => {
+                currentCard.classList.remove('exit');
+                currentCard.classList.add('hidden-stack');
+            }, 800); 
+            currentIndex = nextIndex;
+        }
+        setInterval(rotateStack, 4000);
+
+        // --- SCRAMBLE TEXT ANIMATION (HACKER EFFECT) ---
+        const scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+-=[]{}|;':\",./<>?";
+        const heroPhrases = [
+            { top: "ONE MIND", bot: "ONE GRIND" },
+            { top: "TOGETHER", bot: "WE RISE" },
+            { top: "ALL IN", bot: "ALL TOGETHER" }
+        ];
+        let phraseIndex = 0;
+        const textTop = document.getElementById('hero-text-top');
+        const textBot = document.getElementById('hero-text-bot');
+
+        function runScramble(element, targetText) {
+            let iteration = 0;
+            
+            clearInterval(element.dataset.intervalId);
+            
+            const intervalId = setInterval(() => {
+                element.innerText = targetText
+                    .split("")
+                    .map((letter, index) => {
+                        if(index < iteration) {
+                            return targetText[index];
+                        }
+                        return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+                    })
+                    .join("");
+                
+                if(iteration >= targetText.length){ 
+                    clearInterval(intervalId);
+                }
+                
+                // Adjust this 1/3 value to change speed (higher denominator = slower resolve)
+                iteration += 1 / 3; 
+            }, 30);
+
+            element.dataset.intervalId = intervalId;
+        }
+
+        function cycleHeroText() {
+            phraseIndex = (phraseIndex + 1) % heroPhrases.length;
+            runScramble(textTop, heroPhrases[phraseIndex].top);
+            runScramble(textBot, heroPhrases[phraseIndex].bot);
+        }
+
+        // Start the cycle every 4.5 seconds
+        setInterval(cycleHeroText, 4000);
+
+        // --- CHATBOT LOGIC ---
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWidget = document.getElementById('chat-widget');
+        const closeChatBtn = document.getElementById('close-chat');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function toggleChat() {
+            const isClosed = chatWidget.classList.contains('scale-0');
+            if (isClosed) {
+                chatWidget.classList.remove('scale-0');
+                chatWidget.classList.add('scale-100');
+                chatToggleBtn.classList.remove('animate-bounce'); 
+                setTimeout(() => chatInput.focus(), 300); 
+            } else {
+                chatWidget.classList.remove('scale-100');
+                chatWidget.classList.add('scale-0');
+            }
+        }
+        chatToggleBtn.addEventListener('click', toggleChat);
+        closeChatBtn.addEventListener('click', toggleChat);
+
+        function addMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = isUser ? 'flex justify-end animate-fade-up' : 'flex justify-start animate-fade-up';
+            const bubble = document.createElement('div');
+            bubble.className = isUser 
+                ? 'bg-brand-blue text-white text-sm p-3 rounded-2xl rounded-tr-none shadow-md max-w-[85%]' 
+                : 'bg-white text-slate-600 text-sm p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] border border-slate-100';
+            bubble.innerHTML = text;
+            div.appendChild(bubble);
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(input) {
+            const lowerInput = input.toLowerCase();
+            if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+                return "Hi there! 👋 How can I help you today?";
+            }
+            if (lowerInput.includes('join') || lowerInput.includes('sign up') || lowerInput.includes('member')) {
+                return "We'd love to have you! You can join by clicking the <strong>'Join Us'</strong> button in the top right corner.";
+            }
+            if (lowerInput.includes('event') || lowerInput.includes('hackathon') || lowerInput.includes('workshop')) {
+                return "We have exciting events coming up! <strong>TechHack 2025</strong> is on Nov 25th, and our Arduino Bootcamp starts in January.";
+            }
+            if (lowerInput.includes('project') || lowerInput.includes('build') || lowerInput.includes('make')) {
+                return "Our members are building amazing things! Check out the <strong>Featured Projects</strong> section below to see our work in IoT, AI, and App Dev.";
+            }
+            if (lowerInput.includes('who') || lowerInput.includes('what is')) {
+                return "Technowatch is the premier organization for Computer Engineering Technology students at TUP-Visayas. We bridge hardware and software.";
+            }
+            return "I'm still learning! Try asking about <strong>events</strong>, <strong>projects</strong>, or how to <strong>join</strong>. 🤖";
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+            addMessage(message, true);
+            chatInput.value = '';
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'flex justify-start animate-fade-up';
+            loadingDiv.innerHTML = `
+                <div class="bg-white text-slate-400 text-xs p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 flex gap-1 items-center">
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                </div>
+            `;
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            setTimeout(() => {
+                chatMessages.removeChild(loadingDiv);
+                const botResponse = getBotResponse(message);
+                addMessage(botResponse, false);
+            }, 1000); 
+        });
+    </script>
+</body>
+</html>

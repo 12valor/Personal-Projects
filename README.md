@@ -4,7 +4,7 @@ This repository is a collection of my personal projects, showcasing my experimen
 
 ---
 
-## 🌿 Flow
+## Flow
 > **Natural Products Marketplace**
 
 **Description**
@@ -18,5 +18,16 @@ Flow is an e-commerce platform dedicated to **natural and organic products**. Th
 **Built With**
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+
+---
+
+## Techonwatch Website
+> **School Organization Website**
+
+**Description**
+A prototype website I made for out school organization Technowatch, still not finished
+
+**Built With**
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
 ---

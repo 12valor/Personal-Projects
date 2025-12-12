@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI YouTube Script & Thumbnail Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Simple glassy cards + thumbnail canvas styling */
+    .glass { backdrop-filter: blur(6px); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+    #thumbnailCanvas { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white p-6">
+  <div class="max-w-6xl mx-auto">
+    <header class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-bold">AI YouTube Script & Thumbnail Generator</h1>
+      <div class="text-sm opacity-80">Single-file HTML · Paste your OpenAI API key to use</div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Left: Inputs -->
+      <section class="md:col-span-1 glass p-4 rounded-lg">
+        <h2 class="font-semibold mb-2">Video details</h2>
+        <label class="text-xs opacity-80">Title</label>
+        <input id="title" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700" placeholder="Enter a working title or hook" />
+
+        <label class="text-xs opacity-80">Keywords / short brief (comma separated)</label>
+        <input id="keywords" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700" placeholder="e.g. productivity, morning routine, study tips" />
+
+        <label class="text-xs opacity-80">Tone</label>
+        <select id="tone" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700">
+          <option>Friendly & energetic</option>
+          <option>Informative & professional</option>
+          <option>Casual & humorous</option>
+          <option>Motivational</option>
+        </select>
+
+        <label class="text-xs opacity-80">Target length</label>
+        <select id="length" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700">
+          <option value="short">Short script (1-2 minutes)</option>
+          <option value="medium" selected>Medium (4-6 minutes)</option>
+          <option value="long">Long (8-12 minutes)</option>
+        </select>
+
+        <label class="text-xs opacity-80">OpenAI API Key</label>
+        <input id="apikey" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-yellow-600 mono" placeholder="sk-... (kept locally)" />
+
+        <div class="flex gap-2">
+          <button id="genScriptBtn" class="flex-1 p-2 rounded bg-yellow-600 text-black font-semibold">Generate Script</button>
+          <button id="exportScriptBtn" class="p-2 rounded border border-gray-700">Export</button>
+        </div>
+
+        <hr class="my-4 border-gray-700" />
+        <h3 class="font-semibold mb-2">Thumbnail options</h3>
+        <label class="text-xs opacity-80">Main text (big)</label>
+        <input id="thumbText" class="w-full p-2 mt-1 mb-2 rounded bg-gray-900 border border-gray-700" placeholder="e.g. 5 Morning Hacks" />
+        <label class="text-xs opacity-80">Supporting text (small)</label>
+        <input id="thumbSub" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700" placeholder="e.g. For productivity" />
+
+        <label class="text-xs opacity-80">Emotion / vibe</label>
+        <select id="thumbVibe" class="w-full p-2 mt-1 mb-3 rounded bg-gray-900 border border-gray-700">
+          <option>Bold / urgent</option>
+          <option>Warm & friendly</option>
+          <option>Minimal & clean</option>
+          <option>Dark & cinematic</option>
+        </select>
+
+        <div class="flex gap-2">
+          <button id="drawThumbBtn" class="flex-1 p-2 rounded bg-indigo-600 font-semibold">Draw Thumbnail</button>
+          <button id="copyPromptBtn" class="p-2 rounded border border-gray-700">Copy Image Prompt</button>
+        </div>
+
+      </section>
+
+      <!-- Center: Script output -->
+      <section class="md:col-span-2 glass p-4 rounded-lg">
+        <div class="flex items-start justify-between">
+          <h2 class="font-semibold">AI Script</h2>
+          <div class="text-xs opacity-80">Use generated script as narration + timestamps</div>
+        </div>
+
+        <div id="scriptContainer" class="mt-3 bg-gray-900 p-3 rounded h-96 overflow-auto mono text-sm">
+          <div id="scriptOutput">No script generated yet — enter title & press "Generate Script".</div>
+        </div>
+
+        <div class="mt-3 flex gap-2">
+          <button id="shortenBtn" class="p-2 rounded border border-gray-700">Shorten</button>
+          <button id="expandBtn" class="p-2 rounded border border-gray-700">Expand</button>
+          <button id="copyScriptBtn" class="ml-auto p-2 rounded bg-green-600 font-semibold">Copy Script</button>
+        </div>
+
+        <hr class="my-4 border-gray-700" />
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="col-span-2">
+            <h3 class="font-semibold">Thumbnail preview</h3>
+            <canvas id="thumbnailCanvas" width="1280" height="720"></canvas>
+            <div class="flex gap-2 mt-2">
+              <button id="downloadThumbBtn" class="p-2 rounded bg-pink-600 font-semibold">Download PNG</button>
+              <button id="copyPNGBtn" class="p-2 rounded border border-gray-700">Copy to Clipboard</button>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-semibold">Generated thumbnail prompt</h3>
+            <div id="promptBox" class="mt-2 p-3 bg-gray-900 rounded mono text-sm h-44 overflow-auto">No prompt yet. Press "Copy Image Prompt" to create a detailed prompt for an image model (Stable Diffusion, DALL·E, etc.)</div>
+            <div class="mt-3 text-xs opacity-80">Tip: paste prompt into your image model or use an image API to generate a background image, then replace background in canvas.</div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <footer class="mt-6 text-xs opacity-70">Made for creators — let me know which features to add (voiceover, brand kit, auto-chapters).</footer>
+  </div>
+
+<script>
+// ---------- Utilities ----------
+function el(id){return document.getElementById(id)}
+function setText(id, txt){el(id).innerText = txt}
+
+// ---------- Script generation (OpenAI call) ----------
+async function generateScript() {
+  const title = el('title').value.trim();
+  const keywords = el('keywords').value.trim();
+  const tone = el('tone').value;
+  const length = el('length').value;
+  const apiKey = el('apikey').value.trim();
+  if (!title) { alert('Please provide a title or hook'); return }
+  if (!apiKey) { alert('Please paste your OpenAI API key (kept locally)'); return }
+
+  el('genScriptBtn').disabled = true;
+  setText('scriptOutput','Generating...');
+
+  // Build a robust prompt for the model
+  const prompt = `You are a professional YouTube scriptwriter experienced at short and mid-form content.\nTitle: "${title}"\nKeywords: ${keywords}\nTone: ${tone}\nTarget length: ${length}\n\nProduce:\n- A short hook (2-4 lines) with an on-screen hook suggestion.\n- Sections with timestamps (Intro, Main points, Examples, Call to action).\n- Shot suggestions (B-roll, on-screen text, cutaway).\n- Suggested thumbnail text and 3 alternative video titles.\nBe concise, use plaintext with timestamps like 0:00, 0:30, and specify approximate timing for each section depending on the target length.`;
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{role:'system', content:'You are a helpful assistant.'},{role:'user', content: prompt}],
+        max_tokens: 900,
+        temperature: 0.7
+      })
+    });
+    if (!res.ok) throw new Error('OpenAI error: ' + res.status + ' ' + res.statusText);
+    const data = await res.json();
+    const out = data.choices?.[0]?.message?.content || JSON.stringify(data, null, 2);
+    setText('scriptOutput', out);
+  } catch (err) {
+    setText('scriptOutput', 'Generation failed — ' + err.message);
+  } finally {
+    el('genScriptBtn').disabled = false;
+  }
+}
+
+// Shorten / expand using the same model (edits)
+async function editScript(action){
+  const apiKey = el('apikey').value.trim();
+  if (!apiKey) { alert('Paste OpenAI API key'); return }
+  const current = el('scriptOutput').innerText;
+  if (!current || current.startsWith('No script')) { alert('No script to edit'); return }
+  const userPrompt = action === 'shorten'
+    ? 'Shorten the script to ~50% while keeping the main points and timestamps.'
+    : 'Expand the script by adding examples and transitions to increase runtime by ~40% while keeping tone.';
+  el(action === 'shorten' ? 'shortenBtn' : 'expandBtn').disabled = true;
+  setText('scriptOutput', action === 'shorten' ? 'Shortening...' : 'Expanding...');
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer ' + apiKey},
+      body: JSON.stringify({
+        model:'gpt-4o-mini',
+        messages:[{role:'system', content:'You are a helpful assistant.'}, {role:'user', content: userPrompt + '\n\nSCRIPT:\n' + current}],
+        temperature:0.7, max_tokens:600
+      })
+    });
+    if (!res.ok) throw new Error('OpenAI error: ' + res.status);
+    const data = await res.json();
+    const out = data.choices?.[0]?.message?.content || JSON.stringify(data, null, 2);
+    setText('scriptOutput', out);
+  } catch (e) {
+    setText('scriptOutput','Edit failed — ' + e.message);
+  } finally {
+    el(action === 'shorten' ? 'shortenBtn' : 'expandBtn').disabled = false;
+  }
+}
+
+// ---------- Thumbnail generation & canvas ----------
+const canvas = el('thumbnailCanvas');
+const ctx = canvas.getContext('2d');
+
+function drawThumbnail() {
+  // Clear
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Background: gradient depending on vibe
+  const vibe = el('thumbVibe').value;
+  if (vibe.includes('Bold')) {
+    const g = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    g.addColorStop(0,'#ff5f6d'); g.addColorStop(1,'#ffc371');
+    ctx.fillStyle = g;
+  } else if (vibe.includes('Warm')) {
+    const g = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    g.addColorStop(0,'#f6d365'); g.addColorStop(1,'#fda085');
+    ctx.fillStyle = g;
+  } else if (vibe.includes('Minimal')) {
+    ctx.fillStyle = '#0f172a';
+  } else { // Dark cinematic
+    const g = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    g.addColorStop(0,'#0f172a'); g.addColorStop(1,'#020617');
+    ctx.fillStyle = g;
+  }
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Optional: subtle vignette
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Main text block
+  const main = el('thumbText').value || (el('title').value.split(':')[0] || 'WATCH THIS');
+  const sub = el('thumbSub').value || '';
+
+  // Draw main text big
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  const padding = 80;
+  ctx.fillStyle = 'white';
+  // Big stroke for impact
+  ctx.lineWidth = 18;
+  ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+  ctx.font = 'bold 110px Arial';
+  ctx.strokeText(main.toUpperCase(), padding, padding);
+  ctx.fillText(main.toUpperCase(), padding, padding);
+
+  // Supporting text
+  ctx.font = '600 40px Arial';
+  ctx.lineWidth = 8;
+  ctx.strokeText(sub, padding, padding + 150);
+  ctx.fillText(sub, padding, padding + 150);
+
+  // Placeholder avatar / face circle (useful if user wants to replace with real photo)
+  const faceX = canvas.width - 360; const faceY = canvas.height - 360;
+  const r = 140;
+  // ring
+  ctx.beginPath(); ctx.arc(faceX, faceY, r+8, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(faceX, faceY, r, 0, Math.PI*2); ctx.fillStyle = '#ffffff'; ctx.fill();
+  // small camera-ready smiley
+  ctx.fillStyle = '#111827'; ctx.font = 'bold 60px Arial'; ctx.textAlign='center'; ctx.fillText(':)', faceX, faceY+20);
+
+  // Small watermark
+  ctx.textAlign='right'; ctx.font='600 18px Arial'; ctx.fillStyle='rgba(255,255,255,0.6)';
+  ctx.fillText('Generated with AI', canvas.width - 16, canvas.height - 28);
+}
+
+function generateImagePrompt(){
+  const title = el('title').value; const main = el('thumbText').value; const vibe = el('thumbVibe').value; const keywords = el('keywords').value;
+  const prompt = `Create a high-resolution YouTube thumbnail image (1280x720).\nComposition: left side large bold text reading \"${main || title}\" with strong contrast; right side portrait photo of a smiling creator (close-up) with circular crop.\nStyle: ${vibe}. Use dramatic lighting, shallow depth of field, and bold colors. Include space for small supporting text: \"${el('thumbSub').value}\". Avoid busy background; prefer blurred city or studio bokeh. Add subtle film grain and strong rim light. Emphasize facial expression and eye contact.\nKeywords: ${keywords}.\nDeliverable: PNG, 1280x720.`;
+  return prompt;
+}
+
+async function copyPromptToClipboard(){
+  const p = generateImagePrompt();
+  el('promptBox').innerText = p;
+  await navigator.clipboard.writeText(p);
+  alert('Image prompt copied to clipboard — paste into your image generator.');
+}
+
+// ---------- Download / Copy thumbnail ----------
+function downloadThumbnail(){
+  canvas.toBlob(function(blob){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'thumbnail.png'; a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+async function copyCanvasToClipboard(){
+  try {
+    const blob = await new Promise(resolve => canvas.toBlob(resolve));
+    const item = new ClipboardItem({'image/png': blob});
+    await navigator.clipboard.write([item]);
+    alert('Thumbnail copied to clipboard.');
+  } catch(e){ alert('Copy failed: ' + e.message) }
+}
+
+// ---------- Helpers: copy script & export ----------
+function copyScript(){
+  const txt = el('scriptOutput').innerText;
+  if (!txt) return alert('No script to copy');
+  navigator.clipboard.writeText(txt).then(()=> alert('Script copied to clipboard'));
+}
+
+function exportScript(){
+  const txt = el('scriptOutput').innerText;
+  if (!txt) return alert('No script to export');
+  const blob = new Blob([txt], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = (el('title').value || 'script') + '.txt'; a.click(); URL.revokeObjectURL(url);
+}
+
+// ---------- Event wiring ----------
+el('genScriptBtn').addEventListener('click', generateScript);
+el('shortenBtn').addEventListener('click', ()=> editScript('shorten'));
+el('expandBtn').addEventListener('click', ()=> editScript('expand'));
+el('copyScriptBtn').addEventListener('click', copyScript);
+el('exportScriptBtn').addEventListener('click', exportScript);
+el('drawThumbBtn').addEventListener('click', drawThumbnail);
+el('copyPromptBtn').addEventListener('click', copyPromptToClipboard);
+el('downloadThumbBtn').addEventListener('click', downloadThumbnail);
+el('copyPNGBtn').addEventListener('click', copyCanvasToClipboard);
+
+// initial draw
+drawThumbnail();
+
+</script>
+</body>
+</html>

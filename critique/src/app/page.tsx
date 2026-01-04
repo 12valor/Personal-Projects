@@ -26,8 +26,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      // src/app/page.tsx (Add after the Visual Block div)
 <section className="col-span-12 border-b border-border p-12 bg-background">
   <div className="flex justify-between items-end mb-10">
     <div>

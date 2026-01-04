@@ -1,28 +1,27 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  darkMode: 'class',
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: "class",
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}", // Added strictly for safety
+    "./components/**/*.{js,ts,jsx,tsx,mdx}", // Added strictly for safety
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["Poppins", "sans-serif"],
-      },
       colors: {
         background: "var(--background)",
+        foreground: "var(--foreground)",
         panel: "var(--panel)",
         border: "var(--border)",
-        foreground: "var(--foreground)",
-        // Use this specific hex for maximum saturation
-        ytRed: "#FF0000", 
+        ytRed: "#FF0033",
       },
       boxShadow: {
-        'tactile': 'var(--shadow-tactile)',
-        // Updated glow to be more visible
-        'yt-glow': '0 4px 0 0 rgba(0,0,0,0.5), 0 0px 20px rgba(255, 0, 0, 0.6)',
-      }
+        "yt-glow": "0 0 15px rgba(255, 0, 51, 0.5)",
+        "tactile": "4px 4px 0px rgba(0,0,0,0.5)",
+      },
     },
   },
   plugins: [],
 };
+export default config;

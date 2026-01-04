@@ -1,18 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
-import { ChannelAvatar } from '@/components/ChannelAvatar'; // <--- Import the new component
+import Link from 'next/link';
+import { ChannelAvatar } from '@/components/ChannelAvatar';
 
+// Initialize Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Force dynamic rendering so new submissions appear instantly
 export const revalidate = 0;
 
 export default async function Home() {
+  // Fetch real channels from Supabase
   const { data: dbChannels } = await supabase
     .from('submissions')
     .select('*')
     .order('created_at', { ascending: false });
 
+  // Fallback mock data if DB is empty (so the UI looks good while testing)
   const channels = dbChannels && dbChannels.length > 0 ? dbChannels : [
     { 
       id: 'mock1', 
@@ -39,7 +44,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col flex-1">
-      {/* ... HERO SECTION (Unchanged) ... */}
+      
+      {/* --- HERO SECTION --- */}
       <section className="grid grid-cols-12 gap-0 border-b border-border min-h-[60vh]">
         <div className="col-span-12 lg:col-span-7 p-12 lg:p-20 bg-panel border-r border-border flex flex-col justify-center">
           <div className="inline-flex items-center gap-2 mb-6">
@@ -66,6 +72,7 @@ export default async function Home() {
           </div>
         </div>
 
+        {/* --- 3D VISUAL --- */}
         <div className="col-span-12 lg:col-span-5 bg-background relative overflow-hidden flex items-center justify-center p-12">
           <div className="absolute top-10 right-10 w-20 h-20 border-4 border-border rounded-full opacity-50"></div>
           <div className="absolute bottom-20 left-10 w-32 h-2 bg-ytRed opacity-20"></div>
@@ -85,7 +92,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* --- LIVE CHANNEL REVIEWS --- */}
+      {/* --- LIVE CHANNEL FEED --- */}
       <section className="bg-background border-b border-border p-12">
         <div className="flex justify-between items-end mb-10 pb-4 border-b border-border">
           <div>
@@ -99,47 +106,54 @@ export default async function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {channels.map((channel: any) => (
-            <div key={channel.id} className="group bg-panel border border-border p-6 shadow-tactile hover:-translate-y-2 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden">
-              
-              <div className="flex justify-between items-start mb-6 relative z-10">
-                <div className="flex items-center gap-3">
-                    
-                    {/* --- THE FIX: Using the Client Component Here --- */}
-                    <div className="w-10 h-10 rounded-full border border-border group-hover:border-ytRed/50 overflow-hidden bg-background relative shadow-sm">
-                        <ChannelAvatar 
-                          url={channel.avatar_url} 
-                          name={channel.channel_name} 
-                        />
-                    </div>
-                    {/* ---------------------------------------------- */}
+            // WRAPPER: Makes the entire card clickable and links to detail page
+            <Link 
+              href={`/channel/${channel.id}`} 
+              key={channel.id} 
+              className="block h-full"
+            >
+              <div className="group h-full flex flex-col justify-between bg-panel border border-border p-6 shadow-tactile hover:-translate-y-2 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden">
+                
+                <div className="flex justify-between items-start mb-6 relative z-10">
+                  <div className="flex items-center gap-3">
+                      
+                      {/* CLIENT COMPONENT: Handles Image Loading & Fallbacks */}
+                      <div className="w-10 h-10 rounded-full border border-border group-hover:border-ytRed/50 overflow-hidden bg-background relative shadow-sm">
+                          <ChannelAvatar 
+                            url={channel.avatar_url} 
+                            name={channel.channel_name} 
+                          />
+                      </div>
 
-                    <span className="px-2 py-1 bg-background border border-border text-[9px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-ytRed group-hover:border-ytRed/30 transition-colors">
-                        Review
-                    </span>
+                      <span className="px-2 py-1 bg-background border border-border text-[9px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-ytRed group-hover:border-ytRed/30 transition-colors">
+                          Review
+                      </span>
+                  </div>
+                  <span className="font-mono text-xs text-gray-400">0:00 / 10:00</span>
                 </div>
-                <span className="font-mono text-xs text-gray-400">0:00 / 10:00</span>
-              </div>
 
-              <h4 className="text-xl font-black uppercase tracking-tight mb-3 text-foreground group-hover:text-ytRed transition-colors">
-                {channel.channel_name}
-              </h4>
-              
-              <div className="relative pl-4 border-l-2 border-border group-hover:border-ytRed mb-8 transition-colors">
-                <p className="text-sm font-medium text-gray-500 italic line-clamp-3">
-                  "{channel.goal_text}"
-                </p>
-              </div>
+                <h4 className="text-xl font-black uppercase tracking-tight mb-3 text-foreground group-hover:text-ytRed transition-colors">
+                  {channel.channel_name}
+                </h4>
+                
+                <div className="relative pl-4 border-l-2 border-border group-hover:border-ytRed mb-8 transition-colors">
+                  <p className="text-sm font-medium text-gray-500 italic line-clamp-3">
+                    "{channel.goal_text}"
+                  </p>
+                </div>
 
-              <div className="mt-auto pt-4 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique Now</span>
-                <span className="text-lg text-foreground group-hover:translate-x-1 transition-transform">→</span>
+                <div className="mt-auto pt-4 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique Now</span>
+                  <span className="text-lg text-foreground group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* --- HOW IT WORKS (Unchanged) --- */}
+      {/* --- HOW IT WORKS --- */}
       <section className="grid grid-cols-1 md:grid-cols-3 border-b border-border bg-panel">
         {[
           { step: "01", title: "Upload Link", desc: "Paste your URL. No signup walls." },

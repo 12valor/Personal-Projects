@@ -22,12 +22,12 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
 
   if (!submission) return notFound();
 
-  const isVideo = submission.submission_type === 'video';
+  const isVideo = submission.submission_type === 'video' || submission.submission_type === 'video_only';
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
       
-      {/* HEADER / PLAYER SECTION */}
+      {/* HEADER */}
       <div className="bg-panel border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-12">
           
@@ -35,49 +35,65 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
             ← Back to Feed
           </Link>
 
+          {/* HIDDEN BANNER (Only visible to admin or direct link users) */}
+          {submission.is_hidden && (
+            <div className="mb-8 p-4 bg-gray-900 border border-gray-700 flex items-center gap-3 animate-in fade-in">
+              <span className="text-xl">👁️‍🗨️</span>
+              <div>
+                <h3 className="text-sm font-black uppercase text-gray-300">Content Hidden</h3>
+                <p className="text-xs text-gray-500">This submission is currently hidden from the public feed.</p>
+              </div>
+            </div>
+          )}
+
           {isVideo ? (
-            /* --- VIDEO LAYOUT --- */
+            /* --- VIDEO LAYOUT (Preserved) --- */
             <div className="animate-in fade-in duration-500">
-               {/* Video Title & Meta */}
-               <div className="flex items-center gap-4 mb-4">
+               <div className="flex items-center gap-4 mb-4 flex-wrap">
                   <h1 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-foreground">
                     {submission.video_title}
                   </h1>
+                  
                   {submission.is_verified && (
-                    <div className="flex items-center gap-1 bg-background border border-border px-2 py-1 rounded-full" title="Verified Creator">
+                    <div className="flex items-center gap-1 bg-background border border-border px-2 py-1 rounded-full">
                       <div className="w-3 h-3 bg-ytRed rounded-full flex items-center justify-center text-white text-[8px] font-bold">✓</div>
                       <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Verified</span>
                     </div>
                   )}
+
+                  {/* LOCKED BADGE */}
+                  {submission.is_locked && (
+                    <div className="flex items-center gap-1 bg-red-900/20 border border-red-900 px-2 py-1 rounded-full">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-red-500">🔒 Locked</span>
+                    </div>
+                  )}
                </div>
 
-               {/* Video Player */}
                <div className="w-full aspect-video bg-black rounded-lg overflow-hidden shadow-2xl border border-border mb-8">
-                  <video 
-                    controls 
-                    className="w-full h-full" 
-                    src={submission.video_url} 
-                    poster="https://via.placeholder.com/1280x720/111/333?text=Video+Loading"
-                  />
+                  {submission.video_url && (
+                    <video 
+                      controls 
+                      className="w-full h-full" 
+                      src={submission.video_url} 
+                      poster="https://via.placeholder.com/1280x720/111/333?text=Video"
+                    />
+                  )}
                </div>
 
-               {/* Context Box (Below Video) */}
                {submission.context_text && (
                  <div className="bg-background/50 border-l-4 border-ytRed p-4">
                     <div className="flex items-center gap-3 mb-2">
                        <div className="w-6 h-6 rounded-full overflow-hidden">
                           <ChannelAvatar url={submission.avatar_url} name={submission.channel_name} />
                        </div>
-                       <span className="text-[10px] font-black uppercase tracking-widest text-ytRed">
-                         Creator Asks:
-                       </span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-ytRed">Creator Asks:</span>
                     </div>
                     <p className="text-foreground font-bold text-sm">{submission.context_text}</p>
                  </div>
                )}
             </div>
           ) : (
-            /* --- CHANNEL LAYOUT (Original) --- */
+            /* --- CHANNEL LAYOUT (Preserved) --- */
             <div className="flex flex-col md:flex-row gap-8 items-start animate-in slide-in-from-left-4">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-border p-1 bg-background flex-shrink-0">
                  <ChannelAvatar url={submission.avatar_url} name={submission.channel_name} />
@@ -89,9 +105,15 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                     {submission.channel_name}
                   </h1>
                   {submission.is_verified && (
-                    <div className="flex items-center gap-1 bg-background border border-border px-2 py-1 rounded-full" title="Verified Creator">
+                    <div className="flex items-center gap-1 bg-background border border-border px-2 py-1 rounded-full">
                       <div className="w-4 h-4 bg-ytRed rounded-full flex items-center justify-center text-white text-[10px] font-bold">✓</div>
                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Verified</span>
+                    </div>
+                  )}
+                  {/* LOCKED BADGE */}
+                  {submission.is_locked && (
+                    <div className="flex items-center gap-1 bg-red-900/20 border border-red-900 px-2 py-1 rounded-full">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-red-500">🔒 Locked</span>
                     </div>
                   )}
                 </div>
@@ -100,9 +122,7 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
 
                 {submission.context_text && (
                    <div className="bg-background/50 border-l-4 border-ytRed p-4 max-w-2xl">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-ytRed block mb-1">
-                        Asking For Feedback On:
-                      </span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-ytRed block mb-1">Asking For Feedback On:</span>
                       <p className="text-foreground font-bold text-sm md:text-base">{submission.context_text}</p>
                    </div>
                 )}
@@ -118,10 +138,11 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* COMMENTS */}
+      {/* COMMENTS SECTION */}
       <CommentSection 
         submissionId={id} 
-        submissionType={isVideo ? 'video' : 'channel'} 
+        submissionType={isVideo ? 'video' : 'channel'}
+        isLocked={submission.is_locked} // <--- Pass Lock Status
       />
     </div>
   );

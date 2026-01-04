@@ -83,7 +83,8 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
             context_text: context,
             user_id: session.user.id,
             avatar_url: session.user.user_metadata.avatar_url,
-            is_verified: true
+            is_verified: true,
+            verification_status: 'approved' // <--- AUTO APPROVE EVERYTHING
           }
         ])
         .select()

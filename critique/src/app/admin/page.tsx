@@ -4,27 +4,22 @@ import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 
 // --- TYPES ---
-type Tab = 'analytics' | 'verification' | 'content' | 'users' | 'reports';
+type Tab = 'analytics' | 'content' | 'users' | 'reports';
 
-// --- GRAPH COMPONENTS (CSS ONLY) ---
+// --- GRAPH COMPONENTS ---
 const BarChart = ({ data, color = "bg-foreground" }: { data: { label: string, value: number }[], color?: string }) => {
-  // Prevent division by zero if no data
   const max = Math.max(...data.map(d => d.value)) || 1;
-  
   return (
     <div className="flex items-end gap-2 h-40 pt-6 border-b border-border">
       {data.map((d, i) => (
         <div key={i} className="flex-1 flex flex-col justify-end group relative hover:bg-panel transition-colors rounded-t-sm">
-          {/* The Bar */}
           <div 
             className={`w-full mx-auto max-w-[30px] rounded-t-sm transition-all duration-500 ${color} opacity-80 group-hover:opacity-100`}
             style={{ height: `${(d.value / max) * 100}%`, minHeight: '4px' }}
           ></div>
-          {/* Label */}
           <div className="text-[9px] text-gray-500 text-center mt-2 truncate font-mono uppercase">
             {d.label}
           </div>
-          {/* Tooltip */}
           <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded pointer-events-none whitespace-nowrap z-20 font-bold">
             {d.value}
           </div>
@@ -59,12 +54,10 @@ const KPICard = ({ title, value, subtext }: { title: string, value: string | num
 
 export default function AdminDashboard() {
   const router = useRouter();
-  // DEFAULT TO ANALYTICS SO YOU SEE IT INSTANTLY
   const [activeTab, setActiveTab] = useState<Tab>('analytics');
   const [loading, setLoading] = useState(true);
   
   // Data State
-  const [queue, setQueue] = useState<any[]>([]);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
@@ -91,32 +84,23 @@ export default function AdminDashboard() {
   };
 
   const fetchAllData = async () => {
-    // 1. Verification Queue
-    const { data: qData } = await supabase.from('submissions').select('*').eq('verification_status', 'pending').order('created_at', { ascending: false });
-    setQueue(qData || []);
-
-    // 2. All Submissions
     const { data: subData } = await supabase.from('submissions').select('*').order('created_at', { ascending: false });
     setSubmissions(subData || []);
 
-    // 3. Users
     const { data: uData } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     setUsers(uData || []);
 
-    // 4. Reports
     const { data: rData } = await supabase.from('reports').select('*').order('created_at', { ascending: false });
     setReports(rData || []);
 
-    // 5. Comments
     const { data: cData } = await supabase.from('comments').select('created_at, tags');
     setComments(cData || []);
   };
 
-  // --- ANALYTICS LOGIC ---
+  // --- ANALYTICS ---
   const stats = useMemo(() => {
     if (loading) return null;
 
-    // A. Tag Usage
     const tagCounts: Record<string, number> = {};
     comments.forEach(c => {
       if (c.tags && Array.isArray(c.tags)) {
@@ -126,33 +110,22 @@ export default function AdminDashboard() {
       }
     });
     
-    // Sort and take top 5, or show placeholders if empty
     let topTags = Object.entries(tagCounts)
       .sort(([, a], [, b]) => b - a)
       .map(([label, value]) => ({ label, value }));
       
-    if (topTags.length === 0) {
-      topTags = [{ label: "No Tags Used", value: 0 }];
-    }
+    if (topTags.length === 0) topTags = [{ label: "No Tags Used", value: 0 }];
 
-    // B. Verification Split
-    const verifiedCount = submissions.filter(s => s.is_verified).length;
-    const unverifiedCount = submissions.length - verifiedCount;
-
-    // C. Thread Status
     const lockedCount = submissions.filter(s => s.is_locked).length;
     const openCount = submissions.length - lockedCount;
 
-    // D. Timeline (Last 7 Days)
     const timelineMap: Record<string, number> = {};
-    // Initialize last 7 days with 0
     for(let i=6; i>=0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const str = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       timelineMap[str] = 0;
     }
-    // Fill with data
     submissions.forEach(s => {
       const date = new Date(s.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       if (timelineMap[date] !== undefined) timelineMap[date]++;
@@ -160,34 +133,50 @@ export default function AdminDashboard() {
     
     const timelineData = Object.entries(timelineMap).map(([label, value]) => ({ label, value }));
 
-    return { topTags, verifiedCount, unverifiedCount, lockedCount, openCount, timelineData };
+    return { topTags, lockedCount, openCount, timelineData };
   }, [submissions, comments, loading]);
 
-  // --- ACTIONS ---
-  const handleVerification = async (id: string, status: 'approved' | 'rejected') => {
-    await supabase.from('submissions').update({ verification_status: status, is_verified: status === 'approved' }).eq('id', id);
-    fetchAllData();
-  };
-
+  // --- FIXED ACTIONS ---
+  
   const toggleLock = async (id: string, current: boolean) => {
-    await supabase.from('submissions').update({ is_locked: !current }).eq('id', id);
-    fetchAllData();
+    // 1. Optimistic Update (Update UI instantly)
+    setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_locked: !current } : s));
+
+    // 2. Database Update
+    const { error } = await supabase.from('submissions').update({ is_locked: !current }).eq('id', id);
+    
+    // 3. Revert if error
+    if (error) {
+      alert("Error locking thread");
+      setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_locked: current } : s));
+    }
   };
 
   const toggleHide = async (id: string, current: boolean) => {
-    await supabase.from('submissions').update({ is_hidden: !current }).eq('id', id);
-    fetchAllData();
+    // 1. Optimistic Update
+    setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_hidden: !current } : s));
+
+    // 2. Database Update
+    const { error } = await supabase.from('submissions').update({ is_hidden: !current }).eq('id', id);
+
+    // 3. Revert if error
+    if (error) {
+      alert("Error hiding thread");
+      setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_hidden: current } : s));
+    }
   };
 
   const toggleBan = async (id: string, current: boolean) => {
     if(!confirm("Are you sure you want to ban/unban this user?")) return;
-    await supabase.from('profiles').update({ is_banned: !current }).eq('id', id);
-    fetchAllData();
+    
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, is_banned: !current } : u));
+    const { error } = await supabase.from('profiles').update({ is_banned: !current }).eq('id', id);
+    if(error) fetchAllData(); // Fallback re-fetch
   };
   
   const resolveReport = async (id: string) => {
+    setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'resolved' } : r));
     await supabase.from('reports').update({ status: 'resolved' }).eq('id', id);
-    fetchAllData();
   };
 
   if (loading) return (
@@ -219,7 +208,6 @@ export default function AdminDashboard() {
             <p className="text-[9px] font-black uppercase text-gray-500 mb-2 pl-2">Menu</p>
             {[
               { id: 'analytics', label: 'Platform Health', count: 0 },
-              { id: 'verification', label: 'Verification Queue', count: queue.length },
               { id: 'content', label: 'Manage Content', count: 0 },
               { id: 'users', label: 'User Database', count: 0 },
               { id: 'reports', label: 'Reports', count: reports.filter(r => r.status === 'pending').length },
@@ -250,7 +238,6 @@ export default function AdminDashboard() {
           {/* --- ANALYTICS TAB --- */}
           {activeTab === 'analytics' && stats && (
             <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              
               <div className="flex justify-between items-end">
                  <div>
                    <h2 className="text-3xl font-black uppercase italic tracking-tighter">Analytics Overview</h2>
@@ -263,7 +250,7 @@ export default function AdminDashboard() {
                 <KPICard title="Total Channels" value={submissions.length} subtext="Submitted All Time" />
                 <KPICard title="Total Critiques" value={comments.length} subtext="Feedback Given" />
                 <KPICard title="Active Threads" value={stats.openCount} subtext="Open for Review" />
-                <KPICard title="Pending Action" value={queue.length + reports.filter(r => r.status === 'pending').length} subtext="Queue + Reports" />
+                <KPICard title="Pending Action" value={reports.filter(r => r.status === 'pending').length} subtext="Reports" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -289,64 +276,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
-
-              {/* BOTTOM STATS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-panel border border-border p-6 flex items-center justify-between">
-                   <div>
-                     <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-1">Verification Rate</h3>
-                     <p className="text-2xl font-black">{Math.round((stats.verifiedCount / (submissions.length || 1)) * 100)}%</p>
-                     <p className="text-[10px] text-gray-400">Of all submissions are verified creators</p>
-                   </div>
-                   <div className="w-16 h-16 border-4 border-ytRed rounded-full flex items-center justify-center text-xs font-bold text-ytRed">
-                      {stats.verifiedCount}
-                   </div>
-                </div>
-                
-                <div className="bg-panel border border-border p-6 flex items-center justify-between">
-                   <div>
-                     <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-1">Moderation Health</h3>
-                     <p className="text-2xl font-black">{reports.filter(r => r.status === 'pending').length}</p>
-                     <p className="text-[10px] text-gray-400">Unresolved Reports</p>
-                   </div>
-                   <div className={`w-16 h-16 border-4 rounded-full flex items-center justify-center text-xs font-bold ${reports.filter(r => r.status === 'pending').length > 0 ? 'border-red-500 text-red-500' : 'border-green-500 text-green-500'}`}>
-                      {reports.filter(r => r.status === 'pending').length > 0 ? 'ACTION' : 'GOOD'}
-                   </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* --- VERIFICATION QUEUE --- */}
-          {activeTab === 'verification' && (
-            <div className="max-w-4xl mx-auto animate-in fade-in duration-300">
-              <h2 className="text-2xl font-black uppercase mb-6">Verification Queue</h2>
-              {queue.length === 0 ? (
-                <div className="text-center py-20 border-2 border-dashed border-border text-gray-500">
-                  <p className="font-bold">All caught up!</p>
-                  <p className="text-xs">No pending verifications.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {queue.map((item) => (
-                    <div key={item.id} className="bg-panel border border-border p-6 flex justify-between items-center shadow-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-800 rounded-full overflow-hidden border border-border">
-                           <img src={item.avatar_url || "https://ui-avatars.com/api/?background=random"} className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <a href={item.youtube_url} target="_blank" className="text-lg font-black hover:text-ytRed hover:underline">{item.channel_name}</a>
-                          <p className="text-xs text-gray-500 font-medium">Context: {item.context_text || "No context provided."}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <button onClick={() => handleVerification(item.id, 'rejected')} className="px-6 py-3 border border-border text-xs font-black uppercase hover:bg-red-950 hover:text-red-500 hover:border-red-900 transition-colors">Reject</button>
-                        <button onClick={() => handleVerification(item.id, 'approved')} className="px-6 py-3 bg-ytRed text-white text-xs font-black uppercase shadow-yt-glow hover:-translate-y-1 transition-transform">Approve</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           )}
 
@@ -359,31 +288,65 @@ export default function AdminDashboard() {
                   <thead className="bg-background border-b border-border text-[10px] font-black uppercase text-gray-500 tracking-wider">
                     <tr>
                       <th className="p-4">Channel Name</th>
-                      <th className="p-4">Status</th>
+                      <th className="p-4">Type</th>
+                      <th className="p-4 text-center">Indicators</th>
                       <th className="p-4 text-right">Moderation</th>
                     </tr>
                   </thead>
                   <tbody>
                     {submissions.map((sub) => (
-                      <tr key={sub.id} className="border-b border-border hover:bg-background/50 transition-colors">
+                      <tr 
+                        key={sub.id} 
+                        className={`border-b border-border transition-colors 
+                          ${sub.is_hidden ? 'bg-gray-900/30 opacity-60' : 'hover:bg-background/50'}
+                          ${sub.is_locked ? 'border-l-4 border-l-red-600' : ''}
+                        `}
+                      >
                         <td className="p-4">
                           <span className="font-bold text-foreground block">{sub.channel_name}</span>
-                          <div className="flex gap-2 mt-1">
-                             {sub.is_hidden && <span className="text-[9px] bg-gray-800 text-gray-300 px-1.5 py-0.5 rounded font-bold uppercase">Hidden</span>}
-                             {sub.is_locked && <span className="text-[9px] bg-red-900/50 text-red-200 px-1.5 py-0.5 rounded font-bold uppercase">Locked</span>}
-                          </div>
+                          <a href={`/channel/${sub.id}`} target="_blank" className="text-[10px] text-gray-500 hover:text-ytRed">View Thread →</a>
                         </td>
-                        <td className="p-4 text-xs font-mono text-gray-500 uppercase">{sub.verification_status}</td>
+                        <td className="p-4 text-xs font-mono text-gray-500 uppercase">{sub.submission_type}</td>
+                        
+                        {/* VISUAL INDICATORS */}
+                        <td className="p-4 text-center">
+                           <div className="flex items-center justify-center gap-2">
+                             {sub.is_locked && (
+                               <div className="flex items-center gap-1 bg-red-950 border border-red-900 px-2 py-1 rounded text-red-500 text-[9px] font-black uppercase" title="Thread Locked">
+                                 <span>🔒</span> LOCKED
+                               </div>
+                             )}
+                             {sub.is_hidden && (
+                               <div className="flex items-center gap-1 bg-gray-800 border border-gray-700 px-2 py-1 rounded text-gray-400 text-[9px] font-black uppercase" title="Thread Hidden">
+                                 <span>👁️‍🗨️</span> HIDDEN
+                               </div>
+                             )}
+                             {!sub.is_locked && !sub.is_hidden && (
+                               <span className="text-gray-600 text-[10px]">—</span>
+                             )}
+                           </div>
+                        </td>
+
+                        {/* ACTIONS */}
                         <td className="p-4 flex justify-end gap-2">
                           <button 
                             onClick={() => toggleLock(sub.id, sub.is_locked)} 
-                            className={`px-3 py-1.5 text-[10px] font-bold uppercase border transition-colors ${sub.is_locked ? 'bg-orange-500 border-orange-500 text-white' : 'border-border text-gray-400 hover:text-foreground'}`}
+                            className={`min-w-[80px] px-3 py-1.5 text-[10px] font-bold uppercase border transition-colors 
+                              ${sub.is_locked 
+                                ? 'bg-background border-red-500 text-red-500 hover:bg-red-500 hover:text-white' 
+                                : 'bg-background border-border text-gray-400 hover:border-red-500 hover:text-red-500'
+                              }`}
                           >
                             {sub.is_locked ? 'Unlock' : 'Lock'}
                           </button>
+                          
                           <button 
                             onClick={() => toggleHide(sub.id, sub.is_hidden)} 
-                            className={`px-3 py-1.5 text-[10px] font-bold uppercase border transition-colors ${sub.is_hidden ? 'bg-gray-600 border-gray-600 text-white' : 'border-border text-gray-400 hover:text-foreground'}`}
+                            className={`min-w-[80px] px-3 py-1.5 text-[10px] font-bold uppercase border transition-colors
+                              ${sub.is_hidden 
+                                ? 'bg-background border-foreground text-foreground hover:bg-foreground hover:text-background' 
+                                : 'bg-background border-border text-gray-400 hover:border-foreground hover:text-foreground'
+                              }`}
                           >
                             {sub.is_hidden ? 'Unhide' : 'Hide'}
                           </button>
@@ -468,9 +431,6 @@ export default function AdminDashboard() {
                               className="px-6 py-2 bg-foreground text-background text-xs font-black uppercase hover:bg-gray-300 transition-colors"
                             >
                               Mark Resolved
-                            </button>
-                            <button className="px-6 py-2 border border-border text-xs font-black uppercase hover:bg-white hover:text-black transition-colors">
-                              View Content
                             </button>
                           </div>
                        ) : (

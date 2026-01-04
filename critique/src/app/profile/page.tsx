@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false); // New State
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<'channels' | 'critiques'>('channels');
 
@@ -48,7 +49,6 @@ export default function ProfilePage() {
       .order('created_at', { ascending: false });
 
     // 3. Get User's Critiques (Comments)
-    // We join 'submissions' so we can link back to the channel they critiqued
     const { data: commentData } = await supabase
       .from('comments')
       .select('*, submissions(id, channel_name)')
@@ -77,6 +77,48 @@ export default function ProfilePage() {
     setSaving(false);
   };
 
+  // --- NEW: Handle Image Upload ---
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!event.target.files || event.target.files.length === 0) return;
+      setUploadingImage(true);
+
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${profile.id}-${Math.random()}.${fileExt}`;
+
+      // 1. Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // 2. Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // 3. Update Profile Database
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', profile.id);
+
+      if (dbError) throw dbError;
+
+      // 4. Update Local State
+      setProfile({ ...profile, avatar_url: publicUrl });
+      alert("Profile picture updated!");
+
+    } catch (error: any) {
+      console.error(error);
+      alert("Error uploading image: " + error.message);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   if (loading) return <div className="p-20 text-center font-mono text-xs uppercase tracking-widest text-gray-500">Loading Dashboard...</div>;
 
   return (
@@ -87,20 +129,41 @@ export default function ProfilePage() {
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             
-            {/* Avatar */}
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-border p-1 bg-background flex-shrink-0 relative group">
-               <img 
-                 src={profile?.avatar_url || "https://ui-avatars.com/api/?background=random"} 
-                 className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
-               />
-               <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-ytRed/50 transition-colors"></div>
+            {/* Avatar (Updated with Upload Logic) */}
+            <div className="relative group w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
+               <div className="w-full h-full rounded-full border-2 border-border p-1 bg-background overflow-hidden relative shadow-lg">
+                 <img 
+                   src={profile?.avatar_url || "https://ui-avatars.com/api/?background=random"} 
+                   className={`w-full h-full rounded-full object-cover transition-all duration-300 ${uploadingImage ? 'opacity-50 blur-sm' : 'group-hover:opacity-75'}`}
+                 />
+                 
+                 {/* Loading Spinner */}
+                 {uploadingImage && (
+                   <div className="absolute inset-0 flex items-center justify-center">
+                     <div className="w-6 h-6 border-2 border-ytRed border-t-transparent rounded-full animate-spin"></div>
+                   </div>
+                 )}
+               </div>
+
+               {/* Hidden File Input & Overlay Label */}
+               {!uploadingImage && (
+                 <label className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                    <span className="text-[10px] font-black uppercase text-white tracking-widest">Change</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleAvatarUpload}
+                      className="hidden"
+                    />
+                 </label>
+               )}
             </div>
 
             {/* Info / Edit Form */}
             <div className="flex-1 w-full">
               {!isEditing ? (
                 // VIEW MODE
-                <div>
+                <div className="animate-in fade-in slide-in-from-left-2">
                    <div className="flex justify-between items-start">
                       <div>
                         <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter mb-2">
@@ -202,12 +265,23 @@ export default function ProfilePage() {
             ) : (
               submissions.map((sub) => (
                 <Link href={`/channel/${sub.id}`} key={sub.id} className="block group">
-                  <div className="bg-panel border border-border p-5 hover:border-ytRed/50 transition-all hover:-translate-y-1">
+                  <div className="bg-panel border border-border p-5 hover:border-ytRed/50 transition-all hover:-translate-y-1 relative overflow-hidden">
+                    
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-black text-lg text-foreground group-hover:text-ytRed truncate pr-4">{sub.channel_name}</h3>
+                      <div>
+                        <h3 className="font-black text-lg text-foreground group-hover:text-ytRed truncate pr-4">{sub.video_title || sub.channel_name}</h3>
+                        <div className="flex gap-2 mt-1">
+                          <span className="text-[10px] font-bold uppercase text-gray-500 bg-background border border-border px-1.5 py-0.5 rounded">
+                            {sub.submission_type?.includes('video') ? '🎬 Video' : '📺 Channel'}
+                          </span>
+                          {sub.is_locked && <span className="text-[9px] font-black uppercase text-red-500 bg-red-900/20 px-1.5 py-0.5 rounded border border-red-900">Locked</span>}
+                          {sub.is_hidden && <span className="text-[9px] font-black uppercase text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">Hidden</span>}
+                        </div>
+                      </div>
                       <span className="text-[10px] font-mono text-gray-500">{new Date(sub.created_at).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-xs text-gray-400 line-clamp-2">"{sub.goal_text}"</p>
+
+                    <p className="text-xs text-gray-400 line-clamp-2">"{sub.context_text || sub.goal_text}"</p>
                     <div className="mt-4 pt-3 border-t border-border flex justify-end">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white">View Feedback →</span>
                     </div>
@@ -233,7 +307,7 @@ export default function ProfilePage() {
                     
                     <div className="flex justify-between items-center mb-2">
                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                         On: <span className="text-white group-hover:text-ytRed transition-colors">{comment.submissions?.channel_name || "Unknown Channel"}</span>
+                         On: <span className="text-white group-hover:text-ytRed transition-colors">{comment.submissions?.video_title || comment.submissions?.channel_name || "Unknown"}</span>
                        </span>
                        <span className="text-[10px] font-mono text-gray-600">{new Date(comment.created_at).toLocaleDateString()}</span>
                     </div>

@@ -1,20 +1,40 @@
 @import "tailwindcss";
-
-/* CRITICAL: This tells Tailwind v4 to use your 3D tokens */
 @config "../../tailwind.config.js";
 
 @layer base {
+  :root {
+    /* Pure Black for maximum contrast */
+    --background: #000000; 
+    --panel: #0F0F0F;
+    --border: #1F1F1F;
+    --foreground: #FFFFFF;
+    
+    /* Tactile Shadow */
+    --shadow-tactile: 0 4px 0 0 #111, 0 8px 16px rgba(0,0,0,0.6);
+  }
+
+  .light {
+    --background: #FFFFFF;
+    --panel: #F2F2F2;
+    --border: #E5E5E5;
+    --foreground: #000000;
+    --shadow-tactile: 0 4px 0 0 #DDD, 0 8px 16px rgba(0,0,0,0.05);
+  }
+
   body {
-    background: #050505;
-    color: #FFFFFF;
+    background: var(--background);
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Your grid utility for that dense look */
+/* FIX: No 'opacity' property here. We handle the subtlety via the color itself. */
 .grid-bg {
-  background-size: 32px 32px;
+  background-size: 40px 40px;
   background-image: 
-    linear-gradient(to right, #111 1px, transparent 1px),
-    linear-gradient(to bottom, #111 1px, transparent 1px);
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  /* This ensures the grid stays in the background */
+  z-index: 0;
+  pointer-events: none;
 }

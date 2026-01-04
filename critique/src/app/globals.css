@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* CRITICAL: This tells Tailwind v4 to use your 3D tokens */
+@config "../../tailwind.config.js";
+
+@layer base {
+  body {
+    background: #050505;
+    color: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Your grid utility for that dense look */
+.grid-bg {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, #111 1px, transparent 1px),
+    linear-gradient(to bottom, #111 1px, transparent 1px);
+}

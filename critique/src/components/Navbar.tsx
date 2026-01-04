@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { SubmitModal } from './SubmitModal';
+import { NotificationBell } from './NotificationBell';
 import Link from 'next/link';
 
 export const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isDark, setIsDark] = useState(true); // Default to dark
+  const [isDark, setIsDark] = useState(true);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -33,7 +34,7 @@ export const Navbar = () => {
       else setIsAdmin(false);
     });
 
-    // 3. Theme Init (Check local storage or system pref)
+    // 3. Theme Init
     const storedTheme = localStorage.getItem('theme');
     if (storedTheme === 'light') {
       setIsDark(false);
@@ -77,7 +78,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className="h-16 border-b border-border flex items-center justify-between px-6 md:px-8 bg-background sticky top-0 z-50 transition-colors duration-300">
+      <nav className="h-16 border-b border-border flex items-center justify-between px-6 md:px-8 bg-panel sticky top-0 z-50 transition-colors duration-300">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-8 h-6 bg-ytRed rounded-lg flex items-center justify-center shadow-yt-glow group-hover:scale-105 transition-transform">
             <div className="w-0 h-0 border-t-[4px] border-t-transparent border-l-[8px] border-l-white border-b-[4px] border-b-transparent ml-0.5"></div>
@@ -95,7 +96,7 @@ export const Navbar = () => {
           {/* THEME TOGGLE BUTTON */}
           <button 
             onClick={toggleTheme}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-border bg-panel text-foreground hover:border-ytRed transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-border bg-background text-foreground hover:border-ytRed transition-colors"
             title="Toggle Theme"
           >
             {isDark ? (
@@ -116,6 +117,9 @@ export const Navbar = () => {
             </button>
           ) : (
             <div className="flex items-center gap-4">
+               {/* NOTIFICATION BELL */}
+               <NotificationBell userId={user.id} />
+
                <button onClick={handleLogout} className="hidden md:block text-[10px] font-bold text-gray-600 hover:text-ytRed uppercase tracking-widest">
                  Sign Out
                </button>

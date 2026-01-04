@@ -8,28 +8,29 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const revalidate = 0;
 
-export default async function Home() {
-  const { data: dbChannels } = await supabase
+export default async function Home({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
+  // Await searchParams in Next.js 15+
+  const { filter } = await searchParams;
+  const currentFilter = filter || 'all';
+
+  // Build Query for Filters
+  let query = supabase
     .from('submissions')
     .select('*')
     .order('created_at', { ascending: false });
 
-  const channels = dbChannels && dbChannels.length > 0 ? dbChannels : [
-    { 
-      id: 'mock1', 
-      channel_name: 'Marques Brownlee', 
-      goal_text: 'Reviewing tech is easy, but keeping retention high is hard.', 
-      youtube_url: '#', 
-      avatar_url: 'https://unavatar.io/youtube/mkbhd' 
-    },
-    { 
-      id: 'mock2', 
-      channel_name: 'MrBeast', 
-      goal_text: 'Even I need feedback. Are the intros too fast?', 
-      youtube_url: '#', 
-      avatar_url: 'https://unavatar.io/youtube/mrbeast' 
-    },
-  ];
+  // FIXED LOGIC: Uses .in() to catch both old ('channel') and new ('channel_only') types
+  if (currentFilter === 'channel_only') {
+    query = query.in('submission_type', ['channel_only', 'channel']);
+  }
+  if (currentFilter === 'video_only') {
+    query = query.in('submission_type', ['video_only', 'video']);
+  }
+  if (currentFilter === 'mixed') {
+    query = query.eq('submission_type', 'mixed');
+  }
+
+  const { data: channels } = await query;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -69,7 +70,7 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* RIGHT: The "Video Player" Visual (Grounded, not abstract) */}
+          {/* RIGHT: The "Video Player" Visual */}
           <div className="bg-panel/50 relative flex items-center justify-center p-12 lg:p-0 overflow-hidden">
              {/* The "Player" Container */}
              <div className="w-full max-w-lg aspect-video bg-black rounded-lg border border-border shadow-2xl relative group overflow-hidden">
@@ -88,7 +89,7 @@ export default async function Home() {
                    </div>
                 </div>
 
-                {/* The "Comment" Overlay (Simulating the App's function) */}
+                {/* The "Comment" Overlay */}
                 <div className="absolute top-8 right-8 max-w-[200px] bg-background/90 backdrop-blur border border-border p-4 rounded shadow-lg transform rotate-2 hover:rotate-0 transition-transform duration-300">
                    <div className="flex items-center gap-2 mb-2">
                       <div className="w-5 h-5 rounded-full bg-ytRed"></div>
@@ -107,87 +108,123 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* --- LIVE FEED (Full Width) --- */}
-      <section className="bg-background border-b border-border p-6 md:p-12">
+      {/* --- LIVE FEED --- */}
+      <section className="bg-background border-b border-border p-6 md:p-12 min-h-screen">
         <div className="max-w-[1920px] mx-auto">
-          <div className="flex justify-between items-end mb-8 pb-4 border-b border-border">
+          
+          <div className="flex flex-col md:flex-row justify-between items-end mb-8 pb-4 border-b border-border gap-4">
             <div>
               <h2 className="text-xs font-black text-ytRed uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 bg-ytRed rounded-full animate-pulse"></span>
-                Live Feed
+                Live Activity
               </h2>
-              <h3 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter text-foreground">
+              <h3 className="text-3xl font-black uppercase tracking-tighter text-foreground">
                 Recent Submissions
               </h3>
             </div>
-            <Link href="/explore" className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-ytRed transition-colors">
-              View All →
-            </Link>
+
+            {/* FILTER BAR */}
+            <div className="flex flex-wrap gap-2">
+               {[
+                 { id: 'all', label: 'All', icon: '' },
+                 { id: 'mixed', label: 'Channel + Video', icon: '📺+🎬' },
+                 { id: 'channel_only', label: 'Channel Only', icon: '📺' },
+                 { id: 'video_only', label: 'Video Only', icon: '🎬' },
+               ].map((f) => (
+                 <Link 
+                   key={f.id}
+                   href={f.id === 'all' ? '/' : `/?filter=${f.id}`}
+                   className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border rounded transition-all flex items-center gap-2
+                     ${currentFilter === f.id 
+                       ? 'bg-foreground text-background border-foreground' 
+                       : 'bg-background border-border text-gray-500 hover:border-gray-400 hover:text-foreground'}
+                   `}
+                 >
+                   {f.icon && <span>{f.icon}</span>}
+                   {f.label}
+                 </Link>
+               ))}
+            </div>
           </div>
 
+          {/* GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {channels.map((channel: any) => (
-              <Link 
-                href={`/channel/${channel.id}`} 
-                key={channel.id} 
-                className="block group"
-              >
-                <div className="h-full flex flex-col justify-between bg-panel border border-border p-5 shadow-tactile hover:-translate-y-1 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden rounded-sm">
-                  
-                  <div className="flex justify-between items-start mb-4 relative z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full border border-border group-hover:border-ytRed/50 overflow-hidden bg-background relative shadow-sm">
-                            <ChannelAvatar 
-                              url={channel.avatar_url} 
-                              name={channel.channel_name} 
-                            />
-                        </div>
-                        <span className="px-2 py-0.5 bg-background border border-border text-[8px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-ytRed group-hover:border-ytRed/30 transition-colors">
-                            Active
-                        </span>
+            {!channels || channels.length === 0 ? (
+               <div className="col-span-full py-20 text-center text-gray-500 border border-dashed border-border">
+                 No submissions found for this filter.
+               </div>
+            ) : (
+              channels.map((channel: any) => (
+                <Link 
+                  href={`/channel/${channel.id}`} 
+                  key={channel.id} 
+                  className="block group"
+                >
+                  <div className="h-full flex flex-col justify-between bg-panel border border-border p-5 shadow-tactile hover:-translate-y-1 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden rounded-sm">
+                    
+                    {/* Header */}
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                      <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full border border-border overflow-hidden bg-background relative shadow-sm">
+                              <ChannelAvatar 
+                                url={channel.avatar_url} 
+                                name={channel.channel_name} 
+                              />
+                          </div>
+                          
+                          {/* TYPE ICON BADGE */}
+                          <div className="px-1.5 py-0.5 bg-background border border-border rounded text-[10px] font-bold text-gray-500 flex items-center gap-1" title={channel.submission_type}>
+                            {(channel.submission_type === 'channel_only' || channel.submission_type === 'channel') && '📺 Channel'}
+                            {(channel.submission_type === 'video_only' || channel.submission_type === 'video') && '🎬 Video'}
+                            {channel.submission_type === 'mixed' && '📺+🎬 Combo'}
+                          </div>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h4 className="text-base font-black uppercase tracking-tight mb-2 text-foreground group-hover:text-ytRed transition-colors truncate">
+                      {(channel.submission_type === 'video_only' || channel.submission_type === 'video') ? channel.video_title : channel.channel_name}
+                    </h4>
+                    
+                    {/* Context */}
+                    <div className="relative pl-3 border-l-2 border-border group-hover:border-ytRed mb-6 transition-colors h-12 overflow-hidden">
+                      <p className="text-xs font-medium text-gray-500 italic line-clamp-2">
+                        "{channel.context_text || channel.goal_text}"
+                      </p>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-auto pt-3 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique</span>
+                      <span className="text-sm text-foreground group-hover:translate-x-1 transition-transform">→</span>
                     </div>
                   </div>
-
-                  <h4 className="text-base font-black uppercase tracking-tight mb-2 text-foreground group-hover:text-ytRed transition-colors truncate">
-                    {channel.channel_name}
-                  </h4>
-                  
-                  <div className="relative pl-3 border-l-2 border-border group-hover:border-ytRed mb-6 transition-colors h-12 overflow-hidden">
-                    <p className="text-xs font-medium text-gray-500 italic line-clamp-2">
-                      "{channel.goal_text}"
-                    </p>
-                  </div>
-
-                  <div className="mt-auto pt-3 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique</span>
-                    <span className="text-sm text-foreground group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
 
-      {/* --- SIMPLE STEPS --- */}
-      <section className="bg-panel border-b border-border py-12">
-         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* --- HOW IT WORKS (RESTORED) --- */}
+      <section className="bg-panel border-b border-border">
+         <div className="max-w-[1920px] mx-auto grid grid-cols-1 md:grid-cols-3">
           {[
-            { step: "01", title: "Share Link", desc: "No signup walls. Just paste." },
-            { step: "02", title: "Get Roasted", desc: "Timestamped feedback." },
-            { step: "03", title: "Fix It", desc: "Watch your retention grow." }
+            { step: "01", title: "Upload Link", desc: "Paste your URL. No signup walls." },
+            { step: "02", title: "Get Roasted", desc: "Honest feedback from real creators." },
+            { step: "03", title: "Go Viral", desc: "Fix the drop-offs. Improve CTR." }
           ].map((item, i) => (
-            <div key={i} className="group">
-              <div className="text-4xl font-black text-gray-800 group-hover:text-ytRed transition-colors mb-2 opacity-50">
+            <div key={i} className={`p-16 border-b md:border-b-0 ${i !== 2 ? 'md:border-r' : ''} border-border hover:bg-background transition-colors group`}>
+              <div className="w-12 h-12 mb-6 rounded-full border-2 border-border flex items-center justify-center text-lg font-black text-gray-400 group-hover:border-ytRed group-hover:text-ytRed transition-all">
                 {item.step}
               </div>
-              <h3 className="text-lg font-black uppercase tracking-tighter mb-1 text-foreground">{item.title}</h3>
-              <p className="text-xs font-medium text-gray-500">{item.desc}</p>
+              <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 italic text-foreground">{item.title}</h3>
+              <p className="text-sm font-medium text-gray-500 group-hover:text-foreground">{item.desc}</p>
             </div>
           ))}
         </div>
       </section>
-
+      
     </div>
   );
 }

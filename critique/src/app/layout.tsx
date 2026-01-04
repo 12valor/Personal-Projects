@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Navbar } from "@/components/Navbar"; // <--- Import the Navbar
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer"; // <--- Import Footer
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,13 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* The Navbar goes here so it stays on every page */}
         <Navbar />
         
-        {/* This is where your page.tsx content renders */}
         <main className="min-h-screen">
           {children}
         </main>
+
+        {/* Add Footer Here */}
+        <Footer />
       </body>
     </html>
   );

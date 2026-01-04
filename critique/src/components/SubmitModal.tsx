@@ -35,13 +35,23 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
     if (!context) return;
     setLoading(true);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    let finalVideoUrl = null;
-
     try {
-      // 1. Upload Video if type is video_only or mixed
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // 1. FETCH LATEST PROFILE DATA (Fixes the avatar issue)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', session.user.id)
+        .single();
+      
+      // Use profile avatar OR fallback to session avatar
+      const finalAvatarUrl = profile?.avatar_url || session.user.user_metadata.avatar_url;
+
+      let finalVideoUrl = null;
+
+      // 2. Upload Video if type is video_only or mixed
       if ((submissionType === 'video_only' || submissionType === 'mixed') && videoFile) {
         const fileExt = videoFile.name.split('.').pop();
         const cleanName = `${Date.now()}.${fileExt}`;
@@ -57,13 +67,12 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
         finalVideoUrl = urlData.publicUrl;
       }
 
-      // 2. Prepare Data
-      // For video_only, we might not have a channel name, so we use the User's name or a placeholder
+      // 3. Prepare Data
       const effectiveChannelName = (submissionType === 'video_only') 
         ? (session.user.user_metadata.full_name || "Creator") 
         : channelName;
 
-      // 3. Insert to DB
+      // 4. Insert to DB
       const { data, error: dbError } = await supabase
         .from('submissions')
         .insert([
@@ -82,9 +91,9 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
             // Shared
             context_text: context,
             user_id: session.user.id,
-            avatar_url: session.user.user_metadata.avatar_url,
+            avatar_url: finalAvatarUrl, // <--- NOW USES LATEST PROFILE PIC
             is_verified: true,
-            verification_status: 'approved' // <--- AUTO APPROVE EVERYTHING
+            verification_status: 'approved'
           }
         ])
         .select()
@@ -138,7 +147,7 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
                onClick={() => setSubmissionType('mixed')}
                className={`py-3 text-[10px] font-black uppercase tracking-widest transition-colors rounded flex flex-col items-center gap-1 ${submissionType === 'mixed' ? 'bg-foreground text-background shadow-sm' : 'text-gray-500 hover:text-foreground'}`}
              >
-               <span>📺+🎬</span> Channel + Video
+               <span>📺+🎬</span> Combo
              </button>
           </div>
         </div>

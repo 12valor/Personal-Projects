@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { ChannelAvatar } from '@/components/ChannelAvatar';
+import { SubmissionCard } from '@/components/SubmissionCard';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -12,14 +12,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   const { filter } = await searchParams;
   const currentFilter = filter || 'all';
 
-  // 1. Base Query
+  // Fetch submissions with profile info and comment counts
   let query = supabase
     .from('submissions')
-    .select('*')
-    .eq('is_hidden', false) // <--- CRITICAL: Hides content from public feed
+    .select(`
+      *,
+      profiles (full_name, avatar_url),
+      comments (count)
+    `)
+    .or('is_hidden.eq.false,is_hidden.is.null')
     .order('created_at', { ascending: false });
 
-  // 2. Apply Filters
   if (currentFilter === 'channel_only') {
     query = query.in('submission_type', ['channel_only', 'channel']);
   }
@@ -35,11 +38,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   return (
     <div className="flex flex-col min-h-screen">
       
-      {/* --- HERO SECTION (PRESERVED) --- */}
+      {/* --- HERO SECTION --- */}
       <section className="relative w-full border-b border-border bg-background overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(#80808033_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
         <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
-          
           <div className="flex flex-col justify-center p-8 md:p-16 lg:p-24 relative z-10 lg:border-r border-border/50">
             <div className="inline-block mb-6">
               <span className="text-[10px] font-black tracking-[0.2em] uppercase text-ytRed border border-ytRed/30 px-3 py-1 rounded bg-ytRed/5">
@@ -63,7 +65,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
               </button>
             </div>
           </div>
-
           <div className="bg-panel/50 relative flex items-center justify-center p-12 lg:p-0 overflow-hidden">
              <div className="w-full max-w-lg aspect-video bg-black rounded-lg border border-border shadow-2xl relative group overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center bg-neutral-900">
@@ -94,7 +95,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       {/* --- LIVE FEED --- */}
       <section className="bg-background border-b border-border p-6 md:p-12 min-h-screen">
         <div className="max-w-[1920px] mx-auto">
-          
           <div className="flex flex-col md:flex-row justify-between items-end mb-8 pb-4 border-b border-border gap-4">
             <div>
               <h2 className="text-xs font-black text-ytRed uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
@@ -105,14 +105,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                 Recent Submissions
               </h3>
             </div>
-            
-            {/* Filter Tabs Preserved */}
             <div className="flex flex-wrap gap-2">
                {[
                  { id: 'all', label: 'All', icon: '' },
-                 { id: 'mixed', label: 'Channel + Video', icon: '📺+🎬' },
-                 { id: 'channel_only', label: 'Channel Only', icon: '📺' },
-                 { id: 'video_only', label: 'Video Only', icon: '🎬' },
+                 { id: 'mixed', label: 'Combo', icon: '📺+🎬' },
+                 { id: 'channel_only', label: 'Channel', icon: '📺' },
+                 { id: 'video_only', label: 'Video', icon: '🎬' },
                ].map((f) => (
                  <Link 
                    key={f.id}
@@ -137,47 +135,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                </div>
             ) : (
               channels.map((channel: any) => (
-                <Link href={`/channel/${channel.id}`} key={channel.id} className="block group">
-                  <div className="h-full flex flex-col justify-between bg-panel border border-border p-5 shadow-tactile hover:-translate-y-1 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden rounded-sm">
-                    
-                    <div className="flex justify-between items-start mb-4 relative z-10">
-                      <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full border border-border overflow-hidden bg-background relative shadow-sm">
-                              <ChannelAvatar url={channel.avatar_url} name={channel.channel_name} />
-                          </div>
-                          
-                          {/* Type Indicators Preserved */}
-                          <div className="px-1.5 py-0.5 bg-background border border-border rounded text-[10px] font-bold text-gray-500 flex items-center gap-1">
-                            {(channel.submission_type === 'channel_only' || channel.submission_type === 'channel') && '📺 Channel'}
-                            {(channel.submission_type === 'video_only' || channel.submission_type === 'video') && '🎬 Video'}
-                            {channel.submission_type === 'mixed' && '📺+🎬 Combo'}
-                          </div>
-                      </div>
-                    </div>
-
-                    <h4 className="text-base font-black uppercase tracking-tight mb-2 text-foreground group-hover:text-ytRed transition-colors truncate">
-                      {(channel.submission_type === 'video_only' || channel.submission_type === 'video') ? channel.video_title : channel.channel_name}
-                    </h4>
-                    
-                    <div className="relative pl-3 border-l-2 border-border group-hover:border-ytRed mb-6 transition-colors h-12 overflow-hidden">
-                      <p className="text-xs font-medium text-gray-500 italic line-clamp-2">
-                        "{channel.context_text || channel.goal_text}"
-                      </p>
-                    </div>
-
-                    <div className="mt-auto pt-3 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique</span>
-                      <span className="text-sm text-foreground group-hover:translate-x-1 transition-transform">→</span>
-                    </div>
-                  </div>
-                </Link>
+                <SubmissionCard key={channel.id} channel={channel} />
               ))
             )}
           </div>
         </div>
       </section>
 
-      {/* --- HOW IT WORKS (PRESERVED) --- */}
+      {/* --- HOW IT WORKS --- */}
       <section className="bg-panel border-b border-border">
          <div className="max-w-[1920px] mx-auto grid grid-cols-1 md:grid-cols-3">
           {[

@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false); // New State
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<'channels' | 'critiques'>('channels');
 
@@ -34,24 +34,21 @@ export default function ProfilePage() {
       return;
     }
 
-    // 1. Get Profile
     const { data: profileData } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single();
 
-    // 2. Get User's Channels
     const { data: subData } = await supabase
       .from('submissions')
       .select('*')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
 
-    // 3. Get User's Critiques (Comments)
     const { data: commentData } = await supabase
       .from('comments')
-      .select('*, submissions(id, channel_name)')
+      .select('*, submissions(id, channel_name, video_title)')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
 
@@ -77,7 +74,6 @@ export default function ProfilePage() {
     setSaving(false);
   };
 
-  // --- NEW: Handle Image Upload ---
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!event.target.files || event.target.files.length === 0) return;
@@ -87,19 +83,16 @@ export default function ProfilePage() {
       const fileExt = file.name.split('.').pop();
       const filePath = `${profile.id}-${Math.random()}.${fileExt}`;
 
-      // 1. Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      // 2. Get Public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      // 3. Update Profile Database
       const { error: dbError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
@@ -107,7 +100,6 @@ export default function ProfilePage() {
 
       if (dbError) throw dbError;
 
-      // 4. Update Local State
       setProfile({ ...profile, avatar_url: publicUrl });
       alert("Profile picture updated!");
 
@@ -116,6 +108,27 @@ export default function ProfilePage() {
       alert("Error uploading image: " + error.message);
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  // --- NEW: DELETE LOGIC ---
+  const handleDeleteSubmission = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault(); // Prevents clicking the card link
+    e.stopPropagation(); // Stops event bubbling
+
+    const confirmed = window.confirm("Are you sure you want to delete this post? This cannot be undone.");
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('submissions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      alert("Error deleting: " + error.message);
+    } else {
+      // Update UI instantly without refresh
+      setSubmissions(prev => prev.filter(sub => sub.id !== id));
     }
   };
 
@@ -129,15 +142,12 @@ export default function ProfilePage() {
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             
-            {/* Avatar (Updated with Upload Logic) */}
             <div className="relative group w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
                <div className="w-full h-full rounded-full border-2 border-border p-1 bg-background overflow-hidden relative shadow-lg">
                  <img 
                    src={profile?.avatar_url || "https://ui-avatars.com/api/?background=random"} 
                    className={`w-full h-full rounded-full object-cover transition-all duration-300 ${uploadingImage ? 'opacity-50 blur-sm' : 'group-hover:opacity-75'}`}
                  />
-                 
-                 {/* Loading Spinner */}
                  {uploadingImage && (
                    <div className="absolute inset-0 flex items-center justify-center">
                      <div className="w-6 h-6 border-2 border-ytRed border-t-transparent rounded-full animate-spin"></div>
@@ -145,24 +155,16 @@ export default function ProfilePage() {
                  )}
                </div>
 
-               {/* Hidden File Input & Overlay Label */}
                {!uploadingImage && (
                  <label className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                     <span className="text-[10px] font-black uppercase text-white tracking-widest">Change</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleAvatarUpload}
-                      className="hidden"
-                    />
+                    <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
                  </label>
                )}
             </div>
 
-            {/* Info / Edit Form */}
             <div className="flex-1 w-full">
               {!isEditing ? (
-                // VIEW MODE
                 <div className="animate-in fade-in slide-in-from-left-2">
                    <div className="flex justify-between items-start">
                       <div>
@@ -181,7 +183,6 @@ export default function ProfilePage() {
                       </button>
                    </div>
                    
-                   {/* Mini Stats */}
                    <div className="flex gap-8 mt-8 border-t border-border pt-6">
                       <div>
                         <span className="block text-2xl font-black text-ytRed">{submissions.length}</span>
@@ -194,7 +195,6 @@ export default function ProfilePage() {
                    </div>
                 </div>
               ) : (
-                // EDIT MODE
                 <div className="bg-background border border-border p-6 max-w-2xl animate-in fade-in slide-in-from-top-2">
                   <h3 className="text-xs font-black uppercase tracking-widest text-ytRed mb-4">Update Details</h3>
                   <div className="space-y-4">
@@ -216,17 +216,10 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="flex gap-3 pt-2">
-                      <button 
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="bg-ytRed text-white text-xs font-black uppercase tracking-widest px-6 py-3 hover:shadow-yt-glow transition-all"
-                      >
+                      <button onClick={handleSave} disabled={saving} className="bg-ytRed text-white text-xs font-black uppercase tracking-widest px-6 py-3 hover:shadow-yt-glow transition-all">
                         {saving ? 'Saving...' : 'Save Changes'}
                       </button>
-                      <button 
-                        onClick={() => setIsEditing(false)}
-                        className="border border-border text-gray-400 text-xs font-black uppercase tracking-widest px-6 py-3 hover:text-white transition-colors"
-                      >
+                      <button onClick={() => setIsEditing(false)} className="border border-border text-gray-400 text-xs font-black uppercase tracking-widest px-6 py-3 hover:text-white transition-colors">
                         Cancel
                       </button>
                     </div>
@@ -241,21 +234,14 @@ export default function ProfilePage() {
       {/* --- CONTENT TABS --- */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="flex gap-8 border-b border-border mb-8">
-          <button 
-            onClick={() => setActiveTab('channels')}
-            className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'channels' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}
-          >
+          <button onClick={() => setActiveTab('channels')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'channels' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}>
             My Channels
           </button>
-          <button 
-            onClick={() => setActiveTab('critiques')}
-            className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'critiques' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}
-          >
+          <button onClick={() => setActiveTab('critiques')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'critiques' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}>
             My Critiques
           </button>
         </div>
 
-        {/* TAB CONTENT: CHANNELS */}
         {activeTab === 'channels' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {submissions.length === 0 ? (
@@ -264,35 +250,47 @@ export default function ProfilePage() {
                </div>
             ) : (
               submissions.map((sub) => (
-                <Link href={`/channel/${sub.id}`} key={sub.id} className="block group">
-                  <div className="bg-panel border border-border p-5 hover:border-ytRed/50 transition-all hover:-translate-y-1 relative overflow-hidden">
-                    
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-black text-lg text-foreground group-hover:text-ytRed truncate pr-4">{sub.video_title || sub.channel_name}</h3>
-                        <div className="flex gap-2 mt-1">
-                          <span className="text-[10px] font-bold uppercase text-gray-500 bg-background border border-border px-1.5 py-0.5 rounded">
-                            {sub.submission_type?.includes('video') ? '🎬 Video' : '📺 Channel'}
-                          </span>
-                          {sub.is_locked && <span className="text-[9px] font-black uppercase text-red-500 bg-red-900/20 px-1.5 py-0.5 rounded border border-red-900">Locked</span>}
-                          {sub.is_hidden && <span className="text-[9px] font-black uppercase text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">Hidden</span>}
+                <div key={sub.id} className="relative group/card">
+                  <Link href={`/channel/${sub.id}`} className="block">
+                    <div className="bg-panel border border-border p-5 hover:border-ytRed/50 transition-all hover:-translate-y-1 overflow-hidden">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="font-black text-lg text-foreground group-hover:text-ytRed truncate pr-8">{sub.video_title || sub.channel_name}</h3>
+                          <div className="flex gap-2 mt-1">
+                            <span className="text-[10px] font-bold uppercase text-gray-500 bg-background border border-border px-1.5 py-0.5 rounded">
+                              {sub.submission_type?.includes('video') ? '🎬 Video' : '📺 Channel'}
+                            </span>
+                            {sub.is_locked && <span className="text-[9px] font-black uppercase text-red-500 bg-red-900/20 px-1.5 py-0.5 rounded border border-red-900">Locked</span>}
+                            {sub.is_hidden && <span className="text-[9px] font-black uppercase text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">Hidden</span>}
+                          </div>
                         </div>
+                        <span className="text-[10px] font-mono text-gray-500">{new Date(sub.created_at).toLocaleDateString()}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-gray-500">{new Date(sub.created_at).toLocaleDateString()}</span>
-                    </div>
 
-                    <p className="text-xs text-gray-400 line-clamp-2">"{sub.context_text || sub.goal_text}"</p>
-                    <div className="mt-4 pt-3 border-t border-border flex justify-end">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white">View Feedback →</span>
+                      <p className="text-xs text-gray-400 line-clamp-2">"{sub.context_text || sub.goal_text}"</p>
+                      <div className="mt-4 pt-3 border-t border-border flex justify-end">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white">View Feedback →</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+
+                  {/* TRASH ICON BUTTON */}
+                  <button 
+                    onClick={(e) => handleDeleteSubmission(e, sub.id)}
+                    className="absolute top-4 right-4 p-2 text-gray-600 hover:text-ytRed opacity-0 group-hover/card:opacity-100 transition-opacity z-20"
+                    title="Delete Submission"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
               ))
             )}
           </div>
         )}
 
-        {/* TAB CONTENT: CRITIQUES */}
+        {/* TAB CONTENT: CRITIQUES (Kept exactly as it was) */}
         {activeTab === 'critiques' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {comments.length === 0 ? (
@@ -304,14 +302,12 @@ export default function ProfilePage() {
                 <Link href={`/channel/${comment.submissions?.id}`} key={comment.id} className="block group">
                   <div className="bg-panel border border-border p-5 hover:border-gray-500 transition-colors relative pl-6">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-border group-hover:bg-ytRed transition-colors"></div>
-                    
                     <div className="flex justify-between items-center mb-2">
                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
                          On: <span className="text-white group-hover:text-ytRed transition-colors">{comment.submissions?.video_title || comment.submissions?.channel_name || "Unknown"}</span>
                        </span>
                        <span className="text-[10px] font-mono text-gray-600">{new Date(comment.created_at).toLocaleDateString()}</span>
                     </div>
-                    
                     <p className="text-sm font-medium text-gray-300 italic">"{comment.content}"</p>
                   </div>
                 </Link>
@@ -319,7 +315,6 @@ export default function ProfilePage() {
             )}
           </div>
         )}
-
       </div>
     </div>
   );

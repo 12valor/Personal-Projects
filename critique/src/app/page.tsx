@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { ChannelAvatar } from '@/components/ChannelAvatar'; // <--- Import the new component
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -13,15 +14,32 @@ export default async function Home() {
     .order('created_at', { ascending: false });
 
   const channels = dbChannels && dbChannels.length > 0 ? dbChannels : [
-    { id: 'mock1', channel_name: '@TechMinimalist', goal_text: 'Retention is flatlining at 1:00. Is my editing too slow?', youtube_url: '#' },
-    { id: 'mock2', channel_name: '@VlogLife_99', goal_text: 'Thumbnails get 6% CTR but view duration is low.', youtube_url: '#' },
-    { id: 'mock3', channel_name: '@GamingCentral', goal_text: 'Audio balancing on mobile is weird. Need a check.', youtube_url: '#' },
+    { 
+      id: 'mock1', 
+      channel_name: 'Marques Brownlee', 
+      goal_text: 'Reviewing tech is easy, but keeping retention high is hard.', 
+      youtube_url: '#', 
+      avatar_url: 'https://unavatar.io/youtube/mkbhd' 
+    },
+    { 
+      id: 'mock2', 
+      channel_name: 'CaseyNeistat', 
+      goal_text: 'My vlogs feel messy lately. Do I need more structure?', 
+      youtube_url: '#', 
+      avatar_url: 'https://unavatar.io/youtube/caseyneistat' 
+    },
+    { 
+      id: 'mock3', 
+      channel_name: 'MrBeast', 
+      goal_text: 'Even I need feedback. Are the intros too fast?', 
+      youtube_url: '#', 
+      avatar_url: 'https://unavatar.io/youtube/mrbeast' 
+    },
   ];
 
   return (
     <div className="flex flex-col flex-1">
-      
-      {/* --- HERO SECTION --- */}
+      {/* ... HERO SECTION (Unchanged) ... */}
       <section className="grid grid-cols-12 gap-0 border-b border-border min-h-[60vh]">
         <div className="col-span-12 lg:col-span-7 p-12 lg:p-20 bg-panel border-r border-border flex flex-col justify-center">
           <div className="inline-flex items-center gap-2 mb-6">
@@ -29,7 +47,7 @@ export default async function Home() {
             <span className="text-xs font-bold tracking-[0.2em] uppercase text-ytRed">Beta Access</span>
           </div>
           
-          <h1 className="text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-8 uppercase italic">
+          <h1 className="text-6xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-8 uppercase italic text-foreground">
             Fix your <br /><span className="text-ytRed">Content.</span>
           </h1>
           
@@ -42,32 +60,26 @@ export default async function Home() {
               <div className="w-0 h-0 border-t-[5px] border-t-transparent border-l-[8px] border-l-white border-b-[5px] border-b-transparent"></div>
               Start Review
             </button>
-            <button className="border-2 border-border px-8 py-4 font-bold text-sm uppercase tracking-widest hover:bg-border transition-colors">
+            <button className="border-2 border-border text-foreground px-8 py-4 font-bold text-sm uppercase tracking-widest hover:bg-border transition-colors">
               Explore
             </button>
           </div>
         </div>
 
-        {/* --- 3D VISUAL: YOUTUBE ELEMENTS --- */}
         <div className="col-span-12 lg:col-span-5 bg-background relative overflow-hidden flex items-center justify-center p-12">
-          {/* Decorative floating elements */}
           <div className="absolute top-10 right-10 w-20 h-20 border-4 border-border rounded-full opacity-50"></div>
           <div className="absolute bottom-20 left-10 w-32 h-2 bg-ytRed opacity-20"></div>
 
-          {/* Main 3D Card: The "Video File" */}
           <div className="relative w-64 h-48 bg-panel border-2 border-border rounded-2xl shadow-tactile transform rotate-6 hover:rotate-0 transition-transform duration-500 group">
-            {/* Thumbnail Header */}
             <div className="absolute top-0 left-0 right-0 h-32 bg-border/30 rounded-t-xl flex items-center justify-center overflow-hidden">
                <div className="w-12 h-12 bg-ytRed rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                  <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
                </div>
             </div>
-            {/* Metadata Lines */}
             <div className="absolute bottom-4 left-4 right-4 space-y-2">
               <div className="h-3 bg-foreground/10 rounded w-3/4"></div>
               <div className="h-3 bg-foreground/10 rounded w-1/2"></div>
             </div>
-            {/* Progress Bar */}
             <div className="absolute bottom-0 left-0 h-1 bg-ytRed w-2/3 shadow-[0_0_10px_#FF0033]"></div>
           </div>
         </div>
@@ -81,22 +93,34 @@ export default async function Home() {
               <span className="w-2 h-2 bg-ytRed rounded-full animate-pulse"></span>
               Live Feed
             </h2>
-            <h3 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter">Channels Waiting for Feedback</h3>
+            <h3 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter text-foreground">Channels Waiting for Feedback</h3>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {channels.map((channel: any) => (
             <div key={channel.id} className="group bg-panel border border-border p-6 shadow-tactile hover:-translate-y-2 hover:shadow-yt-glow hover:border-ytRed/50 transition-all cursor-pointer relative overflow-hidden">
-              {/* Creator Tag */}
+              
               <div className="flex justify-between items-start mb-6 relative z-10">
-                <span className="px-3 py-1 bg-background border border-border text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-ytRed group-hover:border-ytRed/30 transition-colors">
-                  Check This
-                </span>
+                <div className="flex items-center gap-3">
+                    
+                    {/* --- THE FIX: Using the Client Component Here --- */}
+                    <div className="w-10 h-10 rounded-full border border-border group-hover:border-ytRed/50 overflow-hidden bg-background relative shadow-sm">
+                        <ChannelAvatar 
+                          url={channel.avatar_url} 
+                          name={channel.channel_name} 
+                        />
+                    </div>
+                    {/* ---------------------------------------------- */}
+
+                    <span className="px-2 py-1 bg-background border border-border text-[9px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-ytRed group-hover:border-ytRed/30 transition-colors">
+                        Review
+                    </span>
+                </div>
                 <span className="font-mono text-xs text-gray-400">0:00 / 10:00</span>
               </div>
 
-              <h4 className="text-xl font-black uppercase tracking-tight mb-3 group-hover:text-ytRed transition-colors">
+              <h4 className="text-xl font-black uppercase tracking-tight mb-3 text-foreground group-hover:text-ytRed transition-colors">
                 {channel.channel_name}
               </h4>
               
@@ -108,14 +132,14 @@ export default async function Home() {
 
               <div className="mt-auto pt-4 border-t border-border flex justify-between items-center group-hover:border-ytRed/20">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-foreground">Critique Now</span>
-                <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                <span className="text-lg text-foreground group-hover:translate-x-1 transition-transform">→</span>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* --- HOW IT WORKS (Minimalist) --- */}
+      {/* --- HOW IT WORKS (Unchanged) --- */}
       <section className="grid grid-cols-1 md:grid-cols-3 border-b border-border bg-panel">
         {[
           { step: "01", title: "Upload Link", desc: "Paste your URL. No signup walls." },
@@ -126,7 +150,7 @@ export default async function Home() {
             <div className="w-12 h-12 mb-6 rounded-full border-2 border-border flex items-center justify-center text-lg font-black text-gray-400 group-hover:border-ytRed group-hover:text-ytRed transition-all">
               {item.step}
             </div>
-            <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 italic">{item.title}</h3>
+            <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 italic text-foreground">{item.title}</h3>
             <p className="text-sm font-medium text-gray-500 group-hover:text-foreground">{item.desc}</p>
           </div>
         ))}

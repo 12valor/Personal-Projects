@@ -138,16 +138,24 @@ export default function AdminDashboard() {
 
   // --- FIXED ACTIONS ---
   
+// --- SAFE ACTIONS ---
+  
   const toggleLock = async (id: string, current: boolean) => {
     // 1. Optimistic Update (Update UI instantly)
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_locked: !current } : s));
 
     // 2. Database Update
-    const { error } = await supabase.from('submissions').update({ is_locked: !current }).eq('id', id);
-    
-    // 3. Revert if error
-    if (error) {
-      alert("Error locking thread");
+    const { error, count } = await supabase // <--- Check 'count'
+      .from('submissions')
+      .update({ is_locked: !current })
+      .eq('id', id)
+      .select(); // <--- Important: Select allows us to see if it actually worked
+
+    // 3. Revert if error OR if no rows were touched (RLS rejection)
+    if (error || count === 0) {
+      console.error("Lock failed:", error);
+      alert("Failed to lock thread. Check admin permissions.");
+      // Revert UI
       setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_locked: current } : s));
     }
   };
@@ -157,11 +165,17 @@ export default function AdminDashboard() {
     setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_hidden: !current } : s));
 
     // 2. Database Update
-    const { error } = await supabase.from('submissions').update({ is_hidden: !current }).eq('id', id);
+    const { error, count } = await supabase
+      .from('submissions')
+      .update({ is_hidden: !current })
+      .eq('id', id)
+      .select();
 
     // 3. Revert if error
-    if (error) {
-      alert("Error hiding thread");
+    if (error || count === 0) {
+      console.error("Hide failed:", error);
+      alert("Failed to hide thread. Check admin permissions.");
+      // Revert UI
       setSubmissions(prev => prev.map(s => s.id === id ? { ...s, is_hidden: current } : s));
     }
   };

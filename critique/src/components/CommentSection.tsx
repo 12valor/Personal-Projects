@@ -56,24 +56,15 @@ export const CommentSection = ({ submissionId, submissionType = 'channel', isLoc
     else if (selectedTags.length < 2) setSelectedTags([...selectedTags, tag]);
   };
 
-  const postComment = async () => {
+const postComment = async () => {
+    // 1. Client-Side Pre-Check
+    if (isLockedState) {
+      setErrorMsg("⛔ Thread is locked.");
+      return;
+    }
     if (!currentUser || !newComment.trim()) return;
 
-    // 1. PRE-FLIGHT CHECK: Fetch fresh lock status directly from DB
-    // This catches the case where you locked it in Admin, but this tab is stale.
-    const { data: submissionStatus } = await supabase
-      .from('submissions')
-      .select('is_locked')
-      .eq('id', submissionId)
-      .single();
-
-    if (submissionStatus?.is_locked) {
-      setIsLockedState(true); // Update UI immediately
-      setErrorMsg("⛔ Critique blocked: This thread was just locked.");
-      return; // STOP HERE
-    }
-
-    // 2. If unlocked, proceed to Insert
+    // 2. Database Attempt
     const { error } = await supabase.from('comments').insert([{
       submission_id: submissionId,
       content: newComment,
@@ -83,14 +74,16 @@ export const CommentSection = ({ submissionId, submissionType = 'channel', isLoc
       author_name: "Legacy"
     }]);
 
-    // 3. Handle Database Rejection (Backup safety)
+    // 3. Error Handling
     if (error) {
-      console.error(error);
-      if (error.message.includes('THREAD_IS_LOCKED_DB_ERROR')) {
-        setIsLockedState(true);
-        setErrorMsg("⛔ Critique blocked: This thread is locked.");
+      console.error("Post Error:", error);
+      
+      // Code 42501 = RLS Policy Violation (The SQL we just ran)
+      if (error.code === '42501') {
+        setIsLockedState(true); // Force UI to lock immediately
+        setErrorMsg("⛔ Failed: This thread is locked by admins.");
       } else {
-        alert("Error posting comment.");
+        alert(`Error: ${error.message}`);
       }
     } else {
       // Success

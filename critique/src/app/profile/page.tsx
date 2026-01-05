@@ -34,18 +34,21 @@ export default function ProfilePage() {
       return;
     }
 
+    // 1. Get Profile
     const { data: profileData } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single();
 
+    // 2. Get User's Channels
     const { data: subData } = await supabase
       .from('submissions')
       .select('*')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
 
+    // 3. Get User's Critiques (Comments)
     const { data: commentData } = await supabase
       .from('comments')
       .select('*, submissions(id, channel_name, video_title)')
@@ -111,10 +114,9 @@ export default function ProfilePage() {
     }
   };
 
-  // --- NEW: DELETE LOGIC ---
   const handleDeleteSubmission = async (e: React.MouseEvent, id: string) => {
-    e.preventDefault(); // Prevents clicking the card link
-    e.stopPropagation(); // Stops event bubbling
+    e.preventDefault(); 
+    e.stopPropagation();
 
     const confirmed = window.confirm("Are you sure you want to delete this post? This cannot be undone.");
     if (!confirmed) return;
@@ -127,7 +129,6 @@ export default function ProfilePage() {
     if (error) {
       alert("Error deleting: " + error.message);
     } else {
-      // Update UI instantly without refresh
       setSubmissions(prev => prev.filter(sub => sub.id !== id));
     }
   };
@@ -142,6 +143,7 @@ export default function ProfilePage() {
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             
+            {/* Avatar */}
             <div className="relative group w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
                <div className="w-full h-full rounded-full border-2 border-border p-1 bg-background overflow-hidden relative shadow-lg">
                  <img 
@@ -243,7 +245,7 @@ export default function ProfilePage() {
         </div>
 
         {activeTab === 'channels' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {submissions.length === 0 ? (
                <div className="col-span-full py-12 text-center border border-dashed border-border text-gray-600 text-sm">
                  You haven't posted any channels yet.
@@ -252,45 +254,52 @@ export default function ProfilePage() {
               submissions.map((sub) => (
                 <div key={sub.id} className="relative group/card">
                   <Link href={`/channel/${sub.id}`} className="block">
-                    <div className="bg-panel border border-border p-5 hover:border-ytRed/50 transition-all hover:-translate-y-1 overflow-hidden">
+                    <div className="bg-panel border border-border p-6 hover:border-ytRed/50 transition-all hover:-translate-y-1 overflow-hidden shadow-sm">
                       <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-black text-lg text-foreground group-hover:text-ytRed truncate pr-8">{sub.video_title || sub.channel_name}</h3>
-                          <div className="flex gap-2 mt-1">
-                            <span className="text-[10px] font-bold uppercase text-gray-500 bg-background border border-border px-1.5 py-0.5 rounded">
+                        <div className="flex-1 pr-12">
+                          <h3 className="font-black text-xl text-foreground group-hover:text-ytRed truncate">
+                            {sub.video_title || sub.channel_name}
+                          </h3>
+                          <div className="flex gap-2 mt-2">
+                            <span className="text-[10px] font-bold uppercase text-gray-500 bg-background border border-border px-2 py-1 rounded">
                               {sub.submission_type?.includes('video') ? '🎬 Video' : '📺 Channel'}
                             </span>
-                            {sub.is_locked && <span className="text-[9px] font-black uppercase text-red-500 bg-red-900/20 px-1.5 py-0.5 rounded border border-red-900">Locked</span>}
-                            {sub.is_hidden && <span className="text-[9px] font-black uppercase text-gray-400 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">Hidden</span>}
+                            {sub.is_locked && <span className="text-[9px] font-black uppercase text-red-500 bg-red-900/20 px-2 py-1 rounded border border-red-900">Locked</span>}
+                            {sub.is_hidden && <span className="text-[9px] font-black uppercase text-gray-400 bg-gray-800 px-2 py-1 rounded border border-gray-700">Hidden</span>}
                           </div>
                         </div>
-                        <span className="text-[10px] font-mono text-gray-500">{new Date(sub.created_at).toLocaleDateString()}</span>
+                        <span className="text-[10px] font-mono text-gray-500 shrink-0">{new Date(sub.created_at).toLocaleDateString()}</span>
                       </div>
 
-                      <p className="text-xs text-gray-400 line-clamp-2">"{sub.context_text || sub.goal_text}"</p>
-                      <div className="mt-4 pt-3 border-t border-border flex justify-end">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white">View Feedback →</span>
+                      <p className="text-xs text-gray-400 line-clamp-2 italic mb-4">"{sub.context_text || sub.goal_text}"</p>
+                      
+                      <div className="mt-auto pt-4 border-t border-border flex justify-end">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
+                          View Feedback →
+                        </span>
                       </div>
                     </div>
                   </Link>
 
-                  {/* TRASH ICON BUTTON */}
-                  <button 
-                    onClick={(e) => handleDeleteSubmission(e, sub.id)}
-                    className="absolute top-4 right-4 p-2 text-gray-600 hover:text-ytRed opacity-0 group-hover/card:opacity-100 transition-opacity z-20"
-                    title="Delete Submission"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+                  {/* HIGH-VISIBILITY DELETE BUTTON */}
+                  <div className="absolute top-4 right-4 z-30 opacity-0 group-hover/card:opacity-100 transition-all translate-x-2 group-hover/card:translate-x-0">
+                    <button 
+                      onClick={(e) => handleDeleteSubmission(e, sub.id)}
+                      className="flex items-center justify-center w-10 h-10 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 hover:scale-110 active:scale-95 transition-all"
+                      title="Delete Submission"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))
             )}
           </div>
         )}
 
-        {/* TAB CONTENT: CRITIQUES (Kept exactly as it was) */}
+        {/* TAB CONTENT: CRITIQUES */}
         {activeTab === 'critiques' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {comments.length === 0 ? (

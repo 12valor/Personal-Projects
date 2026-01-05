@@ -1,3 +1,5 @@
+1/6/2026
+
 # 🚀 Personal Project Showcase
 
 This repository is a curated collection of my personal projects, showcasing my experiments, learning, and creative work across **web development, software engineering, and product design**. Each project focuses on solving a specific problem while emphasizing clean UI, thoughtful UX, and practical functionality.

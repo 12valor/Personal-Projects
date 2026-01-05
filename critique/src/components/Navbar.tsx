@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { SubmitModal } from './SubmitModal';
+import { AuthModal } from './AuthModal';
 import { NotificationBell } from './NotificationBell';
 import Link from 'next/link';
 
-// --- SOCIAL ICONS ---
+// --- SOCIAL ICONS COMPONENT ---
 const SocialIcon = ({ type, href }: { type: 'discord' | 'x' | 'instagram', href: string }) => {
   const icons = {
     discord: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 13.46 13.46 0 0 0-.64 1.316 18.067 18.067 0 0 0-5.43 0 14.237 14.237 0 0 0-.642-1.316.077.077 0 0 0-.08-.037 19.736 19.736 0 0 0-4.88 1.515.069.069 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg>,
@@ -21,7 +22,8 @@ const SocialIcon = ({ type, href }: { type: 'discord' | 'x' | 'instagram', href:
 };
 
 export const Navbar = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -99,13 +101,6 @@ export const Navbar = () => {
     if (data?.role === 'admin') setIsAdmin(true);
   };
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-  };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsMenuOpen(false);
@@ -131,17 +126,23 @@ export const Navbar = () => {
         {/* RIGHT ACTIONS */}
         <div className="flex items-center gap-3 md:gap-6 relative z-[1001]">
           
-          {/* SOCIALS (DESKTOP) */}
+          {/* SOCIALS (DESKTOP ONLY) */}
           <div className="hidden md:flex items-center gap-5 mr-6">
             <SocialIcon type="discord" href="https://discord.gg" />
             <SocialIcon type="x" href="https://twitter.com" />
             <SocialIcon type="instagram" href="https://instagram.com" />
           </div>
 
-          {/* SUBMIT BUTTON */}
+          {/* ACTION BUTTON (Login / Submit Entry) */}
           <button 
             type="button"
-            onClick={() => { !user ? handleLogin() : setIsModalOpen(true); }}
+            onClick={() => { 
+                if (!user) {
+                    setIsAuthModalOpen(true);
+                } else {
+                    setIsSubmitModalOpen(true);
+                }
+            }}
             className="
               bg-foreground text-background border border-current
               text-[10px] md:text-[11px] font-black uppercase tracking-widest
@@ -156,6 +157,7 @@ export const Navbar = () => {
             <span className="hidden md:inline">{user ? 'Submit Entry' : 'Login'}</span>
           </button>
 
+          {/* HAMBURGER BUTTON */}
           <button 
             ref={hamburgerRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -167,11 +169,11 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* HAMBURGER DROPDOWN */}
+        {/* HAMBURGER MENU DROPDOWN */}
         {isMenuOpen && (
           <div ref={menuRef} className="absolute top-[80px] right-6 md:right-10 w-72 bg-white dark:bg-[#000000] border border-border flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 z-[1000] shadow-2xl rounded-md">
             
-            {/* 1. ADMIN PANEL */}
+            {/* 1. ADMIN DASHBOARD LINK (Only for Admins) */}
             {isAdmin && (
               <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="px-5 py-4 flex items-center gap-4 bg-ytRed/10 hover:bg-ytRed/20 transition-colors border-b border-border">
                 <div className="w-5 flex justify-center text-ytRed">
@@ -181,7 +183,7 @@ export const Navbar = () => {
               </Link>
             )}
 
-            {/* 2. IDENTITY */}
+            {/* 2. USER IDENTITY (Avatar & Name) */}
             {user && (
               <div className="px-5 py-5 border-b border-border flex items-center gap-4 bg-foreground/[0.02]">
                 <img src={user.user_metadata.avatar_url} className="w-10 h-10 rounded-full border border-border" alt="" />
@@ -189,9 +191,9 @@ export const Navbar = () => {
               </div>
             )}
 
-            {/* 3. NAVIGATION (ICONS RESTORED) */}
+            {/* 3. NAVIGATION LINKS (With Icons) */}
             <div className="flex flex-col py-2 border-b border-border">
-              {/* HOME */}
+              {/* Home */}
               <Link href="/" onClick={() => setIsMenuOpen(false)} className="px-5 py-3.5 flex items-center gap-4 hover:bg-foreground/[0.05] group">
                 <div className="w-5 flex justify-center">
                   <svg className="w-5 h-5 text-gray-400 group-hover:text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
@@ -201,7 +203,7 @@ export const Navbar = () => {
               
               {user && (
                 <>
-                  {/* PROFILE */}
+                  {/* Profile */}
                   <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="px-5 py-3.5 flex items-center gap-4 hover:bg-foreground/[0.05] group">
                     <div className="w-5 flex justify-center">
                       <svg className="w-5 h-5 text-gray-400 group-hover:text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -209,7 +211,7 @@ export const Navbar = () => {
                     <span className="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-foreground">Profile</span>
                   </Link>
 
-                  {/* NOTIFICATIONS */}
+                  {/* Notifications */}
                   <Link href="/notifications" onClick={() => setIsMenuOpen(false)} className="px-5 py-3.5 flex items-center gap-4 hover:bg-foreground/[0.05] group">
                     <div className="w-5 flex justify-center pointer-events-none">
                        <NotificationBell userId={user?.id} />
@@ -220,7 +222,7 @@ export const Navbar = () => {
               )}
             </div>
 
-            {/* 4. PREFERENCES */}
+            {/* 4. APPEARANCE (With Icon) */}
             <button onClick={toggleTheme} className="w-full px-5 py-3.5 flex items-center justify-between hover:bg-foreground/[0.05] group transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-5 flex justify-center">
@@ -231,7 +233,7 @@ export const Navbar = () => {
               <span className="text-[9px] font-black text-ytRed border border-ytRed/30 px-2 py-0.5">{themeLabel}</span>
             </button>
             
-            {/* 5. LOGOUT */}
+            {/* 5. LOGOUT (With Icon) */}
             {user && (
               <button onClick={handleLogout} className="px-5 py-5 border-t border-border flex items-center gap-4 hover:bg-ytRed/10 group w-full text-left">
                 <div className="w-5 flex justify-center text-gray-400 group-hover:text-ytRed">
@@ -243,7 +245,10 @@ export const Navbar = () => {
           </div>
         )}
       </nav>
-      {user && <SubmitModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+
+      {/* MODALS */}
+      {user && <SubmitModal isOpen={isSubmitModalOpen} onClose={() => setIsSubmitModalOpen(false)} />}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 };

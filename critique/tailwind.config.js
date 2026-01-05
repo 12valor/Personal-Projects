@@ -22,6 +22,22 @@ const config: Config = {
       },
     },
   },
+  extend: {
+  keyframes: {
+    scanline: {
+      '0%': { top: '0%' },
+      '100%': { top: '100%' },
+    },
+    float: {
+      '0%, 100%': { transform: 'translateY(0) translateX(-50%)' },
+      '50%': { transform: 'translateY(-20px) translateX(-50%)' },
+    }
+  },
+  animation: {
+    scanline: 'scanline 8s linear infinite',
+    float: 'float 6s ease-in-out infinite',
+  }
+},
   plugins: [],
 };
 export default config;

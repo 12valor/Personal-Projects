@@ -42,14 +42,12 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
     }
   };
 
-  // --- FETCH YOUTUBE DATA (PFP + BANNER + SUBS) ---
   const getYoutubeData = async (channelUrl: string) => {
     try {
       const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
       if (!API_KEY || !channelUrl) return null;
 
       let fetchUrl = '';
-      // part=statistics added to get sub count
       if (channelUrl.includes('@')) {
         const handle = channelUrl.split('@')[1].split('/')[0].split('?')[0];
         fetchUrl = `https://www.googleapis.com/youtube/v3/channels?part=brandingSettings,snippet,statistics&forHandle=${handle}&key=${API_KEY}`;
@@ -64,7 +62,6 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
       const data = await res.json();
       const item = data.items?.[0];
 
-      // Format subscriber count (e.g., 1500 -> 1.5K)
       const count = parseInt(item?.statistics?.subscriberCount);
       const formattedSubs = count 
         ? count >= 1000000 
@@ -124,7 +121,7 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
           user_id: session.user.id,
           avatar_url: submissionAvatar,
           banner_url: ytData?.bannerUrl,
-          subscriber_count: ytData?.subCount, // <--- SAVING SUBS
+          subscriber_count: ytData?.subCount,
           problem_categories: selectedCategories,
           is_verified: true,
           verification_status: 'approved'
@@ -145,19 +142,22 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-panel border border-border w-full max-w-xl shadow-2xl relative flex flex-col max-h-[90vh] rounded-lg overflow-hidden">
+      {/* Strict White/Black Background */}
+      <div className="bg-white dark:bg-black border border-slate-200 dark:border-white/10 w-full max-w-xl shadow-2xl relative flex flex-col max-h-[90vh] rounded-xl overflow-hidden">
+        
+        {/* Header */}
         <div className="p-8 pb-4">
           <div className="flex justify-between items-start mb-6">
-            <h2 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">New <span className="text-ytRed">Post</span></h2>
-            <button onClick={onClose} className="text-gray-500 hover:text-foreground text-xl font-bold">×</button>
+            <h2 className="text-2xl font-black uppercase italic tracking-tighter text-black dark:text-white">New <span className="text-ytRed">Post</span></h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-black dark:hover:text-white text-2xl font-bold">×</button>
           </div>
 
-          <div className="grid grid-cols-3 gap-1 bg-background border border-border p-1 rounded-lg">
+          <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 p-1 rounded-lg">
              {['channel_only', 'video_only', 'mixed'].map((type) => (
                <button 
                  key={type}
                  onClick={() => setSubmissionType(type as SubmissionType)}
-                 className={`py-3 text-[10px] font-black uppercase tracking-widest rounded transition-all ${submissionType === type ? 'bg-foreground text-background' : 'text-gray-500 hover:text-foreground'}`}
+                 className={`py-3 text-[10px] font-black uppercase tracking-widest rounded transition-all ${submissionType === type ? 'bg-black dark:bg-white text-white dark:text-black shadow-sm' : 'text-gray-500 hover:text-black dark:hover:text-white'}`}
                >
                  {type.replace('_', ' ')}
                </button>
@@ -165,25 +165,26 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
           </div>
         </div>
 
-        <div className="p-8 pt-0 overflow-y-auto text-foreground">
+        {/* Content */}
+        <div className="p-8 pt-0 overflow-y-auto">
           {step === 1 ? (
             <div className="space-y-6">
               {submissionType !== 'video_only' && (
                 <>
-                  <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Channel URL (@handle or full link)" className="w-full bg-background border border-border p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
-                  <input value={channelName} onChange={(e) => setChannelName(e.target.value)} placeholder="Channel Name" className="w-full bg-background border border-border p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
+                  <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Channel URL (@handle or full link)" className="w-full bg-slate-50 dark:bg-white/5 text-black dark:text-white border border-slate-200 dark:border-white/10 p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
+                  <input value={channelName} onChange={(e) => setChannelName(e.target.value)} placeholder="Channel Name" className="w-full bg-slate-50 dark:bg-white/5 text-black dark:text-white border border-slate-200 dark:border-white/10 p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
                 </>
               )}
               {submissionType !== 'channel_only' && (
                 <>
-                  <div className="border border-border p-4 rounded bg-background">
+                  <div className="border border-slate-200 dark:border-white/10 p-4 rounded bg-slate-50 dark:bg-white/5">
                     <label className="text-[10px] font-black uppercase text-gray-500 block mb-2">Upload Video</label>
-                    <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="w-full text-xs font-black file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-black file:bg-ytRed file:text-white cursor-pointer" />
+                    <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="w-full text-xs font-black text-black dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-black file:bg-ytRed file:text-white cursor-pointer" />
                   </div>
-                  <input value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} placeholder="Video Title" className="w-full bg-background border border-border p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
+                  <input value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} placeholder="Video Title" className="w-full bg-slate-50 dark:bg-white/5 text-black dark:text-white border border-slate-200 dark:border-white/10 p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
                 </>
               )}
-              <button onClick={() => setStep(2)} className="w-full bg-foreground text-background font-black py-4 uppercase tracking-widest hover:bg-ytRed hover:text-white transition-colors rounded">Next Step →</button>
+              <button onClick={() => setStep(2)} className="w-full bg-black dark:bg-white text-white dark:text-black font-black py-4 uppercase tracking-widest hover:bg-ytRed dark:hover:bg-ytRed hover:text-white dark:hover:text-white transition-colors rounded">Next Step →</button>
             </div>
           ) : (
             <div className="space-y-6">
@@ -191,15 +192,25 @@ export const SubmitModal = ({ isOpen, onClose }: SubmitModalProps) => {
                 <label className="text-[10px] font-black uppercase text-ytRed block mb-3">Target Problems (Select up to 3)</label>
                 <div className="grid grid-cols-3 gap-2">
                   {CATEGORIES.map(cat => (
-                    <button key={cat} onClick={() => toggleCategory(cat)} className={`py-2 text-[9px] font-black uppercase border rounded transition-all ${selectedCategories.includes(cat) ? 'bg-ytRed border-ytRed text-white shadow-yt-glow' : 'bg-background border-border text-gray-500'}`}>{cat}</button>
+                    <button 
+                      key={cat} 
+                      onClick={() => toggleCategory(cat)} 
+                      className={`py-3 text-[9px] font-black uppercase border rounded transition-all 
+                        ${selectedCategories.includes(cat) 
+                          ? 'bg-ytRed border-ytRed text-white shadow-lg' 
+                          : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-gray-500 hover:border-ytRed hover:text-ytRed'
+                        }`}
+                    >
+                      {cat}
+                    </button>
                   ))}
                 </div>
               </div>
-              <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Main Goal (e.g. Higher retention)" className="w-full bg-background border border-border p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
-              <textarea value={context} onChange={(e) => setContext(e.target.value)} placeholder="Context for the reviewer..." className="w-full bg-background border border-border p-4 font-bold focus:border-ytRed focus:outline-none h-24 resize-none rounded" />
+              <input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Main Goal (e.g. Higher retention)" className="w-full bg-slate-50 dark:bg-white/5 text-black dark:text-white border border-slate-200 dark:border-white/10 p-4 font-bold focus:border-ytRed focus:outline-none rounded" />
+              <textarea value={context} onChange={(e) => setContext(e.target.value)} placeholder="Context for the reviewer..." className="w-full bg-slate-50 dark:bg-white/5 text-black dark:text-white border border-slate-200 dark:border-white/10 p-4 font-bold focus:border-ytRed focus:outline-none h-24 resize-none rounded" />
               <div className="flex justify-between items-center pt-4">
-                <button onClick={() => setStep(1)} className="text-xs font-bold text-gray-500 hover:text-foreground">← Back</button>
-                <button onClick={handleUploadAndSubmit} disabled={loading || selectedCategories.length === 0} className="bg-ytRed text-white font-black px-10 py-4 uppercase tracking-widest shadow-yt-glow disabled:opacity-50 rounded">{loading ? 'Posting...' : 'Finish Post'}</button>
+                <button onClick={() => setStep(1)} className="text-xs font-bold text-gray-500 hover:text-black dark:hover:text-white">← Back</button>
+                <button onClick={handleUploadAndSubmit} disabled={loading || selectedCategories.length === 0} className="bg-ytRed text-white font-black px-10 py-4 uppercase tracking-widest shadow-lg disabled:opacity-50 rounded">{loading ? 'Posting...' : 'Finish Post'}</button>
               </div>
             </div>
           )}

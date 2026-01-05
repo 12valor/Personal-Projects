@@ -12,7 +12,10 @@ export const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   // Start as null to prevent hydration mismatch and incorrect button labels
   const [isDark, setIsDark] = useState<boolean | null>(null);
+  
+  // Refs for click-outside logic
   const menuRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -51,7 +54,13 @@ export const Navbar = () => {
     });
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      // Logic fix: Check if click is outside Menu AND outside Hamburger Button
+      if (
+        menuRef.current && 
+        !menuRef.current.contains(event.target as Node) &&
+        hamburgerRef.current &&
+        !hamburgerRef.current.contains(event.target as Node)
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -111,18 +120,32 @@ export const Navbar = () => {
         </Link>
         
         {/* RIGHT ACTIONS */}
-        <div className="flex items-center gap-4 md:gap-6 relative z-[1001]">
+        <div className="flex items-center gap-3 md:gap-6 relative z-[1001]">
+          
+          {/* UPDATED LOGIN BUTTON */}
           <button 
             type="button"
             onClick={() => { !user ? handleLogin() : setIsModalOpen(true); }}
-            className="bg-foreground text-background text-[11px] font-black px-6 py-3.5 shadow-[4px_4px_0px_0px_#cc0000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all uppercase tracking-[0.2em] hover:bg-ytRed hover:text-white border border-current"
+            className="
+              bg-foreground text-background border border-current
+              text-[10px] md:text-[11px] font-black uppercase tracking-widest
+              px-4 py-2 md:px-6 md:py-3.5
+              shadow-[2px_2px_0px_0px_#cc0000] md:shadow-[4px_4px_0px_0px_#cc0000]
+              active:translate-x-[1px] active:translate-y-[1px] active:shadow-none
+              hover:bg-ytRed hover:text-white hover:border-ytRed
+              transition-all
+            "
           >
-            {user ? 'Post Channel' : 'Login'}
+            {/* Short text for mobile */}
+            <span className="md:hidden">{user ? 'Post' : 'Login'}</span>
+            {/* Full text for desktop */}
+            <span className="hidden md:inline">{user ? 'Post Channel' : 'Login'}</span>
           </button>
 
           <button 
+            ref={hamburgerRef} // Added ref here
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-10 h-10 flex flex-col items-center justify-center border border-border bg-background rounded-sm hover:border-ytRed transition-all"
+            className="w-9 h-9 md:w-10 md:h-10 flex flex-col items-center justify-center border border-border bg-background rounded-sm hover:border-ytRed transition-all"
           >
             <div className={`w-5 h-0.5 bg-foreground mb-1.5 transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
             <div className={`w-5 h-0.5 bg-foreground mb-1.5 transition-all ${isMenuOpen ? 'opacity-0' : ''}`} />

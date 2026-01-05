@@ -4,6 +4,13 @@ import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+// --- Simple Icons for UI ---
+const Icons = {
+  Edit: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
+  X: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
+  Save: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+};
+
 const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -136,14 +143,14 @@ export default function ProfilePage() {
   if (loading) return <div className="p-20 text-center font-mono text-xs uppercase tracking-widest text-gray-500">Loading Dashboard...</div>;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground font-poppins">
       
-      {/* --- HEADER SECTION --- */}
+      {/* --- HEADER SECTION (Revamped Layout & Edit) --- */}
       <div className="bg-panel border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
+          <div className="flex flex-col md:flex-row gap-10 items-start">
             
-            {/* Avatar */}
+            {/* Avatar (Unchanged) */}
             <div className="relative group w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
                <div className="w-full h-full rounded-full border-2 border-border p-1 bg-background overflow-hidden relative shadow-lg">
                  <img 
@@ -167,61 +174,71 @@ export default function ProfilePage() {
 
             <div className="flex-1 w-full">
               {!isEditing ? (
-                <div className="animate-in fade-in slide-in-from-left-2">
-                   <div className="flex justify-between items-start">
+                // --- VIEW MODE ---
+                <div className="animate-in fade-in slide-in-from-left-2 duration-300">
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                       <div>
-                        <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter mb-2">
+                        <h1 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter mb-3">
                           {profile?.full_name || "Anonymous Creator"}
                         </h1>
-                        <p className="text-gray-400 font-medium max-w-xl text-sm leading-relaxed">
+                        <p className="text-gray-500 dark:text-gray-400 font-medium max-w-xl text-sm leading-relaxed mb-6">
                           {profile?.bio || "No bio set yet."}
                         </p>
+                        
+                        {/* Integrated Stats */}
+                        <div className="flex gap-6">
+                          <div className="flex items-center gap-2">
+                            <span className="block text-xl font-black text-ytRed">{submissions.length}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Channels</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="block text-xl font-black text-ytRed">{comments.length}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Critiques</span>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Revamped Edit Button */}
                       <button 
                         onClick={() => setIsEditing(true)}
-                        className="text-[10px] font-black uppercase tracking-widest border border-border px-4 py-2 hover:bg-white hover:text-black transition-colors"
+                        className="flex items-center gap-2 border border-border hover:bg-foreground/5 hover:border-foreground/20 px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-sm mt-4 md:mt-0"
                       >
-                        Edit Profile
+                        <Icons.Edit /> Edit Profile
                       </button>
-                   </div>
-                   
-                   <div className="flex gap-8 mt-8 border-t border-border pt-6">
-                      <div>
-                        <span className="block text-2xl font-black text-ytRed">{submissions.length}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Channels</span>
-                      </div>
-                      <div>
-                        <span className="block text-2xl font-black text-ytRed">{comments.length}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Critiques</span>
-                      </div>
-                   </div>
+                    </div>
                 </div>
               ) : (
-                <div className="bg-background border border-border p-6 max-w-2xl animate-in fade-in slide-in-from-top-2">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-ytRed mb-4">Update Details</h3>
-                  <div className="space-y-4">
+                // --- EDIT MODE (Better UI) ---
+                <div className="bg-background border border-border rounded-xl p-6 shadow-lg animate-in fade-in slide-in-from-top-2 duration-300 max-w-2xl relative">
+                  <button onClick={() => setIsEditing(false)} className="absolute top-4 right-4 text-gray-400 hover:text-foreground transition-colors">
+                    <Icons.X />
+                  </button>
+                  
+                  <h3 className="text-sm font-black uppercase tracking-widest text-ytRed mb-6">Update Details</h3>
+                  
+                  <div className="space-y-5">
                     <div>
-                      <label className="text-[10px] font-bold uppercase text-gray-500 mb-1 block">Display Name</label>
+                      <label className="text-[10px] font-bold uppercase text-gray-500 mb-1.5 block">Display Name</label>
                       <input 
                         value={formData.full_name}
                         onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                        className="w-full bg-panel border border-border p-3 text-sm font-bold focus:border-ytRed focus:outline-none"
+                        className="w-full bg-panel border border-border rounded-lg p-3 text-sm font-bold focus:border-ytRed focus:outline-none transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold uppercase text-gray-500 mb-1 block">Bio</label>
+                      <label className="text-[10px] font-bold uppercase text-gray-500 mb-1.5 block">Bio</label>
                       <textarea 
                         value={formData.bio}
                         onChange={(e) => setFormData({...formData, bio: e.target.value})}
                         rows={3}
-                        className="w-full bg-panel border border-border p-3 text-sm focus:border-ytRed focus:outline-none resize-none"
+                        className="w-full bg-panel border border-border rounded-lg p-3 text-sm font-medium focus:border-ytRed focus:outline-none resize-none transition-colors"
                       />
                     </div>
-                    <div className="flex gap-3 pt-2">
-                      <button onClick={handleSave} disabled={saving} className="bg-ytRed text-white text-xs font-black uppercase tracking-widest px-6 py-3 hover:shadow-yt-glow transition-all">
-                        {saving ? 'Saving...' : 'Save Changes'}
+                    <div className="flex gap-3 pt-3">
+                      <button onClick={handleSave} disabled={saving} className="bg-ytRed text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-red-600 transition-all flex items-center gap-2 shadow-sm disabled:opacity-50">
+                        {saving ? 'Saving...' : <><Icons.Save /> Save Changes</>}
                       </button>
-                      <button onClick={() => setIsEditing(false)} className="border border-border text-gray-400 text-xs font-black uppercase tracking-widest px-6 py-3 hover:text-white transition-colors">
+                      <button onClick={() => setIsEditing(false)} className="border border-border text-gray-500 hover:text-foreground text-xs font-black uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-panel transition-colors">
                         Cancel
                       </button>
                     </div>
@@ -233,13 +250,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* --- CONTENT TABS --- */}
+      {/* --- CONTENT TABS (Original design, just ensuring spacing) --- */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="flex gap-8 border-b border-border mb-8">
-          <button onClick={() => setActiveTab('channels')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'channels' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('channels')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'channels' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-foreground'}`}>
             My Channels
           </button>
-          <button onClick={() => setActiveTab('critiques')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'critiques' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-white'}`}>
+          <button onClick={() => setActiveTab('critiques')} className={`pb-4 text-xs font-black uppercase tracking-widest transition-colors ${activeTab === 'critiques' ? 'text-ytRed border-b-2 border-ytRed' : 'text-gray-500 hover:text-foreground'}`}>
             My Critiques
           </button>
         </div>
@@ -247,14 +264,14 @@ export default function ProfilePage() {
         {activeTab === 'channels' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {submissions.length === 0 ? (
-               <div className="col-span-full py-12 text-center border border-dashed border-border text-gray-600 text-sm">
+               <div className="col-span-full py-16 text-center border-2 border-dashed border-border rounded-2xl text-gray-500 text-sm font-bold uppercase tracking-widest">
                  You haven't posted any channels yet.
                </div>
             ) : (
               submissions.map((sub) => (
                 <div key={sub.id} className="relative group/card">
                   <Link href={`/channel/${sub.id}`} className="block">
-                    <div className="bg-panel border border-border p-6 hover:border-ytRed/50 transition-all hover:-translate-y-1 overflow-hidden shadow-sm">
+                    <div className="bg-panel border border-border p-6 rounded-2xl hover:border-ytRed/50 transition-all hover:-translate-y-1 overflow-hidden shadow-sm">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1 pr-12">
                           <h3 className="font-black text-xl text-foreground group-hover:text-ytRed truncate">
@@ -271,10 +288,10 @@ export default function ProfilePage() {
                         <span className="text-[10px] font-mono text-gray-500 shrink-0">{new Date(sub.created_at).toLocaleDateString()}</span>
                       </div>
 
-                      <p className="text-xs text-gray-400 line-clamp-2 italic mb-4">"{sub.context_text || sub.goal_text}"</p>
+                      <p className="text-xs text-gray-400 line-clamp-2 italic mb-6">"{sub.context_text || sub.goal_text}"</p>
                       
                       <div className="mt-auto pt-4 border-t border-border flex justify-end">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-foreground transition-colors">
                           View Feedback →
                         </span>
                       </div>
@@ -303,21 +320,21 @@ export default function ProfilePage() {
         {activeTab === 'critiques' && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {comments.length === 0 ? (
-               <div className="py-12 text-center border border-dashed border-border text-gray-600 text-sm">
+               <div className="py-16 text-center border-2 border-dashed border-border rounded-2xl text-gray-500 text-sm font-bold uppercase tracking-widest">
                  You haven't critiqued anyone yet.
                </div>
             ) : (
               comments.map((comment) => (
                 <Link href={`/channel/${comment.submissions?.id}`} key={comment.id} className="block group">
-                  <div className="bg-panel border border-border p-5 hover:border-gray-500 transition-colors relative pl-6">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-border group-hover:bg-ytRed transition-colors"></div>
+                  <div className="bg-panel border border-border p-5 rounded-xl hover:border-gray-500 transition-all relative pl-6 shadow-sm hover:shadow-md">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-border group-hover:bg-ytRed transition-colors rounded-l-xl"></div>
                     <div className="flex justify-between items-center mb-2">
-                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                         On: <span className="text-white group-hover:text-ytRed transition-colors">{comment.submissions?.video_title || comment.submissions?.channel_name || "Unknown"}</span>
-                       </span>
-                       <span className="text-[10px] font-mono text-gray-600">{new Date(comment.created_at).toLocaleDateString()}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                          On: <span className="text-foreground group-hover:text-ytRed transition-colors">{comment.submissions?.video_title || comment.submissions?.channel_name || "Unknown"}</span>
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-600">{new Date(comment.created_at).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-300 italic">"{comment.content}"</p>
+                    <p className="text-sm font-medium text-gray-400 italic line-clamp-2">"{comment.content}"</p>
                   </div>
                 </Link>
               ))

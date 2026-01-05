@@ -1,265 +1,305 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
-
-// --- ICONS (Inline SVGs for zero dependencies) ---
-const Icons = {
-  Lock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>,
-  Send: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>,
-  Time: () => <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-  Tag: () => <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>,
-  Empty: () => <svg className="w-12 h-12 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-};
-
-const FEEDBACK_TAGS = ["Hook", "Editing", "Audio", "Pacing", "Thumbnail", "Content"];
+import { useRouter } from 'next/navigation';
+import { AuthModal } from './AuthModal';
 
 interface CommentSectionProps {
   submissionId: string;
-  submissionType?: 'channel' | 'video';
+  submissionType: 'video' | 'channel';
   isLocked?: boolean;
 }
 
-export const CommentSection = ({ submissionId, submissionType = 'channel', isLocked: initialLocked = false }: CommentSectionProps) => {
+export const CommentSection = ({ submissionId, submissionType, isLocked }: CommentSectionProps) => {
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [timestamp, setTimestamp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Auth State
+  const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null); // NEW: Holds the actual DB profile
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
+  const router = useRouter();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const [comments, setComments] = useState<any[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [timestamp, setTimestamp] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isLockedState, setIsLockedState] = useState(initialLocked);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-
   useEffect(() => {
+    const fetchSessionAndProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+
+      // NEW: If logged in, fetch the specific row from 'profiles' table
+      if (session?.user) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id) // Ensure this column name matches your DB (id vs user_id)
+            .single();
+        
+        if (profile) setUserProfile(profile);
+      }
+    };
+
+    fetchSessionAndProfile();
     fetchComments();
-    checkUser();
+
+    const channel = supabase
+      .channel('comments')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments', filter: `submission_id=eq.${submissionId}` }, 
+      (payload) => {
+        fetchComments();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [submissionId]);
 
-  useEffect(() => {
-    setIsLockedState(initialLocked);
-  }, [initialLocked]);
-
-  const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setCurrentUser(session?.user || null);
-  };
-
   const fetchComments = async () => {
-    const { data } = await supabase
+    setIsLoading(true);
+    
+    // We select profiles data via the foreign key relationship
+    // Note: Ensure your foreign key in supabase is named 'profiles' or matches the table name
+    const { data, error } = await supabase
       .from('comments')
-      .select(`*, profiles (full_name, avatar_url)`)
+      .select(`
+        *,
+        profiles (
+            full_name,
+            avatar_url
+        )
+      `)
       .eq('submission_id', submissionId)
       .order('created_at', { ascending: false });
-
-    if (data) setComments(data);
-  };
-
-  const toggleTag = (tag: string) => {
-    if (selectedTags.includes(tag)) setSelectedTags(selectedTags.filter(t => t !== tag));
-    else if (selectedTags.length < 2) setSelectedTags([...selectedTags, tag]);
-  };
-
-  const postComment = async () => {
-    if (isLockedState) {
-      setErrorMsg("⛔ Thread is locked.");
-      return;
+    
+    if (error) {
+        console.error("Error fetching comments:", error);
+    } else if (data) {
+        setComments(data);
     }
-    if (!currentUser || !newComment.trim()) return;
+    
+    setIsLoading(false);
+  };
 
-    const { error } = await supabase.from('comments').insert([{
-      submission_id: submissionId,
-      content: newComment,
-      tags: selectedTags,
-      timestamp: timestamp || null,
-      user_id: currentUser.id,
-      author_name: "Legacy" // You might want to remove this if utilizing Profiles relations
-    }]);
+  // --- HELPER: GET AVATAR ---
+  // If no DB image, generate one using UI Avatars service
+  const getAvatarUrl = (url: string | null, name: string) => {
+    if (url) return url;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=128`;
+  };
+
+  // --- HELPER: GET CURRENT USER NAME ---
+  // Prioritize DB Profile -> then Auth Meta -> then 'Creator'
+  const getCurrentUserDisplayName = () => {
+    if (userProfile?.full_name) return userProfile.full_name;
+    if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
+    return 'Creator';
+  };
+
+  const currentDisplayName = getCurrentUserDisplayName();
+  const currentAvatar = getAvatarUrl(userProfile?.avatar_url, currentDisplayName);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !user) return;
+    
+    setIsLoading(true);
+
+    let finalContent = newComment;
+    if (submissionType === 'video' && timestamp) {
+      finalContent = `[${timestamp}] ${newComment}`;
+    }
+
+    const { data, error } = await supabase
+      .from('comments')
+      .insert({
+        content: finalContent,
+        submission_id: submissionId,
+        user_id: user.id,
+        // We still save the snapshot name, but we prefer fetching dynamic profiles
+        author_name: currentDisplayName, 
+      })
+      .select();
 
     if (error) {
-      if (error.code === '42501') {
-        setIsLockedState(true);
-        setErrorMsg("⛔ Failed: This thread is locked by admins.");
-      } else {
-        alert(`Error: ${error.message}`);
-      }
+      console.error("Supabase Write Error:", error);
+      alert(`Error: ${error.message}`);
     } else {
-      setNewComment("");
-      setTimestamp("");
-      setSelectedTags([]);
-      setErrorMsg("");
-      fetchComments();
+      setNewComment('');
+      setTimestamp('');
+      fetchComments(); 
     }
+    
+    setIsLoading(false);
+  };
+
+  const handleTimestampChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^0-9:]/g, '');
+    if (val.length === 2 && !val.includes(':') && timestamp.length < 2) {
+        val = val + ':';
+    }
+    if (val.length > 5) return;
+    setTimestamp(val);
+  };
+
+  const parseComment = (content: string) => {
+    const timeMatch = content.match(/^\[([0-9]{1,2}:[0-9]{2})\]\s(.+)/);
+    if (timeMatch && submissionType === 'video') {
+      return { time: timeMatch[1], text: timeMatch[2] };
+    }
+    return { time: null, text: content };
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto pt-10 font-sans">
-      
-      {/* --- HEADER --- */}
-      <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-white/10 pb-4">
-        <h3 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          Critiques <span className="bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 text-xs px-2 py-1 rounded-full">{comments.length}</span>
+    <div className="w-full">
+      <div className="flex items-center gap-4 mb-8">
+        <h3 className="text-xl font-black uppercase italic tracking-tighter text-slate-900 dark:text-white">
+          Critique Log
         </h3>
-        {isLockedState && (
-           <span className="flex items-center gap-1.5 text-xs font-bold text-red-500 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
-             <Icons.Lock /> LOCKED
-           </span>
-        )}
+        <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+        <span className="text-xs font-mono font-bold text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded">
+          {comments.length} ENTRIES
+        </span>
       </div>
 
-      {/* --- INPUT AREA --- */}
-      {isLockedState ? (
-        <div className="bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-xl p-8 mb-12 flex flex-col items-center justify-center text-center opacity-70">
-           <div className="w-12 h-12 bg-slate-200 dark:bg-white/10 rounded-full flex items-center justify-center text-slate-400 mb-3">
-             <Icons.Lock />
-           </div>
-           <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Comments have been turned off for this submission.</p>
+      {isLocked ? (
+        <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6 rounded-2xl text-center mb-12">
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">This thread is locked.</p>
         </div>
-      ) : (
-        <div className={`
-          relative bg-white dark:bg-[#0a0a0a] border rounded-xl shadow-sm transition-all duration-300 mb-12 group
-          ${isFocused ? 'border-indigo-500 ring-1 ring-indigo-500 shadow-md' : 'border-slate-200 dark:border-white/10'}
-        `}>
-          {!currentUser && (
-            <div className="absolute inset-0 bg-white/60 dark:bg-black/80 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center rounded-xl">
-              <p className="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-white mb-3">Join the discussion</p>
-              <button className="bg-slate-900 dark:bg-white text-white dark:text-black font-bold px-6 py-2 rounded-full text-xs uppercase tracking-wide hover:scale-105 transition-transform">
-                Login to Critique
+      ) : user ? (
+        <form onSubmit={handleSubmit} className="mb-14 group relative z-10">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-indigo-500 rounded-2xl opacity-20 group-focus-within:opacity-100 transition duration-500 blur-sm"></div>
+          <div className="relative bg-white dark:bg-[#111] rounded-2xl overflow-hidden shadow-2xl">
+            
+            {submissionType === 'video' && (
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-[#151515] border-b border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-2 text-[#FF0032]">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Timecode</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        placeholder="00:00"
+                        value={timestamp}
+                        onChange={handleTimestampChange}
+                        className="w-24 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded px-2 py-1 text-sm font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#FF0032] focus:ring-1 focus:ring-[#FF0032] transition-all text-center placeholder:text-slate-300 dark:placeholder:text-slate-700"
+                    />
+                    <div className="h-4 w-px bg-slate-200 dark:bg-white/10 mx-2" />
+                    <span className="text-[10px] text-slate-400 font-medium hidden sm:inline-block">
+                        Flag specific moments for review.
+                    </span>
+                </div>
+            )}
+
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add your critique..."
+              className="w-full bg-transparent p-5 min-h-[120px] outline-none text-slate-700 dark:text-slate-200 resize-none placeholder:text-slate-400 text-sm md:text-base leading-relaxed"
+            />
+            
+            <div className="flex justify-between items-center p-3 bg-slate-50/50 dark:bg-[#151515]">
+              <div className="flex items-center gap-2 pl-2">
+                 {/* UPDATED: Uses DB avatar or generated fallback */}
+                 <img src={currentAvatar} className="w-6 h-6 rounded-full border border-slate-200 dark:border-white/10 opacity-70" alt="" />
+                 <span className="text-[10px] font-bold text-slate-400 uppercase hidden sm:inline-block">
+                   Posting as <span className="text-slate-900 dark:text-white">{currentDisplayName}</span>
+                 </span>
+              </div>
+              <button 
+                type="submit" 
+                disabled={isLoading || !newComment.trim()}
+                className="bg-[#FF0032] text-white px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-red-600/20"
+              >
+                {isLoading ? 'Sending...' : 'Post Entry'}
               </button>
             </div>
-          )}
-
-          {/* Top Bar: Timestamp & Label */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] rounded-t-xl">
-             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-               New Critique
-             </span>
-             {submissionType === 'video' && (
-               <div className="flex items-center gap-2">
-                 <div className="text-slate-400"><Icons.Time /></div>
-                 <input 
-                   value={timestamp}
-                   onChange={(e) => setTimestamp(e.target.value)}
-                   placeholder="0:00"
-                   className="w-16 bg-transparent text-right text-xs font-mono font-bold text-slate-700 dark:text-slate-300 placeholder:text-slate-300 focus:outline-none focus:text-indigo-500"
-                 />
-               </div>
-             )}
           </div>
-
-          {/* Text Area */}
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="What actionable feedback can you give?"
-            className="w-full bg-transparent p-4 min-h-[120px] text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 font-medium resize-none focus:outline-none"
-          />
-
-          {/* Bottom Bar: Tags & Post */}
-          <div className="px-4 py-3 flex flex-wrap gap-4 justify-between items-center">
-            <div className="flex flex-wrap gap-1.5">
-              {FEEDBACK_TAGS.map(tag => {
-                const isSelected = selectedTags.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className={`
-                      px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border transition-all flex items-center gap-1
-                      ${isSelected 
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-md transform scale-105' 
-                        : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:border-indigo-300 dark:hover:border-indigo-700'
-                      }
-                    `}
-                  >
-                    {isSelected && <span className="text-[8px] mr-1">●</span>}
-                    {tag}
-                  </button>
-                )
-              })}
-            </div>
-
-            <button 
-              onClick={postComment}
-              disabled={!newComment.trim()}
-              className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-black font-black px-5 py-2 rounded-lg text-xs uppercase tracking-widest hover:bg-indigo-600 dark:hover:bg-indigo-400 dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-            >
-              Post <Icons.Send />
-            </button>
-          </div>
-          
-          {errorMsg && (
-            <div className="absolute -bottom-10 left-0 right-0 text-center animate-pulse">
-              <span className="text-xs font-bold text-red-500 bg-red-100 dark:bg-red-900/20 px-3 py-1 rounded-full border border-red-200 dark:border-red-800">{errorMsg}</span>
-            </div>
-          )}
+        </form>
+      ) : (
+        <div className="bg-slate-100 dark:bg-white/5 p-8 rounded-2xl text-center mb-12 border border-dashed border-slate-300 dark:border-white/10">
+           <p className="text-sm font-bold text-slate-500 mb-4">Log in to leave a critique.</p>
+           <button 
+             onClick={() => setIsAuthModalOpen(true)}
+             className="text-xs font-black uppercase tracking-widest text-[#FF0032] hover:underline"
+           >
+             Sign In Now
+           </button>
         </div>
       )}
 
-      {/* --- COMMENTS LIST --- */}
-      <div className="space-y-6">
-        {comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center opacity-50">
-             <Icons.Empty />
-             <p className="text-sm font-bold text-slate-500">No critiques yet.</p>
-             <p className="text-xs text-slate-400">Be the first to provide value.</p>
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="group flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              {/* Avatar Column */}
-              <div className="flex-shrink-0 pt-1">
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-900 p-[2px] shadow-sm">
-                   <img 
-                     src={comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${comment.profiles?.full_name}&background=random`} 
-                     className="w-full h-full rounded-full object-cover border-2 border-white dark:border-[#0a0a0a]"
-                     alt="avatar"
-                   />
-                 </div>
-              </div>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
 
-              {/* Content Column */}
-              <div className="flex-1 bg-white dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 p-4 rounded-2xl rounded-tl-none shadow-sm group-hover:shadow-md transition-shadow">
-                 
-                 {/* Metadata Header */}
-                 <div className="flex justify-between items-start mb-2">
-                    <div>
-                       <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-none mb-1">
-                         {comment.profiles?.full_name || "Anonymous Creator"}
-                       </h4>
-                       <span className="text-[10px] font-medium text-slate-400">
-                         {new Date(comment.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                       </span>
+      <div className="space-y-6 relative">
+        {comments.length > 0 && (
+            <div className="absolute left-[19px] top-4 bottom-4 w-px bg-slate-200 dark:bg-white/10 hidden md:block z-0" />
+        )}
+
+        {comments.map((comment) => {
+            const { time, text } = parseComment(comment.content);
+            const isTimestamped = !!time;
+            
+            // UPDATED LOGIC: Check 'profiles' object first
+            const authorName = comment.profiles?.full_name || comment.author_name || 'Anonymous';
+            // UPDATED LOGIC: Use DB URL, if null generate from name
+            const avatarUrl = getAvatarUrl(comment.profiles?.avatar_url, authorName);
+            
+            return (
+                <div key={comment.id} className="relative z-10 flex gap-4 md:gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500 group">
+                    <div className="shrink-0 pt-1">
+                        <div className={`w-10 h-10 rounded-full border-2 overflow-hidden relative z-10 transition-transform group-hover:scale-110 ${isTimestamped ? 'border-red-500 shadow-[0_0_10px_rgba(255,0,50,0.3)]' : 'border-white dark:border-[#222] bg-white dark:bg-black'}`}>
+                             <img 
+                                src={avatarUrl} 
+                                alt="User" 
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </div>
 
-                    {/* Tags & Time */}
-                    <div className="flex flex-wrap gap-2 justify-end">
-                       {comment.timestamp && (
-                         <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-800/30">
-                           <Icons.Time /> {comment.timestamp}
-                         </div>
-                       )}
-                       {comment.tags?.map((tag: string) => (
-                         <span key={tag} className="text-[9px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 px-2 py-0.5 rounded">
-                           {tag}
-                         </span>
-                       ))}
+                    <div className="flex-1">
+                        <div className="bg-white dark:bg-[#111] border border-slate-100 dark:border-white/5 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-slate-200 dark:hover:border-white/10 transition-all">
+                            <div className="flex items-baseline justify-between mb-2 border-b border-slate-50 dark:border-white/5 pb-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-sm text-slate-900 dark:text-white">
+                                        {authorName}
+                                    </span>
+                                    {isTimestamped && (
+                                        <span className="hidden sm:inline-block bg-red-500 text-white text-[9px] font-bold px-1.5 rounded uppercase tracking-wider">
+                                            Timestamped
+                                        </span>
+                                    )}
+                                </div>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase font-mono">
+                                    {new Date(comment.created_at).toLocaleDateString()}
+                                </span>
+                            </div>
+                            
+                            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                {time && (
+                                    <div className="inline-block mr-2 mb-1">
+                                        <span className="inline-flex items-center gap-1.5 bg-[#FF0032] text-white px-2 py-0.5 rounded text-[11px] font-bold font-mono shadow-sm cursor-pointer hover:bg-red-700 transition-colors">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            {time}
+                                        </span>
+                                    </div>
+                                )}
+                                {text}
+                            </div>
+                        </div>
                     </div>
-                 </div>
-
-                 <div className="w-full h-px bg-slate-100 dark:bg-white/5 my-3" />
-
-                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                   {comment.content}
-                 </p>
-              </div>
+                </div>
+            );
+        })}
+        {comments.length === 0 && (
+            <div className="text-center py-16 opacity-50">
+                <div className="w-16 h-16 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                     <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                </div>
+                <p className="text-slate-500 font-medium text-sm">No critiques yet. Start the conversation.</p>
             </div>
-          ))
         )}
       </div>
     </div>

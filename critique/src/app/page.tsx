@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { SubmissionCard } from '@/components/SubmissionCard';
 import { HeroActions } from '@/components/HeroActions';
-import { MyThreadsSection } from '@/components/MyThreadsSection'; // <--- IMPORT THIS
+import { MyThreadsSection } from '@/components/MyThreadsSection';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -35,7 +35,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     <div className="flex flex-col min-h-screen bg-[#fafafa] dark:bg-[#080808] text-slate-900 dark:text-slate-100 transition-colors duration-700 font-poppins">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 md:pt-0 pb-24 md:pb-48 overflow-hidden">
+      <section className="relative pt-32 lg:pt-0 pb-24 md:pb-48 overflow-hidden">
         {/* Background Glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
           <div className="absolute top-0 right-[-10%] w-[600px] h-[600px] bg-ytRed/15 blur-[120px] rounded-full animate-pulse" />
@@ -44,7 +44,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-[520px] z-30">
+          {/* FIXED: Added 'mx-auto lg:mx-0' to center the container itself on tablets */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-[520px] mx-auto lg:mx-0 z-30">
             <h1 className="text-6xl md:text-[80px] font-black tracking-tighter leading-[0.85] uppercase italic mb-4 text-slate-900 dark:text-white">
               Map the exact <br />
               <span className="text-[#FF0032] drop-shadow-[0_0_35px_rgba(255,0,50,0.3)]">Exit Point.</span>
@@ -102,7 +103,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       </section>
 
       {/* --- CLIENT COMPONENT: MY THREADS --- */}
-      {/* This will handle auth check and fetching on the client side */}
       <MyThreadsSection />
 
       {/* --- FEED SECTION --- */}

@@ -176,8 +176,11 @@ export default function AdminDashboard() {
   if (loading) return <div className="h-screen w-full flex items-center justify-center bg-background text-foreground"><div className="w-8 h-8 border-2 border-ytRed border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <div className="h-20 border-b border-border flex items-center justify-between px-8 bg-panel sticky top-0 z-50 backdrop-blur-md">
+    // FIX: Added 'pt-28' (112px) to push the entire dashboard down, clearing the global navbar (72px) + creating a gap
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans pt-28">
+      
+      {/* Admin Header: Removed 'sticky' here since the main container now scrolls or creates the offset */}
+      <div className="h-20 border-b border-border flex items-center justify-between px-8 bg-panel z-40">
         <div className="flex items-center gap-4">
           <div className="w-4 h-4 bg-ytRed rounded-full animate-pulse shadow-[0_0_15px_#ff0000]"></div>
           <h1 className="font-black uppercase tracking-widest text-2xl">Admin<span className="text-gray-500">Panel</span></h1>
@@ -185,7 +188,10 @@ export default function AdminDashboard() {
         <button onClick={() => router.push('/')} className="px-6 py-2 border border-border text-xs font-bold uppercase hover:bg-white hover:text-black transition-colors rounded-sm">Exit Dashboard</button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden h-[calc(100vh-80px)]">
+      {/* FIX: Adjusted height calculation. 
+          100vh - 12rem (192px) accounts for the top padding (pt-28 = 112px) + Admin Header (h-20 = 80px) 
+      */}
+      <div className="flex flex-1 overflow-hidden h-[calc(100vh-12rem)]">
         <div className="w-64 border-r border-border bg-panel flex flex-col overflow-y-auto">
           <div className="p-6 flex flex-col gap-2">
             <p className="text-[10px] font-bold uppercase text-gray-500 mb-4 pl-2 tracking-widest">Navigation</p>

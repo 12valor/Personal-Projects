@@ -14,6 +14,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
   const subCount = channel.subscriber_count;
   const isLocked = channel.is_locked;
 
+  // --- 1. DETERMINE DISPLAY TYPE ---
   let displayType = 'CHANNEL';
   let displayIcon = (
     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,15 +38,22 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
     );
   }
 
+  // Helper: Used to switch layouts. 'COMBO' is treated as a Channel Layout visually.
   const isChannelLayout = displayType === 'CHANNEL' || displayType === 'COMBO';
 
   return (
+    // Link directs to the page. If it's a COMBO, the page logic should handle showing the video.
     <Link href={`/channel/${channel.id}`} className="block group h-full">
       <div className={`h-full flex flex-col bg-white dark:bg-[#0A0A0A] border rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative ${isLocked ? 'border-red-500/20 opacity-95' : 'border-slate-200 dark:border-white/5'}`}>
         
         {/* --- SECTION 1: VISUAL BLOCK --- */}
         <div className="relative h-32 w-full bg-slate-100 dark:bg-neutral-900 overflow-hidden">
-          {hasVideo ? (
+          
+          {/* LOGIC UPDATE:
+              We only show the <video> preview if it is strictly a 'VIDEO' type submission.
+              If it is 'COMBO' (Mixed), !isChannelLayout is false, so we fall through to the Banner Image.
+          */}
+          {!isChannelLayout && hasVideo ? (
             <video 
               src={channel.video_url} 
               className={`w-full h-full object-cover transition-all duration-700 ${isLocked ? 'grayscale opacity-60' : 'group-hover:scale-105'}`}
@@ -57,6 +65,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
             <div className="w-full h-full bg-slate-200 dark:bg-neutral-800 opacity-20" />
           )}
           
+          {/* Top Indicators */}
           <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 items-end">
              {isLocked ? (
                <span className="bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg flex items-center gap-1">
@@ -72,7 +81,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
         </div>
 
-        {/* --- SECTION 1b: PFP --- */}
+        {/* --- SECTION 1b: PFP (Shown for Channel AND Combo) --- */}
         {isChannelLayout && (
           <div className="relative flex justify-center -mt-10 z-20">
             <div className="w-20 h-20 rounded-full border-[6px] border-white dark:border-[#0A0A0A] bg-white dark:bg-black shadow-xl overflow-hidden aspect-square">
@@ -88,6 +97,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
         {/* --- SECTION 2: ORGANIZED TEXT LAYOUT --- */}
         <div className="flex flex-col flex-grow px-5">
           
+          {/* Uploader Meta */}
           <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-white/5">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-neutral-800 overflow-hidden border border-white/10">
@@ -100,6 +110,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
             </span>
           </div>
 
+          {/* Title Area */}
           <div className={`pt-4 ${isChannelLayout ? 'text-center' : 'text-left'}`}>
             <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] group-hover:text-ytRed transition-colors duration-300">
               {isChannelLayout ? (channel.channel_name || "Untitled") : channel.video_title}
@@ -113,6 +124,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
             )}
           </div>
 
+          {/* Goal Box */}
           <div className={`my-4 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 ${isChannelLayout ? 'text-center' : 'text-left'}`}>
             <span className="block text-[8px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Audit Objective</span>
             <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic line-clamp-2">
@@ -120,7 +132,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
             </p>
           </div>
 
-          {/* --- RED TAGS --- */}
+          {/* Tags */}
           <div className={`mt-auto pb-5 flex flex-wrap gap-1.5 ${isChannelLayout ? 'justify-center' : 'justify-start'}`}>
             {categories.slice(0, 3).map((cat: string) => (
               <span key={cat} className="text-[9px] font-extrabold uppercase tracking-tight text-white bg-red-600/90 dark:bg-red-700/80 px-2 py-0.5 rounded-md shadow-sm">
@@ -133,7 +145,7 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
           </div>
         </div>
 
-        {/* --- FOOTER: IMPROVED COMMENTS VISIBILITY --- */}
+        {/* --- FOOTER --- */}
         <div className="px-5 py-4 bg-slate-50/50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5 flex justify-between items-center group/footer">
            <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 text-[11px] font-black text-slate-600 dark:text-white transition-colors">

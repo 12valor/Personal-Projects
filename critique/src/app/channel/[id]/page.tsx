@@ -22,8 +22,17 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
 
   if (!submission) return notFound();
 
-  const isVideo = submission.submission_type === 'video' || submission.submission_type === 'video_only';
-  const hasBanner = !isVideo && submission.banner_url;
+  // --- LOGIC UPDATE: DETERMINE LAYOUT ---
+  // Only use the strict "Video Grid" layout if it is explicitly 'video_only'.
+  // Everything else ('channel', 'video' aka Combo) uses the "Channel Layout" which supports Banners + Avatars.
+  const isStrictVideoLayout = submission.submission_type === 'video_only';
+  
+  // Allow banners for everything EXCEPT strict video_only
+  const hasBanner = !isStrictVideoLayout && submission.banner_url;
+  
+  // Check if we have a video to show (for the Combo/Channel layout)
+  const hasVideoSource = !!submission.video_url;
+  
   const displayName = submission.profiles?.full_name || submission.channel_name;
 
   return (
@@ -62,11 +71,9 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg> Back to Feed
             </Link>
 
-            {isVideo ? (
-              /* --- VIDEO HEADER --- */
+            {isStrictVideoLayout ? (
+              /* --- VIDEO ONLY HEADER (Grid Layout) --- */
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                 
-                 {/* Top Meta */}
                  <div className="flex flex-col gap-4 mb-8">
                     <div className="flex flex-wrap items-center gap-3">
                        {submission.is_verified && (
@@ -84,7 +91,6 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                  </div>
 
                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
                     {/* LEFT: Video Player */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10 relative group">
@@ -98,7 +104,6 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
 
                     {/* RIGHT: Creator & Context */}
                     <div className="flex flex-col gap-6">
-                        
                         {/* 1. CREATOR CARD */}
                         <div className="bg-white dark:bg-[#111] border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm hover:border-slate-300 dark:hover:border-white/20 transition-colors">
                             <div className="flex items-center gap-4">
@@ -116,15 +121,10 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                             </div>
                         </div>
 
-                        {/* 2. THE ASK (REVAMPED) */}
+                        {/* 2. THE ASK */}
                         <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-gradient-to-br from-white to-slate-50 dark:from-[#151515] dark:to-[#0a0a0a] p-6 group transition-all duration-500 hover:shadow-xl hover:border-red-500/30">
-                             
-                             {/* Background Texture */}
                              <div className="absolute inset-0 bg-[radial-gradient(#FF0032_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.03] dark:opacity-[0.15] pointer-events-none" />
-                             <div className="absolute -right-6 -top-6 text-slate-100 dark:text-white/[0.02] text-9xl font-black italic select-none pointer-events-none font-serif opacity-50">
-                               "
-                             </div>
-
+                             <div className="absolute -right-6 -top-6 text-slate-100 dark:text-white/[0.02] text-9xl font-black italic select-none pointer-events-none font-serif opacity-50">"</div>
                              <div className="relative z-10">
                                  <div className="flex items-center justify-between mb-4">
                                      <div className="flex items-center gap-2">
@@ -132,28 +132,27 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Director's Note</span>
                                      </div>
                                  </div>
-                                 
                                  <p className="text-sm md:text-[15px] font-medium text-slate-700 dark:text-slate-200 italic leading-relaxed mb-6 border-l-2 border-red-500/30 pl-4 py-1">
                                     "{submission.context_text}"
                                  </p>
-                                 
                                  <div className="flex flex-wrap gap-2">
                                    {submission.problem_categories?.map((cat: string) => (
                                      <span key={cat} className="bg-white dark:bg-[#1a1a1a] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide shadow-sm hover:text-red-500 dark:hover:text-red-400 hover:border-red-500/20 transition-colors cursor-default">
-                                       {cat}
+                                        {cat}
                                      </span>
                                    ))}
                                  </div>
                              </div>
                         </div>
-
                     </div>
                  </div>
               </div>
             ) : (
-              /* --- CHANNEL HEADER (Mixed Entries) --- */
+              /* --- CHANNEL / COMBO HEADER (Flex Layout with Banner) --- */
+              /* Use this layout if it's a Channel OR a Combo (anything with channel identity) */
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start animate-in fade-in slide-in-from-left-4 duration-700">
-                 {/* AVATAR */}
+                 
+                 {/* AVATAR (Floating on Desktop) */}
                  <div className="relative group shrink-0">
                     <div className={`w-32 h-32 md:w-40 md:h-40 rounded-full border-[6px] shadow-2xl overflow-hidden bg-slate-200 dark:bg-slate-800 ${hasBanner ? 'border-white/20' : 'border-white dark:border-[#0a0a0a]'}`}>
                        <ChannelAvatar url={submission.avatar_url} name={submission.channel_name} />
@@ -165,9 +164,11 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                     )}
                  </div>
 
-                 {/* INFO */}
+                 {/* INFO COLUMN */}
                  <div className="flex-1 w-full pt-2">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+                    
+                    {/* Title & Stats */}
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
                        <div>
                           <h1 className={`text-4xl md:text-6xl font-black tracking-tighter mb-2 ${hasBanner ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
                              {submission.channel_name}
@@ -185,6 +186,20 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                        </a>
                     </div>
 
+                    {/* --- COMBO FEATURE: VIDEO PLAYER EMBEDDED IN CHANNEL LAYOUT --- */}
+                    {hasVideoSource && (
+                      <div className="mb-8 w-full max-w-4xl">
+                        <div className="w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 relative group">
+                           <video controls className="w-full h-full" src={submission.video_url} />
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded">Featured Critique</span>
+                           <h3 className="text-xs font-bold text-slate-600 dark:text-slate-300 truncate">{submission.video_title}</h3>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Goal Text */}
                     <p className={`text-lg md:text-xl font-medium italic mb-8 max-w-2xl ${hasBanner ? 'text-white/70' : 'text-slate-500 dark:text-slate-400'}`}>
                        "{submission.goal_text}"
                     </p>
@@ -193,18 +208,18 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
                     <div className={`relative overflow-hidden rounded-2xl border p-6 group ${hasBanner ? 'bg-black/40 border-white/10 backdrop-blur-md' : 'bg-white dark:bg-[#111] border-slate-200 dark:border-white/10'}`}>
                        <div className="relative z-10">
                           <div className="flex items-center gap-2 mb-3 opacity-70">
-                              <div className={`w-1.5 h-1.5 rounded-full ${hasBanner ? 'bg-indigo-400' : 'bg-red-500'}`} />
-                              <span className={`text-[10px] font-black uppercase tracking-widest ${hasBanner ? 'text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Review Context</span>
+                             <div className={`w-1.5 h-1.5 rounded-full ${hasBanner ? 'bg-indigo-400' : 'bg-red-500'}`} />
+                             <span className={`text-[10px] font-black uppercase tracking-widest ${hasBanner ? 'text-indigo-300' : 'text-slate-500 dark:text-slate-400'}`}>Review Context</span>
                           </div>
                           <p className={`text-sm md:text-base font-medium leading-relaxed mb-4 ${hasBanner ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                             {submission.context_text}
                           </p>
                           <div className={`flex flex-wrap gap-2 pt-4 border-t ${hasBanner ? 'border-white/10' : 'border-slate-100 dark:border-white/5'}`}>
-                              {submission.problem_categories?.map((cat: string) => (
-                                <span key={cat} className={`border px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wide ${hasBanner ? 'bg-white/10 border-white/10 text-white' : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-slate-600 dark:text-slate-300'}`}>
+                             {submission.problem_categories?.map((cat: string) => (
+                               <span key={cat} className={`border px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wide ${hasBanner ? 'bg-white/10 border-white/10 text-white' : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-slate-600 dark:text-slate-300'}`}>
                                   {cat}
-                                </span>
-                              ))}
+                               </span>
+                             ))}
                           </div>
                        </div>
                     </div>
@@ -223,7 +238,7 @@ export default async function ChannelPage({ params }: { params: Promise<{ id: st
       <div className="max-w-4xl mx-auto px-6 mt-12">
         <CommentSection 
           submissionId={id} 
-          submissionType={isVideo ? 'video' : 'channel'}
+          submissionType={isStrictVideoLayout ? 'video' : 'channel'}
           isLocked={submission.is_locked}
         />
       </div>

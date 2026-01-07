@@ -128,7 +128,7 @@ export const Navbar = () => {
           
           {/* SOCIALS (DESKTOP ONLY) */}
           <div className="hidden md:flex items-center gap-5 mr-6">
-            <SocialIcon type="discord" href="https://discord.gg" />
+            <SocialIcon type="discord" href="https://discord.gg/Eu8bPDrC" />
             <SocialIcon type="x" href="https://twitter.com" />
             <SocialIcon type="instagram" href="https://instagram.com" />
           </div>

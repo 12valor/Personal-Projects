@@ -3,26 +3,32 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { TermsModal } from './TermsModal';
 import { PrivacyModal } from './PrivacyModal';
-import { GuidelinesModal } from './GuidelinesModal'; // Import new modal
-import { SupportModal } from './SupportModal';       // Import new modal
+import { GuidelinesModal } from './GuidelinesModal';
+import { SupportModal } from './SupportModal';
 
 export const Footer = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
-  const [showGuidelines, setShowGuidelines] = useState(false); // New State
-  const [showSupport, setShowSupport] = useState(false);       // New State
+  const [showGuidelines, setShowGuidelines] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
 
   return (
     <>
       <footer className="bg-white dark:bg-[#0a0a0a] border-t border-slate-200 dark:border-white/10 mt-auto font-poppins">
         
-        {/* --- PROTOTYPE BANNER --- */}
-        <div className="bg-amber-400 text-black py-3 font-poppins shadow-sm relative z-20">
-          <div className="max-w-7xl mx-auto px-6 flex items-center justify-center md:justify-start gap-3 text-center md:text-left">
-             <div className="h-2 w-2 rounded-full bg-black animate-pulse" />
-             <p className="text-xs font-black uppercase tracking-widest">
-               Prototype Build v0.1 — Data is currently simulated.
-             </p>
+        {/* --- PROTOTYPE BANNER (Enhanced) --- */}
+        <div className="bg-amber-400 text-black py-3 font-poppins shadow-sm relative z-20 overflow-hidden">
+          {/* Subtle texture overlay for premium feel */}
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[length:4px_4px]" />
+          
+          <div className="max-w-7xl mx-auto px-6 flex items-center justify-center md:justify-start gap-3 text-center md:text-left relative z-10">
+              <div className="relative flex items-center justify-center">
+                <div className="h-2 w-2 rounded-full bg-black animate-pulse relative z-10" />
+                <div className="absolute h-full w-full rounded-full bg-black animate-ping opacity-20" />
+              </div>
+              <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">
+                System Prototype v0.1 — Live Environment
+              </p>
           </div>
         </div>
 
@@ -50,7 +56,6 @@ export const Footer = () => {
             <div className="md:col-span-2">
               <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-6">Platform</h4>
               <ul className="space-y-4 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                {/* FIXED: Live Feed now scrolls to the feed section */}
                 <li><Link href="/#feed-section" className="hover:text-[#FF0032] transition-colors">Live Feed</Link></li>
                 <li><Link href="/profile" className="hover:text-[#FF0032] transition-colors">Creator Dashboard</Link></li>
               </ul>
@@ -59,13 +64,11 @@ export const Footer = () => {
             <div className="md:col-span-2">
               <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-6">Resources</h4>
               <ul className="space-y-4 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                {/* FIXED: Now opens Guidelines Modal */}
                 <li>
                   <button onClick={() => setShowGuidelines(true)} className="hover:text-[#FF0032] transition-colors text-left">
                     Guidelines
                   </button>
                 </li>
-                {/* FIXED: Now opens Support Modal */}
                 <li>
                   <button onClick={() => setShowSupport(true)} className="hover:text-[#FF0032] transition-colors text-left">
                     Support

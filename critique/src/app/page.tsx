@@ -1,10 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
-// Removed: import { SubmissionCard } ... (Now inside FeedGrid)
 import { HeroActions } from '@/components/HeroActions';
 import { MyThreadsSection } from '@/components/MyThreadsSection';
 import { HeroTestimonials } from '@/components/HeroTestimonials';
-// Imported the new Grid Component
 import { FeedGrid } from '@/components/FeedGrid';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -38,7 +36,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     <div className="flex flex-col min-h-screen bg-[#fafafa] dark:bg-[#080808] text-slate-900 dark:text-slate-100 transition-colors duration-700 font-poppins">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 lg:pt-0 pb-24 md:pb-48 overflow-hidden">
+      {/* UPDATED PADDING:
+          - pt-32 (128px) on Mobile: Standard spacing.
+          - lg:pt-36 (144px) on Desktop: Tighter top gap as requested.
+          - pb-24 / md:pb-48: Bottom spacing remains spacious.
+      */}
+      <section className="relative pt-32 lg:pt-36 pb-24 md:pb-48 overflow-hidden">
         {/* Background Glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
           <div className="absolute top-0 right-[-10%] w-[600px] h-[600px] bg-ytRed/15 blur-[120px] rounded-full animate-pulse" />
@@ -102,9 +105,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
 
           </div>
           
-          {/* REPLACED DIRECT GRID WITH NEW RESPONSIVE FEED COMPONENT
-             Handles Mobile Pagination (2 cols, 10 items) vs Desktop Full Grid
-          */}
           <FeedGrid channels={channels || []} />
 
         </div>

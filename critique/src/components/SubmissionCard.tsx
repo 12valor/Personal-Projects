@@ -42,17 +42,22 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
   const isChannelLayout = displayType === 'CHANNEL' || displayType === 'COMBO';
 
   return (
-    // Link directs to the page. If it's a COMBO, the page logic should handle showing the video.
     <Link href={`/channel/${channel.id}`} className="block group h-full">
-      <div className={`h-full flex flex-col bg-white dark:bg-[#0A0A0A] border rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative ${isLocked ? 'border-red-500/20 opacity-95' : 'border-slate-200 dark:border-white/5'}`}>
+      <div className={`
+        h-full flex flex-col 
+        bg-white dark:bg-[#18181b] 
+        border rounded-2xl overflow-hidden relative
+        transition-all duration-300 ease-out
+        hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]
+        ${isLocked 
+          ? 'border-red-500/20 opacity-95' 
+          : 'border-slate-200 dark:border-white/10 dark:group-hover:border-white/20'
+        }
+        ring-1 ring-transparent dark:ring-white/5
+      `}>
         
         {/* --- SECTION 1: VISUAL BLOCK --- */}
-        <div className="relative h-32 w-full bg-slate-100 dark:bg-neutral-900 overflow-hidden">
-          
-          {/* LOGIC UPDATE:
-              We only show the <video> preview if it is strictly a 'VIDEO' type submission.
-              If it is 'COMBO' (Mixed), !isChannelLayout is false, so we fall through to the Banner Image.
-          */}
+        <div className="relative h-32 w-full bg-slate-100 dark:bg-[#202022] overflow-hidden">
           {!isChannelLayout && hasVideo ? (
             <video 
               src={channel.video_url} 
@@ -62,10 +67,9 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
           ) : bannerUrl ? (
             <img src={bannerUrl} className={`w-full h-full object-cover transition-transform duration-1000 ${isLocked ? 'grayscale opacity-60' : 'group-hover:scale-110'}`} alt="Banner" />
           ) : (
-            <div className="w-full h-full bg-slate-200 dark:bg-neutral-800 opacity-20" />
+            <div className="w-full h-full bg-slate-200 dark:bg-[#27272a] opacity-50" />
           )}
           
-          {/* Top Indicators */}
           <div className="absolute top-3 right-3 z-10 flex flex-col gap-1.5 items-end">
              {isLocked ? (
                <span className="bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-lg flex items-center gap-1">
@@ -73,18 +77,18 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
                  Locked
                </span>
              ) : (
-               <span className="bg-white/90 dark:bg-black/80 backdrop-blur-md text-black dark:text-white text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-black/5 dark:border-white/10 shadow-sm flex items-center gap-1.5">
+               <span className="bg-white/90 dark:bg-[#18181b]/90 backdrop-blur-md text-black dark:text-zinc-200 text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-black/5 dark:border-white/10 shadow-sm flex items-center gap-1.5">
                  {displayIcon} {displayType}
                </span>
              )}
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
         </div>
 
-        {/* --- SECTION 1b: PFP (Shown for Channel AND Combo) --- */}
+        {/* --- SECTION 1b: PFP --- */}
         {isChannelLayout && (
           <div className="relative flex justify-center -mt-10 z-20">
-            <div className="w-20 h-20 rounded-full border-[6px] border-white dark:border-[#0A0A0A] bg-white dark:bg-black shadow-xl overflow-hidden aspect-square">
+            <div className="w-20 h-20 rounded-full border-[6px] border-white dark:border-[#18181b] bg-white dark:bg-[#18181b] shadow-xl overflow-hidden aspect-square">
                <img 
                  src={channelPfp || `https://ui-avatars.com/api/?name=${channel.channel_name}&background=random`} 
                  className={`w-full h-full object-cover ${isLocked ? 'grayscale opacity-80' : ''}`}
@@ -97,22 +101,25 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
         {/* --- SECTION 2: ORGANIZED TEXT LAYOUT --- */}
         <div className="flex flex-col flex-grow px-5">
           
-          {/* Uploader Meta */}
+          {/* Uploader Meta (DARKENED FOR VISIBILITY) */}
           <div className="flex items-center justify-between py-4 border-b border-slate-100 dark:border-white/5">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-neutral-800 overflow-hidden border border-white/10">
+              <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-[#27272a] overflow-hidden border border-white/10">
                 <img src={uploaderAvatar || `https://ui-avatars.com/api/?name=${uploaderName}`} alt="u" />
               </div>
-              <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 uppercase tracking-wider truncate max-w-[90px]">{uploaderName}</span>
+              {/* Changed text-slate-400 -> text-slate-700 for better visibility in Light Mode */}
+              <span className="text-[10px] font-bold text-slate-700 dark:text-zinc-500 uppercase tracking-wider truncate max-w-[90px]">{uploaderName}</span>
             </div>
-            <span className="text-[9px] font-medium text-slate-400 dark:text-neutral-600 tracking-tighter">
+            {/* Changed text-slate-400 -> text-slate-600 */}
+            <span className="text-[9px] font-medium text-slate-600 dark:text-zinc-600 tracking-tighter">
               {new Date(channel.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           </div>
 
           {/* Title Area */}
           <div className={`pt-4 ${isChannelLayout ? 'text-center' : 'text-left'}`}>
-            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] group-hover:text-ytRed transition-colors duration-300">
+            {/* FORCE PURE BLACK (#000000) IN LIGHT MODE */}
+            <h3 className="text-lg font-black tracking-tight text-[#000000] dark:text-zinc-100 leading-[1.1] group-hover:text-ytRed transition-colors duration-300">
               {isChannelLayout ? (channel.channel_name || "Untitled") : channel.video_title}
               {channel.is_verified && <span className="ml-1 text-ytRed">●</span>}
             </h3>
@@ -124,10 +131,12 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
             )}
           </div>
 
-          {/* Goal Box */}
-          <div className={`my-4 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 ${isChannelLayout ? 'text-center' : 'text-left'}`}>
-            <span className="block text-[8px] font-black text-slate-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Audit Objective</span>
-            <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300 leading-relaxed italic line-clamp-2">
+          {/* Goal Box (DARKENED CONTENT) */}
+          <div className={`my-4 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-100 dark:border-white/5 ${isChannelLayout ? 'text-center' : 'text-left'}`}>
+            {/* Changed text-slate-400 -> text-slate-500 */}
+            <span className="block text-[8px] font-black text-slate-500 dark:text-zinc-500 uppercase tracking-widest mb-1">Audit Objective</span>
+            {/* Changed text-slate-600 -> text-slate-900 (Nearly Black) */}
+            <p className="text-[11px] font-bold text-slate-900 dark:text-zinc-300 leading-relaxed italic line-clamp-2">
               "{channel.goal_text || "General Perspective"}"
             </p>
           </div>
@@ -135,21 +144,21 @@ export const SubmissionCard = ({ channel }: { channel: any }) => {
           {/* Tags */}
           <div className={`mt-auto pb-5 flex flex-wrap gap-1.5 ${isChannelLayout ? 'justify-center' : 'justify-start'}`}>
             {categories.slice(0, 3).map((cat: string) => (
-              <span key={cat} className="text-[9px] font-extrabold uppercase tracking-tight text-white bg-red-600/90 dark:bg-red-700/80 px-2 py-0.5 rounded-md shadow-sm">
+              <span key={cat} className="text-[9px] font-extrabold uppercase tracking-tight text-white dark:text-zinc-100 bg-red-600/90 dark:bg-red-700/80 px-2 py-0.5 rounded-md shadow-sm border border-transparent dark:border-white/5">
                 #{cat.replace(/\s+/g, '')}
               </span>
             ))}
             {categories.length > 3 && (
-               <span className="text-[9px] font-bold text-slate-300 dark:text-neutral-700">+{categories.length - 3}</span>
+               <span className="text-[9px] font-bold text-slate-400 dark:text-zinc-600">+{categories.length - 3}</span>
             )}
           </div>
         </div>
 
         {/* --- FOOTER --- */}
-        <div className="px-5 py-4 bg-slate-50/50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5 flex justify-between items-center group/footer">
+        <div className="px-5 py-4 bg-slate-50/50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 flex justify-between items-center group/footer">
            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 text-[11px] font-black text-slate-600 dark:text-white transition-colors">
-                <svg className="w-4 h-4 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex items-center gap-1.5 text-[11px] font-black text-slate-700 dark:text-zinc-300 transition-colors group-hover:text-black dark:group-hover:text-white">
+                <svg className="w-4 h-4 text-slate-900 dark:text-zinc-400 dark:group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
                 </svg>
                 {commentCount}

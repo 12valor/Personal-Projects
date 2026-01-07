@@ -31,7 +31,7 @@ const MyThreadItem = ({ post }: { post: any }) => {
   };
 
   return (
-    <div className="relative group cursor-pointer" onClick={handleCardClick}>
+    <div className="relative group cursor-pointer h-full" onClick={handleCardClick}>
       {/* NOTIFICATION BADGE: Only shows if Unread & Has Comments */}
       {hasNewComments && (
         <div className="absolute -top-3 -right-3 z-30 animate-in fade-in zoom-in duration-300 pointer-events-none">
@@ -42,9 +42,11 @@ const MyThreadItem = ({ post }: { post: any }) => {
         </div>
       )}
       {/* We wrap SubmissionCard in a div that handles the click 
-         bubbling from the Link inside the card 
+          bubbling from the Link inside the card 
       */}
-      <SubmissionCard channel={post} />
+      <div className="h-full">
+        <SubmissionCard channel={post} />
+      </div>
     </div>
   );
 };
@@ -93,7 +95,7 @@ export const MyThreadsSection = () => {
   );
 
   return (
-    <section className="bg-white dark:bg-[#0a0a0a] border-y border-slate-200 dark:border-white/10 py-12">
+    <section className="bg-white dark:bg-[#0a0a0a] border-y border-slate-200 dark:border-white/10 py-12 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between mb-8">
            <div className="flex items-center gap-4">
@@ -110,9 +112,13 @@ export const MyThreadsSection = () => {
         </div>
 
         {posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          /* LAYOUT UPDATE:
+             - Mobile: grid-cols-2 (Two columns)
+             - Tablet/Desktop: md:grid-cols-2, lg:grid-cols-3, etc.
+             - Spacing: gap-4 on mobile to fit two cols tight, gap-8 on larger screens
+          */
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
             {posts.map((post) => (
-              // Use the new sub-component here
               <MyThreadItem key={post.id} post={post} />
             ))}
           </div>

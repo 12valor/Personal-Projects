@@ -6,7 +6,7 @@ import { AuthModal } from './AuthModal';
 import { NotificationBell } from './NotificationBell';
 import Link from 'next/link';
 
-// --- SOCIAL ICONS COMPONENT (Refined Hover) ---
+// --- SOCIAL ICONS COMPONENT ---
 const SocialIcon = ({ type, href }: { type: 'discord' | 'x' | 'instagram', href: string }) => {
   const icons = {
     discord: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037 13.46 13.46 0 0 0-.64 1.316 18.067 18.067 0 0 0-5.43 0 14.237 14.237 0 0 0-.642-1.316.077.077 0 0 0-.08-.037 19.736 19.736 0 0 0-4.88 1.515.069.069 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg>,
@@ -15,7 +15,7 @@ const SocialIcon = ({ type, href }: { type: 'discord' | 'x' | 'instagram', href:
   };
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-ytRed hover:bg-ytRed/10 p-2 rounded-full transition-all duration-300">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-ytRed hover:bg-ytRed/5 p-2 rounded-full transition-all duration-300">
       {icons[type]}
     </a>
   );
@@ -91,15 +91,14 @@ export const Navbar = () => {
     };
   }, [supabase]);
 
-  const toggleTheme = () => {
+  const toggleTheme = (mode: 'light' | 'dark') => {
     const root = document.documentElement;
-    const newIsDark = !isDark;
-    
-    setIsDark(newIsDark);
-    if (newIsDark) {
+    if (mode === 'dark') {
+      setIsDark(true);
       root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
+      setIsDark(false);
       root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
@@ -115,8 +114,6 @@ export const Navbar = () => {
     setIsMenuOpen(false);
     window.location.reload();
   };
-
-  const themeLabel = isDark === null ? '...' : (isDark ? 'Dark Mode' : 'Light Mode');
 
   return (
     <>
@@ -184,19 +181,16 @@ export const Navbar = () => {
             "
             aria-label="Toggle Menu"
           >
-            {/* Top Line */}
             <span 
               className={`absolute h-[2px] bg-foreground rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
                 ${isMenuOpen ? 'w-5 rotate-45' : 'w-5 -translate-y-1.5'}
               `} 
             />
-            {/* Middle Line */}
             <span 
               className={`absolute h-[2px] bg-foreground w-5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
                 ${isMenuOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'}
               `} 
             />
-            {/* Bottom Line */}
             <span 
               className={`absolute h-[2px] bg-foreground rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
                 ${isMenuOpen ? 'w-5 -rotate-45' : 'w-5 translate-y-1.5'}
@@ -205,112 +199,124 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* --- PREMIUM DROPDOWN MENU --- */}
+        {/* --- REFINED DROPDOWN MENU --- */}
         <div 
             ref={menuRef} 
             className={`
-              absolute top-[80px] right-6 md:right-10 w-[320px] 
-              bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl 
-              border border-white/20 dark:border-white/10 rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)]
-              overflow-hidden transform origin-top-right transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]
+              absolute top-[80px] right-6 md:right-10 w-[340px] 
+              bg-white dark:bg-[#121212] 
+              border border-zinc-200 dark:border-zinc-800 rounded-2xl 
+              shadow-2xl shadow-black/10 dark:shadow-black/40
+              overflow-hidden transform origin-top-right transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
               ${isMenuOpen ? 'opacity-100 scale-100 translate-y-0 visible' : 'opacity-0 scale-95 -translate-y-4 invisible pointer-events-none'}
             `}
         >
             
-            {/* SECTION: USER / ADMIN */}
-            {(user || isAdmin) && (
-              <div className="bg-gradient-to-b from-black/[0.02] to-transparent border-b border-black/5 dark:border-white/5">
-                {/* Admin Link */}
-                {isAdmin && (
-                  <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="px-6 py-4 flex items-center gap-3 bg-ytRed/5 hover:bg-ytRed/10 transition-colors border-b border-ytRed/10">
-                    <div className="w-5 flex justify-center text-ytRed">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-ytRed">Admin Dashboard</span>
-                  </Link>
-                )}
-                
-                {/* User Identity */}
-                {user && (
-                  <div className="px-6 py-5 flex items-center gap-4">
-                    <div className="relative">
-                      <img src={user.user_metadata.avatar_url} className="w-10 h-10 rounded-full border border-black/10 dark:border-white/10 shadow-sm object-cover" alt="User Avatar" />
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-black rounded-full"></div>
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Signed in as</span>
-                      <span className="text-sm font-black uppercase truncate text-foreground leading-tight">{user.user_metadata.full_name}</span>
-                    </div>
+            {/* SECTION: USER IDENTITY */}
+            {user && (
+              <div className="p-5 border-b border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/30">
+                <div className="flex items-center gap-4">
+                  <div className="relative shrink-0">
+                    <img src={user.user_metadata.avatar_url} className="w-12 h-12 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm object-cover" alt="User Avatar" />
+                    <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-zinc-800 rounded-full"></div>
                   </div>
-                )}
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">{user.user_metadata.full_name}</span>
+                    <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400 truncate mt-0.5">{user.email}</span>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* SECTION: PLATFORM */}
-            <div className="py-3">
-              <div className="px-6 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400/60">Platform</div>
+            {/* SECTION: NAVIGATION */}
+            <div className="py-3 px-2">
+              <div className="px-4 pb-2 pt-1 text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-600">Menu</div>
               
-              <Link href="/" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 group transition-all duration-200">
-                <div className="w-5 flex justify-center">
-                  <svg className="w-5 h-5 text-gray-400 group-hover:text-ytRed transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                </div>
-                <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-foreground group-hover:translate-x-1 transition-all">Feed</span>
-              </Link>
-              
-              {user && (
-                <>
-                  <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 group transition-all duration-200">
-                    <div className="w-5 flex justify-center">
-                      <svg className="w-5 h-5 text-gray-400 group-hover:text-ytRed transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              <div className="flex flex-col gap-1">
+                {/* Admin Link */}
+                {isAdmin && (
+                  <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
+                    <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/20 text-ytRed group-hover:scale-110 transition-transform">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                     </div>
-                    <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-foreground group-hover:translate-x-1 transition-all">My Profile</span>
+                    <span className="text-sm font-bold text-ytRed">Admin Dashboard</span>
                   </Link>
+                )}
 
-                  <Link href="/notifications" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 flex items-center gap-4 hover:bg-black/5 dark:hover:bg-white/5 group transition-all duration-200">
-                    <div className="w-5 flex justify-center pointer-events-none">
-                       <NotificationBell userId={user?.id} />
-                    </div>
-                    <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-foreground group-hover:translate-x-1 transition-all">Notifications</span>
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* SECTION: SETTINGS & UTILS */}
-            <div className="py-3 border-t border-black/5 dark:border-white/5">
-              <div className="px-6 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400/60">Preferences</div>
-              
-              <button onClick={toggleTheme} className="w-full px-6 py-3 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 group transition-all duration-200">
-                <div className="flex items-center gap-4">
-                  <div className="w-5 flex justify-center">
-                    {isDark ? (
-                       <svg className="w-5 h-5 text-gray-400 group-hover:text-ytRed transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                    ) : (
-                       <svg className="w-5 h-5 text-gray-400 group-hover:text-ytRed transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    )}
+                <Link href="/" onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+                  <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                   </div>
-                  <span className="text-xs font-bold text-gray-600 dark:text-gray-300 group-hover:text-foreground">Theme</span>
-                </div>
-                <span className="text-[9px] font-black text-foreground bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded">{themeLabel}</span>
-              </button>
-            </div>
-            
-            {/* MOBILE ONLY SOCIALS */}
-            <div className="md:hidden py-5 border-t border-black/5 dark:border-white/5 flex justify-center gap-8 bg-black/[0.02]">
-               <SocialIcon type="discord" href="https://discord.gg/Eu8bPDrC" />
-               <SocialIcon type="x" href="https://twitter.com" />
-               <SocialIcon type="instagram" href="https://instagram.com" />
+                  <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Platform Feed</span>
+                </Link>
+
+                {user && (
+                  <>
+                    <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+                      <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      </div>
+                      <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">My Profile</span>
+                    </Link>
+
+                    <Link href="/notifications" onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+                      <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                         <NotificationBell userId={user?.id} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Notifications</span>
+                      </div>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
 
-            {/* LOGOUT */}
-            {user && (
-              <button onClick={handleLogout} className="w-full px-6 py-4 border-t border-black/5 dark:border-white/5 flex items-center gap-4 hover:bg-red-500/5 group text-left transition-colors">
-                <div className="w-5 flex justify-center text-gray-400 group-hover:text-ytRed transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            {/* SECTION: PREFERENCES (Segmented Control) */}
+            <div className="px-6 py-4 border-t border-zinc-100 dark:border-zinc-800">
+               <div className="flex items-center justify-between mb-2">
+                 <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Appearance</span>
+               </div>
+               
+               <div className="bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl flex items-center">
+                  <button 
+                    onClick={() => toggleTheme('light')} 
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${!isDark ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    Light
+                  </button>
+                  <button 
+                    onClick={() => toggleTheme('dark')} 
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${isDark ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'}`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    Dark
+                  </button>
+               </div>
+            </div>
+
+            {/* SECTION: FOOTER / LOGOUT */}
+            <div className="p-2 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+                {/* Mobile Socials Row */}
+                <div className="md:hidden flex justify-center gap-6 py-3 mb-2">
+                   <SocialIcon type="discord" href="https://discord.gg/Eu8bPDrC" />
+                   <SocialIcon type="x" href="https://twitter.com" />
+                   <SocialIcon type="instagram" href="https://instagram.com" />
                 </div>
-                <span className="text-xs font-black text-gray-500 group-hover:text-ytRed uppercase tracking-wider transition-colors">Log Out</span>
-              </button>
-            )}
+
+                {user ? (
+                  <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    Log Out
+                  </button>
+                ) : (
+                  <div className="text-center py-2">
+                    <button onClick={() => { setIsAuthModalOpen(true); setIsMenuOpen(false); }} className="text-xs font-black uppercase text-ytRed hover:underline">Log In to Account</button>
+                  </div>
+                )}
+            </div>
+
         </div>
 
       </nav>

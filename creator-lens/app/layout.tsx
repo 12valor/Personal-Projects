@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google"; // 1. Import Poppins
 import "./globals.css";
-import AuthProvider from "@/components/SessionProvider"; // <--- Importing the file you just made
+import AuthProvider from "@/components/SessionProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+// 2. Configure Poppins with specific weights for a premium feel
+const poppins = Poppins({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600"], // Regular, Medium, Semi-Bold
+  variable: "--font-poppins",    // CSS variable for Tailwind
+});
 
 export const metadata: Metadata = {
   title: "CreatorLens",
@@ -17,8 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* We wrap the entire app in the AuthProvider */}
+      {/* 3. Apply the font variable, base background, and text color */}
+      <body className={`${poppins.variable} font-sans bg-slate-50 text-slate-900 antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>

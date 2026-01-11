@@ -12,11 +12,10 @@ export async function GET() {
     auth.setCredentials({ access_token: session.accessToken });
     const ytAnalytics = google.youtubeAnalytics({ version: "v2", auth });
 
-    // Dates: Last 90 days for broad trends
     const startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     const endDate = new Date().toISOString().split('T')[0];
 
-    // 1. AUDIENCE LOYALTY (Proxied via Subscribed Status)
+    // 1. Existing Requests (Loyalty, Retention, Traffic)
     const loyaltyReq = await ytAnalytics.reports.query({
       ids: "channel==MINE",
       startDate, endDate,
@@ -24,17 +23,15 @@ export async function GET() {
       dimensions: "subscribedStatus",
     });
 
-    // 2. RETENTION ANALYZER (Avg % per Video)
     const retentionReq = await ytAnalytics.reports.query({
       ids: "channel==MINE",
       startDate, endDate,
       metrics: "averageViewPercentage,views",
       dimensions: "video",
       sort: "-views",
-      maxResults: 10, 
+      maxResults: 15, 
     });
 
-    // 3. TRAFFIC SOURCES (For Topic Saturation)
     const trafficReq = await ytAnalytics.reports.query({
       ids: "channel==MINE",
       startDate, endDate,
@@ -43,20 +40,38 @@ export async function GET() {
       sort: "-views",
     });
 
-    // 4. DEMOGRAPHICS (Optional for future use)
-    const demoReq = await ytAnalytics.reports.query({
+    // --- NEW REQUESTS ---
+
+    // 2. SEARCH TERMS (For Trend Hijack)
+    // What are people searching to find this channel?
+    const searchReq = await ytAnalytics.reports.query({
       ids: "channel==MINE",
       startDate, endDate,
-      metrics: "viewerPercentage",
-      dimensions: "ageGroup",
-      sort: "ageGroup",
+      metrics: "views",
+      dimensions: "insightTrafficSourceDetail",
+      filters: "insightTrafficSourceType==YT_SEARCH",
+      sort: "-views",
+      maxResults: 20
+    });
+
+    // 3. RELATED VIDEO SOURCES (For Viewer Journey)
+    // Which videos are driving traffic to this channel?
+    const relatedReq = await ytAnalytics.reports.query({
+      ids: "channel==MINE",
+      startDate, endDate,
+      metrics: "views",
+      dimensions: "insightTrafficSourceDetail",
+      filters: "insightTrafficSourceType==RELATED_VIDEO",
+      sort: "-views",
+      maxResults: 10
     });
 
     return NextResponse.json({
-      loyalty: loyaltyReq.data.rows,    // [[status, views, avgDuration], ...]
-      retention: retentionReq.data.rows,// [[videoId, avg%, views], ...]
-      traffic: trafficReq.data.rows,    // [[source, views], ...]
-      demographics: demoReq.data.rows,  // [[age, %], ...]
+      loyalty: loyaltyReq.data.rows,
+      retention: retentionReq.data.rows,
+      traffic: trafficReq.data.rows,
+      searchTerms: searchReq.data.rows,   // [[term, views], ...]
+      relatedVideos: relatedReq.data.rows // [[videoId, views], ...]
     });
 
   } catch (error: any) {

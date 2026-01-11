@@ -3,8 +3,9 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
 import AICoach from "@/components/AICoach";
-import AnalyticsDashboard from "@/components/AnalyticsDashboard"; // Import the new Charts
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import CommentReplyTool from "@/components/CommentReplyTool";
+import ViralSpikeManager from "@/components/ViralSpikeManager"; // 1. Imported here
 
 export default function Home() {
   const { data: session } = useSession();
@@ -167,6 +168,14 @@ Keep it brief. Use bullet points. Be brutal and actionable.`;
 
       <div className="max-w-6xl mx-auto px-6 py-10 space-y-12">
         
+        {/* SECTION 0: Viral Spike Detector (New Feature) */}
+        {session && recentVideos.length > 0 && (
+           <ViralSpikeManager 
+             recentVideos={recentVideos} 
+             velocity={viewVelocity} 
+           />
+        )}
+
         {/* SECTION 1: Channel Overview */}
         {session && channelData && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -255,17 +264,18 @@ Keep it brief. Use bullet points. Be brutal and actionable.`;
           </div>
         )}
 
+        {/* SECTION 3: AI Tools Grid */}
         <div id="ai-tools-section" className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-20">
-  {/* Left Side: The Main AI Strategist (Takes up 2/3 space) */}
-  <div className="lg:col-span-2">
-    <AICoach prefill={selectedVideoPrompt} />
-  </div>
+          {/* Left Side: The Main AI Strategist (Takes up 2/3 space) */}
+          <div className="lg:col-span-2">
+            <AICoach prefill={selectedVideoPrompt} />
+          </div>
 
-  {/* Right Side: The New Reply Tool (Takes up 1/3 space) */}
-  <div className="lg:col-span-1">
-    <CommentReplyTool />
-  </div>
-</div>
+          {/* Right Side: The New Reply Tool (Takes up 1/3 space) */}
+          <div className="lg:col-span-1">
+            <CommentReplyTool />
+          </div>
+        </div>
       </div>
     </main>
   );

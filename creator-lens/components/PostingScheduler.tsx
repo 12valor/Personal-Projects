@@ -14,11 +14,6 @@ export default function PostingScheduler({ data }: { data: any[] }) {
     const grid: Record<string, number> = {}; 
     let maxViews = 0;
 
-    // TEMP TEST DATA - Delete this after you see the colors work
-grid["5-18"] = 500; // Friday at 6PM (Dark Blue)
-grid["0-10"] = 250; // Sunday at 10AM (Medium Blue)
-if (500 > maxViews) maxViews = 500;
-
     // 2. Fill grid with API data
     // API returns rows: [dayOfWeek(0-6), hour(0-23), views]
     data.forEach((row: any) => {

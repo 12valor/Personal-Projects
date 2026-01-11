@@ -8,7 +8,8 @@ import {
   Users, Timer, Clapperboard, 
   Swords, Thermometer, ClipboardList,
   ShieldCheck, Split, Radio, Map,
-  Lightbulb, Wand2, ImagePlus, Trophy // <--- Added Trophy Icon
+  Lightbulb, Wand2, ImagePlus, Trophy, 
+  Sparkles // <--- Added Sparkles Icon for Idea Generator
 } from "lucide-react";
 
 // --- CORE DASHBOARD COMPONENTS ---
@@ -29,7 +30,8 @@ import GrowthForecast from "@/components/tabs/GrowthForecast";
 import TitleIntelligence from "@/components/tabs/TitleIntelligence";
 import MetadataGenerator from "@/components/tabs/MetadataGenerator";
 import ThumbnailMaker from "@/components/tabs/ThumbnailMaker";
-import TopPerformers from "@/components/tabs/TopPerformers"; // <--- Imported Component
+import TopPerformers from "@/components/tabs/TopPerformers";
+import IdeaGenerator from "@/components/tabs/IdeaGenerator"; // <--- Imported Idea Generator
 
 // --- ADVANCED ALGORITHM TABS ---
 import AlgorithmTrust from "@/components/tabs/AlgorithmTrust";
@@ -147,9 +149,10 @@ export default function Home() {
           <NavBtn id="health" icon={Activity} label="Channel Health" />
           <NavBtn id="forecast" icon={TrendingUp} label="Growth Forecast" />
           <NavBtn id="generator" icon={Wand2} label="Metadata Generator" />
+          <NavBtn id="ideas" icon={Sparkles} label="Idea Generator" /> {/* <--- Added Idea Generator Button */}
 
           <div className="px-4 pb-2 mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Deep Dive</div>
-          <NavBtn id="performers" icon={Trophy} label="Top Performers" /> {/* <--- Added Tab */}
+          <NavBtn id="performers" icon={Trophy} label="Top Performers" />
           <NavBtn id="loyalty" icon={Users} label="Audience Loyalty" />
           <NavBtn id="retention" icon={Timer} label="30s Retention" />
           <NavBtn id="format" icon={Clapperboard} label="Format Analyzer" />
@@ -273,7 +276,8 @@ export default function Home() {
               {activeTab === 'journey' && <ViewerJourney relatedVideos={deepData?.relatedVideos} loyalty={deepData?.loyalty} />}
               {activeTab === 'titles' && <TitleIntelligence />}
               {activeTab === 'generator' && <MetadataGenerator />}
-              {activeTab === 'performers' && <TopPerformers />} {/* <--- Render Component */}
+              {activeTab === 'performers' && <TopPerformers />}
+              {activeTab === 'ideas' && <IdeaGenerator />} {/* <--- Render Idea Generator Component */}
             </>
           )}
 

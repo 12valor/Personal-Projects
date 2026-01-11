@@ -2,41 +2,72 @@
 
 import { useState, useEffect } from "react";
 import { 
-  Trophy, Play, BarChart3, ArrowRight, 
-  Lightbulb, Zap, Repeat, ShieldAlert, Target, Loader2
+  Trophy, Play, BarChart3, Search, Loader2,
+  Smartphone, MonitorPlay, Zap, Lightbulb, Repeat, ShieldAlert, Target
 } from "lucide-react";
 
-// Mock Channel ID for demo (Replace with real dynamic ID in production)
-const CHANNEL_ID = "UC_YOUR_CHANNEL_ID"; 
-
 export default function TopPerformers() {
-  const [videos, setVideos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [channelId, setChannelId] = useState("");
+  const [format, setFormat] = useState<'long' | 'short'>('long'); 
+  
+  // DATA STATE
+  const [longVideos, setLongVideos] = useState<any[]>([]);
+  const [shortVideos, setShortVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  
+  // ANALYSIS STATE
   const [analyzingId, setAnalyzingId] = useState<string | null>(null);
   const [analysisData, setAnalysisData] = useState<any | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
 
-  // 1. Fetch Top Videos on Mount
-  useEffect(() => {
-    async function fetchTop() {
-      try {
-        const res = await fetch(`/api/youtube/top-videos?channelId=${CHANNEL_ID}`);
-        const data = await res.json();
-        if (data.videos) setVideos(data.videos);
-      } catch (e) {
-        console.error("Failed to load videos", e);
-      } finally {
-        setLoading(false);
+  // FETCH & SORT
+  const fetchVideos = async (id: string) => {
+    if (!id) return;
+    setLoading(true);
+    setHasSearched(true);
+    setLongVideos([]);
+    setShortVideos([]);
+    
+    try {
+      const cleanId = encodeURIComponent(id.trim());
+      const res = await fetch(`/api/youtube/top-videos?channelId=${cleanId}`);
+      const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        alert(data.error || "Error fetching videos");
+      } else {
+        setLongVideos(data.longForm || []);
+        setShortVideos(data.shorts || []);
+        localStorage.setItem("creatorlens_channel_id", id);
+        
+        // Smart Auto-Switch: If no long videos but lots of shorts, switch tab
+        if (data.longForm?.length === 0 && data.shorts?.length > 0) {
+           setFormat('short');
+        } else if (data.shorts?.length === 0 && data.longForm?.length > 0) {
+           setFormat('long');
+        }
       }
+    } catch (e) {
+      alert("Network Error: Could not reach server.");
+    } finally {
+      setLoading(false);
     }
-    fetchTop();
+  };
+
+  useEffect(() => {
+    const savedId = localStorage.getItem("creatorlens_channel_id");
+    if (savedId) {
+      setChannelId(savedId);
+      fetchVideos(savedId);
+    }
   }, []);
 
-  // 2. Handle "Deep Analysis" Click
+  // ANALYZE HANDLER
   const analyzeVideo = async (video: any) => {
     setAnalyzingId(video.id);
     setSelectedVideo(video);
-    setAnalysisData(null); // Clear previous
+    setAnalysisData(null); 
 
     try {
       const res = await fetch("/api/ai/analyze-performer", {
@@ -44,7 +75,7 @@ export default function TopPerformers() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           videoId: video.id, 
-          title: video.title,
+          title: video.title, 
           stats: { views: video.views, likes: video.likes, comments: video.comments }
         }),
       });
@@ -57,8 +88,9 @@ export default function TopPerformers() {
     }
   };
 
+  const activeList = format === 'long' ? longVideos : shortVideos;
+
   // --- SUB-COMPONENTS ---
-  
   const MetricCard = ({ label, value, sub }: any) => (
     <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</div>
@@ -81,22 +113,65 @@ export default function TopPerformers() {
     </div>
   );
 
-  if (loading) return <div className="h-full flex items-center justify-center text-slate-400 gap-2"><Loader2 className="animate-spin"/> Loading Performance Data...</div>;
-
   return (
     <div className="h-full flex flex-col md:flex-row bg-white overflow-hidden font-sans text-slate-900">
       
-      {/* LEFT: LIST OF TOP PERFORMERS */}
+      {/* LEFT: LIST */}
       <div className="w-full md:w-1/3 border-r border-slate-200 flex flex-col bg-slate-50">
-        <div className="p-6 border-b border-slate-200">
-          <h2 className="text-lg font-black flex items-center gap-2">
+        
+        {/* Header */}
+        <div className="p-6 border-b border-slate-200 bg-white">
+          <h2 className="text-lg font-black flex items-center gap-2 mb-4">
             <Trophy className="text-yellow-500 fill-yellow-500" size={20} />
             Top Performers
           </h2>
-          <p className="text-xs text-slate-500 mt-1">Videos driving the most velocity.</p>
+          
+          <form onSubmit={(e) => { e.preventDefault(); fetchVideos(channelId); }} className="relative mb-4">
+            <input 
+              type="text" placeholder="Channel ID (UC...)" value={channelId}
+              onChange={(e) => setChannelId(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all"
+            />
+            <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
+          </form>
+
+          {/* FILTER TABS */}
+          <div className="flex bg-slate-100 p-1 rounded-lg">
+            <button 
+              onClick={() => setFormat('long')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all ${format === 'long' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <MonitorPlay size={14} /> Long Form ({longVideos.length})
+            </button>
+            <button 
+              onClick={() => setFormat('short')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all ${format === 'short' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <Smartphone size={14} /> Shorts ({shortVideos.length})
+            </button>
+          </div>
         </div>
+
+        {/* Video List */}
         <div className="flex-1 overflow-y-auto">
-          {videos.map((video, idx) => (
+          {loading && (
+             <div className="p-10 text-center text-slate-400 flex flex-col items-center">
+                <Loader2 className="animate-spin mb-2" />
+                <span className="text-xs font-bold">Scanning Library...</span>
+             </div>
+          )}
+          
+          {!loading && hasSearched && activeList.length === 0 && (
+            <div className="p-10 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
+              <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center mb-2">
+                {format === 'long' ? <MonitorPlay size={20} className="opacity-50"/> : <Smartphone size={20} className="opacity-50"/>}
+              </div>
+              <p>No {format === 'long' ? 'Long Form' : 'Shorts'} found in top results.</p>
+              <p className="opacity-70">Try switching tabs.</p>
+            </div>
+          )}
+
+          {activeList.map((video, idx) => (
             <div 
               key={video.id}
               onClick={() => analyzeVideo(video)}
@@ -105,14 +180,14 @@ export default function TopPerformers() {
               }`}
             >
               <div className="flex gap-3">
-                <div className="text-lg font-black text-slate-300">#{idx + 1}</div>
+                <div className="text-lg font-black text-slate-300 w-6">#{idx + 1}</div>
                 <div className="flex-1">
                   <div className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-yellow-600 transition-colors">
                     {video.title}
                   </div>
                   <div className="mt-2 flex items-center gap-3 text-xs font-medium text-slate-500">
-                    <span className="flex items-center gap-1"><Play size={10}/> {parseInt(video.views).toLocaleString()}</span>
-                    <span className="flex items-center gap-1"><Zap size={10}/> {parseInt(video.likes).toLocaleString()}</span>
+                    <span className="flex items-center gap-1"><Play size={10}/> {video.views.toLocaleString()}</span>
+                    <span className="flex items-center gap-1"><Zap size={10}/> {video.likes.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -121,108 +196,94 @@ export default function TopPerformers() {
         </div>
       </div>
 
-      {/* RIGHT: DEEP ANALYSIS PANEL */}
+      {/* RIGHT: ANALYSIS */}
       <div className="flex-1 flex flex-col overflow-y-auto bg-white relative">
         {!selectedVideo ? (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-10 text-center opacity-60">
             <BarChart3 size={48} className="mb-4" />
-            <p className="font-bold">Select a video to analyze</p>
-            <p className="text-sm">We'll break down why it went viral.</p>
+            <p className="font-bold">Select a {format === 'long' ? 'video' : 'Short'} to analyze</p>
+            <p className="text-sm">We'll break down the {format === 'long' ? 'retention structure' : 'loop factor'}.</p>
           </div>
         ) : (
-          <div className="p-8 max-w-4xl mx-auto w-full space-y-8">
-            
-            {/* HEADER */}
+          <div className="p-8 max-w-4xl mx-auto w-full space-y-8 animate-in fade-in zoom-in-95 duration-300">
+            {/* Header */}
             <div>
               <div className="flex items-start gap-4 mb-6">
                 <img src={selectedVideo.thumbnail} className="w-32 rounded-lg shadow-sm border border-slate-100" />
                 <div>
                   <div className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-[10px] font-bold uppercase tracking-wider rounded-full mb-2">
-                    Analysis Target
+                    {format === 'short' ? 'Shorts Analysis' : 'Video Analysis'}
                   </div>
-                  <h1 className="text-2xl font-black text-slate-900 leading-tight">{selectedVideo.title}</h1>
-                  <p className="text-sm text-slate-500 mt-2">Published on {new Date(selectedVideo.publishedAt).toLocaleDateString()}</p>
+                  <h1 className="text-xl font-black text-slate-900 leading-tight">{selectedVideo.title}</h1>
+                  <p className="text-sm text-slate-500 mt-2">Published {new Date(selectedVideo.publishedAt).toLocaleDateString()}</p>
                 </div>
               </div>
-              
-              {/* METRICS ROW */}
               <div className="grid grid-cols-3 gap-4">
-                <MetricCard label="Views" value={parseInt(selectedVideo.views).toLocaleString()} />
-                <MetricCard label="Engagement" value={`${((parseInt(selectedVideo.likes) / parseInt(selectedVideo.views)) * 100).toFixed(1)}%`} sub="Likes/Views Ratio" />
-                <MetricCard label="Est. Retention" value="High" sub="Based on engagement" />
+                <MetricCard label="Views" value={selectedVideo.views.toLocaleString()} />
+                <MetricCard label="Like Ratio" value={`${((selectedVideo.likes / selectedVideo.views) * 100).toFixed(1)}%`} sub="Engagement" />
+                <MetricCard label="Type" value={format === 'short' ? 'Short' : 'Video'} sub="Format" />
               </div>
             </div>
 
-            {/* AI LOADING STATE */}
             {analyzingId === selectedVideo.id && (
                <div className="py-20 flex flex-col items-center justify-center text-slate-400 animate-pulse">
-                  <div className="w-12 h-12 border-4 border-slate-200 border-t-yellow-400 rounded-full animate-spin mb-4"/>
-                  <p className="font-bold text-sm text-slate-600">Deconstructing Script & Pacing...</p>
-                  <p className="text-xs">Reading transcript...</p>
+                  <Loader2 className="w-10 h-10 animate-spin mb-4 text-yellow-400" />
+                  <p className="font-bold text-sm text-slate-600">Analyzing Script & Performance...</p>
                </div>
             )}
 
-            {/* ANALYSIS RESULTS */}
             {analysisData && (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 fade-in duration-500">
-                
                 <div className="h-px bg-slate-100" />
-
-                {/* 1. HOOK ANALYSIS */}
                 <section>
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Why they clicked & stayed</h3>
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Core Drivers</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                      <div className="p-6 bg-slate-900 text-white rounded-xl">
                         <div className="flex items-center justify-between mb-4">
-                           <span className="text-xs font-bold text-slate-400 uppercase">Hook Score</span>
-                           <span className="text-2xl font-black text-yellow-400">{analysisData.hookAnalysis.score}/10</span>
+                           <span className="text-xs font-bold text-slate-400 uppercase">Hook Strength</span>
+                           <span className="text-2xl font-black text-yellow-400">{analysisData.hookAnalysis?.score || 8}/10</span>
                         </div>
-                        <p className="font-medium text-lg leading-snug mb-2">{analysisData.hookAnalysis.mechanism}</p>
-                        <p className="text-sm text-slate-400 opacity-90">{analysisData.hookAnalysis.explanation}</p>
+                        <p className="font-medium text-lg leading-snug mb-2">{analysisData.hookAnalysis?.mechanism || "Visual Interrupt"}</p>
+                        <p className="text-sm text-slate-400 opacity-90">{analysisData.hookAnalysis?.explanation}</p>
                      </div>
                      <div className="p-6 bg-white border border-slate-200 rounded-xl">
                         <span className="text-xs font-bold text-slate-400 uppercase mb-2 block">Algorithm Signals</span>
                         <div className="space-y-3">
                            <div>
-                              <span className="text-xs font-bold text-slate-900 bg-slate-100 px-1 rounded">CTR Factor</span>
-                              <p className="text-sm text-slate-600 mt-1">{analysisData.algorithmSignals.clickThroughFactors}</p>
+                              <span className="text-xs font-bold text-slate-900 bg-slate-100 px-1 rounded">CTR / Swipes</span>
+                              <p className="text-sm text-slate-600 mt-1">{analysisData.algorithmSignals?.clickThroughFactors}</p>
                            </div>
                            <div>
-                              <span className="text-xs font-bold text-slate-900 bg-slate-100 px-1 rounded">Engagement</span>
-                              <p className="text-sm text-slate-600 mt-1">{analysisData.algorithmSignals.engagementTriggers}</p>
+                              <span className="text-xs font-bold text-slate-900 bg-slate-100 px-1 rounded">Interaction</span>
+                              <p className="text-sm text-slate-600 mt-1">{analysisData.algorithmSignals?.engagementTriggers}</p>
                            </div>
                         </div>
                      </div>
                   </div>
                 </section>
-
-                {/* 2. RETENTION DRIVERS */}
                 <section>
                    <InsightBlock icon={Lightbulb} title="Retention Architecture" colorClass="bg-blue-50 text-blue-600">
                       <ul className="list-disc pl-4 space-y-1">
-                        {analysisData.retentionDrivers.map((r: string, i: number) => (
+                        {analysisData.retentionDrivers?.map((r: string, i: number) => (
                            <li key={i}>{r}</li>
                         ))}
                       </ul>
                    </InsightBlock>
                 </section>
-
-                {/* 3. THE PLAYBOOK (Actionable) */}
                 <section>
                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Strategic Playbook</h3>
                    <div className="grid gap-4">
                       <InsightBlock icon={Repeat} title="REPEAT This" colorClass="bg-emerald-50 text-emerald-600">
-                         {analysisData.playbook.repeat}
+                         {analysisData.playbook?.repeat}
                       </InsightBlock>
                       <InsightBlock icon={ShieldAlert} title="AVOID Changing This" colorClass="bg-rose-50 text-rose-600">
-                         {analysisData.playbook.avoid}
+                         {analysisData.playbook?.avoid}
                       </InsightBlock>
-                      <InsightBlock icon={Target} title="Next Video to Test" colorClass="bg-purple-50 text-purple-600">
-                         {analysisData.playbook.nextTest}
+                      <InsightBlock icon={Target} title="Next Concept" colorClass="bg-purple-50 text-purple-600">
+                         {analysisData.playbook?.nextTest}
                       </InsightBlock>
                    </div>
                 </section>
-
               </div>
             )}
           </div>

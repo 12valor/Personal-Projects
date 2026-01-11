@@ -2,41 +2,56 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
+
+// --- EXISTING COMPONENTS ---
 import AICoach from "@/components/AICoach";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import CommentReplyTool from "@/components/CommentReplyTool";
-import ViralSpikeManager from "@/components/ViralSpikeManager"; // 1. Imported here
+import ViralSpikeManager from "@/components/ViralSpikeManager";
+import CompetitorInsights from "@/components/CompetitorInsights";
+
+// --- NEW PREMIUM TABS ---
+import ChannelHealth from "@/components/tabs/ChannelHealth";
+import AudienceLoyalty from "@/components/tabs/AudienceLoyalty";
+import ContentFormat from "@/components/tabs/ContentFormat";
+import TopicSaturation from "@/components/tabs/TopicSaturation";
+import RetentionAnalyzer from "@/components/tabs/RetentionAnalyzer";
+import DecisionLog from "@/components/tabs/DecisionLog";
+import GrowthForecast from "@/components/tabs/GrowthForecast";
 
 export default function Home() {
   const { data: session } = useSession();
   
-  // Data State
+  // --- NAVIGATION STATE ---
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  // --- DATA STATE ---
   const [channelData, setChannelData] = useState<any>(null);
   const [recentVideos, setRecentVideos] = useState<any[]>([]);
   const [viewVelocity, setViewVelocity] = useState<Record<string, number>>({});
+  const [deepData, setDeepData] = useState<any>(null); // State for real Deep Analytics data
   
-  // Refs & Timers
+  // --- REFS & TIMERS ---
   const previousVideosRef = useRef<any[]>([]);
   const [timeUntilUpdate, setTimeUntilUpdate] = useState(60);
-  
-  // AI State
   const [selectedVideoPrompt, setSelectedVideoPrompt] = useState("");
 
+  // --- POLLING LOGIC ---
   const fetchData = async () => {
     try {
       console.log("🔄 Polling YouTube Data..."); 
       
+      // 1. Basic Stats
       const statsRes = await fetch("/api/youtube/stats");
       const statsData = await statsRes.json();
       if (!statsData.error) setChannelData(statsData);
 
+      // 2. Videos & Velocity
       const videosRes = await fetch("/api/youtube/videos");
       const videosData = await videosRes.json();
       
       if (videosData.videos) {
         const newVideos = videosData.videos;
-
-        // Calculate Velocity (Real-time view changes)
         if (previousVideosRef.current.length > 0) {
           const velocityUpdates: Record<string, number> = {};
           newVideos.forEach((newVid: any) => {
@@ -48,235 +63,146 @@ export default function Home() {
           });
           setViewVelocity(velocityUpdates);
         }
-
         previousVideosRef.current = newVideos;
         setRecentVideos(newVideos);
       }
+
+      // 3. Deep Analytics (Real Data)
+      const deepRes = await fetch("/api/youtube/deep-analytics");
+      const deepJson = await deepRes.json();
+      if (!deepJson.error) setDeepData(deepJson);
+
     } catch (err) {
       console.error("Polling Error:", err);
     }
   };
 
-  // Master Timer (Single Source of Truth)
   useEffect(() => {
     if (session) {
-      fetchData(); // Initial load
-
+      fetchData();
       const interval = setInterval(() => {
         setTimeUntilUpdate((prevTime) => {
           if (prevTime <= 1) {
-            fetchData(); // Fetch when timer hits 0
-            return 60;   // Reset to 60s
+            fetchData();
+            return 60;
           }
           return prevTime - 1;
         });
       }, 1000);
-
       return () => clearInterval(interval);
     }
   }, [session]);
 
-  // Helper to format dates for AI context
-  const getDayAndTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return `${date.toLocaleDateString('en-US', { weekday: 'long' })} at ${date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })}`;
-  };
-
-  const handleAnalyzeClick = (video: any) => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    
-    const engagementRate = ((parseInt(video.likes) + parseInt(video.comments)) / parseInt(video.views) * 100).toFixed(2);
-    const viewDiff = viewVelocity[video.id] || 0;
-
-    // 1. Compile History for Context (Pattern Recognition)
-    const historySummary = recentVideos.map(v => 
-      `- Uploaded ${getDayAndTime(v.publishedAt)}: ${parseInt(v.views).toLocaleString()} views`
-    ).join('\n');
-
-    // 2. The Enhanced "6-Feature" Prompt
-    const prompt = `Act as an expert YouTube Analyst. Analyze this channel data to improve growth.
-
-TARGET VIDEO METRICS:
-- Title: "${video.title}"
-- Published: ${getDayAndTime(video.publishedAt)}
-- Total Views: ${Number(video.views).toLocaleString()}
-- REAL-TIME VELOCITY: +${viewDiff} views/minute
-- Likes: ${Number(video.likes).toLocaleString()} / Comments: ${Number(video.comments).toLocaleString()}
-- Engagement Rate: ${engagementRate}%
-
-CHANNEL CONTEXT (Last 5 Uploads):
-${historySummary}
-
-Provide a concise, actionable report with these 6 SECTIONS:
-
-1. 🚀 SEO OPTIMIZATION
-   - Critique the title. Provide 2 alternative "High-CTR" titles.
-   - Suggest 3 specific tags/keywords I missed.
-
-2. ⏰ OPTIMAL POSTING TIMES
-   - Analyze the "Channel Context" list above. Do videos posted on specific days or times perform better?
-   - Was the target video published at an optimal time? If not, suggest a better slot.
-
-3. 🔮 PERFORMANCE PREDICTION
-   - Based on the current velocity (+${viewDiff} views/min) and engagement (${engagementRate}%), forecast the total views in 7 days.
-   - Is this video trending up or flattening out compared to recent uploads?
-
-4. 📈 CONTENT IMPROVEMENT
-   - Suggest one specific editing trick to increase retention for this topic.
-   - Suggest a "Pinned Comment" strategy to trigger replies.
-
-5. ❤️ SENTIMENT ANALYSIS
-   - Based on the Like-to-Comment ratio, interpret the audience vibe.
-   - How should I reply to comments on this specific video?
-
-6. 💡 FUTURE CONTENT GENERATOR
-   - Pitch 2 SEQUEL ideas based on this topic.
-   - Include a "Hook" script for the intro of each idea.
-
-Keep it brief. Use bullet points. Be brutal and actionable.`;
-    
-    setSelectedVideoPrompt(prompt);
-  };
+  // Sidebar Button Helper
+  const NavBtn = ({ id, icon, label }: any) => (
+    <button 
+      onClick={() => setActiveTab(id)}
+      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${
+        activeTab === id 
+          ? "bg-black text-white shadow-md shadow-gray-200" 
+          : "text-gray-600 hover:bg-gray-100 hover:text-black"
+      }`}
+    >
+      <span className="text-lg">{icon}</span> {label}
+    </button>
+  );
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">📸</span>
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight">CreatorLens</h1>
-            {session && (
-              <span className="ml-4 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-2 animate-pulse whitespace-nowrap hidden sm:flex">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                LIVE UPDATES: {timeUntilUpdate}s
-              </span>
-            )}
-          </div>
-
-          {!session ? (
-            <button onClick={() => signIn("google")} className="bg-blue-600 text-white px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition">
-              Sign in with Google
-            </button>
-          ) : (
-            <div className="flex items-center gap-4">
-              <button onClick={() => signOut()} className="text-xs text-red-500 hover:text-red-700 font-medium">Sign Out</button>
-              <img src={session.user?.image || ""} alt="Profile" className="w-10 h-10 rounded-full border-2 border-gray-100" />
-            </div>
-          )}
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row font-sans text-slate-900">
+      
+      {/* SIDEBAR NAVIGATION */}
+      <aside className="w-full md:w-72 bg-white border-r border-gray-200 sticky top-0 h-screen z-30 flex flex-col overflow-y-auto">
+        <div className="p-6 border-b border-gray-100 flex items-center gap-2">
+          <span className="text-2xl">📸</span>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">CreatorLens</h1>
         </div>
-      </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-10 space-y-12">
-        
-        {/* SECTION 0: Viral Spike Detector (New Feature) */}
-        {session && recentVideos.length > 0 && (
-           <ViralSpikeManager 
-             recentVideos={recentVideos} 
-             velocity={viewVelocity} 
-           />
-        )}
+        <nav className="flex-1 p-4 space-y-1">
+          <p className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Overview</p>
+          <NavBtn id="dashboard" icon="📊" label="Dashboard" />
+          <NavBtn id="health" icon="❤️" label="Channel Health" />
+          <NavBtn id="forecast" icon="🚀" label="Growth Forecast" />
 
-        {/* SECTION 1: Channel Overview */}
-        {session && channelData && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Channel Overview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {['Subscriber Count', 'View Count', 'Video Count'].map((label, idx) => {
-                 const keys = ['subscriberCount', 'viewCount', 'videoCount'];
-                 return (
-                   <div key={label} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                     <p className="text-gray-500 text-sm">{label}</p>
-                     <p className="text-3xl font-bold text-gray-900">
-                       {Number(channelData.stats[keys[idx]]).toLocaleString()}
-                     </p>
-                   </div>
-                 )
-              })}
-            </div>
-          </div>
-        )}
+          <p className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mt-6 mb-1">Deep Dive</p>
+          <NavBtn id="loyalty" icon="🤝" label="Audience Loyalty" />
+          <NavBtn id="retention" icon="🎣" label="30s Retention" />
+          <NavBtn id="format" icon="📼" label="Format Analyzer" />
 
-        {/* SECTION 1.5: Detailed Analytics (CHARTS) */}
+          <p className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider mt-6 mb-1">Strategy</p>
+          <NavBtn id="competitors" icon="🕵️" label="Competitors" />
+          <NavBtn id="saturation" icon="🌡️" label="Topic Saturation" />
+          <NavBtn id="decisions" icon="📝" label="Decision Log" />
+        </nav>
+
         {session && (
-          <div className="mb-10">
-             <AnalyticsDashboard />
-          </div>
-        )}
-
-        {/* SECTION 2: Real-Time Video Dashboard */}
-        {session && recentVideos.length > 0 && (
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
-              Recent Uploads <span className="text-xs font-normal text-gray-400">(Auto-refreshes every 60s)</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentVideos.map((video) => (
-                <div key={video.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group hover:shadow-md transition-all">
-                  
-                  {/* Thumbnail */}
-                  <div className="aspect-video w-full bg-gray-200 relative">
-                    <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {new Date(video.publishedAt).toLocaleDateString()}
-                    </div>
-                  </div>
-
-                  {/* Metrics */}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-gray-800 line-clamp-2 mb-3 h-12">{video.title}</h3>
-                    
-                    <div className="space-y-3 mb-6">
-                      
-                      {/* VIEWS ROW */}
-                      <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                        <span className="text-gray-500 text-sm">Views</span>
-                        
-                        <div className="flex items-center gap-2 flex-nowrap whitespace-nowrap">
-                          <span className="font-bold text-gray-900">
-                            {Number(video.views).toLocaleString()}
-                          </span>
-                          
-                          {/* Green Velocity Box */}
-                          {viewVelocity[video.id] > 0 && (
-                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold animate-pulse">
-                              +{viewVelocity[video.id]}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between text-sm text-gray-500 px-2">
-                        <span className="flex items-center gap-1">👍 {Number(video.likes).toLocaleString()}</span>
-                        <span className="flex items-center gap-1">💬 {Number(video.comments).toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={() => handleAnalyzeClick(video)}
-                      className="mt-auto w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
-                    >
-                      ✨ Generate Strategy Report
-                    </button>
-                  </div>
-                </div>
-              ))}
+          <div className="p-4 border-t border-gray-100">
+            <div className="flex items-center gap-3 mb-4 px-2">
+              <img src={session.user?.image || ""} className="w-8 h-8 rounded-full border border-gray-200" />
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-gray-900 truncate">{session.user?.name}</p>
+                <p className="text-xs text-green-600 font-medium">● Online</p>
+              </div>
             </div>
+            <button onClick={() => signOut()} className="w-full py-2 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">
+              Sign Out
+            </button>
           </div>
         )}
+      </aside>
 
-        {/* SECTION 3: AI Tools Grid */}
-        <div id="ai-tools-section" className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-20">
-          {/* Left Side: The Main AI Strategist (Takes up 2/3 space) */}
-          <div className="lg:col-span-2">
-            <AICoach prefill={selectedVideoPrompt} />
-          </div>
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 overflow-y-auto h-screen relative">
+        {!session ? (
+           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-6">
+              <div className="w-20 h-20 bg-black text-white rounded-3xl flex items-center justify-center text-4xl shadow-xl mb-4">📸</div>
+              <h2 className="text-3xl font-black text-gray-900">Welcome to CreatorLens</h2>
+              <button onClick={() => signIn("google")} className="bg-black text-white px-8 py-3 rounded-full font-bold hover:bg-gray-800 transition shadow-xl shadow-gray-200">
+                Sign in with Google
+              </button>
+           </div>
+        ) : (
+          <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            
+            {/* 1. DASHBOARD TAB */}
+            {activeTab === 'dashboard' && (
+               <div className="space-y-10">
+                 {recentVideos.length > 0 && (
+                    <ViralSpikeManager recentVideos={recentVideos} velocity={viewVelocity} />
+                 )}
+                 {channelData && (
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     {['Subscriber Count', 'View Count', 'Video Count'].map((label, idx) => {
+                        const keys = ['subscriberCount', 'viewCount', 'videoCount'];
+                        return (
+                          <div key={label} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <p className="text-gray-500 text-sm font-medium mb-1">{label}</p>
+                            <p className="text-3xl font-black text-gray-900">{Number(channelData.stats[keys[idx]]).toLocaleString()}</p>
+                          </div>
+                        )
+                     })}
+                   </div>
+                 )}
+                 <AnalyticsDashboard />
+                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                   <div className="lg:col-span-2"><AICoach prefill={selectedVideoPrompt} /></div>
+                   <div className="lg:col-span-1"><CommentReplyTool /></div>
+                 </div>
+               </div>
+            )}
 
-          {/* Right Side: The New Reply Tool (Takes up 1/3 space) */}
-          <div className="lg:col-span-1">
-            <CommentReplyTool />
+            {/* 2. PREMIUM TABS (Using Real deepData) */}
+            {activeTab === 'competitors' && <CompetitorInsights myStats={channelData?.stats} />}
+            {activeTab === 'health' && <ChannelHealth stats={channelData?.stats} videos={recentVideos} />}
+            {activeTab === 'loyalty' && <AudienceLoyalty data={deepData?.loyalty} />}
+            {activeTab === 'format' && <ContentFormat videos={recentVideos} />}
+            {activeTab === 'saturation' && <TopicSaturation traffic={deepData?.traffic} />}
+            {activeTab === 'retention' && <RetentionAnalyzer data={deepData?.retention} videos={recentVideos} />}
+            {activeTab === 'decisions' && <DecisionLog />}
+            {activeTab === 'forecast' && <GrowthForecast stats={channelData?.stats} />}
+
           </div>
-        </div>
-      </div>
-    </main>
+        )}
+      </main>
+    </div>
   );
 }

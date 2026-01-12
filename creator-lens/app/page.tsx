@@ -2,14 +2,15 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
-// 1. IMPORT ICONS
+// 1. IMPORT ICONS - Adjusted for a sharper, thinner look where appropriate
 import { 
   LayoutDashboard, Activity, TrendingUp, 
   Users, Timer, Clapperboard, 
   Swords, Thermometer, ClipboardList,
   ShieldCheck, Split, Radio, Map,
-  Lightbulb, Wand2, ImagePlus, Trophy, 
-  Sparkles // <--- Added Sparkles Icon for Idea Generator
+  Lightbulb, Wand2, Trophy, 
+  Sparkles, Menu, Bell, ChevronRight,
+  LogOut, Command
 } from "lucide-react";
 
 // --- CORE DASHBOARD COMPONENTS ---
@@ -29,9 +30,8 @@ import DecisionLog from "@/components/tabs/DecisionLog";
 import GrowthForecast from "@/components/tabs/GrowthForecast";
 import TitleIntelligence from "@/components/tabs/TitleIntelligence";
 import MetadataGenerator from "@/components/tabs/MetadataGenerator";
-import ThumbnailMaker from "@/components/tabs/ThumbnailMaker";
 import TopPerformers from "@/components/tabs/TopPerformers";
-import IdeaGenerator from "@/components/tabs/IdeaGenerator"; // <--- Imported Idea Generator
+import IdeaGenerator from "@/components/tabs/IdeaGenerator";
 
 // --- ADVANCED ALGORITHM TABS ---
 import AlgorithmTrust from "@/components/tabs/AlgorithmTrust";
@@ -44,6 +44,7 @@ export default function Home() {
   
   // --- NAVIGATION STATE ---
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // --- DATA STATE ---
   const [channelData, setChannelData] = useState<any>(null);
@@ -112,175 +113,260 @@ export default function Home() {
 
   // --- UI COMPONENTS ---
   
-  // Sidebar Button
+  // Refined Nav Button: Sharper, Tech-focused interaction
   const NavBtn = ({ id, icon: Icon, label }: any) => (
     <button 
-      onClick={() => setActiveTab(id)}
-      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center gap-3 mb-1 ${
-        activeTab === id 
-          ? "bg-slate-900 text-white shadow-md" 
-          : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-      }`}
+      onClick={() => { setActiveTab(id); setIsMobileMenuOpen(false); }}
+      className={`group w-full text-left px-4 py-2.5 text-sm font-medium transition-all duration-150 flex items-center gap-3 relative
+        ${activeTab === id 
+          ? "text-slate-900 bg-slate-100/80" 
+          : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+        } rounded-md mx-1`} // Sharper rounding (md vs xl)
     >
-      <Icon size={18} className={activeTab === id ? "opacity-100" : "opacity-70"} />
-      {label}
+      {/* Active Indicator Line */}
+      {activeTab === id && (
+        <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-slate-900 rounded-r-sm" />
+      )}
+      
+      <Icon 
+        size={18} 
+        strokeWidth={2}
+        className={`transition-colors duration-200 ${activeTab === id ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"}`} 
+      />
+      <span className="tracking-tight">{label}</span>
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-900">
+    // Applied Poppins font stack with standard fallback
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900" style={{ fontFamily: 'Poppins, ui-sans-serif, system-ui, sans-serif' }}>
       
-      {/* 1. SOLID SIDEBAR */}
-      <aside className="w-full md:w-64 bg-white border-r border-slate-200 sticky top-0 h-screen z-30 flex flex-col overflow-y-auto shadow-[2px_0_5px_rgba(0,0,0,0.02)]">
-        
-        {/* Logo Area */}
-        <div className="p-6 border-b border-slate-100 flex items-center gap-2">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-            <LayoutDashboard size={18} />
-          </div>
-          <h1 className="text-lg font-semibold tracking-tight text-slate-900">CreatorLens</h1>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-6 space-y-1">
+      {/* 1. SIDEBAR - Structure: Sharp, Technical, Clean */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full">
           
-          <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Overview</div>
-          <NavBtn id="dashboard" icon={LayoutDashboard} label="Dashboard" />
-          <NavBtn id="health" icon={Activity} label="Channel Health" />
-          <NavBtn id="forecast" icon={TrendingUp} label="Growth Forecast" />
-          <NavBtn id="generator" icon={Wand2} label="Metadata Generator" />
-          <NavBtn id="ideas" icon={Sparkles} label="Idea Generator" /> {/* <--- Added Idea Generator Button */}
-
-          <div className="px-4 pb-2 mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Deep Dive</div>
-          <NavBtn id="performers" icon={Trophy} label="Top Performers" />
-          <NavBtn id="loyalty" icon={Users} label="Audience Loyalty" />
-          <NavBtn id="retention" icon={Timer} label="30s Retention" />
-          <NavBtn id="format" icon={Clapperboard} label="Format Analyzer" />
-
-          <div className="px-4 pb-2 mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Strategy</div>
-          <NavBtn id="competitors" icon={Swords} label="Competitors" />
-          <NavBtn id="saturation" icon={Thermometer} label="Topic Saturation" />
-          <NavBtn id="decisions" icon={ClipboardList} label="Decision Log" />
-          <NavBtn id="titles" icon={Lightbulb} label="Title Intelligence" />
-
-          <div className="px-4 pb-2 mt-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Advanced</div>
-          <NavBtn id="trust" icon={ShieldCheck} label="Trust Score" />
-          <NavBtn id="cannibal" icon={Split} label="Cannibalization" />
-          <NavBtn id="radar" icon={Radio} label="Trend Radar" />
-          <NavBtn id="journey" icon={Map} label="Viewer Journey" />
-        </nav>
-
-        {/* User Profile */}
-        {session && (
-          <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-            <div className="flex items-center gap-3 mb-3 px-1">
-              <img src={session.user?.image || ""} className="w-8 h-8 rounded-full ring-2 ring-white shadow-sm" />
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-900 truncate">{session.user?.name}</p>
-                <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wide">● Live Syncing</p>
+          {/* Header */}
+          <div className="px-6 py-6 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-slate-900 rounded-md flex items-center justify-center text-white shadow-sm">
+                <Command size={16} />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-base font-bold tracking-tight text-slate-900 leading-none">CreatorLens</h1>
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1">Workspace</span>
               </div>
             </div>
-            <button onClick={() => signOut()} className="w-full py-2 border border-slate-200 rounded-md text-xs font-semibold text-slate-500 hover:bg-white hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm">
-              Sign Out
-            </button>
           </div>
-        )}
+
+          {/* Navigation */}
+          <nav className="flex-1 px-3 py-6 space-y-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+            
+            <div className="space-y-0.5">
+              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overview</div>
+              <NavBtn id="dashboard" icon={LayoutDashboard} label="Dashboard" />
+              <NavBtn id="health" icon={Activity} label="Channel Health" />
+              <NavBtn id="forecast" icon={TrendingUp} label="Growth Forecast" />
+            </div>
+
+            <div className="space-y-0.5">
+               <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Creation</div>
+              <NavBtn id="ideas" icon={Sparkles} label="Idea Generator" />
+              <NavBtn id="generator" icon={Wand2} label="Metadata Generator" />
+              <NavBtn id="titles" icon={Lightbulb} label="Title Intelligence" />
+            </div>
+
+            <div className="space-y-0.5">
+              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Deep Dive</div>
+              <NavBtn id="performers" icon={Trophy} label="Top Performers" />
+              <NavBtn id="competitors" icon={Swords} label="Competitors" />
+              <NavBtn id="loyalty" icon={Users} label="Audience Loyalty" />
+              <NavBtn id="retention" icon={Timer} label="30s Retention" />
+              <NavBtn id="format" icon={Clapperboard} label="Format Analyzer" />
+            </div>
+
+            <div className="space-y-0.5">
+              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Advanced</div>
+              <NavBtn id="saturation" icon={Thermometer} label="Topic Saturation" />
+              <NavBtn id="trust" icon={ShieldCheck} label="Trust Score" />
+              <NavBtn id="cannibal" icon={Split} label="Cannibalization" />
+              <NavBtn id="radar" icon={Radio} label="Trend Radar" />
+              <NavBtn id="journey" icon={Map} label="Viewer Journey" />
+              <NavBtn id="decisions" icon={ClipboardList} label="Decision Log" />
+            </div>
+          </nav>
+
+          {/* User Profile - Compact & Sharp */}
+          {session && (
+            <div className="p-4 border-t border-slate-200 bg-slate-50">
+              <div className="flex items-center gap-3 mb-3">
+                <img src={session.user?.image || ""} className="w-8 h-8 rounded-md border border-slate-200" alt="User" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-slate-900 truncate">{session.user?.name}</p>
+                  <p className="text-[10px] text-emerald-600 font-medium flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Online
+                  </p>
+                </div>
+                <button 
+                  onClick={() => signOut()} 
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+                  title="Sign Out"
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </aside>
 
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto h-screen relative scroll-smooth">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
         
-        {/* Header Bar */}
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-4 flex justify-between items-center">
-           <h2 className="text-xl font-semibold text-slate-800 capitalize">
-             {activeTab.replace(/([A-Z])/g, ' $1').trim()} 
-           </h2>
+        {/* Sticky Header - Sharp, Minimal */}
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-6 py-3 flex justify-between items-center">
+           <div className="flex items-center gap-4">
+             <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-md">
+                <Menu size={20} />
+             </button>
+             <h2 className="text-lg font-bold text-slate-900 tracking-tight capitalize">
+               {activeTab.replace(/([A-Z])/g, ' $1').trim()} 
+             </h2>
+           </div>
            
-           {session && (
-             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="text-xs font-medium text-slate-500 tabular-nums">Next update in {timeUntilUpdate}s</span>
-             </div>
-           )}
+           <div className="flex items-center gap-4">
+             {session && (
+               <>
+                 <button className="text-slate-400 hover:text-slate-600 transition-colors relative">
+                    <Bell size={20} strokeWidth={2} />
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                 </button>
+                 <div className="hidden md:flex items-center gap-2 pl-4 border-l border-slate-200">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sync:</span>
+                    <span className="text-xs font-mono font-medium text-slate-700">{timeUntilUpdate}s</span>
+                 </div>
+               </>
+             )}
+           </div>
         </header>
 
         {/* Content Container */}
-        <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-20">
+        <div className="flex-1 overflow-y-auto scroll-smooth p-4 md:p-8 pb-32">
+          <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           
           {!session ? (
-             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-                <div className="w-24 h-24 bg-slate-900 text-white rounded-[2rem] flex items-center justify-center shadow-2xl mb-4">
-                  <LayoutDashboard size={48} />
+             <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-8">
+                {/* Modernized Logo Block */}
+                <div className="w-20 h-20 bg-slate-900 rounded-xl flex items-center justify-center shadow-2xl shadow-slate-200 rotate-3">
+                   <Command size={40} className="text-white" />
                 </div>
-                <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Welcome to CreatorLens</h2>
-                <p className="text-slate-500 max-w-md text-lg">The premium operating system for modern creators.</p>
-                <button onClick={() => signIn("google")} className="bg-slate-900 text-white px-10 py-4 rounded-full font-bold hover:bg-slate-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1">
-                  Sign in with Google
+                
+                <div className="max-w-md space-y-3">
+                  <h2 className="text-4xl font-bold text-slate-900 tracking-tighter">
+                    CreatorLens
+                  </h2>
+                  <p className="text-slate-500 text-base font-medium leading-relaxed">
+                    Data-driven operating system for high-growth channels.
+                  </p>
+                </div>
+
+                <button 
+                  onClick={() => signIn("google")} 
+                  className="flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-lg font-semibold text-sm shadow-lg hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <span>Continue with Google</span>
+                  <ChevronRight size={16} />
                 </button>
              </div>
           ) : (
             <>
               {/* === TAB 1: DASHBOARD === */}
               {activeTab === 'dashboard' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6">
+                    {/* Velocity Header */}
                     {recentVideos.length > 0 && (
                        <ViralSpikeManager recentVideos={recentVideos} velocity={viewVelocity} />
                     )}
                     
+                    {/* Core Stats Cards - Sharp, clean layout */}
                     {channelData && (
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {['Subscriber Count', 'View Count', 'Video Count'].map((label, idx) => {
                           const keys = ['subscriberCount', 'viewCount', 'videoCount'];
                           const val = Number(channelData.stats[keys[idx]]);
+                          const icons = [Users, Activity, Clapperboard];
+                          const Icon = icons[idx];
+                          
                           return (
-                            <div key={label} className="bg-white p-6 rounded-xl shadow-panel border border-slate-100 flex flex-col justify-center h-32 hover:border-slate-300 transition-colors group">
-                              <div className="flex justify-between items-start">
-                                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">{label}</p>
-                                <span className="text-slate-200 group-hover:text-slate-400 transition-colors">
-                                  <TrendingUp size={16} />
+                            <div key={label} className="group bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all duration-200">
+                              <div className="flex justify-between items-start mb-3">
+                                <div className="p-2 bg-slate-50 rounded-md border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-colors">
+                                  <Icon size={18} className="text-slate-500" />
+                                </div>
+                                <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide">
+                                  LIVE
                                 </span>
                               </div>
-                              <p className="text-3xl font-semibold text-slate-900 tracking-tight tabular-nums">
-                                {val.toLocaleString()}
-                              </p>
+                              <div>
+                                <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">{label}</p>
+                                <p className="text-2xl font-bold text-slate-900 tracking-tight tabular-nums">
+                                  {val.toLocaleString()}
+                                </p>
+                              </div>
                             </div>
                           )
                         })}
                       </div>
                     )}
                     
-                    <AnalyticsDashboard />
+                    {/* Main Analytics Chart */}
+                    <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                       <AnalyticsDashboard />
+                    </div>
                     
+                    {/* Bottom Tools Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      <div className="lg:col-span-2"><AICoach prefill={selectedVideoPrompt} /></div>
-                      <div className="lg:col-span-1"><CommentReplyTool /></div>
+                      <div className="lg:col-span-2">
+                        <AICoach prefill={selectedVideoPrompt} />
+                      </div>
+                      <div className="lg:col-span-1">
+                        <CommentReplyTool />
+                      </div>
                     </div>
                   </div>
               )}
 
-              {/* === OTHER TABS === */}
-              {activeTab === 'competitors' && <CompetitorInsights myStats={channelData?.stats} />}
-              {activeTab === 'health' && <ChannelHealth stats={channelData?.stats} videos={recentVideos} />}
-              {activeTab === 'forecast' && <GrowthForecast stats={channelData?.stats} />}
-              {activeTab === 'loyalty' && <AudienceLoyalty data={deepData?.loyalty} />}
-              {activeTab === 'retention' && <RetentionAnalyzer data={deepData?.retention} videos={recentVideos} />}
-              {activeTab === 'format' && <ContentFormat videos={recentVideos} />}
-              {activeTab === 'saturation' && <TopicSaturation traffic={deepData?.traffic} />}
-              {activeTab === 'decisions' && <DecisionLog />}
-              {activeTab === 'trust' && <AlgorithmTrust videos={recentVideos} />}
-              {activeTab === 'cannibal' && <CannibalizationDetector videos={recentVideos} />}
-              {activeTab === 'radar' && <TrendHijack searchTerms={deepData?.searchTerms} />}
-              {activeTab === 'journey' && <ViewerJourney relatedVideos={deepData?.relatedVideos} loyalty={deepData?.loyalty} />}
-              {activeTab === 'titles' && <TitleIntelligence />}
-              {activeTab === 'generator' && <MetadataGenerator />}
-              {activeTab === 'performers' && <TopPerformers />}
-              {activeTab === 'ideas' && <IdeaGenerator />} {/* <--- Render Idea Generator Component */}
+              {/* === DYNAMIC TABS RENDERER === */}
+              <div className="animate-in fade-in duration-300">
+                {activeTab === 'competitors' && <CompetitorInsights myStats={channelData?.stats} />}
+                {activeTab === 'health' && <ChannelHealth stats={channelData?.stats} videos={recentVideos} />}
+                {activeTab === 'forecast' && <GrowthForecast stats={channelData?.stats} />}
+                {activeTab === 'loyalty' && <AudienceLoyalty data={deepData?.loyalty} />}
+                {activeTab === 'retention' && <RetentionAnalyzer data={deepData?.retention} videos={recentVideos} />}
+                {activeTab === 'format' && <ContentFormat videos={recentVideos} />}
+                {activeTab === 'saturation' && <TopicSaturation traffic={deepData?.traffic} />}
+                {activeTab === 'decisions' && <DecisionLog />}
+                {activeTab === 'trust' && <AlgorithmTrust videos={recentVideos} />}
+                {activeTab === 'cannibal' && <CannibalizationDetector videos={recentVideos} />}
+                {activeTab === 'radar' && <TrendHijack searchTerms={deepData?.searchTerms} />}
+                {activeTab === 'journey' && <ViewerJourney relatedVideos={deepData?.relatedVideos} loyalty={deepData?.loyalty} />}
+                {activeTab === 'titles' && <TitleIntelligence />}
+                {activeTab === 'generator' && <MetadataGenerator />}
+                {activeTab === 'performers' && <TopPerformers />}
+                {activeTab === 'ideas' && <IdeaGenerator />}
+              </div>
             </>
           )}
 
+          </div>
         </div>
       </main>
     </div>

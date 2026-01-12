@@ -2,6 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
+// 1. ADD 'Star' icon for the rater
 import { 
   LayoutDashboard, Activity, TrendingUp, 
   Users, Timer, Clapperboard, 
@@ -9,7 +10,7 @@ import {
   ShieldCheck, Split, Radio, Map,
   Lightbulb, Wand2, Trophy, 
   Sparkles, Menu, Bell, ChevronRight,
-  LogOut, Command
+  LogOut, Command, Star 
 } from "lucide-react";
 
 import AICoach from "@/components/AICoach";
@@ -29,6 +30,9 @@ import TitleIntelligence from "@/components/tabs/TitleIntelligence";
 import MetadataGenerator from "@/components/tabs/MetadataGenerator";
 import TopPerformers from "@/components/tabs/TopPerformers";
 import IdeaGenerator from "@/components/tabs/IdeaGenerator";
+
+// 2. IMPORT THE NEW COMPONENT
+import TitleRater from "@/components/tabs/TitleRater"; 
 
 import AlgorithmTrust from "@/components/tabs/AlgorithmTrust";
 import CannibalizationDetector from "@/components/tabs/CannibalizationDetector";
@@ -120,7 +124,6 @@ export default function Home() {
   );
 
   return (
-    // FIX: Changed "min-h-screen" to "h-screen overflow-hidden" to stop double scrollbars
     <div className="h-screen w-full overflow-hidden bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900" style={{ fontFamily: 'Poppins, ui-sans-serif, system-ui, sans-serif' }}>
       
       {/* 1. SIDEBAR */}
@@ -150,6 +153,9 @@ export default function Home() {
 
             <div className="space-y-0.5">
                <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Tools</div>
+              {/* 3. ADDED THE TITLE RATER BUTTON HERE */}
+              <NavBtn id="rater" icon={Star} label="Rate My Title" />
+              
               <NavBtn id="ideas" icon={Sparkles} label="Idea Generator" />
               <NavBtn id="generator" icon={Wand2} label="Metadata Generator" />
               <NavBtn id="titles" icon={Lightbulb} label="Title Intelligence" />
@@ -316,6 +322,9 @@ export default function Home() {
               )}
 
               <div className="animate-in fade-in duration-300">
+                {/* 4. RENDER THE TITLE RATER HERE */}
+                {activeTab === 'rater' && <TitleRater />}
+                
                 {activeTab === 'competitors' && <CompetitorInsights myStats={channelData?.stats} />}
                 {activeTab === 'health' && <ChannelHealth stats={channelData?.stats} videos={recentVideos} />}
                 {activeTab === 'forecast' && <GrowthForecast stats={channelData?.stats} />}

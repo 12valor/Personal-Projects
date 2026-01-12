@@ -1,21 +1,26 @@
 "use client";
 
 import { useMemo } from "react";
+import { Clapperboard, Smartphone, Radio } from "lucide-react";
 
 export default function ContentFormat({ videos }: { videos: any[] }) {
   
-  // 1. Helper: Parse ISO 8601 Duration (e.g., "PT1H2M10S" -> Seconds)
+  // 1. IMPROVED PARSER: Handles "PT1M" correctly and avoids NaN errors
   const parseDuration = (iso: string) => {
     if (!iso) return 0;
-    const match = iso.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-    if (!match) return 0;
-    const hours = (parseInt(match[1] || "0")) * 3600;
-    const minutes = (parseInt(match[2] || "0")) * 60;
-    const seconds = parseInt(match[3] || "0");
-    return hours + minutes + seconds;
+    // Match individual parts safely
+    const hours = iso.match(/(\d+)H/);
+    const minutes = iso.match(/(\d+)M/);
+    const seconds = iso.match(/(\d+)S/);
+
+    const h = parseInt(hours?.[1] || "0");
+    const m = parseInt(minutes?.[1] || "0");
+    const s = parseInt(seconds?.[1] || "0");
+
+    return (h * 3600) + (m * 60) + s;
   };
 
-  // 2. Real-Time Categorization Logic
+  // 2. LOGIC: Added 90s buffer and fallback for 0s videos
   const formats = useMemo(() => {
     if (!videos || videos.length === 0) return [];
 
@@ -26,50 +31,62 @@ export default function ContentFormat({ videos }: { videos: any[] }) {
     };
 
     videos.forEach((video) => {
-      // Handle different API structures (flat vs nested)
+      // Robust View Parsing
       const views = parseInt(video.views || video.statistics?.viewCount || "0");
-      const durationIso = video.duration || video.contentDetails?.duration || "PT0S";
-      const isLive = video.liveStreamingDetails || video.snippet?.liveBroadcastContent === 'completed'; // Detect past streams
       
+      // Robust Duration Parsing
+      const durationIso = video.duration || video.contentDetails?.duration || "PT0S";
       const seconds = parseDuration(durationIso);
 
+      // Check for Live
+      const isLive = 
+        video.liveStreamingDetails || 
+        video.snippet?.liveBroadcastContent === 'live' ||
+        video.snippet?.liveBroadcastContent === 'upcoming'; 
+
       if (isLive) {
-        // Live Stream (Past or Present)
         stats.live.count++;
         stats.live.views += views;
-      } else if (seconds > 0 && seconds <= 60) {
-        // Shorts (<= 60 seconds)
+      } 
+      // FIX: Increase limit to 90s to catch "1:01" bugs
+      // FIX: Allow 0s videos to default to Shorts (likely metadata lag on new uploads)
+      else if (seconds <= 90) { 
         stats.shorts.count++;
         stats.shorts.views += views;
-      } else {
-        // Long-Form (> 60 seconds)
+      } 
+      else {
         stats.long.count++;
         stats.long.views += views;
       }
     });
 
-    // Helper to calculate average (avoid NaN)
     const getAvg = (cat: { count: number, views: number }) => 
       cat.count > 0 ? Math.round(cat.views / cat.count) : 0;
 
     return [
       { 
-        name: "Long-Form", 
-        views: getAvg(stats.long), 
-        count: stats.long.count,
-        color: "bg-purple-100 text-purple-700" 
-      },
-      { 
-        name: "Shorts", 
+        name: "Shorts", // Moved Shorts to first position since that's your focus
+        icon: Smartphone,
         views: getAvg(stats.shorts), 
         count: stats.shorts.count,
-        color: "bg-red-100 text-red-700" 
+        color: "bg-rose-100 text-rose-700",
+        border: "border-rose-100"
+      },
+      { 
+        name: "Long-Form", 
+        icon: Clapperboard,
+        views: getAvg(stats.long), 
+        count: stats.long.count,
+        color: "bg-purple-100 text-purple-700",
+        border: "border-purple-100"
       },
       { 
         name: "Live Streams", 
+        icon: Radio,
         views: getAvg(stats.live), 
         count: stats.live.count,
-        color: "bg-orange-100 text-orange-700" 
+        color: "bg-orange-100 text-orange-700",
+        border: "border-orange-100"
       },
     ];
   }, [videos]);
@@ -87,25 +104,32 @@ export default function ContentFormat({ videos }: { videos: any[] }) {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {formats.map((fmt, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow">
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${fmt.color} mb-3 flex items-center gap-2`}>
+          <div key={i} className={`bg-white p-6 rounded-2xl border ${fmt.border} flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow relative overflow-hidden`}>
+            
+            {/* Background Icon Decoration */}
+            <fmt.icon className={`absolute -right-4 -bottom-4 text-gray-50 opacity-10 w-32 h-32 rotate-12`} />
+
+            <span className={`px-3 py-1 rounded-full text-xs font-bold ${fmt.color} mb-3 flex items-center gap-2 relative z-10`}>
+              <fmt.icon size={12} />
               {fmt.name}
-              <span className="bg-white/50 px-1.5 rounded-full text-[10px] text-current">
+              <span className="bg-white/60 px-1.5 rounded-full text-[10px] text-current">
                 {fmt.count}
               </span>
             </span>
             
-            {fmt.count > 0 ? (
-              <>
-                <p className="text-3xl font-black text-gray-900">{fmt.views.toLocaleString()}</p>
-                <p className="text-xs text-gray-500 mt-1">Avg Views per Upload</p>
-              </>
-            ) : (
-              <>
-                <p className="text-2xl font-bold text-gray-300">--</p>
-                <p className="text-xs text-gray-400 mt-1">No uploads found</p>
-              </>
-            )}
+            <div className="relative z-10">
+              {fmt.count > 0 ? (
+                <>
+                  <p className="text-4xl font-black text-gray-900 tracking-tight">{fmt.views.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1 font-medium uppercase tracking-wide">Avg Views per Upload</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-gray-300">--</p>
+                  <p className="text-xs text-gray-400 mt-1">No uploads found</p>
+                </>
+              )}
+            </div>
           </div>
         ))}
       </div>

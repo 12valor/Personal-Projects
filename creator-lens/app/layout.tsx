@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google"; // 1. Import Poppins
+import { Poppins } from "next/font/google"; 
 import "./globals.css";
 import AuthProvider from "@/components/SessionProvider";
 
-// 2. Configure Poppins with specific weights for a premium feel
 const poppins = Poppins({ 
   subsets: ["latin"],
-  weight: ["400", "500", "600"], // Regular, Medium, Semi-Bold
-  variable: "--font-poppins",    // CSS variable for Tailwind
+  weight: ["400", "500", "600"], 
+  variable: "--font-poppins",   
 });
 
 export const metadata: Metadata = {
@@ -22,7 +21,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* 3. Apply the font variable, base background, and text color */}
       <body className={`${poppins.variable} font-sans bg-slate-50 text-slate-900 antialiased`}>
         <AuthProvider>
           {children}

@@ -2,7 +2,6 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
-// 1. IMPORT ICONS - Adjusted for a sharper, thinner look where appropriate
 import { 
   LayoutDashboard, Activity, TrendingUp, 
   Users, Timer, Clapperboard, 
@@ -13,14 +12,12 @@ import {
   LogOut, Command
 } from "lucide-react";
 
-// --- CORE DASHBOARD COMPONENTS ---
 import AICoach from "@/components/AICoach";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import CommentReplyTool from "@/components/CommentReplyTool";
 import ViralSpikeManager from "@/components/ViralSpikeManager";
 import CompetitorInsights from "@/components/CompetitorInsights";
 
-// --- STRATEGY & ANALYTICS TABS ---
 import ChannelHealth from "@/components/tabs/ChannelHealth";
 import AudienceLoyalty from "@/components/tabs/AudienceLoyalty";
 import ContentFormat from "@/components/tabs/ContentFormat";
@@ -33,7 +30,6 @@ import MetadataGenerator from "@/components/tabs/MetadataGenerator";
 import TopPerformers from "@/components/tabs/TopPerformers";
 import IdeaGenerator from "@/components/tabs/IdeaGenerator";
 
-// --- ADVANCED ALGORITHM TABS ---
 import AlgorithmTrust from "@/components/tabs/AlgorithmTrust";
 import CannibalizationDetector from "@/components/tabs/CannibalizationDetector";
 import TrendHijack from "@/components/tabs/TrendHijack";
@@ -42,26 +38,19 @@ import ViewerJourney from "@/components/tabs/ViewerJourney";
 export default function Home() {
   const { data: session } = useSession();
   
-  // --- NAVIGATION STATE ---
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // --- DATA STATE ---
   const [channelData, setChannelData] = useState<any>(null);
   const [recentVideos, setRecentVideos] = useState<any[]>([]);
   const [viewVelocity, setViewVelocity] = useState<Record<string, number>>({});
   const [deepData, setDeepData] = useState<any>(null);
-  
-  // --- UTILS ---
   const previousVideosRef = useRef<any[]>([]);
   const [timeUntilUpdate, setTimeUntilUpdate] = useState(60);
   const [selectedVideoPrompt, setSelectedVideoPrompt] = useState("");
 
-  // --- DATA FETCHING ENGINE ---
   const fetchData = async () => {
     try {
       console.log("🔄 Syncing CreatorLens Data..."); 
-      
       const statsRes = await fetch("/api/youtube/stats");
       const statsData = await statsRes.json();
       if (!statsData.error) setChannelData(statsData);
@@ -85,11 +74,9 @@ export default function Home() {
         previousVideosRef.current = newVideos;
         setRecentVideos(newVideos);
       }
-
       const deepRes = await fetch("/api/youtube/deep-analytics");
       const deepJson = await deepRes.json();
       if (!deepJson.error) setDeepData(deepJson);
-
     } catch (err) {
       console.error("Polling Error:", err);
     }
@@ -111,25 +98,20 @@ export default function Home() {
     }
   }, [session]);
 
-  // --- UI COMPONENTS ---
-  
-  // Refined Nav Button: Sharper, Tech-focused interaction
   const NavBtn = ({ id, icon: Icon, label }: any) => (
     <button 
       onClick={() => { setActiveTab(id); setIsMobileMenuOpen(false); }}
-      className={`group w-full text-left px-4 py-2.5 text-sm font-medium transition-all duration-150 flex items-center gap-3 relative
+      className={`group w-full text-left px-4 py-2 text-sm font-medium transition-all duration-200 flex items-center gap-3 relative rounded-md mx-1 my-0.5
         ${activeTab === id 
           ? "text-slate-900 bg-slate-100/80" 
           : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-        } rounded-md mx-1`} // Sharper rounding (md vs xl)
+        }`} 
     >
-      {/* Active Indicator Line */}
       {activeTab === id && (
         <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-slate-900 rounded-r-sm" />
       )}
-      
       <Icon 
-        size={18} 
+        size={16} 
         strokeWidth={2}
         className={`transition-colors duration-200 ${activeTab === id ? "text-slate-900" : "text-slate-400 group-hover:text-slate-600"}`} 
       />
@@ -138,14 +120,13 @@ export default function Home() {
   );
 
   return (
-    // Applied Poppins font stack with standard fallback
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900" style={{ fontFamily: 'Poppins, ui-sans-serif, system-ui, sans-serif' }}>
+    // FIX: Changed "min-h-screen" to "h-screen overflow-hidden" to stop double scrollbars
+    <div className="h-screen w-full overflow-hidden bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900" style={{ fontFamily: 'Poppins, ui-sans-serif, system-ui, sans-serif' }}>
       
-      {/* 1. SIDEBAR - Structure: Sharp, Technical, Clean */}
+      {/* 1. SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
           
-          {/* Header */}
           <div className="px-6 py-6 border-b border-slate-100">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-slate-900 rounded-md flex items-center justify-center text-white shadow-sm">
@@ -158,44 +139,40 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 px-3 py-6 space-y-8 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
             
             <div className="space-y-0.5">
-              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overview</div>
+              <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Analytics</div>
               <NavBtn id="dashboard" icon={LayoutDashboard} label="Dashboard" />
               <NavBtn id="health" icon={Activity} label="Channel Health" />
               <NavBtn id="forecast" icon={TrendingUp} label="Growth Forecast" />
             </div>
 
             <div className="space-y-0.5">
-               <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Creation</div>
+               <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Tools</div>
               <NavBtn id="ideas" icon={Sparkles} label="Idea Generator" />
               <NavBtn id="generator" icon={Wand2} label="Metadata Generator" />
               <NavBtn id="titles" icon={Lightbulb} label="Title Intelligence" />
             </div>
 
             <div className="space-y-0.5">
-              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Deep Dive</div>
+              <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Deep Dive</div>
               <NavBtn id="performers" icon={Trophy} label="Top Performers" />
               <NavBtn id="competitors" icon={Swords} label="Competitors" />
               <NavBtn id="loyalty" icon={Users} label="Audience Loyalty" />
-              <NavBtn id="retention" icon={Timer} label="30s Retention" />
+              <NavBtn id="retention" icon={Timer} label="Retention Analysis" />
               <NavBtn id="format" icon={Clapperboard} label="Format Analyzer" />
             </div>
 
             <div className="space-y-0.5">
-              <div className="px-4 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-2">Advanced</div>
+              <div className="px-4 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Strategy</div>
               <NavBtn id="saturation" icon={Thermometer} label="Topic Saturation" />
               <NavBtn id="trust" icon={ShieldCheck} label="Trust Score" />
-              <NavBtn id="cannibal" icon={Split} label="Cannibalization" />
               <NavBtn id="radar" icon={Radio} label="Trend Radar" />
-              <NavBtn id="journey" icon={Map} label="Viewer Journey" />
               <NavBtn id="decisions" icon={ClipboardList} label="Decision Log" />
             </div>
           </nav>
 
-          {/* User Profile - Compact & Sharp */}
           {session && (
             <div className="p-4 border-t border-slate-200 bg-slate-50">
               <div className="flex items-center gap-3 mb-3">
@@ -204,7 +181,7 @@ export default function Home() {
                   <p className="text-xs font-bold text-slate-900 truncate">{session.user?.name}</p>
                   <p className="text-[10px] text-emerald-600 font-medium flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    Online
+                    Sync Active
                   </p>
                 </div>
                 <button 
@@ -229,9 +206,9 @@ export default function Home() {
       )}
 
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-[#F8FAFC]">
         
-        {/* Sticky Header - Sharp, Minimal */}
+        {/* Sticky Header */}
         <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-6 py-3 flex justify-between items-center">
            <div className="flex items-center gap-4">
              <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-md">
@@ -258,13 +235,12 @@ export default function Home() {
            </div>
         </header>
 
-        {/* Content Container */}
+        {/* Content Container - SCROLLABLE AREA */}
         <div className="flex-1 overflow-y-auto scroll-smooth p-4 md:p-8 pb-32">
           <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           
           {!session ? (
              <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-8">
-                {/* Modernized Logo Block */}
                 <div className="w-20 h-20 bg-slate-900 rounded-xl flex items-center justify-center shadow-2xl shadow-slate-200 rotate-3">
                    <Command size={40} className="text-white" />
                 </div>
@@ -288,15 +264,12 @@ export default function Home() {
              </div>
           ) : (
             <>
-              {/* === TAB 1: DASHBOARD === */}
               {activeTab === 'dashboard' && (
                   <div className="space-y-6">
-                    {/* Velocity Header */}
                     {recentVideos.length > 0 && (
                        <ViralSpikeManager recentVideos={recentVideos} velocity={viewVelocity} />
                     )}
                     
-                    {/* Core Stats Cards - Sharp, clean layout */}
                     {channelData && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {['Subscriber Count', 'View Count', 'Video Count'].map((label, idx) => {
@@ -308,7 +281,7 @@ export default function Home() {
                           return (
                             <div key={label} className="group bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:border-slate-300 transition-all duration-200">
                               <div className="flex justify-between items-start mb-3">
-                                <div className="p-2 bg-slate-50 rounded-md border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-colors">
+                                <div className="p-2 bg-slate-50 rounded-md border border-slate-100 group-hover:bg-white transition-colors">
                                   <Icon size={18} className="text-slate-500" />
                                 </div>
                                 <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide">
@@ -327,12 +300,10 @@ export default function Home() {
                       </div>
                     )}
                     
-                    {/* Main Analytics Chart */}
                     <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
                        <AnalyticsDashboard />
                     </div>
                     
-                    {/* Bottom Tools Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       <div className="lg:col-span-2">
                         <AICoach prefill={selectedVideoPrompt} />
@@ -344,7 +315,6 @@ export default function Home() {
                   </div>
               )}
 
-              {/* === DYNAMIC TABS RENDERER === */}
               <div className="animate-in fade-in duration-300">
                 {activeTab === 'competitors' && <CompetitorInsights myStats={channelData?.stats} />}
                 {activeTab === 'health' && <ChannelHealth stats={channelData?.stats} videos={recentVideos} />}

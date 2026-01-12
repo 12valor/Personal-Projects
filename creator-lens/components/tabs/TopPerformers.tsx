@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Trophy, Play, BarChart3, Search, Loader2,
   Smartphone, MonitorPlay, Zap, Lightbulb, Repeat, ShieldAlert, Target
@@ -39,7 +39,9 @@ export default function TopPerformers() {
       } else {
         setLongVideos(data.longForm || []);
         setShortVideos(data.shorts || []);
-        localStorage.setItem("creatorlens_channel_id", id);
+        
+        // Note: We are NOT saving to localStorage anymore to prevent accidental auto-fills
+        // localStorage.setItem("creatorlens_channel_id", id);
         
         // Smart Auto-Switch: If no long videos but lots of shorts, switch tab
         if (data.longForm?.length === 0 && data.shorts?.length > 0) {
@@ -55,13 +57,7 @@ export default function TopPerformers() {
     }
   };
 
-  useEffect(() => {
-    const savedId = localStorage.getItem("creatorlens_channel_id");
-    if (savedId) {
-      setChannelId(savedId);
-      fetchVideos(savedId);
-    }
-  }, []);
+  // REMOVED: The useEffect hook that auto-fetched data on mount has been deleted.
 
   // ANALYZE HANDLER
   const analyzeVideo = async (video: any) => {
@@ -238,15 +234,15 @@ export default function TopPerformers() {
                 <section>
                   <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Core Drivers</h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                     <div className="p-6 bg-slate-900 text-white rounded-xl">
+                      <div className="p-6 bg-slate-900 text-white rounded-xl">
                         <div className="flex items-center justify-between mb-4">
                            <span className="text-xs font-bold text-slate-400 uppercase">Hook Strength</span>
                            <span className="text-2xl font-black text-yellow-400">{analysisData.hookAnalysis?.score || 8}/10</span>
                         </div>
                         <p className="font-medium text-lg leading-snug mb-2">{analysisData.hookAnalysis?.mechanism || "Visual Interrupt"}</p>
                         <p className="text-sm text-slate-400 opacity-90">{analysisData.hookAnalysis?.explanation}</p>
-                     </div>
-                     <div className="p-6 bg-white border border-slate-200 rounded-xl">
+                      </div>
+                      <div className="p-6 bg-white border border-slate-200 rounded-xl">
                         <span className="text-xs font-bold text-slate-400 uppercase mb-2 block">Algorithm Signals</span>
                         <div className="space-y-3">
                            <div>
@@ -258,7 +254,7 @@ export default function TopPerformers() {
                               <p className="text-sm text-slate-600 mt-1">{analysisData.algorithmSignals?.engagementTriggers}</p>
                            </div>
                         </div>
-                     </div>
+                      </div>
                   </div>
                 </section>
                 <section>

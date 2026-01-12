@@ -1,28 +1,22 @@
+import { NextResponse } from "next/server";
 import { google } from "googleapis";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-// Make sure this import path is correct for your folder structure
-import { authOptions } from "../../auth/[...nextauth]/route"; 
+// FIX: Point to the lib file, NOT the route file
+import { authOptions } from "@/lib/auth"; 
+
+const youtube = google.youtube("v3");
 
 export async function GET() {
-  const session: any = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // FIX: Create an OAuth2 client instead of passing the token directly to google.youtube()
-    const auth = new google.auth.OAuth2();
-    auth.setCredentials({ access_token: session.accessToken });
-
-    const youtube = google.youtube({
-      version: "v3",
-      auth: auth, // Pass the authenticated OAuth client here
-    });
-
     const response = await youtube.channels.list({
-      part: ["statistics", "snippet", "contentDetails"],
+      access_token: session.accessToken,
+      part: ["statistics", "snippet"],
       mine: true,
     });
 
@@ -33,13 +27,17 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      title: channel.snippet?.title,
-      thumbnail: channel.snippet?.thumbnails?.medium?.url,
-      stats: channel.statistics,
+      stats: {
+        subscriberCount: channel.statistics?.subscriberCount,
+        viewCount: channel.statistics?.viewCount,
+        videoCount: channel.statistics?.videoCount,
+        title: channel.snippet?.title,
+        customUrl: channel.snippet?.customUrl,
+        thumbnail: channel.snippet?.thumbnails?.default?.url,
+      },
     });
-
-  } catch (error: any) {
-    console.error("YouTube API Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error("YouTube Stats Error:", error);
+    return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
   }
 }

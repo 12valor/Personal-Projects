@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { 
+  Sparkles, Bot, AlertCircle, 
+  Copy, Check, Trash2, Loader2,
+  Wand2
+} from "lucide-react";
 
-// Define the shape of the props this component accepts
 interface AICoachProps {
   prefill?: string;
 }
@@ -12,25 +16,26 @@ export default function AICoach({ prefill }: AICoachProps) {
   const [analysis, setAnalysis] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // LISTENER: If the parent page sends new text (via the 'Analyze' button), update the box.
+  // Sync with parent prefill
   useEffect(() => {
     if (prefill) {
       setInputText(prefill);
-      // Optional: Clear previous results when a new video is selected
       setAnalysis(""); 
       setError("");
+      if (textareaRef.current) textareaRef.current.focus();
     }
   }, [prefill]);
 
   const handleAnalyze = async () => {
-    // Reset states
     setLoading(true);
     setError("");
     setAnalysis("");
 
     if (!inputText.trim()) {
-      setError("Please enter some content or a topic to analyze.");
+      setError("Please enter a topic, script, or idea first.");
       setLoading(false);
       return;
     }
@@ -38,9 +43,7 @@ export default function AICoach({ prefill }: AICoachProps) {
     try {
       const response = await fetch("/api/analyze", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: inputText }),
       });
 
@@ -50,87 +53,130 @@ export default function AICoach({ prefill }: AICoachProps) {
         throw new Error(data.error || "Failed to analyze content");
       }
 
-      // Set the successful result
       setAnalysis(data.result);
-      
     } catch (err: any) {
       console.error("Analysis Error:", err);
-      setError(err.message || "Something went wrong. Please try again.");
+      setError(err.message || "Connection error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCopy = () => {
+    if (!analysis) return;
+    navigator.clipboard.writeText(analysis);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleClear = () => {
+    setInputText("");
+    setAnalysis("");
+    setError("");
+  };
+
   return (
-    <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 border-b border-gray-100 bg-gray-50">
-        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-          <span>🤖</span> Content Coach
-        </h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Paste your video idea, script, or description below to get AI-powered feedback.
-        </p>
+    <div className="w-full bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden font-sans text-slate-900 flex flex-col h-[600px]">
+      
+      {/* HEADER */}
+      <div className="px-6 py-4 border-b border-slate-200 bg-white flex justify-between items-center z-10">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-md">
+            <Bot size={20} />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold tracking-tight text-slate-900">Strategy Coach</h2>
+            <p className="text-xs text-slate-500 font-medium">AI-powered script & content feedback.</p>
+          </div>
+        </div>
+        
+        {inputText && (
+          <button 
+            onClick={handleClear}
+            className="text-slate-400 hover:text-rose-600 transition-colors p-2 rounded-md hover:bg-slate-50"
+            title="Clear All"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
-      <div className="p-6">
-        {/* Input Section */}
-        <div className="mb-4">
-          <textarea
-            className="w-full h-48 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none transition-all font-mono text-sm"
-            placeholder="e.g., I want to make a video about the new Roblox update where..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-          />
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        {/* LEFT: INPUT AREA */}
+        <div className={`flex flex-col relative transition-all duration-500 ease-in-out ${analysis ? 'w-full md:w-1/2 border-b md:border-b-0 md:border-r border-slate-200' : 'w-full'}`}>
+          <div className="flex-1 relative bg-slate-50/30">
+            <textarea
+              ref={textareaRef}
+              className="w-full h-full p-6 bg-transparent border-none outline-none resize-none text-sm leading-relaxed text-slate-700 placeholder:text-slate-400 font-medium"
+              placeholder="Paste your video idea, script segment, or title here...&#10;&#10;Example:&#10;I want to make a video about Roblox updates, but I'm not sure how to make the intro engaging. Can you review my hook?"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+            />
+            
+            {/* Action Bar (Floating) */}
+            <div className="absolute bottom-6 right-6 left-6 flex items-center justify-between pointer-events-none">
+               <div className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-white/50 backdrop-blur-sm px-2 py-1 rounded">
+                 {inputText.length} chars
+               </div>
+               <button
+                onClick={handleAnalyze}
+                disabled={loading || !inputText}
+                className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-slate-200 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 pointer-events-auto"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" /> Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} className="text-indigo-300" /> Analyze
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Action Button */}
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={handleAnalyze}
-            disabled={loading}
-            className={`px-6 py-3 rounded-lg text-white font-medium transition-all flex items-center gap-2 ${
-              loading
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30"
-            }`}
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Analyzing...
-              </>
-            ) : (
-              "Analyze Content"
-            )}
-          </button>
-        </div>
+        {/* RIGHT: OUTPUT AREA */}
+        {analysis && (
+          <div className="w-full md:w-1/2 flex flex-col bg-white animate-in slide-in-from-right-4 duration-500">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <Wand2 size={14} className="text-indigo-500" />
+                Coach's Feedback
+              </h3>
+              <button 
+                onClick={handleCopy}
+                className="text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1.5 px-2 py-1 rounded hover:bg-white border border-transparent hover:border-slate-200 transition-all"
+              >
+                {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="prose prose-sm prose-slate max-w-none">
+                <div className="whitespace-pre-wrap text-slate-600 leading-7 text-sm font-medium">
+                  {analysis}
+                </div>
+              </div>
+            </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-2 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
+            <div className="p-4 border-t border-slate-100 bg-slate-50/30 text-center">
+              <p className="text-xs text-slate-400 font-medium">AI insights are generated based on YouTube best practices.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ERROR STATE */}
+        {error && !analysis && (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-lg shadow-sm flex items-center gap-2 text-sm font-medium animate-in slide-in-from-bottom-2">
+            <AlertCircle size={16} />
             {error}
           </div>
         )}
 
-        {/* Results Section */}
-        {analysis && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-              <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
-                <span>✨</span> Feedback & Suggestions
-              </h3>
-              <div className="prose prose-blue max-w-none text-gray-700 whitespace-pre-line leading-relaxed">
-                {analysis}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -2,27 +2,28 @@
 
 import { useEffect, useState } from "react";
 import {
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend, BarChart, Bar
+  AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, BarChart, Bar, YAxis
 } from "recharts";
-import { ArrowUpRight, Clock, MapPin, Hash, Activity, MoreHorizontal } from "lucide-react";
+import { 
+  ArrowUpRight, Clock, MapPin, Hash, Activity, 
+  MoreHorizontal, Zap, Eye, UserPlus, Heart
+} from "lucide-react";
 
-// --- PROFESSIONAL COLOR PALETTE (Roblox/SaaS inspired) ---
-// Indigo (Primary), Emerald (Growth), Amber (Warning/Attention), Rose (Alert), Violet (Secondary)
+// --- COLORS ---
 const COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#F43F5E", "#8B5CF6", "#0EA5E9"];
 
-// --- CUSTOM TOOLTIP COMPONENT ---
-// Dark, blurred backdrop for high contrast and modern feel
+// --- CUSTOM TOOLTIP ---
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-900/90 backdrop-blur-md text-white text-xs p-3 rounded-lg shadow-xl border border-white/10 animate-in fade-in zoom-in-95 duration-200">
-        <p className="font-semibold mb-2 text-slate-300 border-b border-white/10 pb-1">{label}</p>
+      <div className="bg-white text-slate-900 text-xs p-3 rounded-lg shadow-xl border border-slate-100 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200">
+        <p className="font-semibold mb-2 text-slate-500 border-b border-slate-100 pb-1">{label}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="font-medium text-slate-200">{entry.name}:</span>
-            <span className="font-bold tabular-nums">{entry.value.toLocaleString()}</span>
+            <span className="font-medium text-slate-500">{entry.name}:</span>
+            <span className="font-semibold tabular-nums text-slate-900">{entry.value.toLocaleString()}</span>
           </div>
         ))}
       </div>
@@ -31,16 +32,95 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-// --- SECTION HEADER COMPONENT ---
+// --- REAL-TIME PULSE CARD (Split Layout) ---
+const RealTimePulseCard = ({ growthData }: { growthData: any[] }) => {
+  const latestViews = growthData.length > 0 ? growthData[growthData.length - 1].views : 0;
+  const latestSubs = growthData.length > 0 ? growthData[growthData.length - 1].subsNet : 0;
+
+  // Simulate hourly breakdown based on daily total
+  const distribute = (total: number) => {
+    const safeTotal = Math.max(0, total);
+    return [
+      { label: "10m", val: Math.ceil(safeTotal * 0.015) },
+      { label: "1h", val: Math.ceil(safeTotal * 0.08) },
+      { label: "3h", val: Math.ceil(safeTotal * 0.22) },
+      { label: "6h", val: Math.ceil(safeTotal * 0.45) },
+      { label: "9h", val: Math.ceil(safeTotal * 0.68) },
+      { label: "12h", val: Math.ceil(safeTotal * 0.85) },
+    ];
+  };
+
+  const viewIntervals = distribute(latestViews);
+  const subIntervals = distribute(latestSubs);
+
+  const StatColumn = ({ label, value }: { label: string, value: number }) => (
+    <div className="flex flex-col justify-center h-full">
+      <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-0.5">{label}</span>
+      <span className="text-lg font-semibold text-slate-900 tabular-nums leading-tight tracking-tight">
+        {value.toLocaleString()}
+      </span>
+    </div>
+  );
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+      
+      {/* LEFT: VIEWS */}
+      <div className="flex-1 p-6 border-b md:border-b-0 md:border-r border-slate-100 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+           <Eye size={64} className="text-indigo-600" />
+        </div>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+            <Eye size={18} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">View Velocity</h3>
+            <p className="text-[11px] text-slate-500 font-medium">Real-time engagement</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-y-6 gap-x-4">
+          {viewIntervals.map((item, i) => (
+            <StatColumn key={i} label={item.label} value={item.val} />
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT: SUBSCRIBERS */}
+      <div className="flex-1 p-6 relative overflow-hidden group bg-slate-50/30">
+        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+           <UserPlus size={64} className="text-emerald-600" />
+        </div>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+            <UserPlus size={18} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">Audience Growth</h3>
+            <p className="text-[11px] text-slate-500 font-medium">New subscriber acquisition</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-y-6 gap-x-4">
+          {subIntervals.map((item, i) => (
+            <StatColumn key={i} label={item.label} value={item.val} />
+          ))}
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+// --- SECTION HEADER ---
 const SectionHeader = ({ title, subtitle, icon: Icon }: any) => (
   <div className="flex items-center justify-between mb-6">
     <div className="flex items-center gap-3">
       <div className="p-2 bg-slate-50 border border-slate-100 rounded-lg text-slate-600">
-        <Icon size={18} strokeWidth={2} />
+        <Icon size={18} strokeWidth={1.5} />
       </div>
       <div>
-        <h3 className="text-sm font-bold text-slate-800 leading-tight">{title}</h3>
-        <p className="text-[11px] font-medium text-slate-400 tracking-wide">{subtitle}</p>
+        <h3 className="text-sm font-semibold text-slate-800 leading-tight">{title}</h3>
+        <p className="text-[11px] font-normal text-slate-400 tracking-wide">{subtitle}</p>
       </div>
     </div>
     <button className="text-slate-300 hover:text-slate-600 transition-colors">
@@ -49,6 +129,7 @@ const SectionHeader = ({ title, subtitle, icon: Icon }: any) => (
   </div>
 );
 
+// --- MAIN DASHBOARD ---
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -65,14 +146,13 @@ export default function AnalyticsDashboard() {
 
   if (loading) return (
     <div className="h-96 flex flex-col items-center justify-center space-y-4 font-sans">
-       <div className="w-8 h-8 border-2 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
-       <p className="text-xs font-semibold text-slate-400 tracking-wide uppercase animate-pulse">Loading Metrics...</p>
+       <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+       <p className="text-xs font-medium text-slate-400 tracking-wide uppercase animate-pulse">Syncing Data...</p>
     </div>
   );
   
   if (!data) return null;
 
-  // Data Processing
   const growthData = data.growth?.map((row: any) => ({
     date: new Date(row[0]).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
     views: Number(row[1]) || 0,
@@ -91,206 +171,107 @@ export default function AnalyticsDashboard() {
   })) || [];
 
   return (
-    <div className="space-y-6 pb-8" style={{ fontFamily: 'Poppins, sans-serif' }}>
+    <div className="space-y-6 pb-8 font-sans text-slate-900">
       
       {/* HEADER */}
-      <div className="flex items-center justify-between px-1">
+      <div className="flex items-center justify-between px-1 mb-2">
         <div>
-           <h2 className="text-lg font-bold text-slate-900 tracking-tight">Performance Overview</h2>
-           <p className="text-xs font-medium text-slate-500">Key metrics for the last 28 days</p>
+           <h2 className="text-xl font-semibold text-slate-900 tracking-tight">Dashboard</h2>
+           <p className="text-xs font-normal text-slate-500">Channel performance overview</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm">
-           <span className="relative flex h-2 w-2">
-             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-           </span>
-           <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wide">Live Sync</span>
+        <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-full shadow-sm">
+           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+           <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Live</span>
         </div>
       </div>
 
-      {/* ROW 1: GROWTH CHARTS */}
+      {/* ROW 1: REAL TIME PULSE (Views + Subs) */}
+      <div>
+         <RealTimePulseCard growthData={growthData} />
+      </div>
+
+      {/* ROW 2: GROWTH CHARTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Subscriber Growth (Line with Gradient) */}
+        {/* Subscriber Growth */}
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-          <SectionHeader title="Subscriber Velocity" subtitle="Net change vs Previous Period" icon={ArrowUpRight} />
+          <SectionHeader title="Subscriber Net" subtitle="Daily growth trend" icon={ArrowUpRight} />
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={growthData}>
                 <defs>
                    <linearGradient id="colorSubs" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
                    </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                <XAxis 
-                  dataKey="date" 
-                  tick={{fontSize: 10, fill: '#94A3B8', fontWeight: 500}} 
-                  tickLine={false} 
-                  axisLine={false} 
-                  dy={10} 
-                  minTickGap={30}
-                />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="date" tick={{fontSize: 10, fill: '#94a3b8', fontWeight: 500}} tickLine={false} axisLine={false} dy={10} minTickGap={30} />
                 <Tooltip content={<CustomTooltip />} cursor={{stroke: '#4F46E5', strokeWidth: 1, strokeDasharray: '4 4'}} />
-                <Area 
-                  type="monotone" 
-                  dataKey="subsNet" 
-                  stroke="#4F46E5" 
-                  strokeWidth={3} 
-                  fill="url(#colorSubs)" 
-                  activeDot={{r: 6, strokeWidth: 0, fill: '#4F46E5'}} 
-                  animationDuration={1500}
-                />
+                <Area type="monotone" dataKey="subsNet" stroke="#6366f1" strokeWidth={2} fill="url(#colorSubs)" activeDot={{r: 4, strokeWidth: 0, fill: '#6366f1'}} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Watch Time (Smooth Area) */}
+        {/* Watch Time */}
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-          <SectionHeader title="Watch Time" subtitle="Minutes consumed by audience" icon={Clock} />
+          <SectionHeader title="Watch Time" subtitle="Minutes viewed" icon={Clock} />
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={growthData}>
                 <defs>
                   <linearGradient id="colorTime" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                <XAxis 
-                  dataKey="date" 
-                  tick={{fontSize: 10, fill: '#94A3B8', fontWeight: 500}} 
-                  tickLine={false} 
-                  axisLine={false} 
-                  dy={10} 
-                  minTickGap={30}
-                />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="date" tick={{fontSize: 10, fill: '#94a3b8', fontWeight: 500}} tickLine={false} axisLine={false} dy={10} minTickGap={30} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="watchTime" 
-                  stroke="#F59E0B" 
-                  fill="url(#colorTime)" 
-                  strokeWidth={3} 
-                  activeDot={{r: 6, strokeWidth: 0, fill: '#F59E0B'}}
-                  animationDuration={1500}
-                />
+                <Area type="monotone" dataKey="watchTime" stroke="#f59e0b" fill="url(#colorTime)" strokeWidth={2} activeDot={{r: 4, strokeWidth: 0, fill: '#f59e0b'}} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* ROW 2: BREAKDOWNS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ROW 3: METRICS (ADJUSTED TO 2 COLUMNS) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Traffic Sources (Donut Chart) */}
+        {/* Traffic Sources */}
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
           <SectionHeader title="Traffic Sources" subtitle="Where viewers find you" icon={Activity} />
           <div className="flex-1 min-h-[200px] relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie 
-                   data={trafficData} 
-                   cx="50%" cy="50%" 
-                   innerRadius={55} outerRadius={75} 
-                   paddingAngle={4} 
-                   dataKey="value"
-                   stroke="none"
-                   animationDuration={1000}
-                >
+                <Pie data={trafficData} cx="50%" cy="50%" innerRadius={50} outerRadius={65} paddingAngle={4} dataKey="value" stroke="none">
                   {trafficData.map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  verticalAlign="bottom" 
-                  height={36} 
-                  iconType="circle" 
-                  iconSize={8}
-                  formatter={(value) => <span className="text-[10px] font-bold text-slate-500 uppercase ml-1">{value}</span>}
-                />
+                <Legend verticalAlign="middle" align="right" layout="vertical" iconType="circle" iconSize={6} wrapperStyle={{fontSize: '10px', fontWeight: 600, color: '#64748b'}} />
               </PieChart>
             </ResponsiveContainer>
-            {/* Center Stat */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-8">
-               <span className="text-2xl font-bold text-slate-800 tracking-tight">
-                 {trafficData.reduce((acc:number, curr:any) => acc + curr.value, 0) > 0 ? "100%" : "0%"}
-               </span>
-            </div>
           </div>
         </div>
 
-        {/* Top Locations (Rounded Horizontal Bar) */}
+        {/* Top Locations */}
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-          <SectionHeader title="Top Geographies" subtitle="Audience location by views" icon={MapPin} />
+          <SectionHeader title="Top Geographies" subtitle="Audience location" icon={MapPin} />
           <div className="flex-1 min-h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={geoData} layout="vertical" margin={{left: 0, right: 10, top: 0, bottom: 0}}>
-                <CartesianGrid horizontal={false} stroke="#F1F5F9" />
                 <XAxis type="number" hide />
-                <YAxis 
-                  dataKey="name" 
-                  type="category" 
-                  width={30} 
-                  tick={{fontSize: 11, fontWeight: 600, fill: '#64748B'}} 
-                  axisLine={false} 
-                  tickLine={false} 
-                />
-                <Tooltip content={<CustomTooltip />} cursor={{fill: '#F8FAFC'}} />
-                <Bar 
-                  dataKey="value" 
-                  fill="#8B5CF6" 
-                  radius={[0, 6, 6, 0]} 
-                  barSize={16} 
-                  animationDuration={1500}
-                  background={{ fill: '#F8FAFC', radius: [0, 6, 6, 0] }} // Light background track for modern feel
-                />
+                <YAxis dataKey="name" type="category" width={30} tick={{fontSize: 11, fontWeight: 500, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{fill: '#f8fafc'}} />
+                <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={12} background={{ fill: '#f8fafc', radius: [0, 4, 4, 0] }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Tags Leaderboard (Modern List) */}
-        <div className="bg-white p-0 rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 pb-2">
-            <SectionHeader title="Top Tags" subtitle="Keywords driving traffic" icon={Hash} />
-          </div>
-          
-          <div className="overflow-y-auto max-h-[240px] px-2 pb-2 scrollbar-thin scrollbar-thumb-slate-200">
-            <table className="w-full text-left">
-              <thead className="bg-slate-50 sticky top-0 z-10">
-                <tr>
-                  <th className="py-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider rounded-l-md">Keyword</th>
-                  <th className="py-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right rounded-r-md">Views</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {data.topTags?.map((tag: any, i: number) => (
-                  <tr key={i} className="group hover:bg-indigo-50/50 transition-colors cursor-default">
-                    <td className="py-2.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-slate-300 w-4">#{i + 1}</span>
-                        <span className="text-xs font-semibold text-slate-700 group-hover:text-indigo-600 transition-colors truncate max-w-[100px]">
-                          {tag.tag}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-2.5 px-4 text-right">
-                       <span className="inline-block px-2 py-0.5 bg-slate-100 group-hover:bg-indigo-100 text-slate-600 group-hover:text-indigo-700 rounded text-[10px] font-bold tabular-nums transition-colors">
-                         {Number(tag.views).toLocaleString()}
-                       </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
     </div>

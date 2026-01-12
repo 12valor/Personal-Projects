@@ -1,6 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { 
+  MessageSquare, Search, ThumbsUp, Sparkles, 
+  Send, X, Check, AlertCircle, Loader2, 
+  Filter, MoreHorizontal, CornerDownLeft
+} from "lucide-react";
 
 interface Comment {
   id: string;
@@ -9,7 +14,6 @@ interface Comment {
   likes: number;
 }
 
-// Types for our new Status Modal
 type StatusState = 'IDLE' | 'SENDING' | 'SUCCESS' | 'ERROR';
 
 export default function CommentReplyTool() {
@@ -26,11 +30,11 @@ export default function CommentReplyTool() {
   const [smartReplies, setSmartReplies] = useState<string[]>([]);
   const [isDrafting, setIsDrafting] = useState(false);
 
-  // STATUS MODAL STATE (The replacement for alerts)
+  // STATUS STATE
   const [status, setStatus] = useState<StatusState>('IDLE');
   const [statusMessage, setStatusMessage] = useState("");
 
-  // Helper: Extract Video ID
+  // HELPER: Extract ID
   const extractVideoId = (input: string) => {
     if (!input) return "";
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
@@ -38,6 +42,7 @@ export default function CommentReplyTool() {
     return (match && match[2].length === 11) ? match[2] : input;
   };
 
+  // ACTIONS
   const fetchComments = async () => {
     if (!videoId) return;
     setLoadingComments(true);
@@ -52,7 +57,6 @@ export default function CommentReplyTool() {
       if (!res.ok) throw new Error(data.error);
       if (data.comments) setComments(data.comments);
     } catch (err) {
-      // Small inline error, not a big alert
       console.error(err);
     } finally {
       setLoadingComments(false);
@@ -93,12 +97,7 @@ export default function CommentReplyTool() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: `
-            Act as a casual YouTuber. Provide 3 short, human-like responses to: "${comment.text}".
-            RULES: One word or emoji only. No punctuation.
-            Examples: Thanks, LOL, ❤️, Facts, True.
-            Output format: 3 words/emojis separated by newlines.
-          `
+          text: `Act as a casual YouTuber. Provide 3 short, human-like responses to: "${comment.text}". RULES: One word or emoji only. No punctuation. Examples: Thanks, LOL, ❤️, Facts, True.`
         }),
       });
       const data = await response.json();
@@ -111,18 +110,14 @@ export default function CommentReplyTool() {
     }
   };
 
-  // --- THE NEW SEND LOGIC ---
   const executeSend = async (ids: string[], text: string) => {
     if (!text) return;
-    
-    // 1. Show Loading Modal
     setStatus('SENDING');
-    setStatusMessage(`Replying to ${ids.length} comment(s)...`);
+    setStatusMessage(`Replying to ${ids.length} viewer(s)...`);
 
     let successCount = 0;
     let failCount = 0;
 
-    // 2. Loop through IDs and Post
     for (const id of ids) {
       try {
         const res = await fetch("/api/youtube/reply", {
@@ -130,285 +125,299 @@ export default function CommentReplyTool() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ parentId: id, text: text }),
         });
-        
         if (res.ok) successCount++;
         else failCount++;
-
       } catch (e) {
         failCount++;
       }
-      
-      // Update message live
       setStatusMessage(`Sent ${successCount}/${ids.length}...`);
     }
 
-    // 3. Show Final Result
     if (failCount === 0) {
       setStatus('SUCCESS');
-      setStatusMessage(`Successfully replied to ${successCount} comment(s)!`);
-      // Cleanup
+      setStatusMessage(`Replied to ${successCount} comments.`);
       setManualReply("");
       setSelectedIds(new Set());
-      setActiveComment(null); // Close the detail modal if open
+      setActiveComment(null);
+      setTimeout(() => setStatus('IDLE'), 2000);
     } else {
       setStatus('ERROR');
-      setStatusMessage(`Finished: ${successCount} sent, ${failCount} failed.`);
-    }
-
-    // 4. Auto-close success modal after 2s
-    if (failCount === 0) {
-      setTimeout(() => setStatus('IDLE'), 2000);
+      setStatusMessage(`${successCount} sent, ${failCount} failed.`);
     }
   };
 
-  const handleBulkSend = () => {
-    executeSend(Array.from(selectedIds), manualReply);
-  };
-
+  const handleBulkSend = () => executeSend(Array.from(selectedIds), manualReply);
   const handleSingleSend = (text: string) => {
-    if (activeComment) {
-      executeSend([activeComment.id], text);
-    }
+    if (activeComment) executeSend([activeComment.id], text);
   };
 
   const getAvatarColor = (name: string) => {
-    const colors = ['bg-red-100 text-red-600', 'bg-blue-100 text-blue-600', 'bg-green-100 text-green-600', 'bg-purple-100 text-purple-600', 'bg-orange-100 text-orange-600'];
+    const colors = ['bg-rose-100 text-rose-600', 'bg-blue-100 text-blue-600', 'bg-emerald-100 text-emerald-600', 'bg-amber-100 text-amber-600', 'bg-violet-100 text-violet-600'];
     return colors[name.charCodeAt(0) % colors.length];
   };
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[650px] overflow-hidden font-sans relative z-0">
+      <div className="bg-white rounded-lg border border-slate-200 flex flex-col h-[650px] overflow-hidden font-sans text-slate-900 shadow-sm relative">
         
-        {/* HEADER */}
-        <div className="px-6 py-5 border-b border-gray-100 bg-white z-10">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-900 tracking-tight">Comments</h3>
-            {comments.length > 0 && (
-               <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
-                 {comments.length}
-               </span>
-            )}
-          </div>
-
-          <div className="flex gap-3">
-            <div className="relative flex-1 group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-400">🔍</span>
-              </div>
-              {comments.length > 0 ? (
+        {/* HEADER TOOLBAR */}
+        <div className="px-4 py-3 border-b border-slate-200 bg-white flex items-center justify-between gap-4 z-10">
+          <div className="flex items-center gap-3 flex-1">
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              <MessageSquare size={16} className="text-slate-500" />
+              Comments
+            </h3>
+            <div className="h-4 w-px bg-slate-200 mx-1" />
+            
+            {comments.length > 0 ? (
+              <div className="relative flex-1 max-w-sm group">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600 transition-colors" size={14} />
                 <input 
                   type="text" 
-                  placeholder="Filter comments..." 
-                  className="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-transparent group-hover:bg-gray-100 focus:bg-white focus:border-gray-200 rounded-xl text-sm transition-all outline-none"
+                  placeholder="Filter by keyword..." 
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-300 transition-all"
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
                 />
-              ) : (
+              </div>
+            ) : (
+              <div className="relative flex-1 max-w-sm group">
                 <input 
                   type="text" 
-                  placeholder="Paste Video Link..." 
-                  className="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-transparent group-hover:bg-gray-100 focus:bg-white focus:border-gray-200 rounded-xl text-sm transition-all outline-none"
+                  placeholder="Paste YouTube Link or Video ID..." 
+                  className="w-full pl-3 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-300 transition-all"
                   value={videoId}
                   onChange={(e) => setVideoId(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && fetchComments()}
                 />
-              )}
-            </div>
-            
-            {comments.length === 0 && (
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {comments.length === 0 ? (
               <button 
                 onClick={fetchComments}
                 disabled={loadingComments || !videoId}
-                className="bg-black text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 shadow-sm"
+                className="bg-slate-900 text-white px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-slate-800 disabled:opacity-50 transition-all flex items-center gap-2 shadow-sm"
               >
-                {loadingComments ? "Loading..." : "Import"}
+                {loadingComments ? <Loader2 size={14} className="animate-spin" /> : "Import"}
               </button>
-            )}
-
-            {comments.length > 0 && (
-               <button 
-                 onClick={toggleSelectAll}
-                 className="text-sm font-semibold text-gray-500 hover:text-black px-2 transition-colors"
-               >
-                 {selectedIds.size === filteredComments.length ? "None" : "All"}
-               </button>
+            ) : (
+              <button 
+                onClick={toggleSelectAll}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 px-3 py-1.5 rounded-md transition-colors border border-transparent hover:border-slate-200"
+              >
+                {selectedIds.size === filteredComments.length ? "Deselect All" : "Select All"}
+              </button>
             )}
           </div>
         </div>
 
-        {/* BODY */}
-        <div className="flex-1 overflow-y-auto bg-white">
-          {comments.length === 0 && !loadingComments && (
-            <div className="h-full flex flex-col items-center justify-center text-gray-400 p-10">
-              <div className="text-4xl mb-4 opacity-20">💬</div>
-              <p className="text-sm">Import a video to manage comments</p>
+        {/* CONTENT AREA */}
+        <div className="flex-1 overflow-y-auto bg-slate-50/30 relative">
+          {/* Loading State */}
+          {loadingComments && (
+            <div className="p-4 space-y-3">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="flex gap-4 p-4 bg-white rounded-lg border border-slate-100 animate-pulse">
+                  <div className="w-8 h-8 bg-slate-100 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <div className="w-1/4 h-3 bg-slate-100 rounded" />
+                    <div className="w-3/4 h-3 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
-          <div className="divide-y divide-gray-50">
-            {filteredComments.map((comment) => (
-              <div 
-                key={comment.id}
-                className={`group flex items-start gap-4 p-4 transition-all hover:bg-gray-50 cursor-pointer ${selectedIds.has(comment.id) ? "bg-blue-50/50" : ""}`}
-                onClick={() => openModalAndGenerate(comment)}
-              >
-                <div className="pt-1" onClick={(e) => { e.stopPropagation(); toggleSelection(comment.id); }}>
-                  <input 
-                    type="checkbox"
-                    className="w-5 h-5 rounded-full border-gray-300 text-black focus:ring-black cursor-pointer"
-                    checked={selectedIds.has(comment.id)}
-                    onChange={() => {}} 
-                  />
-                </div>
-
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${getAvatarColor(comment.author)}`}>
-                  {comment.author.charAt(0).toUpperCase()}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <h4 className="text-sm font-semibold text-gray-900 truncate">{comment.author}</h4>
-                    <span className="text-xs text-gray-400 flex items-center gap-1">
-                      ❤️ {comment.likes}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{comment.text}</p>
-                </div>
+          {/* Empty State */}
+          {comments.length === 0 && !loadingComments && (
+            <div className="h-full flex flex-col items-center justify-center text-slate-400 p-10">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                <MessageSquare className="text-slate-300" size={24} />
               </div>
-            ))}
-          </div>
+              <p className="text-sm font-medium text-slate-500">No comments loaded</p>
+              <p className="text-xs text-slate-400 mt-1">Import a video to start managing engagement.</p>
+            </div>
+          )}
+
+          {/* Comment List */}
+          {comments.length > 0 && (
+            <div className="divide-y divide-slate-100 bg-white min-h-full">
+              {filteredComments.map((comment) => {
+                const isSelected = selectedIds.has(comment.id);
+                return (
+                  <div 
+                    key={comment.id}
+                    onClick={() => openModalAndGenerate(comment)}
+                    className={`group flex items-start gap-4 p-4 transition-all cursor-pointer hover:bg-slate-50/80 ${isSelected ? "bg-slate-50" : ""}`}
+                  >
+                    {/* Checkbox */}
+                    <div className="pt-1" onClick={(e) => { e.stopPropagation(); toggleSelection(comment.id); }}>
+                      <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${isSelected ? 'bg-slate-900 border-slate-900' : 'border-slate-300 bg-white hover:border-slate-400'}`}>
+                        {isSelected && <Check size={12} className="text-white" />}
+                      </div>
+                    </div>
+
+                    {/* Avatar */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${getAvatarColor(comment.author)}`}>
+                      {comment.author.charAt(0).toUpperCase()}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <h4 className="text-sm font-semibold text-slate-900 truncate">{comment.author}</h4>
+                        <div className="flex items-center gap-3">
+                           <span className="text-xs text-slate-400 flex items-center gap-1 bg-slate-50 px-1.5 py-0.5 rounded">
+                             <ThumbsUp size={10} /> {comment.likes}
+                           </span>
+                           <span className="text-xs text-slate-300 group-hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1">
+                             <CornerDownLeft size={12} /> Reply
+                           </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">{comment.text}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* BULK ACTIONS DECK */}
+        {/* BULK ACTION BAR (Floating) */}
         {selectedIds.size > 0 && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 flex items-center gap-2 animate-in slide-in-from-bottom-4 z-20">
-            <div className="pl-3 pr-2 text-sm font-semibold text-gray-900 whitespace-nowrap">
-              {selectedIds.size} selected
+          <div className="absolute bottom-6 left-6 right-6 z-20 animate-in slide-in-from-bottom-4 fade-in duration-300">
+            <div className="bg-slate-900 text-white p-2 rounded-xl shadow-2xl shadow-slate-900/20 flex items-center gap-3">
+              <div className="pl-4 text-xs font-bold whitespace-nowrap text-slate-300">
+                {selectedIds.size} selected
+              </div>
+              <div className="h-4 w-px bg-slate-700" />
+              <input 
+                type="text" 
+                placeholder="Write a reply to all..." 
+                className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none border-none py-2"
+                value={manualReply}
+                onChange={(e) => setManualReply(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleBulkSend()}
+              />
+              <button 
+                onClick={handleBulkSend}
+                disabled={!manualReply}
+                className="bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 disabled:opacity-50 transition-all flex items-center gap-2"
+              >
+                Reply <Send size={12} />
+              </button>
             </div>
-            <div className="h-6 w-px bg-gray-200 mx-1"></div>
-            <input 
-              type="text" 
-              placeholder="Reply to all..." 
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
-              value={manualReply}
-              onChange={(e) => setManualReply(e.target.value)}
-            />
-            <button 
-              onClick={handleBulkSend}
-              disabled={!manualReply}
-              className="bg-black text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-800 disabled:opacity-50 transition-all"
-            >
-              Reply
-            </button>
           </div>
         )}
       </div>
 
-      {/* --- SINGLE COMMENT DETAIL MODAL --- */}
+      {/* --- DETAIL & REPLY MODAL --- */}
       {activeComment && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 ring-1 ring-white/20">
-            {/* Header */}
-            <div className="bg-gray-50/50 px-6 py-4 flex justify-between items-center border-b border-gray-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-2 duration-200 ring-1 ring-black/5">
+            
+            {/* Modal Header */}
+            <div className="bg-white px-6 py-4 flex justify-between items-center border-b border-slate-100">
               <div className="flex items-center gap-3">
-                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow-sm ${getAvatarColor(activeComment.author)}`}>
+                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${getAvatarColor(activeComment.author)}`}>
                    {activeComment.author.charAt(0).toUpperCase()}
                  </div>
-                 <div>
-                   <h3 className="font-bold text-gray-900">{activeComment.author}</h3>
-                   <p className="text-xs text-gray-500 font-medium">Viewer Comment</p>
-                 </div>
+                 <h3 className="font-bold text-slate-900 text-sm">{activeComment.author}</h3>
               </div>
               <button 
                 onClick={() => setActiveComment(null)} 
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 transition-all"
+                className="text-slate-400 hover:text-slate-900 p-1 hover:bg-slate-50 rounded-md transition-colors"
               >
-                ✕
+                <X size={18} />
               </button>
             </div>
 
-            {/* Comment Body */}
-            <div className="p-8">
-              <p className="text-gray-700 text-lg font-medium leading-relaxed relative z-10">
-                "{activeComment.text}"
-              </p>
+            {/* Viewer's Comment (Context) */}
+            <div className="p-6 bg-slate-50/50">
+              <div className="relative">
+                <div className="absolute -left-3 top-0 bottom-0 w-1 bg-slate-200 rounded-full" />
+                <p className="text-slate-700 text-base leading-relaxed pl-4 italic">
+                  "{activeComment.text}"
+                </p>
+              </div>
             </div>
 
-            {/* Reply Actions */}
-            <div className="bg-gray-50 px-6 py-6 border-t border-gray-100">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Quick Replies</span>
+            {/* Smart Suggestions */}
+            <div className="px-6 py-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles size={14} className="text-indigo-500" />
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">AI Suggestions</span>
               </div>
               
               <div className="flex flex-wrap gap-2">
-                {smartReplies.map((reply, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => handleSingleSend(reply.replace(/^\d+\.\s*/, '').replace(/"/g, ''))}
-                    className="px-5 py-2.5 bg-white hover:bg-black hover:text-white border border-gray-200 hover:border-black rounded-full text-sm font-semibold shadow-sm transition-all transform active:scale-95"
-                  >
-                    {reply.replace(/^\d+\.\s*/, '').replace(/"/g, '')}
-                  </button>
-                ))}
-                {isDrafting && <div className="text-xs text-gray-400 p-2 animate-pulse">Drafting...</div>}
+                {isDrafting ? (
+                  <div className="flex items-center gap-2 text-xs text-slate-400 px-2 py-1">
+                    <Loader2 size={12} className="animate-spin" /> Generating ideas...
+                  </div>
+                ) : (
+                  smartReplies.map((reply, i) => {
+                    const cleanReply = reply.replace(/^\d+\.\s*/, '').replace(/"/g, '');
+                    return (
+                      <button 
+                        key={i}
+                        onClick={() => handleSingleSend(cleanReply)}
+                        className="px-3 py-1.5 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 text-slate-600 hover:text-indigo-700 rounded-md text-sm font-medium transition-all text-left"
+                      >
+                        {cleanReply}
+                      </button>
+                    )
+                  })
+                )}
               </div>
-              
-              <div className="mt-6 pt-4 border-t border-gray-200 flex gap-2">
-                 <input 
-                   type="text" 
-                   placeholder="Type a custom reply..." 
-                   className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black outline-none transition-all"
-                   onKeyDown={(e) => {
-                     if (e.key === 'Enter') handleSingleSend(e.currentTarget.value);
-                   }}
-                 />
-              </div>
+            </div>
+
+            {/* Custom Input */}
+            <div className="p-4 border-t border-slate-100 bg-white flex gap-2">
+               <input 
+                 type="text" 
+                 autoFocus
+                 placeholder="Type a custom reply..." 
+                 className="flex-1 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 outline-none transition-all"
+                 onKeyDown={(e) => {
+                   if (e.key === 'Enter') handleSingleSend(e.currentTarget.value);
+                 }}
+               />
+               <button 
+                 className="bg-slate-900 text-white p-2.5 rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
+                 onClick={(e: any) => {
+                    const input = e.currentTarget.previousSibling as HTMLInputElement;
+                    handleSingleSend(input.value);
+                 }}
+               >
+                 <Send size={16} />
+               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* --- STATUS MODAL (Success / Error / Loading) --- */}
+      {/* --- STATUS TOAST --- */}
       {status !== 'IDLE' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 flex flex-col items-center gap-4 min-w-[200px] animate-in zoom-in-95 duration-200 pointer-events-auto">
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-slate-700/50">
+            {status === 'SENDING' && <Loader2 size={18} className="animate-spin text-slate-400" />}
+            {status === 'SUCCESS' && <Check size={18} className="text-emerald-400" />}
+            {status === 'ERROR' && <AlertCircle size={18} className="text-rose-400" />}
             
-            {status === 'SENDING' && (
-              <>
-                <div className="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-                <div className="text-center">
-                  <h4 className="font-bold text-gray-900">Sending Replies</h4>
-                  <p className="text-sm text-gray-500 mt-1">{statusMessage}</p>
-                </div>
-              </>
-            )}
-
-            {status === 'SUCCESS' && (
-              <>
-                <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl">✓</div>
-                <div className="text-center">
-                  <h4 className="font-bold text-gray-900">Sent!</h4>
-                  <p className="text-sm text-gray-500 mt-1">{statusMessage}</p>
-                </div>
-              </>
-            )}
-
+            <span className="text-sm font-medium">{statusMessage}</span>
+            
             {status === 'ERROR' && (
-              <>
-                <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-2xl">✕</div>
-                <div className="text-center">
-                  <h4 className="font-bold text-gray-900">Error</h4>
-                  <p className="text-sm text-gray-500 mt-1">{statusMessage}</p>
-                </div>
-                <button 
-                  onClick={() => setStatus('IDLE')}
-                  className="mt-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-bold text-gray-700"
-                >
-                  Close
-                </button>
-              </>
+              <button 
+                onClick={() => setStatus('IDLE')}
+                className="ml-2 text-slate-400 hover:text-white"
+              >
+                <X size={14} />
+              </button>
             )}
-
           </div>
         </div>
       )}

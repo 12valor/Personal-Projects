@@ -1,132 +1,104 @@
 import { google } from "googleapis";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth"; // <--- FIXED IMPORT
 
 export async function GET() {
   const session: any = await getServerSession(authOptions);
-  
+
   if (!session || !session.accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const youtubeAnalytics = google.youtubeAnalytics({
+    version: "v2",
+    auth: process.env.YOUTUBE_API_KEY, 
+  });
+
+  const youtubeData = google.youtube({
+    version: "v3",
+    auth: process.env.YOUTUBE_API_KEY,
+  });
+
   try {
-    const auth = new google.auth.OAuth2();
-    auth.setCredentials({ access_token: session.accessToken });
-    
-    const ytAnalytics = google.youtubeAnalytics({ version: "v2", auth });
-    const youtube = google.youtube({ version: "v3", auth });
+    // 1. Analytics Report
+    const response = await youtubeAnalytics.reports.query({
+      access_token: session.accessToken,
+      ids: "channel==MINE",
+      startDate: "2022-01-01",
+      endDate: new Date().toISOString().split("T")[0], 
+      metrics: "views,estimatedMinutesWatched,subscribersGained,subscribersLost",
+      dimensions: "day",
+      sort: "day",
+    });
 
-    // Dates: Last 30 Days
-    const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const endDate = new Date().toISOString().split('T')[0];
+    // 2. Traffic Sources
+    const trafficRes = await youtubeAnalytics.reports.query({
+      access_token: session.accessToken,
+      ids: "channel==MINE",
+      startDate: "2023-01-01",
+      endDate: new Date().toISOString().split("T")[0],
+      metrics: "views",
+      dimensions: "insightTrafficSourceType",
+      sort: "-views",
+      maxResults: 5,
+    });
 
-    // --- 1. GROWTH REPORT ---
-    let growthRows = [];
-    try {
-      const res = await ytAnalytics.reports.query({
-        ids: "channel==MINE",
-        startDate, endDate,
-        metrics: "views,subscribersGained,subscribersLost,estimatedMinutesWatched",
-        dimensions: "day",
-        sort: "day",
-      });
-      growthRows = res.data.rows || [];
-    } catch (e) { console.error("Growth Data Failed", e); }
+    // 3. Geography
+    const geoRes = await youtubeAnalytics.reports.query({
+      access_token: session.accessToken,
+      ids: "channel==MINE",
+      startDate: "2023-01-01",
+      endDate: new Date().toISOString().split("T")[0],
+      metrics: "views",
+      dimensions: "country",
+      sort: "-views",
+      maxResults: 5,
+    });
 
-    // --- 2. TRAFFIC SOURCES ---
-    let trafficRows = [];
-    try {
-      const res = await ytAnalytics.reports.query({
-        ids: "channel==MINE",
-        startDate, endDate,
-        metrics: "views",
-        dimensions: "insightTrafficSourceType",
-        sort: "-views",
-        maxResults: 5,
-      });
-      trafficRows = res.data.rows || [];
-    } catch (e) { console.error("Traffic Data Failed", e); }
+    // 4. Top Tags
+    const topVideosRes = await youtubeData.search.list({
+      access_token: session.accessToken,
+      part: ["snippet"],
+      forMine: true,
+      order: "viewCount",
+      type: ["video"],
+      maxResults: 5,
+    });
 
-    // --- 3. GEOGRAPHY ---
-    let geoRows = [];
-    try {
-      const res = await ytAnalytics.reports.query({
-        ids: "channel==MINE",
-        startDate, endDate,
-        metrics: "views",
-        dimensions: "country",
-        sort: "-views",
-        maxResults: 5,
-      });
-      geoRows = res.data.rows || [];
-    } catch (e) { console.error("Geo Data Failed", e); }
-
-    // --- 4. HEATMAP (The likely cause of your 500 error) ---
-    let heatmapRows = [];
-    try {
-      const res = await ytAnalytics.reports.query({
-        ids: "channel==MINE",
-        startDate, endDate,
-        metrics: "views",
-        dimensions: "dayOfWeek,hour", // Complex query
-        sort: "-views",
-      });
-      heatmapRows = res.data.rows || [];
-    } catch (e) { 
-      console.warn("Heatmap Data Unavailable (Normal for new channels)"); 
-      // We don't throw an error here, we just return empty array
-    }
-
-    // --- 5. TOP TAGS ---
-    let topTags: any[] = [];
-    try {
-      const topVideos = await ytAnalytics.reports.query({
-        ids: "channel==MINE",
-        startDate, endDate,
-        metrics: "views",
-        dimensions: "video",
-        sort: "-views",
-        maxResults: 10,
-      });
-
-      const videoIds = topVideos.data.rows?.map((row: any) => row[0]) || [];
-      
+    const topTagsMap: Record<string, number> = {};
+    if (topVideosRes.data.items) {
+      const videoIds = topVideosRes.data.items.map((v) => v.id?.videoId).filter(Boolean) as string[];
       if (videoIds.length > 0) {
-        const videoDetails = await youtube.videos.list({
-          part: ["snippet"],
+        const videosDetails = await youtubeData.videos.list({
+          access_token: session.accessToken,
+          part: ["snippet", "statistics"],
           id: videoIds,
         });
 
-        const tagMap: Record<string, number> = {};
-        videoDetails.data.items?.forEach((video) => {
-          const stats = topVideos.data.rows?.find((r: any) => r[0] === video.id);
-          const views = stats ? Number(stats[1]) : 0;
-          
+        videosDetails.data.items?.forEach((video) => {
+          const views = parseInt(video.statistics?.viewCount || "0");
           video.snippet?.tags?.forEach((tag) => {
-            const lowerTag = tag.toLowerCase();
-            tagMap[lowerTag] = (tagMap[lowerTag] || 0) + views;
+            topTagsMap[tag] = (topTagsMap[tag] || 0) + views;
           });
         });
-
-        topTags = Object.entries(tagMap)
-          .map(([tag, views]) => ({ tag, views }))
-          .sort((a, b) => b.views - a.views)
-          .slice(0, 5);
       }
-    } catch (e) { console.error("Tags Data Failed", e); }
+    }
 
-    // RETURN ALL DATA (Even if some parts are empty)
+    const topTags = Object.entries(topTagsMap)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([tag, views]) => ({ tag, views }));
+
     return NextResponse.json({
-      growth: growthRows,
-      traffic: trafficRows,
-      geo: geoRows,
-      heatmap: heatmapRows,
+      growth: response.data.rows,
+      traffic: trafficRes.data.rows,
+      geo: geoRes.data.rows,
       topTags: topTags,
     });
 
-  } catch (error: any) {
-    console.error("Critical Analytics Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error("Analytics API Error:", error);
+    return NextResponse.json({ error: "Failed to fetch analytics" }, { status: 500 });
   }
 }

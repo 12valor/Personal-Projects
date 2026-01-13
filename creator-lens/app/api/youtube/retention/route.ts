@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth"; // <--- FIXED IMPORT
 
 export async function GET(request: Request) {
   const session: any = await getServerSession(authOptions);

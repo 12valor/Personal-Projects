@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth"; // <--- FIXED IMPORT
 
 // Helper: Extract ID from any YouTube URL (Server-Side)
 const extractVideoId = (input: string) => {

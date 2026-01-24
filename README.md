@@ -33,7 +33,7 @@ The following technologies were utilized across the projects in this repository 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
 
-![CreatorLens Dashboard](Showcase%20Screenshots/creatorlens.png)
+<img src="Showcase%20Screenshots/creatorlens.png" alt="CreatorLens Dashboard" height="350">
 
 CreatorLens is a comprehensive dashboard for YouTube creators to track growth and analyze content performance. It provides real-time insights and actionable tools to optimize engagement strategies.
 
@@ -45,7 +45,7 @@ CreatorLens is a comprehensive dashboard for YouTube creators to track growth an
 ### CRITIQUE
 **Creator Feedback Platform**
 
-![CRITIQUE Platform](Showcase%20Screenshots/critique.png)
+<img src="Showcase%20Screenshots/critique.png" alt="CRITIQUE Platform" height="350">
 
 CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
 
@@ -61,7 +61,7 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 ### TUPV Website
 **Institutional Portal**
 
-![TUPV Website](Showcase%20Screenshots/tupv.png)
+<img src="Showcase%20Screenshots/tupv.png" alt="TUPV Website" height="350">
 
 A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
 
@@ -72,7 +72,7 @@ A digital portal developed for the Technological University of the Philippines -
 ### Technowatch
 **Organization Website Prototype**
 
-![Technowatch Website](Showcase%20Screenshots/technowatchweb.png)
+<img src="Showcase%20Screenshots/technowatchweb.png" alt="Technowatch Website" height="350">
 
 A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
 
@@ -85,6 +85,10 @@ A prototype developed for the Technowatch school organization. This project focu
 
 ### Retrieve
 **Lost & Found Management System**
+
+![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
+
+> **Note:** This project is a paid commission. The source code is displayed here for demonstration purposes only and is **not** open source under the repository's main MIT license. All rights reserved.
 
 A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
 
@@ -99,7 +103,7 @@ A commissioned web application designed to facilitate the reporting and recovery
 ### Flow
 **Natural Products Marketplace**
 
-![Flow Marketplace](Showcase%20Screenshots/flow.png)
+<img src="Showcase%20Screenshots/flow.png" alt="Flow Marketplace" height="350">
 
 Flow is an e-commerce platform for organic products. It demonstrates full-stack capabilities including product management, dynamic cart logic, and a streamlined checkout flow.
 

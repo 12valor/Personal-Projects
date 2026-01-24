@@ -33,8 +33,6 @@ The following technologies were utilized across the projects in this repository 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
 
-<img src="Showcase%20Screenshots/creatorlens.png" alt="CreatorLens Dashboard" height="350">
-
 CreatorLens is a comprehensive dashboard for YouTube creators to track growth and analyze content performance. It provides real-time insights and actionable tools to optimize engagement strategies.
 
 * **Growth Tracking:** Real-time monitoring of subscriber and view trends.
@@ -44,8 +42,6 @@ CreatorLens is a comprehensive dashboard for YouTube creators to track growth an
 
 ### CRITIQUE
 **Creator Feedback Platform**
-
-<img src="Showcase%20Screenshots/critique.png" alt="CRITIQUE Platform" height="350">
 
 CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
 
@@ -61,8 +57,6 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 ### TUPV Website
 **Institutional Portal**
 
-<img src="Showcase%20Screenshots/tupv.png" alt="TUPV Website" height="350">
-
 A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
 
 * **Information Hub:** Centralized access to announcements, news, and events.
@@ -71,8 +65,6 @@ A digital portal developed for the Technological University of the Philippines -
 
 ### Technowatch
 **Organization Website Prototype**
-
-<img src="Showcase%20Screenshots/technowatchweb.png" alt="Technowatch Website" height="350">
 
 A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
 
@@ -103,13 +95,30 @@ A commissioned web application designed to facilitate the reporting and recovery
 ### Flow
 **Natural Products Marketplace**
 
-<img src="Showcase%20Screenshots/flow.png" alt="Flow Marketplace" height="350">
-
 Flow is an e-commerce platform for organic products. It demonstrates full-stack capabilities including product management, dynamic cart logic, and a streamlined checkout flow.
 
 * **Brand Identity:** Nature-inspired, minimalist user interface.
 * **Inventory Management:** Dynamic filtering for sustainable product categories.
 * **Full-Stack Integration:** Seamless cart persistence and checkout processing.
+
+---
+
+## 📸 Project Gallery
+
+### CreatorLens
+<img src="Showcase%20Screenshots/creatorlens.png" alt="CreatorLens Dashboard" height="350">
+
+### CRITIQUE
+<img src="Showcase%20Screenshots/critique.png" alt="CRITIQUE Platform" height="350">
+
+### Flow Marketplace
+<img src="Showcase%20Screenshots/flow.png" alt="Flow Marketplace" height="350">
+
+### TUPV Website
+<img src="Showcase%20Screenshots/tupv.png" alt="TUPV Website" height="350">
+
+### Technowatch Website
+<img src="Showcase%20Screenshots/technowatchweb.png" alt="Technowatch Website" height="350">
 
 ---
 

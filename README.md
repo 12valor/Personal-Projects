@@ -1,5 +1,7 @@
 # Personal Project Showcase
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 > **Note on Maintenance:** As of 2026, all projects within this repository are no longer actively maintained. They serve as a portfolio of past work, technical experiments, and design explorations.
 
 This repository is a curated collection of personal projects showcasing experiments in web development, software engineering, and product design. Each project focuses on solving specific problems with an emphasis on clean UI, thoughtful UX, and practical functionality.

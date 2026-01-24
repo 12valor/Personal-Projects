@@ -28,10 +28,12 @@ The following technologies were utilized across the projects in this repository 
 
 ---
 
-## Tools & Platforms
+## 🛠️ Tools & Platforms
 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
+
+![CreatorLens Dashboard](Showcase%20Screenshots/creatorlens.png)
 
 CreatorLens is a comprehensive dashboard for YouTube creators to track growth and analyze content performance. It provides real-time insights and actionable tools to optimize engagement strategies.
 
@@ -39,10 +41,11 @@ CreatorLens is a comprehensive dashboard for YouTube creators to track growth an
 * **Optimization:** Analysis of viewership patterns to suggest optimal posting schedules.
 * **Predictive Analytics:** Performance estimation based on historical data.
 * **Content Tools:** Automatic generation of highlight clips from high-engagement segments.
-* **Interface:** Minimalist dashboard featuring system-aware light and dark modes.
 
-### Critique
+### CRITIQUE
 **Creator Feedback Platform**
+
+![CRITIQUE Platform](Showcase%20Screenshots/critique.png)
 
 CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
 
@@ -53,10 +56,12 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 
 ---
 
-## Institutions
+## 🏛️ Institutions
 
 ### TUPV Website
 **Institutional Portal**
+
+![TUPV Website](Showcase%20Screenshots/tupv.png)
 
 A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
 
@@ -67,6 +72,8 @@ A digital portal developed for the Technological University of the Philippines -
 ### Technowatch
 **Organization Website Prototype**
 
+![Technowatch Website](Showcase%20Screenshots/technowatchweb.png)
+
 A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
 
 * **Status:** Early-stage concept.
@@ -74,7 +81,7 @@ A prototype developed for the Technowatch school organization. This project focu
 
 ---
 
-## Commissions
+## 🤝 Commissions
 
 ### Retrieve
 **Lost & Found Management System**
@@ -87,10 +94,12 @@ A commissioned web application designed to facilitate the reporting and recovery
 
 ---
 
-## Commerce
+## 🛍️ Commerce
 
 ### Flow
 **Natural Products Marketplace**
+
+![Flow Marketplace](Showcase%20Screenshots/flow.png)
 
 Flow is an e-commerce platform for organic products. It demonstrates full-stack capabilities including product management, dynamic cart logic, and a streamlined checkout flow.
 

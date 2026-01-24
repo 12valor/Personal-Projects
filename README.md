@@ -28,6 +28,14 @@ The following technologies were utilized across the projects in this repository 
 
 ---
 
+## 📸 Project Gallery
+
+| **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> |
+
+---
+
 ## 🛠️ Tools & Platforms
 
 ### CreatorLens
@@ -100,25 +108,6 @@ Flow is an e-commerce platform for organic products. It demonstrates full-stack 
 * **Brand Identity:** Nature-inspired, minimalist user interface.
 * **Inventory Management:** Dynamic filtering for sustainable product categories.
 * **Full-Stack Integration:** Seamless cart persistence and checkout processing.
-
----
-
-## 📸 Project Gallery
-
-### CreatorLens
-<img src="Showcase%20Screenshots/creatorlens.png" alt="CreatorLens Dashboard" height="350">
-
-### CRITIQUE
-<img src="Showcase%20Screenshots/critique.png" alt="CRITIQUE Platform" height="350">
-
-### Flow Marketplace
-<img src="Showcase%20Screenshots/flow.png" alt="Flow Marketplace" height="350">
-
-### TUPV Website
-<img src="Showcase%20Screenshots/tupv.png" alt="TUPV Website" height="350">
-
-### Technowatch Website
-<img src="Showcase%20Screenshots/technowatchweb.png" alt="Technowatch Website" height="350">
 
 ---
 

@@ -26,7 +26,7 @@ The following technologies were utilized across the projects in this repository 
 
 ---
 
-## Projects
+## 🛠️ Tools & Platforms
 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
@@ -49,14 +49,9 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 * **Blind Review:** A "First Impression" mode to gather unbiased feedback before revealing channel identity.
 * **User Management:** Secure authentication via multiple providers.
 
-### Retrieve (Commission)
-**Lost & Found Management System**
+---
 
-A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
-
-* **Item Tracking:** Status updates for reported lost and found items.
-* **Search & Filter:** Robust filtering by category, date, and location.
-* **User Claims:** Verification process for claiming matched items.
+## 🏛️ Institutions
 
 ### TUPV Website
 **Institutional Portal**
@@ -67,6 +62,31 @@ A digital portal developed for the Technological University of the Philippines -
 * **Academic Resources:** Sections dedicated to departmental information and academic calendars.
 * **Responsive Design:** Optimized for accessibility across mobile and desktop devices.
 
+### Technowatch
+**Organization Website Prototype**
+
+A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
+
+* **Status:** Early-stage concept.
+* **Focus:** Visual hierarchy and mobile responsiveness.
+
+---
+
+## 🤝 Commissions
+
+### Retrieve
+**Lost & Found Management System**
+
+A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
+
+* **Item Tracking:** Status updates for reported lost and found items.
+* **Search & Filter:** Robust filtering by category, date, and location.
+* **User Claims:** Verification process for claiming matched items.
+
+---
+
+## 🛍️ Commerce
+
 ### Flow
 **Natural Products Marketplace**
 
@@ -75,14 +95,6 @@ Flow is an e-commerce platform for organic products. It demonstrates full-stack 
 * **Brand Identity:** Nature-inspired, minimalist user interface.
 * **Inventory Management:** Dynamic filtering for sustainable product categories.
 * **Full-Stack Integration:** Seamless cart persistence and checkout processing.
-
-### Technowatch
-**Organization Website Prototype**
-
-A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
-
-* **Status:** Early-stage concept.
-* **Focus:** Visual hierarchy and mobile responsiveness.
 
 ---
 

@@ -19,6 +19,8 @@ The following technologies were utilized across the projects in this repository 
 **Backend & Infrastructure**
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
 
@@ -46,6 +48,24 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 * **Threaded Discussion:** Organized feedback loops rather than unstructured comments.
 * **Blind Review:** A "First Impression" mode to gather unbiased feedback before revealing channel identity.
 * **User Management:** Secure authentication via multiple providers.
+
+### Retrieve (Commission)
+**Lost & Found Management System**
+
+A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
+
+* **Item Tracking:** Status updates for reported lost and found items.
+* **Search & Filter:** Robust filtering by category, date, and location.
+* **User Claims:** Verification process for claiming matched items.
+
+### TUPV Website
+**Institutional Portal**
+
+A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
+
+* **Information Hub:** Centralized access to announcements, news, and events.
+* **Academic Resources:** Sections dedicated to departmental information and academic calendars.
+* **Responsive Design:** Optimized for accessibility across mobile and desktop devices.
 
 ### Flow
 **Natural Products Marketplace**

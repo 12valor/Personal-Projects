@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Post Lost or Found Item</title>
+    <!-- Link to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> 
+    <!-- External CSS file for styles -->
+    <link rel="stylesheet" href="post-item.css" />
+</head>
+<body>
+
+    <!-- HAMBURGER ICON (for mobile) -->
+    <div class="hamburger" id="hamburger" aria-label="Menu" role="button" tabindex="0" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- SIDEBAR NAVIGATION (mobile view) -->
+    <div id="sidebar" aria-hidden="true">
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button active" data-section="post-item" aria-current="page">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </div>
+
+    <!-- TOP NAVIGATION BAR (desktop) -->
+    <nav>
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button active" data-section="post-item" aria-current="page">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </nav>
+
+    <!-- MAIN CONTENT SECTION -->
+    <div class="main-content">
+        <div class="form-container card-style">
+            <h2>Post a Lost or Found Item</h2>
+
+            <form id="reportForm">
+                
+                <div class="form-group status-toggle">
+                    <label>Status:</label>
+                    <div class="status-buttons">
+                         <button class="status-button active" id="lostItemBtn" type="button" data-status="Lost">Lost Item</button>
+                         <button class="status-button" id="foundItemBtn" type="button" data-status="Found">Found Item</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                     <label for="category-select">Category:</label>
+                    <div class="select-wrapper">
+                         <select id="category-select" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Books & Notes">Books & Notes</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemName">Item Name:</label>
+                    <input type="text" id="itemName" required placeholder="e.g., Black Hydro Flask Tumbler" />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" rows="4" required placeholder="Include brand, color, size, specific marks..."></textarea>
+                </div>
+
+                <div class="details-grid">
+                     <div class="form-group photo-group">
+                        <label>Upload Photo:</label>
+                        <button type="button" class="photo-uploader" id="photo-uploader">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                             <span>Add Photo</span>
+                        </button>
+                        <input type="file" id="photo-input" accept="image/*" style="display:none;" />
+                    </div>
+
+                    <div class="side-details">
+                         <div class="form-group">
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" required placeholder="e.g., Library 2nd Floor" />
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date:</label>
+                            <input type="date" id="date" required />
+                        </div>
+                         <div class="form-group">
+                            <label for="time">Time:</label>
+                            <input type="time" id="time" required />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitReport">Submit Report</button>
+            </form>
+        </div>
+
+        <!-- ============ REPORTS MANAGEMENT SECTION ============ -->
+        <div class="reports-management card-style">
+            <h2>Reports Management</h2>
+            
+            <!-- Table for listing submitted reports -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Status</th>
+                        <th>Actions</th> <!-- Action column (View/Delete) -->
+                    </tr>
+                </thead>
+                <tbody id="reportsTableBody">
+                    <!-- JS will populate this -->
+                </tbody>
+            </table>
+
+            <!-- Publish button opens publish modal -->
+            <button id="publishPost" class="submit-button">Publish Post</button>
+        </div>
+    </div>
+
+    <!-- ================================
+         CONFIRMATION MODAL (Before submit)
+       =================================-->
+    <div id="confirmationMessageModal" class="modal confirmation-modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Confirm Submission</h3>
+            <!-- Placeholder for summary details -->
+            <div id="modal-summary" class="modal-summary">
+                <div class="summary-image-container">
+                     <img id="summary-image" src="https://placehold.co/100x100/f0f0f0/ccc?text=No+Image" alt="Preview">
+                 </div>
+                <div class="summary-details">
+                    <p><strong>Status:</strong> <span id="summary-status"></span></p>
+                    <p><strong>Category:</strong> <span id="summary-category"></span></p>
+                    <p><strong>Item Name:</strong> <span id="summary-itemName"></span></p>
+                    <p><strong>Location:</strong> <span id="summary-location"></span></p>
+                    <p><strong>Date:</strong> <span id="summary-date"></span></p>
+                    <p><strong>Time:</strong> <span id="summary-time"></span></p>
+                    <p><strong>Description:</strong> <span id="summary-description"></span></p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelReportBtn" class="modal-btn cancel-btn">Cancel</button>
+                <button id="confirmReportBtn" class="modal-btn confirm-btn">Confirm Report</button>
+            </div>
+        </div>
+    </div>
+    
+     <!-- ================================
+         SUCCESS MODAL
+       =================================-->
+    <div id="successModal" class="modal success-modal" style="display:none;">
+        <div class="modal-content">
+             <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="m9 15 2 2 4-4"></path></svg>
+            </div>
+            <h3 id="success-title">Post Submitted</h3>
+            <p id="success-message">Your item has been successfully posted.</p>
+            <button id="successOkBtn" class="modal-btn confirm-btn">OK</button>
+        </div>
+    </div>
+
+    <!-- ================================
+         PUBLISH MODAL (For publishing items)
+       =================================-->
+    <div id="publishModal" class="modal publish-modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Publish Your Post</h3>
+            <form id="publishForm">
+                <!-- Status Toggle -->
+                <div class="form-group status-toggle">
+                    <label>Status:</label>
+                    <div class="status-buttons">
+                         <button class="status-button active" id="publishLostBtn" type="button" data-status="Lost">Lost Item</button>
+                         <button class="status-button" id="publishFoundBtn" type="button" data-status="Found">Found Item</button>
+                    </div>
+                </div>
+                
+                <!-- Category -->
+                 <div class="form-group">
+                     <label for="publishCategory">Category:</label>
+                    <div class="select-wrapper">
+                         <select id="publishCategory" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Books & Notes">Books & Notes</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Item Details -->
+                <div class="form-group">
+                    <label for="publishItemName">Item Name:</label>
+                    <input type="text" id="publishItemName" required />
+                </div>
+                <div class="form-group">
+                    <label for="publishDescription">Description:</label>
+                    <textarea id="publishDescription" rows="3" required></textarea>
+                </div>
+                
+                <!-- Upload Photo -->
+                <div class="form-group photo-group">
+                    <label>Upload Photo:</label>
+                    <button type="button" class="photo-uploader" id="publish-photo-uploader">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                         <span>Add Photo</span>
+                    </button>
+                    <input type="file" id="publish-photo-input" accept="image/*" style="display:none;" />
+                </div>
+
+                <!-- Location and Time Info -->
+                <div class="form-group">
+                    <label for="publishLocation">Location:</label>
+                    <input type="text" id="publishLocation" required />
+                </div>
+                <div class="form-group">
+                    <label for="publishDate">Date:</label>
+                    <input type="date" id="publishDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="publishTime">Time:</label>
+                    <input type="time" id="publishTime" required />
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button type="button" id="publishCancelBtn" class="modal-btn cancel-btn">Cancel</button>
+                    <button type="submit" id="publishConfirmBtn" class="modal-btn confirm-btn">Publish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ================================
+         JAVASCRIPT FUNCTIONALITY
+       =================================-->
+    <script src="post-item.js"></script>
+</body>
+</html>

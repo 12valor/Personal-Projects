@@ -1,0 +1,168 @@
+/* --- STYLES FOR PROFILE PAGE --- */
+
+.profile-container {
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    margin-bottom: 30px; /* Added more space at the bottom */
+}
+
+.profile-header-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 2px solid var(--button-bg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.profile-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--primary-text);
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden; /* This is key to keeping the image round */
+}
+
+/* This styles the image that will be added via JavaScript */
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Edit icon overlay on hover */
+.profile-picture::after {
+    content: '✏️';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-picture:hover::after {
+    opacity: 1;
+}
+
+
+.profile-picture svg {
+    width: 48px;
+    height: 48px;
+}
+
+.username {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+.user-email-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.action-btn {
+    display: flex; /* Use flexbox for robust centering */
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background-color: #283593;
+    transform: translateY(-2px);
+}
+
+/* Show mobile footer on this page */
+.footer {
+    display: block;
+    color: var(--footer-text);
+    font-size: 0.9rem;
+    padding: 20px 0;
+    text-align: center;
+}
+
+
+/* --- Desktop Layout --- */
+@media (min-width: 768px) {
+    .profile-container {
+        max-width: 700px;
+        background-color: var(--card-bg);
+        padding: 40px;
+        border-radius: 12px;
+        margin-top: 40px;
+        margin-bottom: 40px; /* Ensure margin is also applied on desktop */
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        border: 2px solid var(--button-bg);
+    }
+    
+    .profile-header-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .action-btn {
+        flex: 1;
+        max-width: 200px;
+    }
+
+    /* Hide mobile footer on desktop */
+    .footer {
+        display: none;
+    }
+}
+

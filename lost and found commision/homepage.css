@@ -1,0 +1,328 @@
+/* --- HOMEPAGE STYLES --- */
+
+:root {
+    --primary-bg: #F3F3F3;
+    --card-bg: #FFFFFF;
+    --nav-bg: #FFFFFF;
+    --primary-text: #333333;
+    --secondary-text: #666666;
+    --accent-color: #f2c029;
+    --button-bg: #1A237E;
+    --button-text: #FFFFFF;
+    --sidebar-bg: #ffc400; /* Updated to new yellow */
+    --sidebar-width: 240px;
+    --sidebar-width-collapsed: 60px; /* Reduced for a tighter look */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+html {
+    height: 100%;
+}
+
+body {
+    background-color: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%; /* Ensures the body fills the viewport */
+}
+
+.page-wrapper {
+    display: flex;
+    flex: 1 1 auto; /* This forces the content area to grow and fill space */
+    min-height: 0;
+}
+
+/* --- Sidebar (Desktop Only) --- */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    color: var(--primary-text);
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    display: none;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: relative;
+    padding: 5px;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: var(--primary-text);
+    padding: 18px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    width: 100%;
+    margin: 0;
+}
+.sidebar-toggle:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+.sidebar-toggle svg {
+    width: 24px;
+    height: 24px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-nav {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.sidebar-nav a {
+    color: var(--primary-text);
+    text-decoration: none;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav a:hover {
+    background-color: var(--button-bg); /* Hover effect is now blue */
+    color: var(--button-text); /* Text turns white for contrast */
+}
+
+.sidebar-icon {
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+/* --- Main App Container --- */
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* On mobile, main-content is a simple flex container */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* --- Mobile Navigation --- */
+.mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var(--button-bg);
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-icon {
+    width: 56px; height: 56px; border-radius: 50%; border: 3px solid transparent; display: flex;
+    justify-content: center; align-items: center; transition: border-color 0.3s ease; background-color: var(--card-bg);
+}
+.nav-icon:hover, .nav-icon.active { border-color: var(--accent-color); }
+.nav-icon img { width: 32px; height: 32px; object-fit: contain; display: block; }
+
+
+/* --- Filter Controls --- */
+.filter-controls {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.category-filter-container {
+    display: block; /* Show on mobile */
+}
+
+/* Style the select dropdown */
+.select-wrapper {
+    position: relative;
+}
+#category-filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.select-wrapper::after {
+    content: '▼';
+    font-size: 1rem;
+    color: var(--button-text);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+
+/* --- Filter Buttons --- */
+.filter-buttons { 
+    display: flex; 
+    gap: 10px; 
+    flex-shrink: 0;
+    padding: 0; /* Remove padding since it's on the wrapper now */
+}
+.filter-btn {
+    flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--button-bg); font-size: 1rem;
+    font-weight: 600; cursor: pointer; background-color: var(--button-bg); color: var(--button-text);
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+.filter-btn:not(.active):hover {
+    background-color: var(--accent-color); border-color: var(--accent-color);
+    color: var(--button-bg); transform: translateY(-2px);
+}
+.filter-btn.active:hover { transform: translateY(-2px); }
+.filter-btn.active { background-color: var(--card-bg); color: var(--button-bg); }
+
+
+/* --- Items Container --- */
+.items-container {
+    padding: 0 15px 30px 15px;
+    flex-grow: 1;
+}
+#lost-items-list, #found-items-list { display: flex; flex-direction: column; gap: 15px; }
+
+
+/* --- Item Card --- */
+.item-card {
+    background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 15px; display: flex; gap: 15px; border: 2px solid var(--button-bg);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.item-card:hover { transform: translateY(-2px); border-color: var(--accent-color); }
+.item-details { flex: 1; color: var(--primary-text); }
+.item-details h3 { font-size: 1.1rem; margin-bottom: 8px; font-weight: 600; }
+.item-details p { font-size: 0.9rem; color: var(--secondary-text); line-height: 1.5; }
+.item-details p strong { color: var(--primary-text); font-weight: 500; }
+.item-image {
+    width: 100px; height: 100px; flex-shrink: 0; display: flex; justify-content: center;
+    align-items: center; border-radius: 8px; overflow: hidden;
+}
+.item-image.no-image {
+    background-color: #e9ecef; color: var(--secondary-text); font-size: 0.8rem;
+    font-weight: 500; text-align: center; padding: 5px;
+}
+.item-image img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- New Info Section --- */
+.info-section {
+    display: none; /* Hidden on mobile */
+    padding: 40px 20px;
+    background-color: var(--card-bg);
+    text-align: center;
+}
+.info-section h2 {
+    font-size: 1.8rem;
+    color: var(--primary-text);
+    margin-bottom: 30px;
+}
+.steps-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+.step {
+    flex: 1;
+    max-width: 300px;
+}
+.step svg {
+    color: var(--button-bg);
+    margin-bottom: 15px;
+}
+.step h3 {
+    font-size: 1.2rem;
+    color: var(--primary-text);
+    margin-bottom: 10px;
+}
+.step p {
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+
+/* --- Desktop Layout --- */
+@media (min-width: 768px) {
+    .mobile-nav { display: none; }
+    .sidebar { display: flex; }
+    
+    .filter-controls {
+        display: flex;
+        flex-direction: row; /* Change back to row for desktop */
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        flex-shrink: 0;
+    }
+
+    .category-filter-container {
+        display: block;
+        flex-basis: 300px;
+    }
+
+    .filter-buttons {
+        padding: 0;
+        flex-basis: 300px;
+        flex-grow: 1;
+    }
+    
+    .items-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 20px 20px 20px;
+    }
+
+    #lost-items-list, #found-items-list { 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 20px; 
+        flex-direction: unset; 
+    }
+    
+    .info-section { 
+        display: block;
+        margin: 0 20px 20px 20px;
+        flex-shrink: 0;
+    }
+    .item-card { padding: 15px; align-items: center; }
+    .item-details p { font-size: 0.85rem; }
+    .item-image { width: 80px; height: 80px; }
+}
+
+/* Modal Styles */
+.modal-overlay {
+    display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;
+}
+.modal-content {
+    background-color: #fefefe; color: #333; padding: 30px; border-radius: 10px; width: 90%;
+    max-width: 500px; position: relative; text-align: left;
+}
+.close-modal {
+    color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px;
+    font-weight: bold; cursor: pointer;
+}

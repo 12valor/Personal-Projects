@@ -1,0 +1,99 @@
+/* --- STYLES FOR DESKTOP FOOTER --- */
+
+/* These styles are only for the desktop version of the footer.
+   Include this stylesheet on any page that needs it.
+*/
+
+/* Variables used by the footer */
+:root {
+    --desktop-footer-bg: #1A237E;
+    --desktop-footer-text: #FFFFFF;
+}
+
+/* Hide desktop footer by default on mobile */
+.desktop-footer {
+    display: none;
+}
+
+/* Desktop Responsiveness */
+@media (min-width: 768px) {
+    /* Hide the original mobile footer on desktop */
+    .footer {
+        display: none;
+    }
+
+    /* Show and style the new desktop footer */
+    .desktop-footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--desktop-footer-bg);
+        color: var(--desktop-footer-text);
+        padding: 40px 20px;
+        width: 100%;
+        gap: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .desktop-footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
+        max-width: 1200px;
+        gap: 20px;
+    }
+
+    .footer-section {
+        flex: 1;
+    }
+
+    .footer-section h4 {
+        margin-bottom: 15px;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    .footer-section p,
+    .footer-section a {
+        color: var(--desktop-footer-text);
+        text-decoration: none;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .footer-section a {
+        transition: opacity 0.3s ease;
+    }
+
+    .footer-section a:hover {
+        opacity: 0.8;
+        text-decoration: underline;
+    }
+
+    .footer-links {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 8px;
+    }
+
+    .footer-section img {
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    .desktop-footer .copyright {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        width: 100%;
+        max-width: 1200px;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 20px;
+    }
+}
+

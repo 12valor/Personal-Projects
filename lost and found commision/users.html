@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard - User Management</title>
+    <!-- Link to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="users.css" />
+</head>
+<body>
+
+    <!-- ========================= -->
+    <!-- Hamburger icon for mobile -->
+    <!-- ========================= -->
+    <div class="hamburger" id="hamburger" aria-label="Menu" role="button" tabindex="0" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- ========================= -->
+    <!-- Sidebar menu (mobile view) -->
+    <!-- ========================= -->
+    <div id="sidebar" aria-hidden="true">
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button active" data-section="users" aria-current="page">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </div>
+
+    <!-- ========================= -->
+    <!-- Top Navigation (Desktop)  -->
+    <!-- ========================= -->
+    <nav>
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button active" data-section="users" aria-current="page">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </nav>
+
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+    <div class="main-content">
+        <div class="card-style">
+            <h2>User Management</h2>
+
+            <!-- User Controls (Search / Add) -->
+            <div class="user-controls">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by name, email, or status...">
+                </div>
+                <!-- "Add User" button removed -->
+            </div>
+
+            <!-- User Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="actions-header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Demo Row 1 -->
+                        <tr data-username="admin_jess" data-email="jess@example.com" data-status="Admin">
+                            <td>admin_jess</td>
+                            <td>jess@example.com</td>
+                            <td><span class="status-badge status-admin">Admin</span></td>
+                            <td class="actions-cell">
+                                <button class="action-btn btn-view" title="View User"><i class="fa-solid fa-eye"></i></button>
+                                <button class="action-btn btn-delete" title="Delete User"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <!-- Demo Row 2 -->
+                        <tr data-username="user_mike" data-email="mike@student.com" data-status="User">
+                            <td>user_mike</td>
+                            <td>mike@student.com</td>
+                            <td><span class="status-badge status-user">User</span></td>
+                            <td class="actions-cell">
+                                <button class="action-btn btn-view" title="View User"><i class="fa-solid fa-eye"></i></button>
+                                <button class="action-btn btn-delete" title="Delete User"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================
+         VIEW USER MODAL
+       =================================-->
+    <div id="viewUserModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>User's Latest Report</h3>
+            <div class="user-details">
+                <!-- Placeholder content for user's latest report -->
+                <p><strong>Item:</strong> Black Tumbler</p>
+                <p><strong>Status:</strong> Lost</p>
+                <p><strong>Location:</strong> Comlab room</p>
+                <p><strong>Date:</strong> 2025-10-14</p>
+                <p><em>(This is placeholder data. Real data would be loaded here.)</em></p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn confirm-btn" data-close>Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- "ADD USER MODAL" has been removed -->
+
+    <!-- ================================
+         DELETE CONFIRM MODAL
+       =================================-->
+    <div id="deleteUserModal" class="modal" style="display:none;">
+         <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this user? This action will permanently remove them from the database.</p>
+             <div class="modal-actions">
+                <button class="modal-btn cancel-btn" data-close>Cancel</button>
+                <button class="modal-btn delete-btn" id="confirm-delete-btn">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- External JS file -->
+    <!-- ========================= -->
+    <script src="users.js"></script>
+
+</body>
+</html>
+

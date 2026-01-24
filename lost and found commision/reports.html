@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard - Reports</title>
+    <!-- Link to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="reports.css" />
+</head>
+<body>
+
+    <!-- ========================= -->
+    <!-- Hamburger icon for mobile -->
+    <!-- ========================= -->
+    <div class="hamburger" id="hamburger" aria-label="Menu" role="button" tabindex="0" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- ========================= -->
+    <!-- Sidebar menu (mobile view) -->
+    <!-- ========================= -->
+    <div id="sidebar" aria-hidden="true">
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button active" data-section="reports" aria-current="page">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </div>
+
+    <!-- ========================= -->
+    <!-- Top Navigation (Desktop)  -->
+    <!-- ========================= -->
+    <nav>
+        <a href="overview.html">
+            <button class="nav-button" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button active" data-section="reports" aria-current="page">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </nav>
+
+    <div class="main-content">
+        <h2>Item Reports</h2>
+        
+        <!-- ========================= -->
+        <!-- Tabs for filtering reports -->
+        <!-- ========================= -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="all">All Items</button>
+            <button class="tab-btn" data-tab="lost">Lost Items</button>
+            <button class="tab-btn" data-tab="found">Found Items</button>
+            <button class="tab-btn" data-tab="matches">Matches</button>
+        </div>
+
+        <!-- ========================= -->
+        <!-- Sorting Menu -->
+        <!-- ========================= -->
+        <div class="sorting-menu">
+            <span>Sort by:</span>
+            <button class="sorting-btn active" data-sort="default">Default</button>
+            <button class="sorting-btn" data-sort="name">Name</button>
+            <button class="sorting-btn" data-sort="date">Date</button>
+        </div>
+
+        <!-- ========================= -->
+        <!-- Items Container -->
+        <!-- ========================= -->
+        <div id="itemsContainer">
+
+            <!-- Example Found Item -->
+            <div class="item-card" data-category="found" data-status="found" data-name="Tumbler" data-date="2023-10-01">
+                <img src="https://tse4.mm.bing.net/th/id/OIP.ND2f_Ye93E-_BUZhr2uGqgHaHa?cb=12&w=646&h=646&rs=1&pid=ImgDetMain&o=7&rm=3" class="item-image" alt="Item Image" />
+                <div class="item-details">
+                    <div class="item-title">Found!</div>
+                    <div class="item-desc">Tumbler. Proceed to the office to verify if it's yours.</div>
+                </div>
+                <div class="item-actions">
+                    <button class="action-btn btn-details">See Details</button>
+                    <button class="action-btn btn-mark-retrieved" data-action="mark-retrieved">Mark as Retrieved</button>
+                    <button class="action-btn btn-mark-found" data-action="mark-found" style="display: none;">Mark as Found</button>
+                </div>
+            </div>
+
+            <!-- Example Lost Item -->
+            <div class="item-card" data-category="lost" data-status="lost" data-name="Wallet" data-date="2023-09-25">
+                <img src="https://i5.walmartimages.com/asr/7836677b-9832-4e83-be1d-6cabc8ac4256_2.e4a31f45805710ba015986d5b95b59f5.jpeg" class="item-image" alt="Item Image" />
+                <div class="item-details">
+                    <div class="item-title">Lost!</div>
+                    <div class="item-desc">Wallet with ID inside. Proceed to the office to verify if it's yours.</div>
+                </div>
+                <div class="item-actions">
+                    <button class="action-btn btn-details">See Details</button>
+                    <button class="action-btn btn-mark-retrieved" data-action="mark-retrieved" style="display: none;">Mark as Retrieved</button>
+                    <button class="action-btn btn-mark-found" data-action="mark-found">Mark as Found</button>
+                </div>
+            </div>
+
+            <!-- Example Found Item -->
+            <div class="item-card" data-category="found" data-status="found" data-name="Umbrella" data-date="2023-10-03">
+                <img src="https://tse1.mm.bing.net/th/id/OIP.K30kmXNPDL3lU_YlTYUydQAAAA?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3" class="item-image" alt="Item Image" />
+                <div class="item-details">
+                    <div class="item-title">Found!</div>
+                    <div class="item-desc">Black umbrella. Proceed to the office to verify if it's yours.</div>
+                </div>
+                 <div class="item-actions">
+                    <button class="action-btn btn-details">See Details</button>
+                    <button class="action-btn btn-mark-retrieved" data-action="mark-retrieved">Mark as Retrieved</button>
+                    <button class="action-btn btn-mark-found" data-action="mark-found" style="display: none;">Mark as Found</button>
+                </div>
+            </div>
+
+            <div class="item-card" data-category="matches" data-status="retrieved" data-name="Backpack" data-date="2023-10-03">
+                <img src="https://tse1.mm.bing.net/th/id/OIP.Xf2zm5AAREftTloQVHGwHAHaJQ?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3" class="item-image" alt="Item Image" />
+                <div class="item-details">
+                    <div class="item-title">Matches!</div>
+                    <div class="item-desc">Black Backpack. Thankyou for returning the item.</div>
+                </div>
+                 <div class="item-actions">
+                    <button class="action-btn btn-details">See Details</button>
+                    <button class="action-btn btn-mark-retrieved" data-action="mark-retrieved" style="display: none;">Mark as Retrieved</button>
+                    <button class="action-btn btn-mark-found" data-action="mark-found" style="display: none;">Mark as Found</button>
+                </div>
+            </div>
+
+        </div> <!-- End Items Container -->
+    </div> <!-- End Main Content -->
+
+    <!-- ========================= -->
+    <!-- External JS file -->
+    <!-- ========================= -->
+    <script src="reports.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+/* =======================================
+   GLOBAL STYLES & VARIABLES
+   ======================================= */
+:root {
+    --primary-bg: #F8F9FA;
+    --secondary-bg: #1A237E;
+    --secondary-bg-hover: #283593;
+    --card-bg: #FFFFFF;
+    --text-light: #FFFFFF;
+    --text-dark: #212529;
+    --text-muted: #6C757D;
+    --accent-yellow: #f2c029;
+    --accent-blue: #007BFF;
+    --border-light: #DEE2E6;
+    --input-bg: #f1f3f5;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --danger-bg: #dc3545;
+    --danger-bg-hover: #c82333;
+    --status-admin-bg: #fff3cd;
+    --status-admin-text: #856404;
+    --status-user-bg: #d1e7dd;
+    --status-user-text: #198754;
+    --status-guest-bg: #e2e3e5;
+    --status-guest-text: #495057;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =======================================
+   NAVIGATION (Shared from other pages)
+   ======================================= */
+.hamburger { 
+    display: none; 
+    position: fixed; 
+    top: 15px; 
+    left: 15px; 
+    width: 30px; 
+    height: 22px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    cursor: pointer; 
+    z-index: 1001; 
+}
+.hamburger span { 
+    display: block; 
+    height: 3px; 
+    background-color: var(--text-light); 
+    border-radius: 2px; 
+    transition: all 0.3s ease; 
+}
+
+#sidebar { 
+    position: fixed; 
+    top: 0; 
+    left: -280px; 
+    width: 280px; 
+    height: 100%; 
+    background-color: var(--secondary-bg); 
+    padding-top: 70px; 
+    transition: left 0.3s ease; 
+    z-index: 1000; 
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2); 
+}
+#sidebar.open { left: 0; }
+#sidebar a { text-decoration: none; }
+#sidebar .nav-button { 
+    background: none; 
+    border: none; 
+    color: var(--text-light); 
+    font-size: 1.1em; 
+    padding: 15px 25px; 
+    text-align: left; 
+    width: 100%; 
+    cursor: pointer; 
+    font-weight: 500; 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    transition: background-color 0.2s, color 0.2s; 
+}
+#sidebar .nav-button i { width: 20px; text-align: center; }
+#sidebar .nav-button.active { 
+    background-color: var(--accent-yellow); 
+    color: var(--secondary-bg); 
+    font-weight: 600; 
+}
+#sidebar .nav-button:hover:not(.active) { 
+    background-color: var(--secondary-bg-hover); 
+}
+
+nav { 
+    display: flex; 
+    justify-content: center; 
+    background-color: var(--secondary-bg); 
+    padding: 10px 0; 
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+}
+nav a { text-decoration: none; }
+nav .nav-button { 
+    background: none; 
+    border: none; 
+    color: var(--text-light); 
+    font-size: 1em; 
+    margin: 0 15px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-weight: 500; 
+    border-radius: 6px; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    transition: background-color 0.2s, color 0.2s; 
+}
+nav .nav-button i { font-size: 1.1em; }
+nav .nav-button.active { 
+    background-color: var(--accent-yellow); 
+    color: var(--secondary-bg); 
+    font-weight: 600; 
+}
+nav .nav-button:hover:not(.active) { 
+    background-color: var(--secondary-bg-hover); 
+}
+
+/* =======================================
+   MAIN CONTENT
+   ======================================= */
+.main-content {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.card-style {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.card-style h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: var(--text-dark);
+    font-size: 1.8em;
+    font-weight: 600;
+    padding-bottom: 10px;
+}
+
+/* =======================================
+   USER CONTROLS (Search/Add)
+   ======================================= */
+.user-controls {
+    display: flex;
+    justify-content: flex-end; /* Push search bar to the right */
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%; /* Mobile-first: full width */
+}
+.search-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+#searchInput {
+    width: 100%;
+    padding: 10px 15px 10px 40px; /* Padding for icon */
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--input-bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* Ensure padding doesn't break width */
+}
+#searchInput:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    background-color: var(--card-bg);
+}
+
+/* =======================================
+   USER TABLE
+   ======================================= */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling on small tables */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-dark);
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-light);
+    text-align: left;
+    vertical-align: middle;
+}
+
+thead th {
+    background-color: #f8f9fa;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+/* Fix for action column alignment */
+th.actions-header {
+    text-align: right;
+}
+td.actions-cell {
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+tbody tr:hover {
+    background-color: #f8f9fa; /* Light hover for table rows */
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+.status-admin {
+    background-color: var(--status-admin-bg);
+    color: var(--status-admin-text);
+}
+.status-user {
+    background-color: var(--status-user-bg);
+    color: var(--status-user-text);
+}
+.status-guest {
+    background-color: var(--status-guest-bg);
+    color: var(--status-guest-text);
+}
+
+/* Action Buttons in Table */
+.action-btn {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 1.1em;
+}
+.action-btn i {
+    display: block;
+}
+
+.action-btn.btn-view:hover {
+    background-color: #e2e6ea;
+    color: var(--accent-blue);
+}
+.action-btn.btn-delete:hover {
+    background-color: #f8d7da;
+    color: var(--danger-bg);
+}
+
+/* =======================================
+   MODAL STYLES
+   ======================================= */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text-dark);
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    text-align: left;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.close-modal:hover {
+    color: var(--text-dark);
+}
+
+.modal-content h3 {
+    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.modal-content p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    line-height: 1.7;
+    text-align: center; /* Center paragraph text in modals */
+}
+
+.user-details p {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    text-align: left; /* Keep details left-aligned */
+}
+.user-details strong {
+    color: var(--text-dark);
+    display: inline-block;
+    min-width: 90px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 20px;
+}
+/* Center buttons for simple close */
+#viewUserModal .modal-actions {
+    justify-content: center;
+}
+
+
+.modal-btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.modal-btn:hover {
+    transform: translateY(-1px);
+}
+
+.confirm-btn {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+}
+.confirm-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: #e9ecef;
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+.cancel-btn:hover {
+    background-color: #dee2e6;
+}
+
+.delete-btn {
+    background-color: var(--danger-bg);
+    color: var(--text-light);
+}
+.delete-btn:hover {
+    background-color: var(--danger-bg-hover);
+}
+
+
+/* =======================================
+   RESPONSIVE DESIGN (Mobile)
+   ======================================= */
+@media(max-width: 768px) {
+    nav { display: none; }
+    .hamburger { display: flex; }
+    .main-content { padding: 15px; margin-top: 60px; }
+    .card-style { padding: 20px; }
+    
+    .user-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-wrapper {
+        width: 100%; /* Ensure it's full-width */
+        max-width: none; /* Remove max-width on mobile */
+    }
+    
+    table {
+        font-size: 0.9em;
+    }
+    th, td {
+        padding: 10px 8px;
+    }
+    .action-btn {
+        padding: 5px;
+    }
+}
+
+/* Desktop-specific layout adjustments */
+@media (min-width: 769px) {
+    .search-wrapper {
+        max-width: 350px; /* Re-apply max-width only for desktop */
+    }
+}

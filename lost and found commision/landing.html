@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve - Lost & Found</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            /* Corporate Palette */
+            --primary-blue: #1A237E;
+            --primary-blue-hover: #121858;
+            --accent-gold: #F2C029;
+            --bg-color: #F4F6F8; /* Light gray enterprise background */
+            --card-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #E0E0E0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            border-bottom: 4px solid var(--accent-gold);
+            padding: 0 20px;
+        }
+
+        .desktop-header-content {
+            height: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info {
+            font-size: 0.85rem;
+            color: #E8EAF6;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .separator { opacity: 0.4; }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        nav a:hover { opacity: 0.8; }
+
+        /* --- MAIN LAYOUT --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Professional Card Design */
+        .login-card {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px; /* Slight radius, not round */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Very subtle shadow */
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* Logo Area */
+        .logo-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+        }
+
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .card-header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .card-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* --- BUTTONS --- */
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 6px; /* Professional squared edges */
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent;
+        }
+
+        .btn i { margin-right: 10px; }
+
+        /* Primary Button (Log In) */
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-blue-hover);
+        }
+
+        /* Secondary Button (Sign Up) */
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+        .btn-secondary:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Tertiary (Guest) */
+        .guest-link {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--text-muted);
+            display: inline-block;
+        }
+        .guest-link:hover { color: var(--primary-blue); border-bottom-color: var(--primary-blue); }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #ffffff;
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr; /* 4 Columns */
+            gap: 40px;
+        }
+
+        .footer-col h4 {
+            color: var(--primary-blue);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 8px; }
+
+        .footer-col a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--primary-blue); }
+
+        .legal-row {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 20px 20px 0;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5); /* Simple dim */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: var(--bg-color);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 1.1rem; color: var(--primary-blue); margin: 0; }
+        
+        .close-modal { cursor: pointer; font-size: 1.2rem; color: #888; }
+        .close-modal:hover { color: #333; }
+
+        .modal-body { padding: 20px; line-height: 1.6; color: var(--text-main); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+            .header-info { display: none; } /* Simplified header for mobile */
+            .desktop-header-content { justify-content: center; }
+            .login-card { border: none; box-shadow: none; background: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="desktop-header-content">
+            <div class="header-info">
+                <span id="current-date">--/--/----</span>
+                <span class="separator">|</span>
+                <span id="current-time">--:--</span>
+                <span class="separator">|</span>
+                <span><i class="fas fa-chart-line"></i> Visitor #7843</span>
+            </div>
+            <nav>
+                <a href="landing.html">Home</a>
+                <a href="#" id="about-link">About</a>
+                <a href="#" id="contact-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="login-card">
+            
+            <div class="logo-wrapper">
+                <img src="images/logo.png" alt="Retrieve Logo">
+            </div>
+
+            <div class="card-header">
+                <h1>Retrieve System</h1>
+                <p>Welcome to the centralized Lost & Found portal.<br>Please select an option to proceed.</p>
+            </div>
+
+            <div class="action-area">
+                <a href="login.html" class="btn btn-primary">
+                    <i class="fas fa-lock"></i> Secure Login
+                </a>
+                <a href="register.html" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+                <a href="homepage.html" class="guest-link">
+                    Continue as Guest Visitor
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4 style="color: var(--text-main);">Retrieve</h4>
+                <p style="color: var(--text-muted); line-height: 1.6;">
+                    The official institutional partner for reclaiming lost assets. Secure, efficient, and community-driven.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About System</a></li>
+                    <li><a href="#">Procedure Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support Center</h4>
+                <ul>
+                    <li><a href="#">Report Issue</a></li>
+                    <li><a href="#">Lost Item FAQ</a></li>
+                    <li><a href="#">Found Item Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> help@retrieve.org</li>
+                    <li><i class="fas fa-phone"></i> (555) 123-4567</li>
+                </ul>
+            </div>
+        </div>
+        <div class="legal-row">
+            <p>&copy; 2025 Retrieve Organization. All Rights Reserved. Iloilo City, Philippines.</p>
+        </div>
+    </footer>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>About Retrieve</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Retrieve is the official lost and found management system. This platform is designed to facilitate the efficient return of lost items to their rightful owners through a secure and transparent verification process.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Contact Administration</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><strong>Email:</strong> admin@retrieve.example.com</p>
+                <p><strong>Office:</strong> Room 304, Admin Building</p>
+                <p><strong>Hours:</strong> Mon-Fri, 8:00 AM - 5:00 PM</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Date/Time Script ---
+        function updateDateTime() {
+            const dateEl = document.getElementById('current-date');
+            const timeEl = document.getElementById('current-time');
+            if(dateEl && timeEl) {
+                const now = new Date();
+                dateEl.textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                timeEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // --- Modal Logic ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const closeBtns = document.querySelectorAll('.close-modal');
+
+        document.getElementById('about-link').onclick = () => aboutModal.style.display = "flex";
+        document.getElementById('contact-link').onclick = () => contactModal.style.display = "flex";
+
+        closeBtns.forEach(btn => btn.onclick = () => {
+            aboutModal.style.display = "none";
+            contactModal.style.display = "none";
+        });
+
+        window.onclick = (e) => {
+            if (e.target == aboutModal) aboutModal.style.display = "none";
+            if (e.target == contactModal) contactModal.style.display = "none";
+        }
+    </script>
+</body>
+</html>

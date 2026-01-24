@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard - Overview</title>
+    <!-- External CSS for dashboard design -->
+    <link rel="stylesheet" href="overview.css">
+    
+    <!-- Link to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons (Fixed CDN Link) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 🍔 HAMBURGER ICON (Visible only on mobile view) -->
+    <div class="hamburger" id="hamburger" aria-label="Menu" role="button" tabindex="0" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- 🧭 SIDEBAR NAVIGATION MENU (for mobile view) -->
+    <div id="sidebar" aria-hidden="true">
+        <!-- Overview Button -->
+        <a href="overview.html">
+            <button class="nav-button active" data-section="overview" aria-current="page">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <!-- Post Item Button -->
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <!-- Reports Button -->
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <!-- Users Button -->
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </div>
+
+    <!-- 🧭 TOP NAVIGATION BAR (for desktop view) -->
+    <nav>
+        <a href="overview.html">
+            <button class="nav-button active" data-section="overview">
+                <i class="fa-solid fa-database"></i> Overview
+            </button>
+        </a>
+        <a href="post-item.html">
+            <button class="nav-button" data-section="post-item">
+                <i class="fa-solid fa-pen-to-square"></i> Post Item
+            </button>
+        </a>
+        <a href="reports.html">
+            <button class="nav-button" data-section="reports">
+                <i class="fa-solid fa-bell"></i> Reports
+            </button>
+        </a>
+        <a href="users.html">
+            <button class="nav-button" data-section="users">
+                <i class="fa-solid fa-circle-user"></i> Users
+            </button>
+        </a>
+    </nav>
+
+    <!-- 🌟 MAIN CONTENT AREA -->
+    <div class="main">
+
+        <!-- 🧾 ACTIVITY OVERVIEW SECTION -->
+        <section id="overview-section" class="content-section">
+            <h2>Activity Overview</h2>
+            <div class="activity-overview">
+
+                <!-- 📦 Found and Lost Summary Card -->
+                <div class="activity-card" id="found-items">
+                    <h3>Overall</h3>
+                    <h3>Found Items: </h3>
+                    <h3>Never Claimed: </h3>
+                    <h3>Recent Lost Items: </h3>
+                    <h3>Recent Found Items: </h3>
+                </div>
+
+                <!-- 📋 Claim/Match Statistics -->
+                <div class="activity-card" id="claimed-items">
+                    <h3>Lost Items: </h3>
+                    <h3>Found Items: </h3>
+                    <h3>Matches: </h3>
+                    <h3>User Inquires: </h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📢 RECENT ADMIN POST SECTION -->
+        <h2>Recent Admin Post</h2>
+        <div class="notifications">
+
+            <!-- 📰 Individual Admin Post Notification -->
+            <div class="notification" 
+                 data-status="Found" 
+                 data-item="Umbrella"
+                 data-category="Accessories"
+                 data-description="Color grey" 
+                 data-location="TUPV"
+                 data-date="2025-10-22"
+                 data-time="14:30"
+                 data-image="https://static.vecteezy.com/system/resources/previews/005/616/466/original/black-umbrella-isolated-on-white-free-photo.jpg">
+                <!-- Image related to the post -->
+                <div class="image-box">
+                    <img src="https://static.vecteezy.com/system/resources/previews/005/616/466/original/black-umbrella-isolated-on-white-free-photo.jpg" alt="umbrella">
+                </div>
+
+                <!-- Post text details -->
+                <div class="notification-text">
+                    <h3><strong>Status: Found!</strong></h3>
+                    <h4>Item name: Umbrella</h4>
+                    <h4>Category: Accessories</h4>
+                    <h4>Desciption: Color grey</h4>
+                    <h4>Location: TUPV</h4>
+                    <h4>Date: 2025-10-22</h4>
+                    <h4>Time: 14:30</h4>
+                </div>
+
+                <!-- ✏️🗑️ Buttons for managing the post -->
+                <div class="button-container">
+                    <button class="notification-btn btn-edit">Edit</button>
+                    <button class="notification-btn delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔔 USER NOTIFICATIONS SECTION -->
+        <h2>User Notifications</h2>
+        <div class="notifications">
+
+            <!-- 🔔 Individual user notification -->
+            <div class="notification"
+                 data-status="Lost" 
+                 data-item="Backpack"
+                 data-category="Bags"
+                 data-description="Color Black backpack" 
+                 data-location="TUPV"
+                 data-date="2025-10-21"
+                 data-time="09:00"
+                 data-image="https://campthunder.org/wp-content/uploads/2018/02/lightweight-backpack.jpg">
+                <!-- Image related to the lost/found item -->
+                <div class="image-box">
+                    <img src="https://campthunder.org/wp-content/uploads/2018/02/lightweight-backpack.jpg" alt="backpack">
+                </div>
+
+                <!-- Notification text content -->
+                <div class="notification-text">
+                    <h3><strong>New Post!</strong></h3>
+                    <h4>Status: Lost</h4>
+                    <h4>Item name: Backpack</h4>
+                    <h4>Category: Bags</h4>
+                    <h4>Description: Color Black backpack</h4>
+                    <h4>Last Seen: TUPV</h4>
+                    <h4>Date: 2025-10-21</h4>
+                    <h4>Time: 09:00</h4>
+                </div>
+
+                <!-- 👁️🗑️ Buttons for user interaction -->
+                <div class="button-container">
+                    <button class="notification-btn btn-view">View</button>
+                    <button class="notification-btn delete-btn">Remove</button>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of main content -->
+    
+    <!-- ================================
+         VIEW DETAILS MODAL
+       =================================-->
+    <div id="viewDetailsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" data-close>&times;</span>
+            <h3>Report Details</h3>
+            <div class="modal-summary">
+                 <div class="summary-image-container">
+                     <img id="modal-image" src="" alt="Item Image">
+                 </div>
+                 <div class="summary-details">
+                    <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                    <p><strong>Item Name:</strong> <span id="modal-item"></span></p>
+                    <p><strong>Category:</strong> <span id="modal-category"></span></p>
+                    <p><strong>Location:</strong> <span id="modal-location"></span></p>
+                    <p><strong>Date:</strong> <span id="modal-date"></span></p>
+                    <p><strong>Time:</strong> <span id="modal-time"></span></p>
+                    <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                 </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn confirm-btn" data-close>Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ================================
+         DELETE CONFIRM MODAL
+       =================================-->
+    <div id="deleteConfirmationModal" class="modal" style="display:none;">
+         <div class="modal-content">
+            <span class="close-modal" data-close>&times;</span>
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+             <div class="modal-actions">
+                <button class="modal-btn cancel-btn" data-close>Cancel</button>
+                <button class="modal-btn delete-btn" id="confirm-delete-btn">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 📜 EXTERNAL SCRIPT FILE -->
+    <script src="overview.js"></script>
+
+</body>
+</html>

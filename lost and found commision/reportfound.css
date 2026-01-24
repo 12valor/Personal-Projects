@@ -1,0 +1,324 @@
+/* --- STYLES FOR REPORT FORM --- */
+
+.report-form-container {
+    padding: 20px 15px;
+}
+
+.report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.report-form h2 {
+    text-align: center;
+    color: var(--primary-text);
+    margin-bottom: 10px;
+    display: none; /* Hidden on mobile, shown on desktop */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--secondary-text);
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+/* Custom Select Dropdown */
+.select-wrapper {
+    position: relative;
+}
+#category-select {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.select-wrapper::after {
+    content: '▼';
+    font-size: 1rem;
+    color: var(--button-text);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Textarea for Description */
+#item-description {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Details Grid for Photo, Date, etc. */
+.details-grid {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+.photo-group {
+    flex: 1;
+}
+.side-details {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Photo Uploader Button */
+.photo-uploader {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column; /* To stack icon and text */
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    color: #aaa;
+    gap: 8px;
+    padding: 10px;
+    overflow: hidden; /* Ensures the preview image stays contained */
+}
+
+.photo-uploader span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.photo-uploader svg {
+    transition: transform 0.2s;
+}
+.photo-uploader:hover svg {
+    transform: scale(1.1);
+    color: var(--button-bg);
+}
+
+/* Style for the image preview */
+.photo-uploader img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px; /* Slightly smaller radius to fit inside the container */
+}
+
+
+/* Date, Time, Location Inputs */
+.date-time-inputs {
+    display: flex;
+    gap: 10px;
+}
+.date-time-inputs input {
+    flex: 1;
+}
+
+#lost-date, #lost-time, #location {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: #f0f0f0;
+}
+
+/* Submit Button */
+.submit-btn {
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.submit-btn:hover {
+    background-color: #283593;
+    transform: translateY(-2px);
+}
+
+/* --- Confirmation & Success Modal Styles --- */
+.confirmation-modal-content, .success-modal-content {
+    max-width: 600px;
+}
+
+.confirmation-modal-content h3, .success-modal-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-text);
+    font-size: 1.5rem;
+}
+
+.summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.summary-image-container {
+    width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.summary-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.summary-details p {
+    margin-bottom: 10px;
+    color: var(--secondary-text);
+    line-height: 1.5;
+}
+
+.summary-details p strong {
+    color: var(--primary-text);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.modal-btn:hover {
+    transform: translateY(-1px);
+}
+
+.confirm-btn {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+.confirm-btn:hover {
+    background-color: #283593;
+}
+
+.cancel-btn {
+    background-color: #e0e0e0;
+    color: #333;
+}
+.cancel-btn:hover {
+    background-color: #bdbdbd;
+}
+
+/* --- Success Modal Specific Styles --- */
+.success-modal-content {
+    text-align: center;
+    padding: 40px;
+}
+.success-icon {
+    margin-bottom: 20px;
+    color: var(--button-bg);
+}
+.success-modal-content p {
+    color: var(--secondary-text);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+.notify-btn {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    padding: 12px 30px;
+    border-radius: 50px; /* pill shape */
+    font-size: 1rem;
+}
+.notify-btn:hover {
+     background-color: #283593;
+}
+
+
+
+/* --- Desktop Layout --- */
+@media (min-width: 768px) {
+    .report-form-container {
+        padding: 40px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    .report-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "title title"
+            "category category"
+            "description details"
+            "submit submit";
+        gap: 25px 40px;
+    }
+    
+    .report-form h2 {
+        display: block;
+        grid-area: title;
+    }
+    .category-group {
+        grid-area: category;
+    }
+    .description-group {
+        grid-area: description;
+    }
+    .details-grid {
+        grid-area: details;
+        flex-direction: column;
+        gap: 25px;
+    }
+    .photo-group, .side-details {
+        width: 100%;
+    }
+    .submit-btn {
+        grid-area: submit;
+        width: 50%;
+        margin: 10px auto 0;
+    }
+
+    /* Desktop modal layout */
+    .summary-grid {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .summary-image-container {
+        width: 200px;
+        height: 200px;
+        flex-shrink: 0;
+    }
+}

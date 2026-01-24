@@ -1,0 +1,590 @@
+/* ================================
+   BASIC RESET & BODY STYLING
+   ================================= */
+:root {
+    --primary-bg: #97cbff; /* Very Light Grey */
+    --secondary-bg: #1A237E;
+    --secondary-bg-hover: #283593;
+    --card-bg: #FFFFFF;
+    --text-light: #FFFFFF;
+    --text-dark: #212529;
+    --text-muted: #6C757D;
+    --accent-yellow: #f2c029;
+    --border-light: #DEE2E6;
+    --input-bg: #f1f3f5;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --danger-bg: #dc3545;
+    --danger-bg-hover: #c82333;
+    --success-bg: #28a745;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* ================================
+   NAVIGATION STYLES
+   ================================= */
+
+/* --- HAMBURGER --- */
+.hamburger { 
+    display: none; 
+    position: fixed; 
+    top: 15px; 
+    left: 15px; 
+    width: 30px; 
+    height: 22px; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    cursor: pointer; 
+    z-index: 1001; 
+}
+.hamburger span { 
+    display: block; 
+    height: 3px; 
+    background-color: var(--text-light); 
+    border-radius: 2px; 
+    transition: all 0.3s ease; 
+}
+
+/* --- SIDEBAR --- */
+#sidebar { 
+    position: fixed; 
+    top: 0; 
+    left: -280px; 
+    width: 280px; 
+    height: 100%; 
+    background-color: var(--secondary-bg); 
+    padding-top: 70px; 
+    transition: left 0.3s ease; 
+    z-index: 1000; 
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2); 
+}
+#sidebar.open { left: 0; }
+#sidebar a { text-decoration: none; }
+#sidebar .nav-button { 
+    background: none; 
+    border: none; 
+    color: var(--text-light); 
+    font-size: 1.1em; 
+    padding: 15px 25px; 
+    text-align: left; 
+    width: 100%; 
+    cursor: pointer; 
+    font-weight: 500; 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    transition: background-color 0.2s, color 0.2s; 
+}
+#sidebar .nav-button i { width: 20px; text-align: center; }
+#sidebar .nav-button.active { 
+    background-color: var(--accent-yellow); 
+    color: var(--secondary-bg); 
+    font-weight: 600; 
+}
+#sidebar .nav-button:hover:not(.active) { 
+    background-color: var(--secondary-bg-hover); 
+}
+
+/* --- TOP NAV (Desktop) --- */
+nav { 
+    display: flex; 
+    justify-content: center; 
+    background-color: var(--secondary-bg); 
+    padding: 10px 0; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+}
+nav a { text-decoration: none; }
+nav .nav-button { 
+    background: none; 
+    border: none; 
+    color: var(--text-light); 
+    font-size: 1em; 
+    margin: 0 15px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-weight: 500; 
+    border-radius: 6px; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    transition: background-color 0.2s, color 0.2s; 
+}
+nav .nav-button i { font-size: 1.1em; }
+nav .nav-button.active { 
+    background-color: var(--accent-yellow); 
+    color: var(--secondary-bg); 
+    font-weight: 600; 
+}
+nav .nav-button:hover:not(.active) { 
+    background-color: var(--secondary-bg-hover); 
+}
+
+/* ================================
+   MAIN CONTENT & FORM CONTAINER
+   ================================= */
+.main-content {
+    padding: 20px 15px;
+    max-width: 800px;
+    margin: 20px auto;
+    width: 100%;
+}
+
+.card-style {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.form-container h2 {
+    text-align: center;
+    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 1.6em;
+}
+
+/* ================================
+   FORM STYLES
+   ================================= */
+#reportForm, #publishForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Reduced gap from 18px */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.95em;
+}
+
+/* Input Fields */
+input[type=text],
+input[type=date],
+input[type=time],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--input-bg);
+    color: var(--text-dark);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* This ensures width: 100% is respected */
+}
+
+/* Fix for centering date and time input text */
+input[type=date],
+input[type=time] {
+    text-align: center;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Select Wrapper for Arrow */
+.select-wrapper {
+    position: relative;
+}
+.select-wrapper::after {
+    content: '▼';
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+select {
+     appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* Status Toggle Buttons */
+.status-toggle {
+    margin-bottom: 5px; /* Reduced margin */
+}
+
+/* Center the "Status:" label */
+.status-toggle label {
+    text-align: center;
+    font-size: 1em; /* Make it a bit more prominent */
+}
+
+.status-buttons {
+    display: grid; /* Use grid for two equal columns */
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.status-button {
+    padding: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-muted);
+    background-color: var(--input-bg);
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+.status-button.active {
+    background-color: var(--secondary-bg);
+    color: var(--text-light);
+    border-color: var(--secondary-bg);
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.status-button:not(.active):hover {
+    background-color: var(--accent-yellow); /* Yellow hover */
+    color: var(--secondary-bg); /* Dark text on hover */
+    border-color: var(--accent-yellow);
+}
+
+
+/* --- Details Grid (Photo, Location, Date/Time) --- */
+.details-grid {
+    display: grid;
+    gap: 15px; /* Reduced gap */
+}
+
+/* Photo Uploader */
+.photo-uploader {
+    width: 100%;
+    aspect-ratio: 16 / 10; /* Wider aspect ratio */
+    border: 2px dashed var(--border-light);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--input-bg);
+    cursor: pointer;
+    color: var(--text-muted);
+    gap: 8px;
+    padding: 10px;
+    overflow: hidden;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+.photo-uploader:hover {
+    border-color: var(--accent-blue);
+}
+.photo-uploader span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.photo-uploader svg {
+    transition: transform 0.2s;
+    color: #aaa;
+}
+.photo-uploader:hover svg {
+    transform: scale(1.1);
+    color: var(--accent-blue);
+}
+.photo-uploader img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Submit Button */
+.submit-button {
+    padding: 12px 25px;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--accent-yellow);
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-top: 10px; /* Reduced margin */
+}
+.submit-button:hover {
+    background-color: #eab308; /* Darker yellow */
+    transform: translateY(-1px);
+}
+
+/* ================================
+   REPORTS MANAGEMENT
+   ================================= */
+.reports-management {
+    margin-top: 40px;
+}
+
+.reports-management h2 {
+    text-align: center;
+    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 1.6em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg);
+    color: var(--text-dark);
+    border-radius: 8px;
+    overflow: hidden; /* To apply radius to table corners */
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-light);
+    text-align: left;
+}
+
+th {
+    background-color: #f8f9fa; /* Light grey header */
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Table buttons */
+.view-request-btn,
+.delete-request-btn {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.view-request-btn {
+    background-color: var(--secondary-bg); /* Changed to dark blue */
+    color: var(--text-light);
+}
+.view-request-btn:hover {
+    background-color: var(--secondary-bg-hover); /* Changed to lighter dark blue */
+}
+
+.delete-request-btn {
+    background-color: var(--danger-bg);
+    color: var(--text-light);
+    margin-left: 5px;
+}
+.delete-request-btn:hover {
+    background-color: var(--danger-bg-hover);
+}
+
+#publishPost {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 25px;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--success-bg);
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+#publishPost:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+
+/* ================================
+   MODAL STYLES
+   ================================= */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text-dark);
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.confirmation-modal .modal-content,
+.publish-modal .modal-content {
+     max-width: 600px;
+     text-align: left;
+}
+
+.modal-content h3 {
+    color: var(--text-dark);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.modal-content p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    line-height: 1.7;
+}
+
+.modal-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    text-align: left;
+    margin-bottom: 25px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 20px;
+}
+.modal-summary p {
+     margin-bottom: 8px;
+     font-size: 0.95em;
+}
+.modal-summary strong {
+    color: var(--text-dark);
+    display: inline-block;
+    min-width: 90px;
+}
+.summary-image-container {
+     width: 100%;
+     max-height: 150px;
+     border-radius: 6px;
+     overflow: hidden;
+     background-color: var(--input-bg);
+}
+.summary-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+.publish-modal .modal-actions {
+     justify-content: flex-end; /* Align publish buttons to the right */
+}
+
+.modal-btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.modal-btn:hover {
+    transform: translateY(-1px);
+}
+
+.confirm-btn {
+    background-color: var(--secondary-bg);
+    color: var(--text-light);
+}
+.confirm-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: #e9ecef;
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+.cancel-btn:hover {
+    background-color: #dee2e6;
+}
+
+/* Success Modal Styles */
+.success-icon {
+    margin-bottom: 15px;
+    color: var(--success-bg);
+}
+#successOkBtn {
+    background-color: var(--accent-blue);
+    color: var(--text-light);
+}
+
+/* ================================
+   RESPONSIVE DESIGN (MOBILE)
+   ================================= */
+@media(max-width: 768px) {
+    nav { display: none; }
+    .hamburger { display: flex; }
+    .main-content { padding: 15px; margin-top: 60px; }
+    .card-style { padding: 20px; }
+    .form-container h2 { font-size: 1.4em; margin-bottom: 20px; }
+    .details-grid { grid-template-columns: 1fr; }
+    .reports-management { margin-top: 30px; }
+    table { font-size: 0.9em; }
+    th, td { padding: 8px; }
+    .view-request-btn, .delete-request-btn { padding: 5px 8px; font-size: 0.85em; }
+
+    .modal-content { padding: 20px; }
+    .modal-content h3 { font-size: 1.3em; }
+    .modal-actions { flex-direction: column-reverse; gap: 10px; }
+    .modal-btn { width: 100%; }
+    .modal-summary { grid-template-columns: 1fr; } /* Stack on mobile */
+    .summary-image-container { max-height: 120px; }
+}
+
+/* Desktop-specific layout adjustments */
+@media(min-width: 769px) {
+    .details-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: flex-start;
+    }
+    .photo-uploader {
+        aspect-ratio: 1 / 1;
+    }
+    .modal-summary {
+        grid-template-columns: 150px 1fr;
+        gap: 20px;
+        align-items: flex-start;
+    }
+}

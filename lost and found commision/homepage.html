@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve - Home</title>
+    <!-- Link to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="footer.css">
+</head>
+<body>
+
+    <!-- This header is for DESKTOP view -->
+    <header class="desktop-header">
+        <div class="desktop-header-content">
+            <div class="header-info">
+                <span id="visitor-count">Visitors: 7,843</span>
+                <span class="separator">|</span>
+                <span id="current-date">October 21, 2025</span>
+                <span class="separator">|</span>
+                <span id="current-time">12:00:00 PM</span>
+            </div>
+            <nav>
+                <a href="homepage.html">Home</a>
+                <a href="#" id="about-link">About</a>
+                <a href="#" id="contact-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="page-wrapper">
+        <!-- Collapsible Sidebar for Desktop -->
+        <aside class="sidebar collapsed" id="desktop-sidebar">
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <nav class="sidebar-nav">
+                <a href="reportlost.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    <span>Report Lost Item</span>
+                </a>
+                <a href="reportfound.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    <span>Report Found Item</span>
+                </a>
+                <a href="profile.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sidebar-icon"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Profile</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main container for the app -->
+        <div class="app-container" id="app-container">
+            
+            <!-- Top Navigation for Mobile -->
+            <nav class="mobile-nav">
+                <a href="reportlost.html" class="nav-icon" title="Report Lost">
+                    <img src="https://placehold.co/40x40/333/FFF?text=Lost" alt="Report Lost">
+                </a>
+                <a href="reportfound.html" class="nav-icon" title="Report Found">
+                     <img src="https://placehold.co/40x40/333/FFF?text=Found" alt="Report Found">
+                </a>
+                <a href="homepage.html" class="nav-icon active" title="Home">
+                    <img src="https://placehold.co/40x40/333/FFF?text=Home" alt="Home">
+                </a>
+                <a href="profile.html" class="nav-icon" title="Profile">
+                    <img src="https://placehold.co/40x40/333/FFF?text=Profile" alt="Profile">
+                </a>
+            </nav>
+
+            <div class="main-content">
+                
+                <!-- This wrapper contains all filters -->
+                <div class="filter-controls">
+                     <!-- Category Filter -->
+                    <div class="category-filter-container">
+                        <div class="select-wrapper">
+                             <select id="category-filter-select">
+                                <option value="">Select a Category</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="personal-items">Personal Items</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="accessories">Accessories</option>
+                                <option value="books-stationery">Books & Stationery</option>
+                                <option value="sports-equipment">Sports Equipment</option>
+                                <option value="miscellaneous">Miscellaneous</option>
+                                <option value="keys-locks">Keys & Locks</option>
+                                <option value="documents">Documents</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Filter Buttons -->
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" id="lost-btn">LOST</button>
+                        <button class="filter-btn" id="found-btn">FOUND</button>
+                    </div>
+                </div>
+
+                <!-- This container now holds both lists and is what scrolls -->
+                <div class="items-container">
+                    <!-- List for LOST items -->
+                    <div id="lost-items-list">
+                        <div class="item-card" data-category="accessories"><div class="item-details"><h3>LOST ITEM</h3><p><strong>ITEM:</strong> Tumbler</p><p><strong>COLOR:</strong> Black</p><p><strong>LAST SEEN:</strong> Comlab room</p><p><strong>DATE REPORTED:</strong> 10/14/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Tumbler"></div></div>
+                        <div class="item-card" data-category="accessories"><div class="item-details"><h3>LOST ITEM</h3><p><strong>ITEM:</strong> Hand Watch</p><p><strong>COLOR:</strong> Rose Gold</p><p><strong>LAST SEEN:</strong> MTB Grounds</p><p><strong>DATE REPORTED:</strong> 10/13/25</p></div><div class="item-image no-image"><span>NO IMAGE PROVIDED</span></div></div>
+                        <div class="item-card" data-category="personal-items"><div class="item-details"><h3>LOST ITEM</h3><p><strong>ITEM:</strong> Leather Wallet</p><p><strong>COLOR:</strong> Light Brown</p><p><strong>LAST SEEN:</strong> Canteen</p><p><strong>DATE REPORTED:</strong> 10/12/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Wallet"></div></div>
+                        <div class="item-card" data-category="electronics"><div class="item-details"><h3>LOST ITEM</h3><p><strong>ITEM:</strong> Phone</p><p><strong>COLOR:</strong> Black</p><p><strong>LAST SEEN:</strong> Gym</p><p><strong>DATE REPORTED:</strong> 10/11/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Phone"></div></div>
+                        <div class="item-card" data-category="electronics"><div class="item-details"><h3>LOST ITEM</h3><p><strong>ITEM:</strong> Mouse</p><p><strong>COLOR:</strong> Black</p><p><strong>LAST SEEN:</strong> Library</p><p><strong>DATE REPORTED:</strong> 10/10/25</p></div><div class="item-image no-image"><span>NO IMAGE PROVIDED</span></div></div>
+                    </div>
+
+                    <!-- List for FOUND items (hidden by default) -->
+                    <div id="found-items-list" style="display: none;">
+                        <div class="item-card" data-category="accessories"><div class="item-details"><h3>FOUND ITEM</h3><p><strong>ITEM:</strong> Tumbler</p><p><strong>COLOR:</strong> Black</p><p><strong>FOUND AT:</strong> Comlab room</p><p><strong>DATE FOUND:</strong> 10/14/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Tumbler"></div></div>
+                        <div class="item-card" data-category="accessories"><div class="item-details"><h3>FOUND ITEM</h3><p><strong>ITEM:</strong> Hand Watch</p><p><strong>COLOR:</strong> Rose Gold</p><p><strong>FOUND AT:</strong> MTB Grounds</p><p><strong>DATE REPORTED:</strong> 10/13/25</p></div><div class="item-image no-image"><span>NO IMAGE PROVIDED</span></div></div>
+                        <div class="item-card" data-category="personal-items"><div class="item-details"><h3>FOUND ITEM</h3><p><strong>ITEM:</strong> Leather Wallet</p><p><strong>COLOR:</strong> Light Brown</p><p><strong>FOUND AT:</strong> Canteen</p><p><strong>DATE REPORTED:</strong> 10/12/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Wallet"></div></div>
+                        <div class="item-card" data-category="electronics"><div class="item-details"><h3>FOUND ITEM</h3><p><strong>ITEM:</strong> Phone</p><p><strong>COLOR:</strong> Black</p><p><strong>FOUND AT:</strong> Gym</p><p><strong>DATE REPORTED:</strong> 10/11/25</p></div><div class="item-image"><img src="https://placehold.co/100x100/1A237E/FFFFFF?text=Item" alt="Phone"></div></div>
+                    </div>
+                </div>
+
+                <!-- New Info Section for Desktop -->
+                <section class="info-section">
+                    <h2>How It Works</h2>
+                    <div class="steps-container">
+                        <div class="step">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                            <h3>Report an Item</h3>
+                            <p>Quickly post details about an item you've either lost or found on campus.</p>
+                        </div>
+                        <div class="step">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
+                            <h3>Get Notified</h3>
+                            <p>Our system intelligently alerts users when a potential match for their item is reported.</p>
+                        </div>
+                        <div class="step">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                            <h3>Claim It</h3>
+                            <p>Arrange a secure meet-up at a designated point on campus to claim your belongings.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- This footer is for DESKTOP view -->
+    <footer class="desktop-footer">
+        <div class="desktop-footer-content">
+            <div class="footer-section">
+                <img src="https://placehold.co/120x50/ffffff/333333?text=School+Logo" alt="School Logo">
+                <p>Your trusted partner in finding what's lost.</p>
+            </div>
+            <div class="footer-section"><h4>Quick Links</h4><ul class="footer-links"><li><a href="#">About Us</a></li><li><a href="#">How It Works</a></li><li><a href="#">FAQ</a></li></ul></div>
+            <div class="footer-section"><h4>Contact & Legal</h4><ul class="footer-links"><li><a href="#">Contact Us</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li></ul></div>
+            <div class="footer-section"><h4>Follow Us</h4><ul class="footer-links"><li><a href="#" target="_blank">Facebook</a></li><li><a href="#" target="_blank">Twitter</a></li><li><a href="#" target="_blank">Instagram</a></li></ul></div>
+        </div>
+        <div class="copyright"><p>&copy; 2025 Retrieve. All rights reserved. | Iloilo City, Philippines</p></div>
+    </footer>
+    
+    <!-- Modals for About and Contact -->
+    <div id="about-modal" class="modal-overlay"><div class="modal-content"><span class="close-modal">&times;</span><h2>About Retrieve</h2><p>Retrieve is a modern solution to an age-old problem. Our platform connects people who have lost items with those who have found them, creating a community of trust and support.</p></div></div>
+    <div id="contact-modal" class="modal-overlay"><div class="modal-content"><span class="close-modal">&times;</span><h2>Contact Us</h2><p><strong>Email:</strong> support@retrieve.example.com</p><p><strong>Phone:</strong> (555) 123-4567</p></div></div>
+
+    <script>
+        // --- Standard Date/Time and Modal Script ---
+        function updateDateTime() {
+            const dateElement = document.getElementById('current-date');
+            const timeElement = document.getElementById('current-time');
+            if(dateElement && timeElement) {
+                const now = new Date();
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                dateElement.textContent = now.toLocaleDateString('en-US', dateOptions);
+                const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                timeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
+            }
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const aboutLink = document.getElementById('about-link');
+        const contactLink = document.getElementById('contact-link');
+        const closeButtons = document.querySelectorAll('.close-modal');
+
+        if(aboutLink) {
+             aboutLink.onclick = function(e) { e.preventDefault(); aboutModal.style.display = "flex"; }
+        }
+       if(contactLink){
+            contactLink.onclick = function(e) { e.preventDefault(); contactModal.style.display = "flex"; }
+       }
+        closeButtons.forEach(button => {
+            button.onclick = function() {
+                if(aboutModal) aboutModal.style.display = "none";
+                if(contactModal) contactModal.style.display = "none";
+            }
+        });
+        window.onclick = function(event) {
+            if (event.target == aboutModal) aboutModal.style.display = "none";
+            if (event.target == contactModal) contactModal.style.display = "none";
+        }
+        
+        // --- Sidebar Toggle Script (Simplified) ---
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('desktop-sidebar');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+        
+        // --- Filtering Logic ---
+        const lostBtn = document.getElementById('lost-btn');
+        const foundBtn = document.getElementById('found-btn');
+        const categoryFilterSelect = document.getElementById('category-filter-select');
+        const lostItemsList = document.getElementById('lost-items-list');
+        const foundItemsList = document.getElementById('found-items-list');
+        const allCards = document.querySelectorAll('.item-card');
+
+        function applyFilters(categoryFilter) {
+            allCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                const isInCategory = !categoryFilter || categoryFilter === "" || cardCategory === categoryFilter;
+
+                if (isInCategory) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        lostBtn.addEventListener('click', () => {
+            lostBtn.classList.add('active');
+            foundBtn.classList.remove('active');
+            lostItemsList.style.display = '';
+            foundItemsList.style.display = 'none';
+            applyFilters(categoryFilterSelect.value);
+        });
+
+        foundBtn.addEventListener('click', () => {
+            foundBtn.classList.add('active');
+            lostBtn.classList.remove('active');
+            foundItemsList.style.display = '';
+            lostItemsList.style.display = 'none';
+            applyFilters(categoryFilterSelect.value);
+        });
+
+        categoryFilterSelect.addEventListener('change', () => {
+            applyFilters(categoryFilterSelect.value);
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get('category');
+            if (category) {
+                categoryFilterSelect.value = category;
+                applyFilters(category);
+            }
+        });
+
+    </script>
+</body>
+</html>

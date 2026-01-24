@@ -1,0 +1,74 @@
+/* --- STYLES FOR DESKTOP HEADER --- */
+
+/* These styles are only for the desktop version of the header.
+   Include this stylesheet on any page that needs it.
+*/
+
+/* Variables used by the header */
+:root {
+    --desktop-header-bg: #1A237E;
+    --desktop-header-text: #FFFFFF;
+    --accent-color: #f2c029; /* Explicitly defined yellow for hover */
+    --button-bg: #1A237E;
+}
+
+/* Hide desktop header by default on mobile */
+.desktop-header {
+    display: none;
+}
+
+/* Desktop Responsiveness */
+@media (min-width: 768px) {
+    /* Show and style the desktop header */
+    .desktop-header {
+        display: flex;
+        justify-content: center;
+        background-color: var(--desktop-header-bg);
+        color: var(--desktop-header-text);
+        padding: 15px 20px;
+        width: 100%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .desktop-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 25px;
+    }
+
+    .header-info {
+        text-align: left;
+        font-size: 0.9rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .header-info span {
+        margin: 0 5px;
+    }
+    
+    .header-info .separator {
+        opacity: 0.5;
+    }
+
+    .desktop-header nav a {
+        color: var(--desktop-header-text);
+        text-decoration: none;
+        margin-left: 15px;
+        font-weight: 600;
+        padding: 8px 15px;
+        border-radius: 5px;
+        border: 1px solid transparent;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .desktop-header nav a:hover {
+        background-color: var(--accent-color);
+        color: var(--button-bg);
+    }
+    
+    /* REMOVED the .active class that was causing the issue */
+}
+

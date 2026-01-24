@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve - Log In</title>
+    <!-- Link to your new component stylesheets -->
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="footer.css">
+    <style>
+        /* Basic Resets and Font */
+        :root {
+            --primary-bg: #f2c029; /* Golden yellow from image */
+            --button-bg: #1A237E; /* Dark blue from image */
+            --button-text: #FFFFFF;
+            --footer-text: #3333339a;
+            --desktop-footer-bg: #1A237E; /* Changed to button blue */
+            --desktop-footer-text: #FFFFFF; /* Changed to white */
+            --card-bg: #FFFFFF; /* White background for the form card */
+            --input-border: #CCCCCC;
+            --input-placeholder: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--primary-bg);
+            color: #333; /* Default text color for the form */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* Main content container for the login form */
+        .login-container {
+            flex: 1; /* Allows it to grow and push footers down */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Card-like form container */
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px; /* Made container bigger to fit title */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Align labels to the left */
+            margin: 100px 0; /* Added 100px top and bottom margin */
+        }
+
+        .form-card h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 700;
+            white-space: nowrap; /* Ensures the text stays on one line */
+        }
+
+        .form-group {
+            margin-bottom: 10px; 
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-align: left; /* Keep placeholder text left-aligned */
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .login-btn {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 8px;
+            padding: 15px 25px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 30px auto 0;
+            display: block;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.4);
+        }
+
+        .login-btn:hover, .login-btn:focus {
+            background-color: #283593;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 6px 16px rgba(26, 35, 126, 0.5);
+        }
+
+        /* Mobile Footer (Original) */
+        .footer {
+            width: 100%;
+            text-align: center;
+            color: var(--footer-text);
+            font-size: 0.8rem;
+            padding: 20px 0;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            color: #333;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+            text-align: left;
+        }
+
+        .close-modal {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="desktop-header">
+        <div class="desktop-header-content">
+            <div class="header-info">
+                <span id="visitor-count">Visitors: 7,843</span>
+                <span class="separator">|</span>
+                <span id="current-date">October 21, 2025</span>
+                 <span class="separator">|</span>
+                <span id="current-time">12:00:00 PM</span>
+            </div>
+            <nav>
+                <a href="landing.html">Home</a>
+                <a href="#" id="about-link">About</a>
+                <a href="#" id="contact-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="form-card">
+            <h2>Enter credentials to continue</h2>
+            <form>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter Email Address...">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password...">
+                </div>
+                <button type="submit" class="login-btn" id="login-btn">LOG IN</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>All rights reserved 2025</p>
+    </footer>
+
+    <footer class="desktop-footer">
+        <div class="desktop-footer-content">
+            <div class="footer-section">
+                 <img src="images/logo.png" alt="School Logo">
+                <p>Your trusted partner in finding what's lost.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact & Legal</h4>
+                 <ul class="footer-links">
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+             <div class="footer-section">
+                <h4>Follow Us</h4>
+                <ul class="footer-links">
+                    <li><a href="#" target="_blank">Facebook</a></li>
+                    <li><a href="#" target="_blank">Twitter</a></li>
+                    <li><a href="#" target="_blank">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Retrieve. All rights reserved. | Iloilo City, Philippines</p>
+        </div>
+    </footer>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>About Retrieve</h2>
+            <p>Retrieve is a modern solution to an age-old problem. Our platform connects people who have lost items with those who have found them, creating a community of trust and support. Whether it's a lost wallet, a forgotten umbrella, or a cherished pet, Retrieve is here to help you reconnect with your belongings.</p>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Contact Us</h2>
+            <p>Have a question or need assistance? We're here to help.</p>
+            <p><strong>Email:</strong> support@retrieve.example.com</p>
+            <p><strong>Phone:</strong> (555) 123-4567</p>
+            <p><strong>Address:</strong> 123 Main Street, Iloilo City, Philippines</p>
+        </div>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const dateElement = document.getElementById('current-date');
+            const timeElement = document.getElementById('current-time');
+            
+            if(dateElement && timeElement) {
+                const now = new Date();
+                
+                const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                dateElement.textContent = now.toLocaleDateString('en-US', dateOptions);
+
+                const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                timeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
+            }
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // --- MODAL LOGIC ---
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+
+        const aboutLink = document.getElementById('about-link');
+        const contactLink = document.getElementById('contact-link');
+
+        const closeButtons = document.querySelectorAll('.close-modal');
+
+        // Open modals
+        aboutLink.onclick = function(e) {
+            e.preventDefault(); // Prevent the link from navigating
+            aboutModal.style.display = "flex";
+        }
+        contactLink.onclick = function(e) {
+            e.preventDefault(); // Prevent the link from navigating
+            contactModal.style.display = "flex";
+        }
+
+        // Close modals with the 'X' button
+        closeButtons.forEach(button => {
+            button.onclick = function() {
+                aboutModal.style.display = "none";
+                contactModal.style.display = "none";
+            }
+        });
+
+        // Close modals by clicking on the background overlay
+        window.onclick = function(event) {
+            if (event.target == aboutModal || event.target == contactModal) {
+                aboutModal.style.display = "none";
+                contactModal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
+

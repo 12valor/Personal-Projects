@@ -1,0 +1,120 @@
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.loader-img {
+  width: 100px;
+  height: 100px;
+  animation: pulse 2s ease-in-out infinite, zoomOut 0.5s ease-out 2s forwards;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes zoomOut {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(30); opacity: 0; }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  max-width: 100%;
+  max-height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 30px;
+  width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.modal-news-title {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.modal-news-text {
+  font-size: 16px;
+  color: #555;
+}
+
+.modal-socials {
+  margin: 20px 0;
+}
+
+.modal-social-link {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #0077cc;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.modal-social-link:hover {
+  color: #004f8a;
+}
+
+.modal-button {
+  padding: 10px 30px;
+  background-color: #222;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.modal-button:hover {
+  background-color: #444;
+}
+
+
+.hidden {
+  display: none;
+}
+.modal-callout {
+  background-color: #fff3f3;
+  color: #721c24;
+  border-left: 6px solid #dc3545;
+  padding: 10px 16px;
+  margin: 16px 0;
+  border-radius: 4px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}

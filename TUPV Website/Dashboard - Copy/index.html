@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard with Modal</title>
+  <link rel="stylesheet" href="mystyle.css">
+  <link rel="stylesheet" href="css/all.min.css">
+</head>
+<body>
+
+  <button class="hamburger" id="hamburger"></button>
+
+  <div class="dashboard">
+    <aside class="sidebar">
+      <h2 class="logo"><i class="fas fa-chart-line"></i> TUPV DASHBOARD</h2>
+      <ul class="menu">
+        <li>
+          <button class="menu-btn"><i class="fa-sharp fa-solid fa-school"></i> Subjects</button>
+          <ul class="submenu">
+            <li><i class="fa-solid fa-square-root-variable"></i> Integral Calculus</li>
+            <li><i class="fa-solid fa-brush"></i> Art Appreciation</li>
+            <li><i class="fa-solid fa-database"></i> Theory Of Database</li>
+          </ul>
+        </li>
+        <li>
+          <button class="menu-btn"><i class="fa-sharp fa-solid fa-users"></i> Affliations</button>
+          <ul class="submenu">
+            <li><i class="fa-solid fa-microchip"></i>Technowatch </li>
+            <li><i class="fa-solid fa-gamepad"></i> Archons</li>
+            <li><i class="fa-solid fa-compact-disc"></i> El Gremio</li>
+          </ul>
+        </li>
+        <li>
+          <button class="menu-btn"><i class="fa-sharp fa-solid fa-wifi"></i> Hobbies</button>
+          <ul class="submenu">
+            <li><i class="fa-solid fa-code-branch"></i> Coding</li>
+            <li><i class="fa-solid fa-mug-saucer"></i> Coffee</li>
+            <li><i class="fa-solid fa-basketball"></i> Basketball</li>
+            <li><i class="fa-solid fa-headset"></i> Gaming</li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="content">
+      <div class="main-header">
+        <div class="main-logo">
+          <img src="logo.png" alt="Logo">
+        </div>
+        <div class="main-greeting">
+          <h1>Technological University of The Philippines - Visayas</h1>
+          <H4>Captain Sabi Street, Zone 12, Talisay City, 6115 Negros Occidental, Philippines</H4>
+          <p>
+            Tel. No. (039) 445-2177 | http://www.tupvisayas.du.ph | Email: visayas@tup.edu.ph
+            <h3>IN TUP, WE WILL BECOME</h3>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <h2>REGISTER</h2>
+        <form id="InfoForm">
+          <input type="text" name="name" placeholder="Full Name" required><br>
+          <input type="email" name="email" placeholder="Email" required><br>
+          <input type="tel" name="phone" placeholder="Phone Number" required><br>
+          <input type="DATE" name="DATE" placeholder="Birthday" required><br>
+          <input type="password" name="password" placeholder="Password" required><br>
+          <button type="submit">Submit</button>
+        </form>
+       
+      </div>
+      
+    </main>
+  </div>
+
+  <div class="modal" id="confirmationModal">
+    <div class="modal-content">
+      <h3>Thank You</h3>
+      <p>Your information has been submitted.</p>
+      <p>Check your email.</p>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="myscript.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../Poppins/Poppins-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../Poppins/Poppins-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('../BebasNeue/BebasNeue-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  background-color: #f4f6f8;
+  color: #1a1a1a;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  background-color: maroon;
+  color: white;
+  width: 50%;
+  margin: 0 auto;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.header p {
+  font-size: 16px;
+  color: #555;
+}
+
+.callout {
+  background-color: #ffdbdb;
+  padding: 20px;
+  border-left: 6px solid #b53f3f;
+  margin-bottom: 30px;
+  border-radius: 4px;
+}
+
+.callout h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.callout p {
+  font-size: 14px;
+  color: #333;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.card-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-content h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.card-content p {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
+}
+
+.card:hover {
+  background-color: rgb(137, 39, 39);
+  color: white;
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: maroon;
+}
+
+.card:hover .card-content p {
+  color: #ffffff;
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.back-button-container {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.back-button {
+  text-decoration: none;
+  padding: 10px 20px;
+  background-color: maroon;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background-color: #9f3030;
+}

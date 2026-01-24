@@ -26,7 +26,7 @@ The following technologies were utilized across the projects in this repository 
 
 ---
 
-## 🛠️ Tools & Platforms
+## Tools & Platforms
 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
@@ -39,7 +39,7 @@ CreatorLens is a comprehensive dashboard for YouTube creators to track growth an
 * **Content Tools:** Automatic generation of highlight clips from high-engagement segments.
 * **Interface:** Minimalist dashboard featuring system-aware light and dark modes.
 
-### CRITIQUE
+### Critique
 **Creator Feedback Platform**
 
 CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
@@ -51,7 +51,7 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 
 ---
 
-## 🏛️ Institutions
+## Institutions
 
 ### TUPV Website
 **Institutional Portal**
@@ -72,7 +72,7 @@ A prototype developed for the Technowatch school organization. This project focu
 
 ---
 
-## 🤝 Commissions
+## Commissions
 
 ### Retrieve
 **Lost & Found Management System**
@@ -85,7 +85,7 @@ A commissioned web application designed to facilitate the reporting and recovery
 
 ---
 
-## 🛍️ Commerce
+## Commerce
 
 ### Flow
 **Natural Products Marketplace**

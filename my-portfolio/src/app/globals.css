@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Reset to ensure flat design. 
+    Removes default anti-aliasing issues and sets the base background.
+  */
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Optional: Smooth Scroll Behavior 
+  (Only for anchor links, we are not scroll-jacking)
+*/
+html {
+  scroll-behavior: smooth;
+}

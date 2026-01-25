@@ -3,27 +3,33 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function Hero() {
-  // Animation: Staggered fade up (0.05s - 0.1s stagger)
-  // "Fade + slight Y-translate on page load (no dramatic motion)"
+  // Animation: Staggered fade up
   const fadeUp = {
     hidden: { opacity: 0, y: 15 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
       transition: {
-        delay: 0.2 + i * 0.1, // Starts after 0.2s, staggers by 0.1s
+        delay: 0.2 + i * 0.1,
         duration: 0.8,
-        ease: [0.25, 1, 0.5, 1], // Editorial "soft" ease (no bounce)
+        ease: [0.25, 1, 0.5, 1],
       },
     }),
   };
 
   return (
     <section className="relative w-full border-b border-border">
-      <div className="grid grid-cols-1 md:grid-cols-12 min-h-[90vh]">
+      {/* CHANGE 1: Changed md:grid-cols-12 to lg:grid-cols-12 
+         This ensures the layout stays as a single column on tablets (iPads), 
+         only splitting into two columns on desktop/laptops.
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[90vh]">
         
         {/* LEFT COLUMN: Typography & CTA */}
-        <div className="md:col-span-7 flex flex-col justify-center px-6 md:px-16 py-20 border-r border-border bg-background z-10">
+        {/* CHANGE 2: Changed md:col-span-7 to lg:col-span-7
+           Also added explicit 'col-span-1' for mobile/tablet default.
+        */}
+        <div className="col-span-1 lg:col-span-7 flex flex-col justify-center px-6 md:px-16 py-20 lg:border-r border-border bg-background z-10 text-center lg:text-left items-center lg:items-start">
           <div className="max-w-2xl">
             {/* Headline */}
             <motion.h1
@@ -43,12 +49,12 @@ export default function Hero() {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="text-lg md:text-xl text-gray-500 max-w-md mb-12 leading-relaxed font-light"
+              className="text-lg md:text-xl text-gray-500 max-w-md mb-12 leading-relaxed font-light mx-auto lg:mx-0"
             >
               Building visual clarity in a noisy world. I prioritize structure, typography, and negative space.
             </motion.p>
 
-            {/* Minimal CTA - No button explosion */}
+            {/* Minimal CTA */}
             <motion.div 
               custom={2} 
               initial="hidden" 
@@ -58,10 +64,8 @@ export default function Hero() {
               <a href="#work" className="group inline-flex items-center gap-2 text-foreground font-medium text-lg">
                 <span className="relative">
                   View Selected Works
-                  {/* Underline slides in from left on hover */}
                   <span className="absolute left-0 -bottom-1 w-full h-[1px] bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </span>
-                {/* Arrow moves slightly */}
                 <span className="transform transition-transform duration-300 group-hover:translate-x-1 text-accent">
                   →
                 </span>
@@ -71,22 +75,21 @@ export default function Hero() {
         </div>
 
         {/* RIGHT COLUMN: Portrait */}
-        <div className="md:col-span-5 relative h-[50vh] md:h-auto flex items-end justify-center overflow-hidden bg-background">
-          {/* Subtle green accent background shape (optional, adds depth) */}
+        {/* CHANGE 3: Added 'hidden' (default) and 'lg:flex' (desktop only).
+            This completely removes the image block on Mobile AND Tablets (iPad).
+            It will only appear on screens wider than 1024px.
+        */}
+        <div className="hidden lg:flex lg:col-span-5 relative h-auto items-end justify-center overflow-hidden bg-background">
           <div className="absolute top-0 right-0 w-full h-full bg-accent/5 -z-10" />
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: [0.25, 1, 0.5, 1], delay: 0.4 }}
-            className="relative w-full h-[90%] md:h-[85%] translate-x-4 md:translate-x-0"
+            className="relative w-full h-[85%]"
           >
-            {/* IMPORTANT: 
-               1. Replace '/portrait.png' with your actual file in public/ folder.
-               2. Use a transparent PNG for the best effect.
-            */}
             <Image
-              src="/portrait.png" // Put your image in public folder
+              src="/portrait.png"
               alt="Designer Portrait"
               fill
               className="object-contain object-bottom grayscale-[10%] group-hover:grayscale-0 transition-all duration-700"

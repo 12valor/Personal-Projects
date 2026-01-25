@@ -1,62 +1,86 @@
-"use client";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import { supabase } from "../lib/supabase";
 import Link from "next/link";
+import Image from "next/image";
 
-// Mock Data
-const projects = [
-  { id: 1, title: "Lumina Interface", category: "UI/UX Design", src: "/p1.jpg" },
-  { id: 2, title: "TechReview 2024", category: "YouTube Editing", src: "/p2.jpg" },
-  { id: 3, title: "Apex Branding", category: "UI/UX Design", src: "/p3.jpg" },
-  { id: 4, title: "Minimalist Daily", category: "YouTube Editing", src: "/p4.jpg" },
-];
+// Define the shape of our data
+interface Project {
+  id: number;
+  title: string;
+  category: string;
+  image_url: string;
+}
 
-export default function WorkGrid() {
+// Server Component
+export default async function WorkGrid() {
+  
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('*')
+    .order('id', { ascending: false });
+
+  if (!projects || projects.length === 0) {
+    return (
+      <section className="px-6 py-24 text-center border-t border-border">
+        <p className="text-gray-400 font-light">Portfolio is currently empty.</p>
+      </section>
+    );
+  }
+
   return (
-    <section id="work" className="px-6 md:px-16 py-24 bg-background">
-      {/* Section Header */}
-      <div className="flex items-end justify-between mb-16 border-b border-border pb-6">
-        <h2 className="text-3xl font-medium text-foreground">Selected Works</h2>
-        <span className="text-sm text-gray-400 hidden md:block">(04) Projects</span>
+    <section id="work" className="px-6 md:px-16 py-32 bg-background border-t border-border">
+      
+      {/* Header */}
+      <div className="max-w-5xl mx-auto flex items-baseline justify-between mb-20">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground">
+          Selected Works
+        </h2>
+        <span className="text-xs font-mono text-gray-400 hidden md:block">
+          ( {projects.length.toString().padStart(2, '0')} )
+        </span>
       </div>
 
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
-        {projects.map((project) => (
+      {/* Grid: Restored to 2 columns to match your red box sizing */}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
+        
+        {projects.map((project: Project) => (
           <Link 
             href={`/work/${project.id}`} 
             key={project.id} 
-            className="group cursor-pointer block"
+            className="group block"
           >
-            {/* Image Container (Editorial Crop) */}
-            <div className="overflow-hidden mb-6 border border-gray-100 bg-gray-50 relative aspect-[4/3]">
-              <motion.div
-                whileHover={{ scale: 1.03 }} // "Image slightly zooms (scale 1.03 max)"
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="w-full h-full relative"
-              >
-                {/* Ensure p1.jpg, p2.jpg etc exist in public/ folder */}
-                <Image 
-                  src={project.src} 
-                  alt={project.title} 
-                  fill 
-                  className="object-cover"
-                />
-              </motion.div>
+            {/* 1. Image Container (Reverted to 4/3 to match the height of your drawing) */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm">
+              
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700 z-10" />
+              
+              <div className="w-full h-full relative transition-transform duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.02]">
+                {project.image_url ? (
+                   <Image 
+                   src={project.image_url} 
+                   alt={project.title} 
+                   fill 
+                   className="object-cover"
+                   sizes="(max-width: 768px) 100vw, 50vw"
+                 />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 bg-gray-50">
+                    <span className="text-xs uppercase tracking-widest">No Preview</span>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Text Content - No "Card" Background */}
-            <div className="flex flex-col items-start space-y-2">
-              <span className="text-xs font-semibold tracking-widest uppercase text-accent">
+            {/* 2. Text Content */}
+            <div className="flex flex-col items-start space-y-3 pr-8">
+              <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-accent/80 pl-[1px]">
                 {project.category}
               </span>
               
               <div className="relative inline-block">
-                <h3 className="text-2xl font-medium text-foreground">
+                <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight">
                   {project.title}
                 </h3>
-                {/* "Thin underline slides in from left" */}
-                <span className="absolute left-0 -bottom-1 w-full h-[1px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out"></span>
+                <span className="absolute left-0 -bottom-2 w-full h-[1px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-out"></span>
               </div>
             </div>
           </Link>

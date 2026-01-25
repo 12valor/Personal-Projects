@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="no-scrollbar">
       {/* 2. Apply the variable to the body */}
       <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
         {children}

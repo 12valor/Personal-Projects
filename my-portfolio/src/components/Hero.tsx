@@ -1,105 +1,124 @@
 "use client";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
 export default function Hero() {
-  // Animation: Staggered fade up
-  const fadeUp = {
-    hidden: { opacity: 0, y: 15 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.2 + i * 0.1,
-        duration: 0.8,
-        ease: [0.25, 1, 0.5, 1],
-      },
-    }),
+  const containerRef = useRef(null);
+
+  // 1. Track Scroll Progress
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  // 2. Parallax Hooks (Elements move at different speeds)
+  const yBackground = useTransform(scrollYProgress, [0, 1], [0, 300]); // Text moves fast
+  const yImage = useTransform(scrollYProgress, [0, 1], [0, 100]);      // Image moves slow (depth)
+  const opacityFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]); // Fade out on scroll
+
+  // 3. Entrance Animations
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] } 
+    }
   };
 
   return (
-    <section className="relative w-full border-b border-border">
-      {/* CHANGE 1: Changed md:grid-cols-12 to lg:grid-cols-12 
-         This ensures the layout stays as a single column on tablets (iPads), 
-         only splitting into two columns on desktop/laptops.
-      */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[90vh]">
+    <section 
+      ref={containerRef} 
+      className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
+    >
+      
+      {/* --- LAYER 1: BACKGROUND TITLE (Behind Image) --- */}
+      {/* Position: Top Left */}
+      <motion.div 
+        style={{ y: yBackground, opacity: opacityFade }}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="absolute top-[12vh] left-6 md:left-16 z-0 pointer-events-none"
+      >
+        <h1 className="text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90">
+          Graphic
+        </h1>
+      </motion.div>
+
+      {/* --- LAYER 2: PORTRAIT IMAGE (Middle) --- */}
+      {/* Hidden on Mobile/iPad (lg:flex), Centered, Parallax applied */}
+      <motion.div 
+        style={{ y: yImage }}
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="absolute inset-0 z-10 hidden lg:flex items-end justify-center pointer-events-none"
+      >
+        {/* Container constraints to keep image realistic size */}
+        <div className="relative w-[45vw] h-[90%]">
+          <Image
+            src="/hero.png" // Make sure this is a Transparent PNG for best effect
+            alt="Designer Portrait"
+            fill
+            className="object-contain object-bottom"
+            priority
+            draggable={false}
+          />
+        </div>
+      </motion.div>
+
+      {/* --- LAYER 3: FOREGROUND TITLE (In Front of Image) --- */}
+      {/* Position: Bottom Right */}
+      <motion.div 
+        style={{ y: yBackground }}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ delay: 0.1 }}
+        className="absolute bottom-[15vh] right-6 md:right-16 z-20 pointer-events-none text-right"
+      >
+        <h1 className="text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase">
+          Designer
+        </h1>
+      </motion.div>
+
+
+      {/* --- LAYER 4: UI DETAILS (Fixed Overlay) --- */}
+      {/* Sidebar & Bottom Text */}
+      <div className="absolute inset-0 z-30 pointer-events-none px-6 md:px-16 pb-12 flex flex-col justify-end">
         
-        {/* LEFT COLUMN: Typography & CTA */}
-        {/* CHANGE 2: Changed md:col-span-7 to lg:col-span-7
-           Also added explicit 'col-span-1' for mobile/tablet default.
-        */}
-        <div className="col-span-1 lg:col-span-7 flex flex-col justify-center px-6 md:px-16 py-20 lg:border-r border-border bg-background z-10 text-center lg:text-left items-center lg:items-start">
-          <div className="max-w-2xl">
-            {/* Headline */}
-            <motion.h1
-              custom={0}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tighter text-foreground mb-8 leading-[1.05]"
-            >
-              I’m a Graphic <br />
-              <span className="text-accent italic">Designer</span>
-            </motion.h1>
+        <div className="flex justify-between items-end w-full">
+            {/* Bottom Left: Description */}
+            <div className="max-w-xs pointer-events-auto">
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                    
+                    {/* Bouncing Scroll Arrow */}
+                    <motion.a 
+                        href="#work"
+                        animate={{ y: [0, 10, 0] }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        className="text-3xl text-accent inline-block cursor-pointer hover:text-foreground transition-colors"
+                    >
+                        ↓
+                    </motion.a>
+                </motion.div>
+            </div>
 
-            {/* Subtext */}
-            <motion.p
-              custom={1}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="text-lg md:text-xl text-gray-500 max-w-md mb-12 leading-relaxed font-light mx-auto lg:mx-0"
-            >
-              Building visual clarity in a noisy world. I prioritize structure, typography, and negative space.
-            </motion.p>
-
-            {/* Minimal CTA */}
-            <motion.div 
-              custom={2} 
-              initial="hidden" 
-              animate="visible" 
-              variants={fadeUp}
-            >
-              <a href="#work" className="group inline-flex items-center gap-2 text-foreground font-medium text-lg">
-                <span className="relative">
-                  View Selected Works
-                  <span className="absolute left-0 -bottom-1 w-full h-[1px] bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                </span>
-                <span className="transform transition-transform duration-300 group-hover:translate-x-1 text-accent">
-                  →
-                </span>
-              </a>
-            </motion.div>
-          </div>
+            {/* Vertical Sidebar (Left Side) - Visual Decor */}
+            <div className="absolute left-6 md:left-16 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-6 opacity-40">
+                <span className="text-xs tracking-[0.3em] font-medium [writing-mode:vertical-lr] rotate-180">2K24</span>
+                <div className="w-[1px] h-24 bg-foreground"></div>
+                <span className="text-xs tracking-[0.3em] font-medium [writing-mode:vertical-lr] rotate-180 text-accent">.PORTFOLIO</span>
+            </div>
         </div>
-
-        {/* RIGHT COLUMN: Portrait */}
-        {/* CHANGE 3: Added 'hidden' (default) and 'lg:flex' (desktop only).
-            This completely removes the image block on Mobile AND Tablets (iPad).
-            It will only appear on screens wider than 1024px.
-        */}
-        <div className="hidden lg:flex lg:col-span-5 relative h-auto items-end justify-center overflow-hidden bg-background">
-          <div className="absolute top-0 right-0 w-full h-full bg-accent/5 -z-10" />
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: [0.25, 1, 0.5, 1], delay: 0.4 }}
-            className="relative w-full h-[85%]"
-          >
-            <Image
-              src="/portrait.png"
-              alt="Designer Portrait"
-              fill
-              className="object-contain object-bottom grayscale-[10%] group-hover:grayscale-0 transition-all duration-700"
-              priority
-              draggable={false}
-            />
-          </motion.div>
-        </div>
-
       </div>
+
     </section>
   );
 }

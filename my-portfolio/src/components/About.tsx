@@ -33,23 +33,19 @@ const timelineData = [
 export default function About() {
   const targetRef = useRef<HTMLDivElement>(null);
   
-  // Track scroll progress of this specific section (0 to 1)
   const { scrollYProgress } = useScroll({
     target: targetRef,
   });
 
-  // Map vertical scroll (0 -> 1) to horizontal movement (1% -> -95%)
-  // We move the timeline LEFT as the user scrolls DOWN
+  // Map vertical scroll to horizontal movement
   const x = useTransform(scrollYProgress, [0, 1], ["1%", "-75%"]);
-
-  // Parallax Text Effect (Moves slower than the timeline)
   const textX = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
-    // Height 300vh gives us "scroll distance" to make the animation feel slow and smooth
-    <section ref={targetRef} className="relative h-[300vh] bg-background">
+    // CHANGED: Reduced height from 300vh to 200vh.
+    // This makes the scroll shorter, bringing the next section up faster.
+    <section ref={targetRef} className="relative h-[200vh] bg-background">
       
-      {/* Sticky Container: Freezes the view while we animate the content */}
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         
         {/* Parallax Background Text */}
@@ -82,7 +78,6 @@ export default function About() {
               key={index} 
               className="group relative flex flex-col justify-center min-w-[300px] md:min-w-[450px] border-l border-gray-200 pl-8 md:pl-12 hover:border-accent/50 transition-colors duration-500"
             >
-              {/* Year Badge */}
               <span className="text-6xl md:text-8xl font-light text-gray-200 group-hover:text-accent/20 transition-colors duration-500 mb-4 block">
                 {item.year}
               </span>

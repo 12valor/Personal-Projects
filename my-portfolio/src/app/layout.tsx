@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import Navbar from "../components/Navbar"; // Import here
 
-// 1. Configure Poppins
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"], // Weights needed for editorial feel
-  variable: "--font-poppins", // CSS variable for Tailwind
-  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: "Graphic Designer Portfolio",
-  description: "Minimalist portfolio showcasing UI/UX and Video Editing",
+  title: "Mark Ashton | Portfolio",
+  description: "Graphic Designer & Visual Artist",
 };
 
 export default function RootLayout({
@@ -22,8 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="no-scrollbar">
-      {/* 2. Apply the variable to the body */}
-      <body className={`${poppins.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className={`${poppins.className} antialiased bg-background text-foreground`}>
+        <Navbar /> {/* Add Navbar here, above children */}
         {children}
       </body>
     </html>

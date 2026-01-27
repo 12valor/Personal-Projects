@@ -1,37 +1,73 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
+    darkMode: ["class"],
+    content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      // 1. Force Poppins as the default sans font
-      fontFamily: {
-        sans: ["var(--font-poppins)", "sans-serif"],
-      },
-      // 2. Define your Minimal/Editorial Color Palette
-      colors: {
-        background: "#FFFFFF", // Pure white
-        foreground: "#1A1A1A", // Sharp, editorial black
-        accent: {
-          DEFAULT: "#2F5E41", // The subtle green you requested
-          hover: "#244A32",
-          light: "#E8F0EA", // For very subtle backgrounds
-        },
-        border: "#E5E5E5", // Neutral gray for grid lines
-        subtle: "#F5F5F5", // For hover states
-      },
-      // 3. Strict Border Radius (No "AI-card" blobs)
-      borderRadius: {
-        DEFAULT: "4px",
-        md: "6px",
-        lg: "8px", 
-      },
-    },
+  	extend: {
+  		fontFamily: {
+  			sans: [
+  				'var(--font-poppins)',
+  				'sans-serif'
+  			]
+  		},
+  		colors: {
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				hover: '#244A32',
+  				light: '#E8F0EA',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			subtle: '#F5F5F5',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			}
+  		},
+  		borderRadius: {
+  			DEFAULT: '4px',
+  			md: 'calc(var(--radius) - 2px)',
+  			lg: 'var(--radius)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		}
+  	}
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;

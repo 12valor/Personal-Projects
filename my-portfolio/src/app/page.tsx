@@ -5,19 +5,20 @@ import Services from "../components/Services";
 import Contact from "../components/Contact"; // Import
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import TechStack from "../components/TechStack";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Navbar />
       <Hero />
-      
+      <TechStack />
       <div id="about">
         <About />
       </div>
 
-      <WorkGrid />
       <Services />
+      <WorkGrid />
       <Contact />
       
     </main>

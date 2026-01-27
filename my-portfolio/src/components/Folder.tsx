@@ -51,10 +51,17 @@ const Folder: React.FC<FolderProps> = ({ color = '#5227FF', size = 1, className 
             style={{ backgroundColor: folderBackColor }}
           ></span>
 
-          {/* Paper Hint (Visual only, suggests content inside) */}
-          <div className="absolute z-10 bottom-[10%] left-1/2 -translate-x-1/2 w-[80%] h-[10%] bg-white opacity-20 rounded-t-md group-hover:h-[30%] transition-all duration-300"></div>
+          {/* --- DECORATIVE BLANK CARDS --- */}
+          {/* Card 1 (Back - Tilted Left) */}
+          <div className="absolute z-10 bottom-[15%] left-1/2 w-[80%] h-[60%] bg-white opacity-50 rounded-sm border border-white/20 origin-bottom transform -translate-x-1/2 -rotate-6 transition-all duration-300 group-hover:bottom-[30%] group-hover:-rotate-12"></div>
           
-          {/* Front Flaps */}
+          {/* Card 2 (Middle - Tilted Right) */}
+          <div className="absolute z-10 bottom-[15%] left-1/2 w-[80%] h-[60%] bg-white opacity-70 rounded-sm border border-white/20 origin-bottom transform -translate-x-1/2 rotate-3 transition-all duration-300 group-hover:bottom-[35%] group-hover:rotate-6"></div>
+          
+          {/* Card 3 (Front - Straight) */}
+          <div className="absolute z-10 bottom-[15%] left-1/2 w-[80%] h-[60%] bg-white opacity-90 rounded-sm border border-gray-100 origin-bottom transform -translate-x-1/2 -rotate-1 transition-all duration-300 group-hover:bottom-[40%] group-hover:rotate-0"></div>
+
+          {/* --- FRONT FLAPS (Cover the bottom of the cards) --- */}
           <div
             className="absolute z-30 w-full h-full origin-bottom transition-all duration-300 ease-in-out group-hover:[transform:skew(15deg)_scaleY(0.6)]"
             style={{

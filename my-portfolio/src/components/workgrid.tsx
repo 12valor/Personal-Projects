@@ -1,8 +1,8 @@
 import { supabase } from "../lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react"; // Make sure you have lucide-react or use an SVG
 
-// Define the shape of our data
 interface Project {
   id: number;
   title: string;
@@ -10,7 +10,6 @@ interface Project {
   image_url: string;
 }
 
-// Server Component
 export default async function WorkGrid() {
   
   const { data: projects } = await supabase
@@ -27,10 +26,10 @@ export default async function WorkGrid() {
   }
 
   return (
-    <section id="work" className="px-6 md:px-16 py-32 bg-background border-t border-border">
+    <section id="work" className="px-6 md:px-16 pt-0 pb-32 bg-background border-t border-border">
       
       {/* Header */}
-      <div className="max-w-5xl mx-auto flex items-baseline justify-between mb-20">
+      <div className="max-w-5xl mx-auto flex items-baseline justify-between mb-12 md:mb-20 pt-12">
         <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-foreground">
           Selected Works
         </h2>
@@ -39,27 +38,36 @@ export default async function WorkGrid() {
         </span>
       </div>
 
-      {/* Grid: Restored to 2 columns to match your red box sizing */}
+      {/* Grid */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24">
         
         {projects.map((project: Project) => (
           <Link 
             href={`/work/${project.id}`} 
             key={project.id} 
-            className="group block"
+            className="group block relative"
           >
-            {/* 1. Image Container (Reverted to 4/3 to match the height of your drawing) */}
-            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm">
+            {/* 1. Image Container */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm rounded-sm">
               
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700 z-10" />
+              {/* Overlay: Darken slightly on hover + Icon */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-20 flex items-center justify-center">
+                 <div className="w-12 h-12 bg-white rounded-full items-center justify-center hidden group-hover:flex opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-lg">
+                    <ArrowUpRight className="w-5 h-5 text-black" />
+                 </div>
+              </div>
               
-              <div className="w-full h-full relative transition-transform duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.02]">
+              <div className="w-full h-full relative">
                 {project.image_url ? (
                    <Image 
                    src={project.image_url} 
                    alt={project.title} 
                    fill 
-                   className="object-cover"
+                   // THE MAGIC TRICK:
+                   // 1. object-top: Start showing from the top
+                   // 2. group-hover:object-bottom: Scroll to bottom on hover
+                   // 3. duration-[3s]: Take 3 seconds to scroll (adjust for speed)
+                   className="object-cover object-top transition-[object-position] duration-[3s] ease-in-out group-hover:object-bottom"
                    sizes="(max-width: 768px) 100vw, 50vw"
                  />
                 ) : (
@@ -77,10 +85,9 @@ export default async function WorkGrid() {
               </span>
               
               <div className="relative inline-block">
-                <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight">
+                <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight group-hover:text-accent transition-colors duration-300">
                   {project.title}
                 </h3>
-                <span className="absolute left-0 -bottom-2 w-full h-[1px] bg-foreground scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-out"></span>
               </div>
             </div>
           </Link>

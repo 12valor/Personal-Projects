@@ -127,7 +127,7 @@ export default function Hero() {
       >
         <div className="relative w-[45vw] h-[90%]">
           <Image
-            src="/hero.png" 
+            src="/hero2.png"
             alt="Designer Portrait"
             fill
             className="object-contain object-bottom"

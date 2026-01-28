@@ -20,7 +20,10 @@ export default function Contact() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  setFormState({ ...formState, [e.target.name]: e.target.value });
+  setFormState({ 
+    ...formState, 
+    [e.target.name]: e.target.value 
+  });
 };
 
   const handleSubmit = async (e) => {

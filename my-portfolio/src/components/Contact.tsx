@@ -19,9 +19,9 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleChange = (e) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  setFormState({ ...formState, [e.target.name]: e.target.value });
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();

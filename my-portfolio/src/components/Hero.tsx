@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import Image from "next/image";
 
 // --- CUSTOM HOOK FOR SHUFFLE EFFECT ---
@@ -72,14 +72,17 @@ export default function Hero() {
   const yImage = useTransform(scrollYProgress, [0, 1], [0, 100]);      
   const opacityFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]); 
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { duration: 0.8, ease: [0.25, 1, 0.5, 1] } 
+ const fadeInUp: Variants = { 
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.6, -0.05, 0.01, 0.99] // TypeScript is happy now because it knows what to expect
     }
-  };
+  }
+};
 
   return (
     <section 

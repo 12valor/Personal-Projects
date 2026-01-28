@@ -1,16 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabase"; // Adjust path if needed (../../lib/supabase)
+import { supabase } from "../../lib/supabase"; 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-// Match your DB structure
+// Match your DB structure exactly
 interface Project {
   id: number;
   title: string;
   category: string;
-  role: string;     // New field
-  year: string;     // New field
+  role: string;
+  year: string;
   description: string;
   image_url: string;
 }
@@ -29,9 +29,9 @@ export default function AdminPanel() {
   const [editId, setEditId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     title: "",
-    category: "UI/UX Design",
-    role: "",       // New
-    year: "",       // New
+    category: "Web Design",
+    role: "",       
+    year: "",       
     description: "",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -57,7 +57,6 @@ export default function AdminPanel() {
 
   const handleEdit = (project: Project) => {
     setEditId(project.id);
-    // Pre-fill form
     setFormData({
       title: project.title,
       category: project.category,
@@ -65,7 +64,6 @@ export default function AdminPanel() {
       year: project.year || "",
       description: project.description || "",
     });
-    // Switch to form view
     setActiveTab("add");
     window.scrollTo(0, 0);
   };
@@ -74,7 +72,6 @@ export default function AdminPanel() {
     if (!confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      // 1. Delete image from Storage if it exists
       if (imageUrl && imageUrl.includes("/portfolio/")) {
         const path = imageUrl.split("/portfolio/")[1];
         if (path) {
@@ -82,11 +79,9 @@ export default function AdminPanel() {
         }
       }
 
-      // 2. Delete row from DB
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
 
-      // 3. Update UI
       fetchProjects();
       router.refresh();
       alert("Project deleted.");
@@ -105,7 +100,6 @@ export default function AdminPanel() {
         ? projects.find((p) => p.id === editId)?.image_url 
         : "";
 
-      // 1. Upload NEW Image if one was selected
       if (imageFile) {
         const fileExt = imageFile.name.split(".").pop();
         const fileName = `${Math.random()}.${fileExt}`;
@@ -117,24 +111,20 @@ export default function AdminPanel() {
 
         if (uploadError) throw uploadError;
 
-        // Get public URL
         const { data } = supabase.storage.from("portfolio").getPublicUrl(filePath);
         imageUrl = data.publicUrl;
       }
 
-      // 2. Prepare Data Payload
       const payload = {
         title: formData.title,
         category: formData.category,
-        role: formData.role,       // Save role
-        year: formData.year,       // Save year
+        role: formData.role,
+        year: formData.year,
         description: formData.description,
         image_url: imageUrl,
       };
 
-      // 3. Insert or Update
       if (editId) {
-        // UPDATE
         const { error } = await supabase
           .from("projects")
           .update(payload)
@@ -142,7 +132,6 @@ export default function AdminPanel() {
         if (error) throw error;
         alert("Project updated successfully!");
       } else {
-        // INSERT
         const { error } = await supabase
           .from("projects")
           .insert([payload]);
@@ -150,7 +139,6 @@ export default function AdminPanel() {
         alert("Project created successfully!");
       }
 
-      // 4. Cleanup & Refresh
       resetForm();
       router.refresh(); 
       if (editId) setActiveTab("list");
@@ -165,43 +153,52 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "UI/UX Design", role: "", year: "", description: "" });
+    setFormData({ title: "", category: "Web Design", role: "", year: "", description: "" });
     setImageFile(null);
+  };
+
+  const getCategoryColor = (cat: string) => {
+    if (cat.includes("Web")) return "bg-blue-50 text-blue-700 border-blue-200";
+    if (cat.includes("Video")) return "bg-purple-50 text-purple-700 border-purple-200";
+    if (cat.includes("Graphic")) return "bg-orange-50 text-orange-700 border-orange-200";
+    return "bg-gray-100 text-gray-700 border-gray-200";
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground font-sans">
       {/* Admin Header */}
-      <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-accent rounded-full"></div>
-          <h1 className="font-semibold text-lg">Portfolio Admin</h1>
+          <div className="w-3 h-3 bg-black rounded-full"></div> {/* Darker dot */}
+          <h1 className="font-semibold text-lg text-black">Portfolio Admin</h1>
         </div>
-        <a href="/" target="_blank" className="text-sm text-gray-500 hover:text-accent transition-colors">
+        <a href="/" target="_blank" className="text-sm text-gray-600 hover:text-black transition-colors font-medium">
           View Live Site ↗
         </a>
       </header>
 
-      <main className="max-w-4xl mx-auto py-12 px-6">
+      <main className="max-w-5xl mx-auto py-12 px-6">
         
-        {/* Tab Navigation */}
+        {/* Tab Navigation - UPDATED COLORS FOR VISIBILITY */}
         <div className="flex border-b border-gray-200 mb-8">
           <button 
             onClick={() => { setActiveTab("add"); resetForm(); }}
-            className={`pb-3 px-4 text-sm font-medium transition-colors border-b-2 ${
+            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${
               activeTab === "add" 
-              ? "border-accent text-accent" 
-              : "border-transparent text-gray-400 hover:text-gray-600"
+              // Active: Black text, Black border (High Contrast)
+              ? "border-black text-black" 
+              // Inactive: Dark Gray text, transparent border (Readable)
+              : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"
             }`}
           >
             {editId ? "Editing Project..." : "Add New Project"}
           </button>
           <button 
             onClick={() => setActiveTab("list")}
-            className={`pb-3 px-4 text-sm font-medium transition-colors border-b-2 ${
+            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${
               activeTab === "list" 
-              ? "border-accent text-accent" 
-              : "border-transparent text-gray-400 hover:text-gray-600"
+              ? "border-black text-black" 
+              : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"
             }`}
           >
             Edit Existing
@@ -216,50 +213,58 @@ export default function AdminPanel() {
               {/* Row 1: Title & Category */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Project Title</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label>
                   <input 
                     type="text" 
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                     placeholder="e.g. Lumina Interface"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Category</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
                   <select 
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-accent"
+                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black"
                   >
-                    <option>UI/UX Design</option>
-                    <option>YouTube Editing</option>
-                    <option>Graphic Design</option>
-                    <option>Branding</option>
+                    <optgroup label="Web Design">
+                      <option value="Website">Website</option>
+                      <option value="Components">Components</option>
+                    </optgroup>
+                    <optgroup label="Graphic Design">
+                      <option value="Posters/Pubmats">Posters/Pubmats</option>
+                      <option value="GFX">GFX</option>
+                    </optgroup>
+                    <optgroup label="Video Editing">
+                      <option value="Reels">Reels</option>
+                      <option value="Long Form">Long Form</option>
+                    </optgroup>
                   </select>
                 </div>
               </div>
 
-              {/* Row 2: Role & Year (NEW FIELDS) */}
+              {/* Row 2: Role & Year */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-500">My Role</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">My Role</label>
                   <input 
                     type="text" 
                     value={formData.role}
                     onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-accent"
+                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
                     placeholder="e.g. Lead Designer"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Year</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
                   <input 
                     type="text" 
                     value={formData.year}
                     onChange={(e) => setFormData({...formData, year: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-accent"
+                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
                     placeholder="e.g. 2024"
                   />
                 </div>
@@ -267,19 +272,19 @@ export default function AdminPanel() {
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Description</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label>
                 <textarea 
                   rows={5}
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-accent transition-all resize-y"
+                  className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black transition-all resize-y"
                   placeholder="Describe the project goal, your contribution, and the outcome..."
                 ></textarea>
               </div>
 
               {/* Image Upload */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
                   {editId ? "Replace Image (Optional)" : "Project Image"}
                 </label>
                 <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50">
@@ -298,7 +303,7 @@ export default function AdminPanel() {
                   <button 
                     type="button" 
                     onClick={resetForm}
-                    className="px-6 py-2.5 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                    className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black transition-colors"
                   >
                     Cancel Edit
                   </button>
@@ -306,7 +311,7 @@ export default function AdminPanel() {
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="px-8 py-2.5 bg-foreground text-white text-sm font-medium rounded hover:bg-black transition-colors disabled:opacity-50 shadow-sm"
+                  className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm"
                 >
                   {loading ? "Saving..." : (editId ? "Update Project" : "Save Project")}
                 </button>
@@ -326,16 +331,17 @@ export default function AdminPanel() {
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Preview</th>
-                    <th className="px-6 py-4 font-medium">Title</th>
-                    <th className="px-6 py-4 font-medium">Role</th>
-                    <th className="px-6 py-4 font-medium text-right">Actions</th>
+                    <th className="px-6 py-4 font-medium text-gray-700">Preview</th>
+                    <th className="px-6 py-4 font-medium text-gray-700">Title</th>
+                    <th className="px-6 py-4 font-medium text-gray-700">Role</th>
+                    <th className="px-6 py-4 font-medium text-right text-gray-700">Details & Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {projects.map((project) => (
                     <tr key={project.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors last:border-0">
-                      <td className="px-6 py-3">
+                      
+                      <td className="px-6 py-3 w-24">
                         <div className="w-16 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200">
                           {project.image_url ? (
                             <Image src={project.image_url} alt="" fill className="object-cover" />
@@ -344,26 +350,39 @@ export default function AdminPanel() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-3 font-medium text-foreground">
+
+                      <td className="px-6 py-3 font-medium text-gray-900 text-base">
                         {project.title}
-                        <div className="text-xs text-gray-400 font-normal mt-0.5">{project.category}</div>
                       </td>
-                      <td className="px-6 py-3 text-gray-500">
+
+                      <td className="px-6 py-3 text-gray-600">
                         {project.role || "—"}
                       </td>
-                      <td className="px-6 py-3 text-right space-x-4">
-                        <button 
-                          onClick={() => handleEdit(project)}
-                          className="text-accent hover:text-green-700 font-medium transition-colors"
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(project.id, project.image_url)}
-                          className="text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          Delete
-                        </button>
+
+                      <td className="px-6 py-3 text-right">
+                        <div className="flex items-center justify-end gap-6">
+                            
+                            {/* Category Badge */}
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>
+                                {project.category}
+                            </span>
+
+                            {/* UPDATED: High Contrast Action Buttons */}
+                            <div className="flex items-center gap-4">
+                                <button 
+                                onClick={() => handleEdit(project)}
+                                className="text-blue-600 hover:text-blue-800 font-bold transition-colors"
+                                >
+                                Edit
+                                </button>
+                                <button 
+                                onClick={() => handleDelete(project.id, project.image_url)}
+                                className="text-gray-400 hover:text-red-600 font-medium transition-colors"
+                                >
+                                Delete
+                                </button>
+                            </div>
+                        </div>
                       </td>
                     </tr>
                   ))}

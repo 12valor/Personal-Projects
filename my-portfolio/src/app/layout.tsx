@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Mark Ashton | Portfolio",
-  description: "Graphic Designer & Visual Artist",
+  title: "AG.Portfolio",
+  description: "Designs and edits",
 };
 
 export default function RootLayout({

@@ -1,60 +1,83 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import Image from "next/image";
 
+// 1. Add 'img' to your data. 
+// Replace these with your actual local paths (e.g., "/timeline/2021.jpg")
 const timelineData = [
   {
     year: "2021",
     title: "GFX Artist",
     category: "Visuals",
     desc: "Started my creative journey making GFX art. Focused on composition, lighting, and digital aesthetics for local communities.",
+    img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
   },
   {
     year: "2022",
     title: "Video Editing",
     category: "Motion",
     desc: "Transitioned into motion. Mastered pacing, sound design, and storytelling to create compelling video narratives.",
+    img: "https://images.unsplash.com/photo-1574717432707-c5b98d1976a2?q=80&w=1000&auto=format&fit=crop"
   },
   {
     year: "2023",
     title: "Graphic Design",
     category: "Branding",
     desc: "Deepened my focus on static design. Refined my eye for typography, grid systems, and brand identity.",
+    img: "https://images.unsplash.com/photo-1626785774573-4b799314348d?q=80&w=1000&auto=format&fit=crop"
   },
   {
     year: "2024",
     title: "Programming",
     category: "Development",
     desc: "Bridging the gap between design and function. Learned to build the interfaces I design using modern web tech.",
+    img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop"
   },
   {
     year: "Future",
     title: "The Hybrid",
     category: "Evolution",
     desc: "Merging creative direction with engineering to build immersive, high-performance digital experiences.",
+    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
   },
 ];
 
 export default function About() {
   const targetRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null); // New Ref for the visible window
+  const stickyRef = useRef<HTMLDivElement>(null);
   
   const [scrollRange, setScrollRange] = useState(0);
   const [viewportW, setViewportW] = useState(0);
 
+  // --- CURSOR FOLLOWER LOGIC ---
+  const [activeImg, setActiveImg] = useState<string | null>(null);
+  
+  // Motion values for smooth mouse tracking
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  // Springs for buttery smooth movement (dampened physics)
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
+  const x = useSpring(mouseX, springConfig);
+  const y = useSpring(mouseY, springConfig);
+
+  // Update mouse coordinates
+  const handleMouseMove = (e: React.MouseEvent) => {
+    // We update the motion values directly (no React re-render needed)
+    mouseX.set(e.clientX);
+    mouseY.set(e.clientY);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (contentRef.current && stickyRef.current) {
-        // 1. Measure the long strip (Total Content Width)
         setScrollRange(contentRef.current.scrollWidth);
-        
-        // 2. Measure the sticky container (Visible Screen Width)
         setViewportW(stickyRef.current.offsetWidth);
       }
     };
 
-    // Observers to handle dynamic loading/resizing
     const resizeObserver = new ResizeObserver(() => handleResize());
     if (contentRef.current) resizeObserver.observe(contentRef.current);
     if (stickyRef.current) resizeObserver.observe(stickyRef.current);
@@ -64,9 +87,7 @@ export default function About() {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Calculate strict distance: Total Length - Visible Screen
   const distance = scrollRange - viewportW;
-  // Use a fallback of 0 to prevent negative values on initial render
   const finalDistance = distance > 0 ? distance : 0;
 
   const { scrollYProgress } = useScroll({
@@ -74,17 +95,37 @@ export default function About() {
     offset: ["start start", "end end"],
   });
 
-  // Scroll the exact distance needed to reach the end
-  const x = useTransform(scrollYProgress, [0, 1], ["0px", `-${finalDistance}px`]);
+  const xScroll = useTransform(scrollYProgress, [0, 1], ["0px", `-${finalDistance}px`]);
   const textX = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [0.4, 0]);
 
   return (
-    // h-[300vh] ensures enough scroll track for a smooth pace
     <section ref={targetRef} className="relative h-[300vh] bg-background">
       
-      {/* We attach stickyRef here to measure the "Screen Window" */}
-      <div ref={stickyRef} className="sticky top-0 flex h-screen items-center overflow-hidden">
+      {/* THE FLOATING IMAGE 
+         Positioned 'fixed' so it stays relative to the screen, not the scroll container 
+      */}
+      <motion.div
+        style={{ x, y, opacity: activeImg ? 1 : 0 }}
+        className="fixed top-0 left-0 z-50 pointer-events-none overflow-hidden rounded-xl shadow-2xl w-[300px] aspect-[4/3] hidden md:block"
+      >
+        {/* We just swap the src, but keep the container alive for transitions */}
+        {activeImg && (
+           <Image
+             src={activeImg}
+             alt="Timeline Preview"
+             fill
+             className="object-cover"
+           />
+        )}
+      </motion.div>
+
+
+      <div 
+        ref={stickyRef} 
+        className="sticky top-0 flex h-screen items-center overflow-hidden"
+        onMouseMove={handleMouseMove} // Track mouse movement over the whole sticky area
+      >
         
         {/* Parallax Background Text */}
         <motion.div 
@@ -97,7 +138,7 @@ export default function About() {
         {/* Horizontal Moving Content */}
         <motion.div 
           ref={contentRef}
-          style={{ x }} 
+          style={{ x: xScroll }} 
           className="flex gap-16 md:gap-32 pl-12 md:pl-32 pr-12 relative z-10 w-max items-center"
         >
           
@@ -122,6 +163,9 @@ export default function About() {
             <div 
               key={index} 
               className="group relative flex flex-col justify-center min-w-[300px] md:min-w-[500px]"
+              // SET IMAGE ON HOVER
+              onMouseEnter={() => setActiveImg(item.img)}
+              onMouseLeave={() => setActiveImg(null)}
             >
               {/* Decorative Top Line */}
               <div className="w-full h-[1px] bg-gray-200 group-hover:bg-accent/50 transition-colors duration-500 mb-8 origin-left transform scale-x-50 group-hover:scale-x-100 ease-out"></div>
@@ -130,7 +174,7 @@ export default function About() {
                 {item.category}
               </span>
 
-              <span className="text-7xl md:text-9xl font-bold text-gray-200 group-hover:text-foreground transition-colors duration-700 mb-6 block">
+              <span className="text-7xl md:text-9xl font-bold text-gray-200 group-hover:text-foreground transition-colors duration-700 mb-6 block cursor-default">
                 {item.year}
               </span>
               
@@ -144,7 +188,6 @@ export default function About() {
             </div>
           ))}
           
-          {/* Spacer at the end so the last item can reach the center of the screen */}
           <div className="min-w-[40vw]"></div>
 
         </motion.div>

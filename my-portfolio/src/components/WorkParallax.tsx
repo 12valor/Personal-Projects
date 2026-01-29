@@ -10,9 +10,9 @@ interface Project {
   title: string;
   category: string;
   image_url: string;
+  is_featured?: boolean; // NEW FIELD (Optional to prevent errors on old types)
 }
 
-// CONFIGURATION
 const CATEGORY_MAP: Record<string, string[]> = {
   "Web Design": ["Website", "Components"],
   "Graphic Design": ["Posters/Pubmats", "GFX"],
@@ -70,26 +70,28 @@ const ParallaxCard = ({ project, index }: { project: Project; index: number }) =
 };
 
 export default function WorkParallax({ projects }: { projects: Project[] }) {
-  const [activeParent, setActiveParent] = useState("All");
+  const [activeParent, setActiveParent] = useState("Highlights");
   const [activeSub, setActiveSub] = useState("All");
 
   const filteredProjects = useMemo(() => {
-    // Helper: clean string to remove spaces and case sensitivity
     const clean = (str: string) => str.toLowerCase().trim();
 
-    if (activeParent === "All") return projects;
+    // --- 1. HIGHLIGHTS VIEW ---
+    // Show only projects where `is_featured` is true
+    if (activeParent === "Highlights") {
+      return projects.filter((p) => p.is_featured === true);
+    }
 
+    // --- 2. SPECIFIC CATEGORY VIEW ---
     const allowedSubs = CATEGORY_MAP[activeParent] || [];
 
     if (activeSub === "All") {
-      // Show if project matches the Parent Name OR any of the sub-categories
       return projects.filter((p) => {
         const cat = clean(p.category);
         return cat === clean(activeParent) || allowedSubs.some(sub => clean(sub) === cat);
       });
     }
 
-    // Strict Sub-category check (Fuzzy Match)
     return projects.filter((p) => clean(p.category) === clean(activeSub));
   }, [activeParent, activeSub, projects]);
 
@@ -105,11 +107,12 @@ export default function WorkParallax({ projects }: { projects: Project[] }) {
       <div className="flex flex-col gap-8 items-center md:items-start">
         <div className="flex flex-wrap gap-4 justify-center md:justify-start">
            <button
-              onClick={() => handleParentClick("All")}
-              className={`px-6 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-300 ${activeParent === "All" ? "bg-foreground text-background shadow-md transform scale-105" : "bg-transparent text-gray-500 hover:text-foreground hover:bg-gray-100"}`}
+              onClick={() => handleParentClick("Highlights")}
+              className={`px-6 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-300 ${activeParent === "Highlights" ? "bg-foreground text-background shadow-md transform scale-105" : "bg-transparent text-gray-500 hover:text-foreground hover:bg-gray-100"}`}
             >
-              All Work
+              Highlights
           </button>
+          
           {Object.keys(CATEGORY_MAP).map((parent) => (
             <button
               key={parent}
@@ -122,7 +125,7 @@ export default function WorkParallax({ projects }: { projects: Project[] }) {
         </div>
 
         <AnimatePresence mode="wait">
-          {activeParent !== "All" && (
+          {activeParent !== "Highlights" && (
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}

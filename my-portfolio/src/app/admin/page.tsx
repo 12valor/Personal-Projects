@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase"; 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Star } from "lucide-react"; // Make sure you have lucide-react installed
 
-// Match your DB structure exactly
 interface Project {
   id: number;
   title: string;
@@ -13,19 +13,16 @@ interface Project {
   year: string;
   description: string;
   image_url: string;
+  is_featured: boolean; // <--- NEW FIELD
 }
 
 export default function AdminPanel() {
   const router = useRouter();
   
-  // UI State
-  const [activeTab, setActiveTab] = useState("add"); // "add" | "list"
+  const [activeTab, setActiveTab] = useState("add"); 
   const [loading, setLoading] = useState(false);
-  
-  // Data State
   const [projects, setProjects] = useState<Project[]>([]);
   
-  // Form State
   const [editId, setEditId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -33,10 +30,15 @@ export default function AdminPanel() {
     role: "",       
     year: "",       
     description: "",
+    is_featured: false, // <--- NEW STATE
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  // Fetch projects whenever we switch to the "List" tab
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  // BATCH CONFIG
+  const BATCH_CATEGORIES = ["GFX", "Posters/Pubmats"];
+  const isBatchMode = BATCH_CATEGORIES.includes(formData.category) && !editId;
+
   useEffect(() => {
     if (activeTab === "list") {
       fetchProjects();
@@ -53,8 +55,6 @@ export default function AdminPanel() {
     if (error) console.error("Error fetching projects:", error);
   };
 
-  // --- Handlers ---
-
   const handleEdit = (project: Project) => {
     setEditId(project.id);
     setFormData({
@@ -63,7 +63,9 @@ export default function AdminPanel() {
       role: project.role || "",
       year: project.year || "",
       description: project.description || "",
+      is_featured: project.is_featured || false, // <--- LOAD VALUE
     });
+    setSelectedFiles([]); 
     setActiveTab("add");
     window.scrollTo(0, 0);
   };
@@ -78,10 +80,8 @@ export default function AdminPanel() {
           await supabase.storage.from("portfolio").remove([path]);
         }
       }
-
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
-
       fetchProjects();
       router.refresh();
       alert("Project deleted.");
@@ -91,52 +91,74 @@ export default function AdminPanel() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFiles(Array.from(e.target.files));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let imageUrl = editId 
-        ? projects.find((p) => p.id === editId)?.image_url 
-        : "";
+      // === BRANCH A: BATCH UPLOAD ===
+      if (isBatchMode && selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+            const fileExt = file.name.split(".").pop();
+            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
+            if (uploadError) throw uploadError;
 
-      if (imageFile) {
-        const fileExt = imageFile.name.split(".").pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
+            const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
+            const autoTitle = file.name.replace(/\.[^/.]+$/, ""); 
 
-        const { error: uploadError } = await supabase.storage
-          .from("portfolio")
-          .upload(filePath, imageFile);
+            const payload = {
+                title: autoTitle, 
+                category: formData.category,
+                role: "", year: "", description: "",
+                image_url: data.publicUrl,
+                is_featured: false, // Batch uploads default to NOT featured
+            };
+            const { error: insertError } = await supabase.from("projects").insert([payload]);
+            if (insertError) throw insertError;
+        }
+        alert(`Successfully uploaded ${selectedFiles.length} items!`);
+      } 
+      
+      // === BRANCH B: STANDARD SINGLE UPLOAD ===
+      else {
+        let imageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
 
-        if (uploadError) throw uploadError;
+        if (selectedFiles.length > 0) {
+            const file = selectedFiles[0];
+            const fileExt = file.name.split(".").pop();
+            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
+            if (uploadError) throw uploadError;
+            const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
+            imageUrl = data.publicUrl;
+        }
 
-        const { data } = supabase.storage.from("portfolio").getPublicUrl(filePath);
-        imageUrl = data.publicUrl;
-      }
+        const payload = {
+            title: formData.title,
+            category: formData.category,
+            role: formData.role,
+            year: formData.year,
+            description: formData.description,
+            image_url: imageUrl,
+            is_featured: formData.is_featured, // <--- SAVE TOGGLE
+        };
 
-      const payload = {
-        title: formData.title,
-        category: formData.category,
-        role: formData.role,
-        year: formData.year,
-        description: formData.description,
-        image_url: imageUrl,
-      };
-
-      if (editId) {
-        const { error } = await supabase
-          .from("projects")
-          .update(payload)
-          .eq("id", editId);
-        if (error) throw error;
-        alert("Project updated successfully!");
-      } else {
-        const { error } = await supabase
-          .from("projects")
-          .insert([payload]);
-        if (error) throw error;
-        alert("Project created successfully!");
+        if (editId) {
+            const { error } = await supabase.from("projects").update(payload).eq("id", editId);
+            if (error) throw error;
+            alert("Project updated successfully!");
+        } else {
+            const { error } = await supabase.from("projects").insert([payload]);
+            if (error) throw error;
+            alert("Project created successfully!");
+        }
       }
 
       resetForm();
@@ -153,23 +175,22 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "Web Design", role: "", year: "", description: "" });
-    setImageFile(null);
+    setFormData({ title: "", category: "Web Design", role: "", year: "", description: "", is_featured: false });
+    setSelectedFiles([]);
   };
 
   const getCategoryColor = (cat: string) => {
     if (cat.includes("Web")) return "bg-blue-50 text-blue-700 border-blue-200";
     if (cat.includes("Video")) return "bg-purple-50 text-purple-700 border-purple-200";
-    if (cat.includes("Graphic")) return "bg-orange-50 text-orange-700 border-orange-200";
+    if (cat.includes("Graphic") || cat === "GFX") return "bg-orange-50 text-orange-700 border-orange-200";
     return "bg-gray-100 text-gray-700 border-gray-200";
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground font-sans">
-      {/* Admin Header */}
       <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-black rounded-full"></div> {/* Darker dot */}
+          <div className="w-3 h-3 bg-black rounded-full"></div>
           <h1 className="font-semibold text-lg text-black">Portfolio Admin</h1>
         </div>
         <a href="/" target="_blank" className="text-sm text-gray-600 hover:text-black transition-colors font-medium">
@@ -179,27 +200,17 @@ export default function AdminPanel() {
 
       <main className="max-w-5xl mx-auto py-12 px-6">
         
-        {/* Tab Navigation - UPDATED COLORS FOR VISIBILITY */}
+        {/* Tab Navigation */}
         <div className="flex border-b border-gray-200 mb-8">
           <button 
             onClick={() => { setActiveTab("add"); resetForm(); }}
-            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${
-              activeTab === "add" 
-              // Active: Black text, Black border (High Contrast)
-              ? "border-black text-black" 
-              // Inactive: Dark Gray text, transparent border (Readable)
-              : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"
-            }`}
+            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${activeTab === "add" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"}`}
           >
             {editId ? "Editing Project..." : "Add New Project"}
           </button>
           <button 
             onClick={() => setActiveTab("list")}
-            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${
-              activeTab === "list" 
-              ? "border-black text-black" 
-              : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"
-            }`}
+            className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 ${activeTab === "list" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"}`}
           >
             Edit Existing
           </button>
@@ -210,90 +221,123 @@ export default function AdminPanel() {
           <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm animate-in fade-in duration-500">
             <form onSubmit={handleSubmit} className="space-y-6">
               
-              {/* Row 1: Title & Category */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={formData.title}
-                    onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                    placeholder="e.g. Lumina Interface"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
-                  <select 
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black"
-                  >
-                    <optgroup label="Web Design">
-                      <option value="Website">Website</option>
-                      <option value="Components">Components</option>
-                    </optgroup>
-                    <optgroup label="Graphic Design">
-                      <option value="Posters/Pubmats">Posters/Pubmats</option>
-                      <option value="GFX">GFX</option>
-                    </optgroup>
-                    <optgroup label="Video Editing">
-                      <option value="Reels">Reels</option>
-                      <option value="Long Form">Long Form</option>
-                    </optgroup>
-                  </select>
-                </div>
+              <div className="flex flex-col md:flex-row gap-6">
+                  {/* CATEGORY */}
+                  <div className="flex-1 space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
+                    <select 
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black"
+                    >
+                      <optgroup label="Web Design">
+                        <option value="Website">Website</option>
+                        <option value="Components">Components</option>
+                      </optgroup>
+                      <optgroup label="Graphic Design">
+                        <option value="Posters/Pubmats">Posters/Pubmats</option>
+                        <option value="GFX">GFX</option>
+                      </optgroup>
+                      <optgroup label="Video Editing">
+                        <option value="Reels">Reels</option>
+                        <option value="Long Form">Long Form</option>
+                      </optgroup>
+                    </select>
+                  </div>
+
+                  {/* FEATURED TOGGLE (NEW) */}
+                  {!isBatchMode && (
+                      <div className="flex items-end pb-3">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                checked={formData.is_featured}
+                                onChange={(e) => setFormData({...formData, is_featured: e.target.checked})}
+                                className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black cursor-pointer"
+                            />
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-black transition-colors">
+                                Feature in Highlights?
+                            </span>
+                        </label>
+                      </div>
+                  )}
               </div>
 
-              {/* Row 2: Role & Year */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">My Role</label>
-                  <input 
-                    type="text" 
-                    value={formData.role}
-                    onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
-                    placeholder="e.g. Lead Designer"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
-                  <input 
-                    type="text" 
-                    value={formData.year}
-                    onChange={(e) => setFormData({...formData, year: e.target.value})}
-                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
-                    placeholder="e.g. 2024"
-                  />
-                </div>
-              </div>
+              {isBatchMode && (
+                 <p className="text-xs text-orange-600 font-medium">
+                    ✨ Batch Mode Active: Multiple files allowed. "Featured" is disabled for batch uploads.
+                 </p>
+              )}
 
-              {/* Description */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label>
-                <textarea 
-                  rows={5}
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black transition-all resize-y"
-                  placeholder="Describe the project goal, your contribution, and the outcome..."
-                ></textarea>
-              </div>
+              {/* STANDARD FIELDS */}
+              {!isBatchMode && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label>
+                    <input 
+                      type="text" 
+                      required={!isBatchMode}
+                      value={formData.title}
+                      onChange={(e) => setFormData({...formData, title: e.target.value})}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                      placeholder="e.g. Lumina Interface"
+                    />
+                  </div>
 
-              {/* Image Upload */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-700">My Role</label>
+                      <input 
+                        type="text" 
+                        value={formData.role}
+                        onChange={(e) => setFormData({...formData, role: e.target.value})}
+                        className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                        placeholder="e.g. Lead Designer"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
+                      <input 
+                        type="text" 
+                        value={formData.year}
+                        onChange={(e) => setFormData({...formData, year: e.target.value})}
+                        className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                        placeholder="e.g. 2024"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label>
+                    <textarea 
+                      rows={5}
+                      value={formData.description}
+                      onChange={(e) => setFormData({...formData, description: e.target.value})}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black transition-all resize-y"
+                      placeholder="Describe the project goal, your contribution, and the outcome..."
+                    ></textarea>
+                  </div>
+                </div>
+              )}
+
+              {/* IMAGE UPLOAD */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
-                  {editId ? "Replace Image (Optional)" : "Project Image"}
+                  {editId ? "Replace Image (Optional)" : (isBatchMode ? "Select Images (Batch Upload)" : "Project Image")}
                 </label>
-                <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50">
+                <div className={`border rounded px-4 py-3 bg-gray-50 ${isBatchMode ? "border-orange-300 bg-orange-50" : "border-gray-300"}`}>
                   <input 
                     type="file" 
                     accept="image/*"
-                    onChange={(e) => e.target.files && setImageFile(e.target.files[0])}
+                    multiple={isBatchMode}
+                    onChange={handleFileChange}
                     className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-foreground hover:file:bg-gray-300 transition-colors cursor-pointer"
                   />
+                  {isBatchMode && selectedFiles.length > 0 && (
+                     <p className="text-xs text-gray-600 mt-2 font-medium">
+                        {selectedFiles.length} files selected ready for upload.
+                     </p>
+                  )}
                 </div>
               </div>
 
@@ -313,7 +357,9 @@ export default function AdminPanel() {
                   disabled={loading}
                   className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm"
                 >
-                  {loading ? "Saving..." : (editId ? "Update Project" : "Save Project")}
+                  {loading 
+                    ? (isBatchMode && selectedFiles.length > 1 ? "Uploading Batch..." : "Saving...") 
+                    : (editId ? "Update Project" : (isBatchMode ? `Upload ${selectedFiles.length || 0} Projects` : "Save Project"))}
                 </button>
               </div>
             </form>
@@ -333,7 +379,7 @@ export default function AdminPanel() {
                   <tr>
                     <th className="px-6 py-4 font-medium text-gray-700">Preview</th>
                     <th className="px-6 py-4 font-medium text-gray-700">Title</th>
-                    <th className="px-6 py-4 font-medium text-gray-700">Role</th>
+                    <th className="px-6 py-4 font-medium text-gray-700">Status</th>
                     <th className="px-6 py-4 font-medium text-right text-gray-700">Details & Actions</th>
                   </tr>
                 </thead>
@@ -355,19 +401,21 @@ export default function AdminPanel() {
                         {project.title}
                       </td>
 
-                      <td className="px-6 py-3 text-gray-600">
-                        {project.role || "—"}
+                      {/* NEW: STATUS COLUMN (Shows Star if Featured) */}
+                      <td className="px-6 py-3">
+                         {project.is_featured && (
+                             <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full w-fit">
+                                <Star className="w-3 h-3 fill-amber-500" />
+                                <span>Featured</span>
+                             </div>
+                         )}
                       </td>
 
                       <td className="px-6 py-3 text-right">
                         <div className="flex items-center justify-end gap-6">
-                            
-                            {/* Category Badge */}
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>
                                 {project.category}
                             </span>
-
-                            {/* UPDATED: High Contrast Action Buttons */}
                             <div className="flex items-center gap-4">
                                 <button 
                                 onClick={() => handleEdit(project)}

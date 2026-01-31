@@ -1,6 +1,9 @@
 import { supabase } from "../lib/supabase";
 import WorkParallax from "./WorkParallax"; 
 
+// --- ADD THIS LINE HERE ---
+export const revalidate = 0; // Forces the page to fetch fresh data every time
+
 export default async function WorkGrid() {
   
   const { data: projects } = await supabase
@@ -19,7 +22,7 @@ export default async function WorkGrid() {
   return (
     <section id="work" className="px-6 md:px-16 pt-0 pb-32 bg-background border-t border-border">
       
-      {/* Header Spacer (Removed Text, kept spacing for breathing room) */}
+      {/* Header Spacer */}
       <div className="pt-12 mb-12 md:mb-16"></div>
 
       {/* Grid Container */}

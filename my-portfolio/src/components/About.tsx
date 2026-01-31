@@ -11,35 +11,28 @@ const timelineData = [
     title: "GFX Artist",
     category: "Visuals",
     desc: "Started my creative journey making GFX art. Focused on composition, lighting, and digital aesthetics for local communities.",
-    img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+    img: "/2021.png"
   },
   {
     year: "2022",
     title: "Video Editing",
     category: "Motion",
     desc: "Transitioned into motion. Mastered pacing, sound design, and storytelling to create compelling video narratives.",
-    img: "https://images.unsplash.com/photo-1574717432707-c5b98d1976a2?q=80&w=1000&auto=format&fit=crop"
+    img: "/2022.png"
   },
   {
     year: "2023",
     title: "Graphic Design",
     category: "Branding",
     desc: "Deepened my focus on static design. Refined my eye for typography, grid systems, and brand identity.",
-    img: "https://images.unsplash.com/photo-1626785774573-4b799314348d?q=80&w=1000&auto=format&fit=crop"
+    img: "/2023.jpeg"
   },
   {
     year: "2024",
     title: "Programming",
     category: "Development",
     desc: "Bridging the gap between design and function. Learned to build the interfaces I design using modern web tech.",
-    img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop"
-  },
-  {
-    year: "Future",
-    title: "The Hybrid",
-    category: "Evolution",
-    desc: "Merging creative direction with engineering to build immersive, high-performance digital experiences.",
-    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
+    img: "/2024.png"
   },
 ];
 

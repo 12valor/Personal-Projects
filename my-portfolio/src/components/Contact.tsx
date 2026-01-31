@@ -1,17 +1,29 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { supabase } from "../lib/supabase"; 
+import { ArrowUpRight, Copy, Check, Loader2, Github, Linkedin, Youtube, Instagram, Facebook } from "lucide-react";
 
 export default function Contact() {
-  // Existing state
-  const [copied, setCopied] = useState(false);
+  const containerRef = useRef(null);
   
-  // Form states
+  // --- PARALLAX SETUP ---
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Subtle parallax for the background word
+  const yBg = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+
+  // State
+  const [copied, setCopied] = useState(false);
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const email = "hello@agevangelista.dev";
+  const email = "evangelista.agdiaz@gmail.com";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -20,159 +32,188 @@ export default function Contact() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  setFormState({ 
-    ...formState, 
-    [e.target.name]: e.target.value 
-  });
-};
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormState({ name: "", email: "", message: "" });
-    
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000);
+    setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg("");
+    
+    try {
+      const { error } = await supabase.from('inquiries').insert([{ 
+        name: formState.name, 
+        email: formState.email, 
+        message: formState.message 
+      }]);
+
+      if (error) throw error;
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+      setTimeout(() => setIsSubmitted(false), 5000);
+
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setErrorMsg("Something went wrong. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const socialLinks = [
+    { name: "LinkedIn", url: "#", icon: <Facebook className="w-5 h-5" /> },
+    { name: "GitHub", url: "#", icon: <Github className="w-5 h-5" /> },
+  ];
+
   return (
-    <section id="contact" className="relative py-24 md:py-32 px-6 bg-background border-t border-border overflow-hidden">
+    <section 
+      id="contact" 
+      ref={containerRef}
+      className="relative py-24 md:py-32 px-6 bg-white border-t border-gray-100 overflow-hidden"
+    >
       
-      <div className="max-w-6xl mx-auto relative z-10">
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+      {/* --- BACKGROUND WATERMARK (Editorial Style) --- */}
+      <motion.div 
+        style={{ y: yBg }}
+        className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none select-none opacity-[0.03]"
+      >
+        <h1 className="text-[25vw] font-black text-black leading-none tracking-tighter -ml-10">
+          LET'S
+        </h1>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           
-          {/* --- LEFT COLUMN: Info & Copy Interaction --- */}
-          <div>
-            {/* Header */}
+          {/* --- LEFT COLUMN: Typography & Info --- */}
+          <div className="flex flex-col h-full pt-4">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="mb-12"
             >
-              <h2 className="text-sm font-mono text-accent tracking-widest uppercase mb-4">
-                ( Get in Touch )
+              <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-black mb-2 leading-[0.9]">
+                Have an idea?
               </h2>
-              <p className="text-3xl md:text-5xl font-light leading-tight text-foreground">
-                Have a project in mind? <br/>
-                <span className="text-gray-400">Let's build something specific.</span>
+              <p className="text-6xl md:text-8xl font-bold tracking-tighter text-gray-300 leading-[0.9]">
+                Let's build it.
               </p>
             </motion.div>
 
-            {/* Big Interactive Email */}
-            <div className="relative group cursor-pointer inline-block mb-16" onClick={handleCopy}>
-               <AnimatePresence mode="wait">
-                {copied ? (
-                  <motion.h1
-                    key="copied"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="text-4xl md:text-7xl font-bold tracking-tighter text-accent"
-                  >
-                    Copied!
-                  </motion.h1>
-                ) : (
-                  <motion.h1
-                    key="email"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="text-4xl md:text-7xl font-bold tracking-tighter text-foreground group-hover:text-gray-400 transition-colors duration-300"
-                  >
-                    Let's Talk
-                  </motion.h1>
-                )}
-               </AnimatePresence>
-
-               {/* Hover Line */}
-               <div className="w-full h-[2px] bg-foreground group-hover:bg-accent transition-colors duration-300 mt-2"></div>
-               
-               <p className="mt-4 text-sm text-gray-500 group-hover:text-accent transition-colors">
-                 {copied ? "Email copied to clipboard" : "Click to copy email address"}
-               </p>
+            <div className="mt-16 md:mt-24">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="group cursor-pointer w-fit" 
+                onClick={handleCopy}
+              >
+                <p className="text-sm font-medium text-gray-500 mb-3 tracking-wide uppercase">Drop me an email</p>
+                <div className="flex items-center gap-4">
+                  <h3 className="text-3xl md:text-4xl font-bold text-black border-b-2 border-transparent group-hover:border-black transition-all duration-300">
+                    {email}
+                  </h3>
+                  <div className="p-2 text-gray-400 group-hover:text-black transition-colors">
+                     {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
+                  </div>
+                </div>
+                <AnimatePresence>
+                  {copied && (
+                    <motion.span 
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-xs text-black mt-2 block font-medium"
+                    >
+                      Copied to clipboard.
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </div>
 
-            {/* Social Links (Moved to Left Column) */}
-            <div className="grid grid-cols-2 gap-6 border-t border-gray-800 pt-8">
-                {[
-                  { name: "LinkedIn", url: "#" },
-                  { name: "GitHub", url: "#" },
-                  { name: "YouTube", url: "https://www.youtube.com/@RoastBloxx" },
-                  { name: "Instagram", url: "#" }
-                ].map((social, idx) => (
-                  <a 
-                    key={idx} 
-                    href={social.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center group"
-                  >
-                    <span className="text-xs font-mono text-gray-500 mr-3 group-hover:text-accent transition-colors">0{idx + 1}</span>
-                    <span className="text-base font-medium text-foreground group-hover:translate-x-2 transition-transform duration-300">
-                      {social.name}
-                    </span>
-                  </a>
-                ))}
-            </div>
+            {/* Socials */}
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ delay: 0.4 }}
+               className="flex flex-wrap gap-4 mt-12"
+            >
+              {socialLinks.map((social, idx) => (
+                <a 
+                  key={idx} 
+                  href={social.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-200 text-gray-600 hover:border-black hover:text-black hover:bg-gray-50 transition-all duration-300"
+                  aria-label={social.name}
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </motion.div>
           </div>
 
-          {/* --- RIGHT COLUMN: Form --- */}
+          {/* --- RIGHT COLUMN: Clean Card Form --- */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-gray-50/5 p-8 rounded-2xl border border-white/10" // Adjust background opacity as needed
+            className="bg-white rounded-2xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
           >
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* Name Input */}
               <div className="space-y-2">
-                <label htmlFor="name" className="text-xs font-mono uppercase text-gray-400 tracking-wider">What's your name?</label>
+                <label htmlFor="name" className="text-sm font-semibold text-gray-900">
+                  Name
+                </label>
                 <input
                   type="text"
-                  id="name"
                   name="name"
+                  id="name"
                   required
+                  placeholder="Your name"
                   value={formState.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
-                  className="w-full bg-transparent border-b border-gray-700 py-3 text-lg text-foreground focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900"
                 />
               </div>
 
+              {/* Email Input */}
               <div className="space-y-2">
-                <label htmlFor="email" className="text-xs font-mono uppercase text-gray-400 tracking-wider">Your Email</label>
+                <label htmlFor="email" className="text-sm font-semibold text-gray-900">
+                  Email
+                </label>
                 <input
                   type="email"
-                  id="email"
                   name="email"
+                  id="email"
                   required
+                  placeholder="Your email"
                   value={formState.email}
                   onChange={handleChange}
-                  placeholder="john@example.com"
-                  className="w-full bg-transparent border-b border-gray-700 py-3 text-lg text-foreground focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900"
                 />
               </div>
 
+              {/* Message Input */}
               <div className="space-y-2">
-                <label htmlFor="message" className="text-xs font-mono uppercase text-gray-400 tracking-wider">Tell me about your project</label>
+                <label htmlFor="message" className="text-sm font-semibold text-gray-900">
+                  Project Description
+                </label>
                 <textarea
-                  id="message"
                   name="message"
+                  id="message"
                   required
-                  rows={4}
+                  rows={5}
+                  placeholder="Tell me about your project needs..."
                   value={formState.message}
                   onChange={handleChange}
-                  placeholder="I need a minimalist website for..."
-                  className="w-full bg-transparent border-b border-gray-700 py-3 text-lg text-foreground focus:border-accent focus:outline-none transition-colors placeholder:text-gray-600 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900 resize-none"
                 />
               </div>
 
@@ -180,28 +221,28 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isSubmitted}
-                  className="group relative px-8 py-4 bg-foreground text-background font-bold text-lg overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-accent"
+                  className="w-full flex items-center justify-center gap-2 bg-black text-white font-medium text-lg py-4 rounded-lg hover:bg-gray-800 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    {isSubmitting ? "Sending..." : isSubmitted ? "Message Sent!" : "Send Message"}
-                    {!isSubmitting && !isSubmitted && (
-                      <span className="group-hover:translate-x-1 transition-transform">→</span>
-                    )}
-                  </span>
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : isSubmitted ? (
+                    <>Message Sent <Check className="w-5 h-5" /></>
+                  ) : (
+                    <>Send Message <ArrowUpRight className="w-5 h-5" /></>
+                  )}
                 </button>
               </div>
 
-              {/* Success Message Fade In */}
               <AnimatePresence>
-                {isSubmitted && (
-                  <motion.p
+                {(isSubmitted || errorMsg) && (
+                  <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="text-accent font-mono text-sm"
+                    className={`text-sm text-center font-medium mt-4 ${isSubmitted ? "text-green-600" : "text-red-600"}`}
                   >
-                    Thanks for reaching out! I'll get back to you shortly.
-                  </motion.p>
+                    {isSubmitted ? "Thanks! I'll be in touch soon." : errorMsg}
+                  </motion.div>
                 )}
               </AnimatePresence>
             </form>

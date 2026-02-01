@@ -16,7 +16,6 @@ interface Project {
   is_featured: boolean;
 }
 
-// NEW INTERFACE FOR MESSAGES
 interface Inquiry {
   id: number;
   created_at: string;
@@ -28,13 +27,13 @@ interface Inquiry {
 export default function AdminPanel() {
   const router = useRouter();
   
-  // Tabs: 'add', 'list', 'inquiries'
+  // Tabs
   const [activeTab, setActiveTab] = useState("add"); 
   const [loading, setLoading] = useState(false);
   
   // Data State
   const [projects, setProjects] = useState<Project[]>([]);
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]); // New State for Messages
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   
   const [editId, setEditId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -47,10 +46,8 @@ export default function AdminPanel() {
   });
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const BATCH_CATEGORIES = ["GFX", "Posters/Pubmats"];
-  const isBatchMode = BATCH_CATEGORIES.includes(formData.category) && !editId;
 
-  // --- EFFECT: Fetch Data based on active tab ---
+  // --- EFFECT: Fetch Data ---
   useEffect(() => {
     if (activeTab === "list") {
       fetchProjects();
@@ -68,7 +65,6 @@ export default function AdminPanel() {
     if (error) console.error("Error fetching projects:", error);
   };
 
-  // NEW: Fetch Inquiries
   const fetchInquiries = async () => {
     const { data, error } = await supabase
       .from("inquiries")
@@ -111,13 +107,12 @@ export default function AdminPanel() {
     }
   };
 
-  // NEW: Delete Inquiry
   const handleDeleteInquiry = async (id: number) => {
     if (!confirm("Delete this message?")) return;
     try {
       const { error } = await supabase.from("inquiries").delete().eq("id", id);
       if (error) throw error;
-      fetchInquiries(); // Refresh list
+      fetchInquiries(); 
     } catch (err) {
       console.error(err);
       alert("Error deleting inquiry.");
@@ -135,62 +130,41 @@ export default function AdminPanel() {
     setLoading(true);
 
     try {
-      // BRANCH A: BATCH UPLOAD
-      if (isBatchMode && selectedFiles.length > 0) {
-        for (const file of selectedFiles) {
-            const fileExt = file.name.split(".").pop();
-            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-            const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
-            if (uploadError) throw uploadError;
-
-            const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
-            const autoTitle = file.name.replace(/\.[^/.]+$/, ""); 
-
-            const payload = {
-                title: autoTitle, 
-                category: formData.category,
-                role: "", year: "", description: "",
-                image_url: data.publicUrl,
-                is_featured: false, 
-            };
-            const { error: insertError } = await supabase.from("projects").insert([payload]);
-            if (insertError) throw insertError;
-        }
-        alert(`Successfully uploaded ${selectedFiles.length} items!`);
-      } 
-      // BRANCH B: STANDARD SINGLE UPLOAD
-      else {
-        let imageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
-        if (selectedFiles.length > 0) {
-            const file = selectedFiles[0];
-            const fileExt = file.name.split(".").pop();
-            const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-            const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
-            if (uploadError) throw uploadError;
-            const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
-            imageUrl = data.publicUrl;
-        }
-
-        const payload = {
-            title: formData.title,
-            category: formData.category,
-            role: formData.role,
-            year: formData.year,
-            description: formData.description,
-            image_url: imageUrl,
-            is_featured: formData.is_featured,
-        };
-
-        if (editId) {
-            const { error } = await supabase.from("projects").update(payload).eq("id", editId);
-            if (error) throw error;
-            alert("Project updated successfully!");
-        } else {
-            const { error } = await supabase.from("projects").insert([payload]);
-            if (error) throw error;
-            alert("Project created successfully!");
-        }
+      // STANDARD SINGLE UPLOAD LOGIC ONLY
+      let imageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
+      
+      if (selectedFiles.length > 0) {
+          const file = selectedFiles[0];
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+          
+          const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
+          if (uploadError) throw uploadError;
+          
+          const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
+          imageUrl = data.publicUrl;
       }
+
+      const payload = {
+          title: formData.title,
+          category: formData.category,
+          role: formData.role,
+          year: formData.year,
+          description: formData.description,
+          image_url: imageUrl,
+          is_featured: formData.is_featured,
+      };
+
+      if (editId) {
+          const { error } = await supabase.from("projects").update(payload).eq("id", editId);
+          if (error) throw error;
+          alert("Project updated successfully!");
+      } else {
+          const { error } = await supabase.from("projects").insert([payload]);
+          if (error) throw error;
+          alert("Project created successfully!");
+      }
+
       resetForm();
       if (editId) setActiveTab("list");
 
@@ -243,7 +217,6 @@ export default function AdminPanel() {
           >
             Edit Projects
           </button>
-          {/* NEW TAB: INQUIRIES */}
           <button 
             onClick={() => setActiveTab("inquiries")}
             className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap flex items-center gap-2 ${activeTab === "inquiries" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black hover:border-gray-300"}`}
@@ -257,12 +230,8 @@ export default function AdminPanel() {
         {activeTab === "add" && (
           <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm animate-in fade-in duration-500">
             <form onSubmit={handleSubmit} className="space-y-6">
-               {/* ... (Existing Form Code) ... */}
-               {/* Copy/Paste your existing form UI here. I am abbreviating for brevity since we didn't change the form logic, just the handlers above. */}
-               {/* Make sure to include the Category Select, Standard Fields, Image Upload, and Submit Button as defined in your previous code. */}
-               
-               {/* For clarity in this response, I'm just putting the container structure. You already have the form UI code. */}
-               <div className="flex flex-col md:flex-row gap-6">
+              
+              <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-1 space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
                     <select 
@@ -270,38 +239,57 @@ export default function AdminPanel() {
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
                       className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black"
                     >
-                      <optgroup label="Web Design"><option value="Website">Website</option><option value="Components">Components</option></optgroup>
-                      <optgroup label="Graphic Design"><option value="Posters/Pubmats">Posters/Pubmats</option><option value="GFX">GFX</option></optgroup>
-                      <optgroup label="Video Editing"><option value="Reels">Reels</option><option value="Long Form">Long Form</option></optgroup>
+                      <optgroup label="Web Design">
+                        <option value="Website">Website</option>
+                        <option value="Components">Components</option>
+                      </optgroup>
+                      <optgroup label="Graphic Design">
+                        <option value="Posters/Pubmats">Posters/Pubmats</option>
+                        <option value="GFX">GFX</option>
+                      </optgroup>
+                      <optgroup label="Video Editing">
+                        <option value="Reels">Reels</option>
+                        <option value="Long Form">Long Form</option>
+                      </optgroup>
                     </select>
                   </div>
-                  {!isBatchMode && (
-                      <div className="flex items-end pb-3">
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                            <input type="checkbox" checked={formData.is_featured} onChange={(e) => setFormData({...formData, is_featured: e.target.checked})} className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black cursor-pointer" />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-black transition-colors">Feature in Highlights?</span>
-                        </label>
-                      </div>
-                  )}
-              </div>
-              
-              {isBatchMode && <p className="text-xs text-orange-600 font-medium">✨ Batch Mode Active.</p>}
-              
-              {!isBatchMode && (
-                <div className="space-y-6">
-                  <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label><input type="text" required={!isBatchMode} value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Role</label><input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
-                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label><input type="text" value={formData.year} onChange={(e) => setFormData({...formData, year: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
+                  
+                  <div className="flex items-end pb-3">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" checked={formData.is_featured} onChange={(e) => setFormData({...formData, is_featured: e.target.checked})} className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black cursor-pointer" />
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-black transition-colors">Feature in Highlights?</span>
+                    </label>
                   </div>
-                  <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label><textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
+              </div>
+
+              {/* STANDARD FIELDS - ALWAYS VISIBLE NOW */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label>
+                  <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="e.g. Lumina Interface or GFX 01" />
                 </div>
-              )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Role</label>
+                    <input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="Optional" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
+                    <input type="text" value={formData.year} onChange={(e) => setFormData({...formData, year: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="e.g. 2024" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label>
+                  <textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="Optional description..." />
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-700">{editId ? "Replace Image" : "Project Image"}</label>
-                <div className={`border rounded px-4 py-3 bg-gray-50 ${isBatchMode ? "border-orange-300 bg-orange-50" : "border-gray-300"}`}>
-                  <input type="file" accept="image/*" multiple={isBatchMode} onChange={handleFileChange} className="w-full text-sm text-gray-500" />
+                <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50">
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-sm text-gray-500" />
                 </div>
               </div>
 
@@ -318,8 +306,7 @@ export default function AdminPanel() {
         {/* --- LIST VIEW --- */}
         {activeTab === "list" && (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm animate-in fade-in duration-500">
-             {/* ... Your Existing List View Table ... */}
-             {projects.length === 0 ? (
+            {projects.length === 0 ? (
               <div className="p-12 text-center text-gray-400"><p>No projects found.</p></div>
             ) : (
               <table className="w-full text-sm text-left">
@@ -361,7 +348,7 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* --- INQUIRIES VIEW (NEW) --- */}
+        {/* --- INQUIRIES VIEW --- */}
         {activeTab === "inquiries" && (
           <div className="space-y-4 animate-in fade-in duration-500">
              {inquiries.length === 0 ? (

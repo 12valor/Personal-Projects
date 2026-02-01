@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star, MessageSquare, Trash2, Mail } from "lucide-react"; 
 
+// --- CONFIGURATION ---
+// 1. Enter your Cloud Name from Cloudinary Dashboard
+const CLOUDINARY_CLOUD_NAME = "ddjr0ymx"; 
+// 2. This matches the Unsigned Preset you created
+const CLOUDINARY_PRESET = "Portfolio";
+
 interface Project {
   id: number;
   title: string;
@@ -27,14 +33,16 @@ interface Inquiry {
 export default function AdminPanel() {
   const router = useRouter();
   
-  // Tabs
+  // Tabs: 'add', 'list', 'inquiries'
   const [activeTab, setActiveTab] = useState("add"); 
   const [loading, setLoading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState(""); // Feedback for large uploads
   
   // Data State
   const [projects, setProjects] = useState<Project[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   
+  // Form State
   const [editId, setEditId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -45,9 +53,9 @@ export default function AdminPanel() {
     is_featured: false,
   });
 
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // --- EFFECT: Fetch Data ---
+  // --- EFFECT: Fetch Data based on active tab ---
   useEffect(() => {
     if (activeTab === "list") {
       fetchProjects();
@@ -74,7 +82,23 @@ export default function AdminPanel() {
     if (error) console.error("Error fetching inquiries:", error);
   };
 
-  // --- Handlers ---
+  // --- CLOUDINARY UPLOAD HELPER ---
+  const uploadToCloudinary = async (file: File) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", CLOUDINARY_PRESET); 
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      { method: "POST", body: data }
+    );
+
+    if (!res.ok) throw new Error("Cloudinary upload failed");
+    const fileData = await res.json();
+    return fileData.secure_url; 
+  };
+
+  // --- HANDLERS ---
   const handleEdit = (project: Project) => {
     setEditId(project.id);
     setFormData({
@@ -85,7 +109,7 @@ export default function AdminPanel() {
       description: project.description || "",
       is_featured: project.is_featured || false,
     });
-    setSelectedFiles([]); 
+    setSelectedFile(null); 
     setActiveTab("add");
     window.scrollTo(0, 0);
   };
@@ -93,12 +117,15 @@ export default function AdminPanel() {
   const handleDelete = async (id: number, imageUrl: string) => {
     if (!confirm("Are you sure you want to delete this project?")) return;
     try {
+      // Only try to delete from Supabase storage if it's NOT a Cloudinary link
       if (imageUrl && imageUrl.includes("/portfolio/")) {
         const path = imageUrl.split("/portfolio/")[1];
         if (path) await supabase.storage.from("portfolio").remove([path]);
       }
+      
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
+      
       fetchProjects();
       alert("Project deleted.");
     } catch (err) {
@@ -119,32 +146,26 @@ export default function AdminPanel() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFiles(Array.from(e.target.files));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setUploadStatus("");
 
     try {
-      // STANDARD SINGLE UPLOAD LOGIC ONLY
+      // 1. Handle Image Upload (Cloudinary or Keep Existing)
       let imageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
       
-      if (selectedFiles.length > 0) {
-          const file = selectedFiles[0];
-          const fileExt = file.name.split(".").pop();
-          const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-          
-          const { error: uploadError } = await supabase.storage.from("portfolio").upload(fileName, file);
-          if (uploadError) throw uploadError;
-          
-          const { data } = supabase.storage.from("portfolio").getPublicUrl(fileName);
-          imageUrl = data.publicUrl;
+      if (selectedFile) {
+          setUploadStatus("Uploading to Cloudinary...");
+          // Upload to Cloudinary instead of Supabase
+          imageUrl = await uploadToCloudinary(selectedFile);
+          setUploadStatus("Upload complete!");
+      } else if (!imageUrl && !editId) {
+          // Optional: Handle case where new project has no image
+          // alert("Please select an image."); return;
       }
 
+      // 2. Prepare Payload
       const payload = {
           title: formData.title,
           category: formData.category,
@@ -155,6 +176,7 @@ export default function AdminPanel() {
           is_featured: formData.is_featured,
       };
 
+      // 3. Save to Supabase DB
       if (editId) {
           const { error } = await supabase.from("projects").update(payload).eq("id", editId);
           if (error) throw error;
@@ -170,16 +192,17 @@ export default function AdminPanel() {
 
     } catch (error) {
       console.error(error);
-      alert("Error saving project.");
+      alert("Error saving project. See console for details.");
     } finally {
       setLoading(false);
+      setUploadStatus("");
     }
   };
 
   const resetForm = () => {
     setEditId(null);
     setFormData({ title: "", category: "Web Design", role: "", year: "", description: "", is_featured: false });
-    setSelectedFiles([]);
+    setSelectedFile(null);
   };
 
   const getCategoryColor = (cat: string) => {
@@ -226,12 +249,13 @@ export default function AdminPanel() {
           </button>
         </div>
 
-        {/* --- FORM VIEW --- */}
+        {/* --- ADD / EDIT FORM --- */}
         {activeTab === "add" && (
           <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm animate-in fade-in duration-500">
             <form onSubmit={handleSubmit} className="space-y-6">
               
               <div className="flex flex-col md:flex-row gap-6">
+                  {/* CATEGORY SELECT */}
                   <div className="flex-1 space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
                     <select 
@@ -254,6 +278,7 @@ export default function AdminPanel() {
                     </select>
                   </div>
                   
+                  {/* FEATURED TOGGLE */}
                   <div className="flex items-end pb-3">
                     <label className="flex items-center gap-3 cursor-pointer group">
                         <input type="checkbox" checked={formData.is_featured} onChange={(e) => setFormData({...formData, is_featured: e.target.checked})} className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black cursor-pointer" />
@@ -262,17 +287,17 @@ export default function AdminPanel() {
                   </div>
               </div>
 
-              {/* STANDARD FIELDS - ALWAYS VISIBLE NOW */}
+              {/* STANDARD FIELDS */}
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Title</label>
-                  <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="e.g. Lumina Interface or GFX 01" />
+                  <input type="text" required value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="e.g. Lumina Interface" />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Role</label>
-                    <input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="Optional" />
+                    <input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="e.g. Lead Designer" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
@@ -286,17 +311,39 @@ export default function AdminPanel() {
                 </div>
               </div>
 
+              {/* IMAGE UPLOAD (Cloudinary) */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-700">{editId ? "Replace Image" : "Project Image"}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                  {editId ? "Replace Image" : "Project Image (Supports Large Files)"}
+                </label>
                 <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50">
-                  <input type="file" accept="image/*" onChange={handleFileChange} className="w-full text-sm text-gray-500" />
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={(e) => e.target.files && setSelectedFile(e.target.files[0])} 
+                    className="w-full text-sm text-gray-500" 
+                  />
                 </div>
+                {uploadStatus && (
+                  <p className="text-sm text-blue-600 font-medium animate-pulse mt-1">
+                    {uploadStatus}
+                  </p>
+                )}
               </div>
 
+              {/* ACTIONS */}
               <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
-                {editId && <button type="button" onClick={resetForm} className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black">Cancel</button>}
-                <button type="submit" disabled={loading} className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm">
-                  {loading ? "Saving..." : "Save Project"}
+                {editId && (
+                  <button type="button" onClick={resetForm} className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black">
+                    Cancel
+                  </button>
+                )}
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm"
+                >
+                  {loading ? (uploadStatus ? "Uploading..." : "Saving...") : "Save Project"}
                 </button>
               </div>
             </form>
@@ -321,7 +368,13 @@ export default function AdminPanel() {
                 <tbody>
                   {projects.map((project) => (
                     <tr key={project.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-3 w-24"><div className="w-16 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200">{project.image_url ? <Image src={project.image_url} alt="" fill className="object-cover" /> : "No Img"}</div></td>
+                      <td className="px-6 py-3 w-24">
+                        <div className="w-16 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200">
+                          {project.image_url ? (
+                            <Image src={project.image_url} alt="" fill className="object-cover" />
+                          ) : "No Img"}
+                        </div>
+                      </td>
                       <td className="px-6 py-3 font-medium text-gray-900 text-base">{project.title}</td>
                       <td className="px-6 py-3">
                          {project.is_featured && (
@@ -333,7 +386,9 @@ export default function AdminPanel() {
                       </td>
                       <td className="px-6 py-3 text-right">
                         <div className="flex items-center justify-end gap-6">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>{project.category}</span>
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>
+                                {project.category}
+                            </span>
                             <div className="flex items-center gap-4">
                                 <button onClick={() => handleEdit(project)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
                                 <button onClick={() => handleDelete(project.id, project.image_url)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>

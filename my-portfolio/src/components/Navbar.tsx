@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation"; // <--- 1. Import this
 
 const navLinks = [
   { name: "About", href: "#about" },
@@ -13,6 +14,14 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // 2. Get the current path
+  const pathname = usePathname();
+
+  // 3. HIDE NAVBAR IF ON ADMIN PAGE
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
 
   // Handle Scroll Effect
   useEffect(() => {

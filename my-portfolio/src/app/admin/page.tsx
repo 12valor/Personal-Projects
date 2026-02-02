@@ -3,12 +3,11 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase"; 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Star, MessageSquare, Trash2, Mail } from "lucide-react"; 
+import { Star, MessageSquare, Trash2, Mail, Lock, LogOut } from "lucide-react"; 
+import { verifyAdminPassword, checkAuth, logout } from "../actions"; // <--- Import Actions
 
 // --- CONFIGURATION ---
-// 1. Enter your Cloud Name from Cloudinary Dashboard
-const CLOUDINARY_CLOUD_NAME = "ddjr0ymx"; 
-// 2. This matches the Unsigned Preset you created
+const CLOUDINARY_CLOUD_NAME = "ddjrj0ymx";
 const CLOUDINARY_PRESET = "Portfolio";
 
 interface Project {
@@ -33,81 +32,87 @@ interface Inquiry {
 export default function AdminPanel() {
   const router = useRouter();
   
-  // Tabs: 'add', 'list', 'inquiries'
+  // --- AUTH STATE (NEW) ---
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  // --- DATA STATE ---
   const [activeTab, setActiveTab] = useState("add"); 
   const [loading, setLoading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState(""); // Feedback for large uploads
-  
-  // Data State
+  const [uploadStatus, setUploadStatus] = useState(""); 
   const [projects, setProjects] = useState<Project[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  
-  // Form State
   const [editId, setEditId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
-    title: "",
-    category: "Web Design",
-    role: "",       
-    year: "",       
-    description: "",
-    is_featured: false,
+    title: "", category: "Web Design", role: "", year: "", description: "", is_featured: false,
   });
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // --- EFFECT: Fetch Data based on active tab ---
+  // --- 1. CHECK AUTH ON LOAD ---
   useEffect(() => {
-    if (activeTab === "list") {
-      fetchProjects();
-    } else if (activeTab === "inquiries") {
-      fetchInquiries();
-    }
-  }, [activeTab]);
+    checkAuth().then((isLoggedIn) => {
+      if (isLoggedIn) setIsAuthenticated(true);
+      setAuthLoading(false);
+    });
+  }, []);
 
+  // --- 2. FETCH DATA ONLY IF AUTHENTICATED ---
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (activeTab === "list") fetchProjects();
+      else if (activeTab === "inquiries") fetchInquiries();
+    }
+  }, [activeTab, isAuthenticated]);
+
+  // --- LOGIN HANDLER ---
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isValid = await verifyAdminPassword(passwordInput);
+    if (isValid) {
+      setIsAuthenticated(true);
+      setLoginError("");
+    } else {
+      setLoginError("Incorrect password");
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setIsAuthenticated(false);
+  };
+
+  // --- EXISTING FUNCTIONS (Unchanged) ---
   const fetchProjects = async () => {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .order("id", { ascending: false });
+    const { data, error } = await supabase.from("projects").select("*").order("id", { ascending: false });
     if (data) setProjects(data);
-    if (error) console.error("Error fetching projects:", error);
   };
 
   const fetchInquiries = async () => {
-    const { data, error } = await supabase
-      .from("inquiries")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
     if (data) setInquiries(data);
-    if (error) console.error("Error fetching inquiries:", error);
   };
 
-  // --- CLOUDINARY UPLOAD HELPER ---
   const uploadToCloudinary = async (file: File) => {
+    if (!CLOUDINARY_PRESET) throw new Error("Misconfigured: CLOUDINARY_PRESET is missing.");
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", CLOUDINARY_PRESET); 
 
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-      { method: "POST", body: data }
-    );
-
-    if (!res.ok) throw new Error("Cloudinary upload failed");
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: "POST", body: data });
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error?.message || "Upload failed");
+    }
     const fileData = await res.json();
     return fileData.secure_url; 
   };
 
-  // --- HANDLERS ---
   const handleEdit = (project: Project) => {
     setEditId(project.id);
     setFormData({
-      title: project.title,
-      category: project.category,
-      role: project.role || "",
-      year: project.year || "",
-      description: project.description || "",
-      is_featured: project.is_featured || false,
+      title: project.title, category: project.category, role: project.role || "", year: project.year || "", description: project.description || "", is_featured: project.is_featured || false,
     });
     setSelectedFile(null); 
     setActiveTab("add");
@@ -117,21 +122,15 @@ export default function AdminPanel() {
   const handleDelete = async (id: number, imageUrl: string) => {
     if (!confirm("Are you sure you want to delete this project?")) return;
     try {
-      // Only try to delete from Supabase storage if it's NOT a Cloudinary link
       if (imageUrl && imageUrl.includes("/portfolio/")) {
         const path = imageUrl.split("/portfolio/")[1];
         if (path) await supabase.storage.from("portfolio").remove([path]);
       }
-      
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
-      
       fetchProjects();
       alert("Project deleted.");
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting project.");
-    }
+    } catch (err) { console.error(err); alert("Error deleting project."); }
   };
 
   const handleDeleteInquiry = async (id: number) => {
@@ -140,43 +139,23 @@ export default function AdminPanel() {
       const { error } = await supabase.from("inquiries").delete().eq("id", id);
       if (error) throw error;
       fetchInquiries(); 
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting inquiry.");
-    }
+    } catch (err) { console.error(err); alert("Error deleting inquiry."); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setUploadStatus("");
-
     try {
-      // 1. Handle Image Upload (Cloudinary or Keep Existing)
       let imageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
-      
       if (selectedFile) {
           setUploadStatus("Uploading to Cloudinary...");
-          // Upload to Cloudinary instead of Supabase
           imageUrl = await uploadToCloudinary(selectedFile);
           setUploadStatus("Upload complete!");
-      } else if (!imageUrl && !editId) {
-          // Optional: Handle case where new project has no image
-          // alert("Please select an image."); return;
       }
-
-      // 2. Prepare Payload
       const payload = {
-          title: formData.title,
-          category: formData.category,
-          role: formData.role,
-          year: formData.year,
-          description: formData.description,
-          image_url: imageUrl,
-          is_featured: formData.is_featured,
+          title: formData.title, category: formData.category, role: formData.role, year: formData.year, description: formData.description, image_url: imageUrl, is_featured: formData.is_featured,
       };
-
-      // 3. Save to Supabase DB
       if (editId) {
           const { error } = await supabase.from("projects").update(payload).eq("id", editId);
           if (error) throw error;
@@ -186,17 +165,9 @@ export default function AdminPanel() {
           if (error) throw error;
           alert("Project created successfully!");
       }
-
       resetForm();
       if (editId) setActiveTab("list");
-
-    } catch (error) {
-      console.error(error);
-      alert("Error saving project. See console for details.");
-    } finally {
-      setLoading(false);
-      setUploadStatus("");
-    }
+    } catch (error) { console.error(error); alert("Error saving project."); } finally { setLoading(false); setUploadStatus(""); }
   };
 
   const resetForm = () => {
@@ -212,6 +183,47 @@ export default function AdminPanel() {
     return "bg-gray-100 text-gray-700 border-gray-200";
   };
 
+  // --- RENDER 1: LOADING SPINNER ---
+  if (authLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400">Loading...</div>;
+
+  // --- RENDER 2: LOGIN SCREEN (If not authenticated) ---
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 font-sans">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full border border-gray-200">
+          <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white">
+              <Lock className="w-6 h-6" />
+            </div>
+          </div>
+          <h2 className="text-xl font-bold text-center text-gray-900 mb-2">Admin Access</h2>
+          <p className="text-sm text-gray-500 text-center mb-6">Please enter the master password.</p>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input 
+              type="password" 
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+              placeholder="Password"
+            />
+            {loginError && <p className="text-red-500 text-xs font-medium text-center">{loginError}</p>}
+            <button 
+              type="submit" 
+              className="w-full bg-black text-white py-3 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors"
+            >
+              Unlock Panel
+            </button>
+          </form>
+          <div className="mt-6 text-center">
+             <a href="/" className="text-xs text-gray-400 hover:text-black transition-colors">← Back to Portfolio</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- RENDER 3: REAL ADMIN PANEL (If Authenticated) ---
   return (
     <div className="min-h-screen bg-gray-50 text-foreground font-sans">
       <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between sticky top-0 z-10 shadow-sm">
@@ -219,9 +231,14 @@ export default function AdminPanel() {
           <div className="w-3 h-3 bg-black rounded-full"></div>
           <h1 className="font-semibold text-lg text-black">Portfolio Admin</h1>
         </div>
-        <a href="/" target="_blank" className="text-sm text-gray-600 hover:text-black transition-colors font-medium">
-          View Live Site ↗
-        </a>
+        <div className="flex items-center gap-6">
+            <a href="/" target="_blank" className="text-sm text-gray-600 hover:text-black transition-colors font-medium">
+            View Live Site ↗
+            </a>
+            <button onClick={handleLogout} className="text-red-500 hover:text-red-700 transition-colors" title="Logout">
+                <LogOut className="w-5 h-5" />
+            </button>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto py-12 px-6">

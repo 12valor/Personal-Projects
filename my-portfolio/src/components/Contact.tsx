@@ -62,8 +62,8 @@ export default function Contact() {
   };
 
   const socialLinks = [
-    { name: "LinkedIn", url: "#", icon: <Facebook className="w-5 h-5" /> },
-    { name: "GitHub", url: "#", icon: <Github className="w-5 h-5" /> },
+    { name: "LinkedIn", url: "https://www.facebook.com/ag.evangelistaii", icon: <Facebook className="w-5 h-5" /> },
+    { name: "GitHub", url: "https://github.com/12valor", icon: <Github className="w-5 h-5" /> },
   ];
 
   return (

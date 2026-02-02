@@ -43,6 +43,12 @@ const nextConfig = {
       },
     ],
   },
+  // --- EXPERIMENTAL CONFIGURATION ---
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb', // Increases upload limit to 50MB
+    },
+  },
 };
 
 export default nextConfig;

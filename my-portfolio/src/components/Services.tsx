@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import Image from "next/image"; // IMPORTED NEXT/IMAGE
 import Folder from "./Folder"; 
 import TiltedCard from "./TiltedCard";
 
@@ -21,21 +22,17 @@ export default function Services() {
     {
       id: 1,
       text: "Graphic Design",
-      // REMOVED EMOJI
-      // Replace these URLs with your own images (e.g., "/images/graphic-design.jpg")
-      src: "graphic.jpg"
+      src: "/graphic.jpg" // Ensure these paths start with / if in public folder
     },
     {
       id: 2,
       text: "Video Editing",
-      // REMOVED EMOJI
-      src: "vid.jpg"
+      src: "/vid.jpg"
     },
     {
       id: 3,
       text: "Web Design",
-      // REMOVED EMOJI
-      src: "web.jpg"
+      src: "/web.jpg"
     }
   ];
 
@@ -45,11 +42,28 @@ export default function Services() {
       id="services" 
       className="relative flex flex-col items-center bg-gray-50 border-t border-border overflow-hidden pt-20 pb-32 min-h-[90vh]"
     >
-      
+      {/* --- PERFORMANCE OPTIMIZATION: INVISIBLE PRELOADER --- 
+          This forces the browser to download and decode images immediately 
+          when the page loads, rather than waiting for the folder to open. 
+          This kills the lag spike on mobile. */}
+      <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none">
+        {cardsData.map((card) => (
+          <Image 
+            key={card.id}
+            src={card.src}
+            alt="preload"
+            width={600} 
+            height={800}
+            priority={true} // Forces high priority loading
+            quality={75}    // Slightly reduces file size without visible loss
+          />
+        ))}
+      </div>
+
       {/* Background Text */}
       <motion.div 
         style={{ y: yBackground }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0 will-change-transform"
       >
         <span className="text-[25vw] font-black tracking-tighter text-foreground select-none">
           SERVICES
@@ -59,7 +73,7 @@ export default function Services() {
       {/* Title */}
       <motion.div 
         style={{ y: yTitle, opacity: opacityText }}
-        className="relative z-10 text-center mb-16 px-6 mt-10"
+        className="relative z-10 text-center mb-16 px-6 mt-10 will-change-transform"
       >
         <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6 text-foreground">
           What I Do
@@ -89,7 +103,7 @@ export default function Services() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0, filter: "blur(5px)" }}
               transition={{ duration: 0.2 }}
-              className="cursor-pointer"
+              className="cursor-pointer will-change-transform" // Hardware acceleration hint
             >
               <Folder 
                 size={3.2} 
@@ -108,6 +122,8 @@ export default function Services() {
               {cardsData.map((card, i) => (
                 <motion.div
                   key={card.id}
+                  // Added will-change to hint browser to prep GPU
+                  className="h-[400px] w-full will-change-transform"
                   variants={{
                     hidden: { y: 50, opacity: 0, scale: 0.9 },
                     visible: { 
@@ -122,7 +138,6 @@ export default function Services() {
                       }
                     }
                   }}
-                  className="h-[400px] w-full"
                 >
                   <TiltedCard
                     imageSrc={card.src}
@@ -138,7 +153,6 @@ export default function Services() {
                     showTooltip={false}
                     displayOverlayContent={true}
                     overlayContent={
-                      // UPDATED OVERLAY: Removed Icon, centered text
                       <div className="bg-black/30 backdrop-blur-[2px] w-full h-full flex flex-col items-center justify-center rounded-[15px] border border-white/10 group">
                           <p className="text-white font-bold text-lg tracking-[0.2em] uppercase group-hover:scale-110 transition-transform duration-300">
                             {card.text}
@@ -162,7 +176,7 @@ export default function Services() {
                   >
                     Close Stack
                   </button>
-              </motion.div>
+              </motion.div> 
             </motion.div>
           )}
         </AnimatePresence>

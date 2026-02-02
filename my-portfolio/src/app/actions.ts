@@ -9,13 +9,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// --- 1. CLOUDINARY UPLOAD ---
+// --- 1. SINGLE UPLOAD (Keep for backward compatibility) ---
 export async function uploadImage(formData: FormData) {
   const file = formData.get("file") as File;
-  
-  if (!file) {
-    throw new Error("No file found");
-  }
+  if (!file) throw new Error("No file found");
 
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
@@ -35,10 +32,37 @@ export async function uploadImage(formData: FormData) {
   });
 }
 
-// --- 2. PASSWORD VERIFICATION ---
+// --- 2. MULTIPLE UPLOAD (New Feature) ---
+export async function uploadGalleryImages(formData: FormData) {
+  const files = formData.getAll("files") as File[];
+  
+  if (!files || files.length === 0) {
+    return [];
+  }
+
+  // Upload all files in parallel
+  const uploadPromises = files.map(async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    return new Promise<string>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "portfolio/gallery" }, 
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result?.secure_url || "");
+        }
+      ).end(buffer);
+    });
+  });
+
+  return Promise.all(uploadPromises);
+}
+
+// --- 3. AUTH & LOGOUT ---
 export async function verifyAdminPassword(password: string) {
   if (password === process.env.ADMIN_PASSWORD) {
-    const cookieStore = await cookies(); // Next.js 15+ needs await here
+    const cookieStore = await cookies();
     cookieStore.set("admin_session", "true", { 
       httpOnly: true, 
       secure: process.env.NODE_ENV === "production",
@@ -50,14 +74,12 @@ export async function verifyAdminPassword(password: string) {
   return false;
 }
 
-// --- 3. CHECK SESSION ---
 export async function checkAuth() {
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
   return session?.value === "true";
 }
 
-// --- 4. LOGOUT (This was missing!) ---
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("admin_session");

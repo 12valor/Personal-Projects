@@ -20,6 +20,7 @@ The following technologies were utilized across the projects in this repository 
 
 **Backend & Infrastructure**
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=cloudinary&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
@@ -28,15 +29,29 @@ The following technologies were utilized across the projects in this repository 
 
 ---
 
-## 📸 Project Gallery
+## Project Gallery
 
-| **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** |
-|:---:|:---:|:---:|:---:|:---:|
-| <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> |
+| **Portfolio** | **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> |
 
 ---
 
-## 🛠️ Tools & Platforms
+## Personal Identity
+
+### AG Evangelista Portfolio
+**Personal Brand & Content Management System**
+
+A dynamic portfolio website featuring a secure, custom-built admin panel. This project serves as a live demonstration of full-stack capabilities, allowing for real-time management of projects, media assets, and client inquiries without touching the codebase.
+
+* **Custom Admin Panel:** Secured via server-side authentication (Next.js Server Actions & Cookies) to manage content.
+* **Media Optimization:** Integrated **Cloudinary** API for handling high-resolution uploads and optimized video/image delivery.
+* **Dynamic CMS:** Built on Supabase to handle project data, enabling "Highlight" features and category sorting instantly.
+* **Interactive UI:** Utilizes Framer Motion for scroll-triggered animations and parallax effects.
+
+---
+
+## Tools & Platforms
 
 ### CreatorLens
 **YouTube Channel Management Dashboard**
@@ -60,7 +75,7 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 
 ---
 
-## 🏛️ Institutions
+## Institutions
 
 ### TUPV Website
 **Institutional Portal**
@@ -81,7 +96,7 @@ A prototype developed for the Technowatch school organization. This project focu
 
 ---
 
-## 🤝 Commissions
+## Commissions
 
 ### Retrieve
 **Lost & Found Management System**
@@ -98,7 +113,7 @@ A commissioned web application designed to facilitate the reporting and recovery
 
 ---
 
-## 🛍️ Commerce
+## Commerce
 
 ### Flow
 **Natural Products Marketplace**

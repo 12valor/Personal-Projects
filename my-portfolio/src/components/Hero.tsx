@@ -17,22 +17,19 @@ const useScrambleText = (targetText: string) => {
         targetText
           .split("")
           .map((letter, index) => {
-            // If we've passed this index, show the real letter
             if (index < iteration) {
               return targetText[index];
             }
-            // Otherwise show a random character
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join("")
       );
 
-      // Speed of resolution (higher denominator = slower)
       if (iteration >= targetText.length) {
         clearInterval(interval);
       }
-      iteration += 1 / 2; // Reveals 1 character every 2 frames
-    }, 30); // 30ms per frame
+      iteration += 1 / 2; 
+    }, 30); 
 
     return () => clearInterval(interval);
   }, [targetText]);
@@ -54,11 +51,10 @@ export default function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
-    }, 4500); // Change words every 4.5 seconds
+    }, 4500); 
     return () => clearInterval(interval);
   }, []);
 
-  // Apply the shuffle hook to current words
   const topText = useScrambleText(phrases[index][0]);
   const bottomText = useScrambleText(phrases[index][1]);
 
@@ -72,17 +68,17 @@ export default function Hero() {
   const yImage = useTransform(scrollYProgress, [0, 1], [0, 100]);      
   const opacityFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]); 
 
- const fadeInUp: Variants = { 
-  hidden: { opacity: 0, y: 40 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.6, -0.05, 0.01, 0.99] // TypeScript is happy now because it knows what to expect
+  const fadeInUp: Variants = { 
+    hidden: { opacity: 0, y: 40 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99]
+      }
     }
-  }
-};
+  };
 
   return (
     <section 
@@ -90,48 +86,62 @@ export default function Hero() {
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >
       
-      {/* --- LAYER 1: SOLID TEXT (Behind Image) --- */}
+      {/* --- LAYER 1: SOLID TEXT --- */}
+      {/* Z-INDEX LOGIC:
+          - Mobile/Tablet (default): z-20. Keeps text clear/above.
+          - Desktop (lg): z-0. Puts solid text BEHIND the image for the sandwich effect.
+      */}
       
-      {/* TOP TEXT (Shuffles: GRAPHIC -> VIDEO -> WEB) */}
+      {/* TOP TEXT */}
       <motion.div 
         style={{ y: yBackground, opacity: opacityFade }}
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="absolute top-[12vh] left-6 md:left-16 z-0 pointer-events-none"
+        className="absolute top-[8vh] left-4 md:top-[10vh] md:left-8 lg:top-[12vh] lg:left-16 z-20 lg:z-0 pointer-events-none"
       >
-        <h1 className="text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90 min-w-[5ch]">
+        <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90 min-w-[5ch]">
           {topText}
         </h1>
       </motion.div>
 
-      {/* BOTTOM TEXT - Solid Base (Shuffles: DESIGNER -> EDITOR -> DEVELOPER) */}
+      {/* BOTTOM TEXT */}
       <motion.div 
         style={{ y: yBackground }}
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
         transition={{ delay: 0.1 }}
-        className="absolute bottom-[15vh] right-6 md:right-16 z-0 pointer-events-none text-right"
+        // MOBILE & TABLET: Stacked Left
+        // DESKTOP: Bottom Right
+        className="
+          absolute 
+          top-[16vh] left-4 text-left 
+          md:top-[20vh] md:left-8 
+          lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right 
+          z-20 lg:z-0 pointer-events-none"
       >
-        <h1 className="text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase min-w-[5ch]">
+        <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase min-w-[5ch]">
           {bottomText}
         </h1>
       </motion.div>
 
 
       {/* --- LAYER 2: THE IMAGE (Middle) --- */}
+      {/* Always z-10. 
+          On Desktop: Sits ON TOP of Layer 1 (Solid) but BELOW Layer 3 (Hollow).
+      */}
       <motion.div 
         style={{ y: yImage }}
-        initial={{ opacity: 0, scale: 1.1 }}
+        initial={{ opacity: 0, scale: 1.05 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="absolute inset-0 z-10 hidden lg:flex items-end justify-center pointer-events-none"
+        className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none"
       >
-        <div className="relative w-[45vw] h-[90%]">
+        <div className="relative w-full h-[65%] md:h-[70%] lg:w-[45vw] lg:h-[90%]">
           <Image
             src="/hero2.png"
-            alt="Designer Portrait"
+            alt="Portrait"
             fill
             className="object-contain object-bottom"
             priority
@@ -141,21 +151,25 @@ export default function Hero() {
       </motion.div>
 
 
-      {/* --- LAYER 3: HOLLOW TEXT (Front Overlay) --- */}
-      {/* ONLY "BOTTOM TEXT" exists here (Sandwich Effect) */}
-      <div className="absolute inset-0 z-20 pointer-events-none mix-blend-normal">
-        
+      {/* --- LAYER 3: HOLLOW TEXT (Desktop Only) --- */}
+      {/* - Hidden on Mobile/Tablet.
+         - Visible on Desktop (lg:block).
+         - z-30 (Front).
+         - This layer contains the "Outline" text. Because it is z-30, it sits ON TOP of the image.
+         - Since the solid text is z-0 (Behind Image), you see: Solid -> Image -> Outline.
+      */}
+      <div className="hidden lg:block absolute inset-0 z-30 pointer-events-none mix-blend-normal">
         <motion.div 
             style={{ y: yBackground }}
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
             transition={{ delay: 0.1 }}
-            className="absolute bottom-[15vh] right-6 md:right-16 text-right"
+            className="absolute bottom-[15vh] right-16 text-right"
         >
             <h1 
-                className="text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent min-w-[5ch]"
-                style={{ WebkitTextStroke: "2px #fff" }} // Visible only over the image
+                className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent min-w-[5ch]"
+                style={{ WebkitTextStroke: "2px #fff" }}
             >
             {bottomText}
             </h1>

@@ -13,9 +13,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <TechStack />
-      <div id="about">
         <About />
-      </div>
       <Services />
       <WorkGrid />
       <Contact />

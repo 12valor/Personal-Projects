@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import Image from "next/image"; // IMPORTED NEXT/IMAGE
+import Image from "next/image";
 import Folder from "./Folder"; 
 import TiltedCard from "./TiltedCard";
 
@@ -14,26 +14,14 @@ export default function Services() {
     offset: ["start end", "end start"],
   });
 
-  const yBackground = useTransform(scrollYProgress, [0, 1], [-50, 50]);   
+  const yBackground = useTransform(scrollYProgress, [0, 1], [-50, 50]);    
   const yTitle = useTransform(scrollYProgress, [0, 1], [30, -30]);        
   const opacityText = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
 
   const cardsData = [
-    {
-      id: 1,
-      text: "Graphic Design",
-      src: "/graphic.jpg" // Ensure these paths start with / if in public folder
-    },
-    {
-      id: 2,
-      text: "Video Editing",
-      src: "/vid.jpg"
-    },
-    {
-      id: 3,
-      text: "Web Design",
-      src: "/web.jpg"
-    }
+    { id: 1, text: "Graphic Design", src: "/graphic.jpg" },
+    { id: 2, text: "Video Editing", src: "/vid.jpg" },
+    { id: 3, text: "Web Design", src: "/web.jpg" }
   ];
 
   return (
@@ -42,10 +30,9 @@ export default function Services() {
       id="services" 
       className="relative flex flex-col items-center bg-gray-50 border-t border-border overflow-hidden pt-20 pb-32 min-h-[90vh]"
     >
-      {/* --- PERFORMANCE OPTIMIZATION: INVISIBLE PRELOADER --- 
-          This forces the browser to download and decode images immediately 
-          when the page loads, rather than waiting for the folder to open. 
-          This kills the lag spike on mobile. */}
+      {/* --- PRELOADER --- 
+          Safely preloads images to prevent lag when opening the folder.
+      */}
       <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none">
         {cardsData.map((card) => (
           <Image 
@@ -54,8 +41,8 @@ export default function Services() {
             alt="preload"
             width={600} 
             height={800}
-            priority={true} // Forces high priority loading
-            quality={75}    // Slightly reduces file size without visible loss
+            priority
+            sizes="(max-width: 768px) 100vw, 33vw" 
           />
         ))}
       </div>
@@ -63,7 +50,7 @@ export default function Services() {
       {/* Background Text */}
       <motion.div 
         style={{ y: yBackground }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0 will-change-transform"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0"
       >
         <span className="text-[25vw] font-black tracking-tighter text-foreground select-none">
           SERVICES
@@ -73,7 +60,7 @@ export default function Services() {
       {/* Title */}
       <motion.div 
         style={{ y: yTitle, opacity: opacityText }}
-        className="relative z-10 text-center mb-16 px-6 mt-10 will-change-transform"
+        className="relative z-10 text-center mb-10 md:mb-16 px-6 mt-10"
       >
         <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6 text-foreground">
           What I Do
@@ -92,7 +79,7 @@ export default function Services() {
       </motion.div>
 
       {/* MAIN INTERACTION AREA */}
-      <div className="relative z-20 w-full max-w-6xl px-4 flex justify-center items-center min-h-[400px]">
+      <div className="relative z-20 w-full max-w-7xl px-0 md:px-4 flex justify-center items-center min-h-[400px]">
         
         <AnimatePresence mode="wait">
           {!isOpen ? (
@@ -103,7 +90,7 @@ export default function Services() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0, filter: "blur(5px)" }}
               transition={{ duration: 0.2 }}
-              className="cursor-pointer will-change-transform" // Hardware acceleration hint
+              className="cursor-pointer will-change-transform"
             >
               <Folder 
                 size={3.2} 
@@ -112,18 +99,22 @@ export default function Services() {
               />
             </motion.div>
           ) : (
-            // STATE 2: THE CARDS (Popped Up)
+            // STATE 2: THE CARDS
             <motion.div
               key="cards"
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 w-full"
+              // The classes inside [] are native Tailwind arbitrary values to hide scrollbars safely
+              className="
+                flex flex-row overflow-x-auto snap-x snap-mandatory gap-4 px-6 pb-4 w-full 
+                md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0
+                [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
+              "
               initial="hidden"
               animate="visible"
             >
               {cardsData.map((card, i) => (
                 <motion.div
                   key={card.id}
-                  // Added will-change to hint browser to prep GPU
-                  className="h-[400px] w-full will-change-transform"
+                  className="min-w-[85vw] md:min-w-0 h-[400px] snap-center will-change-transform"
                   variants={{
                     hidden: { y: 50, opacity: 0, scale: 0.9 },
                     visible: { 
@@ -131,10 +122,10 @@ export default function Services() {
                       opacity: 1, 
                       scale: 1,
                       transition: { 
-                        delay: i * 0.05, 
+                        delay: i * 0.1,
                         type: "spring",
                         stiffness: 300,
-                        damping: 20
+                        damping: 25
                       }
                     }
                   }}
@@ -167,12 +158,18 @@ export default function Services() {
               <motion.div 
                  initial={{ opacity: 0 }} 
                  animate={{ opacity: 1 }} 
-                 transition={{ delay: 0.3 }}
-                 className="col-span-1 md:col-span-3 flex justify-center mt-8"
+                 transition={{ delay: 0.5 }}
+                 className="
+                    fixed bottom-10 left-0 right-0 z-50 flex justify-center pointer-events-none 
+                    md:static md:col-span-2 lg:col-span-3 md:mt-8 md:pointer-events-auto
+                 "
               >
                   <button 
                     onClick={() => setIsOpen(false)}
-                    className="text-sm text-gray-400 hover:text-accent transition-colors uppercase tracking-widest text-[10px]"
+                    className="
+                        pointer-events-auto bg-white/90 backdrop-blur md:bg-transparent px-6 py-2 rounded-full shadow-lg md:shadow-none border border-gray-200 md:border-none
+                        text-xs md:text-sm text-gray-800 md:text-gray-400 hover:text-accent transition-all uppercase tracking-widest font-medium
+                    "
                   >
                     Close Stack
                   </button>
@@ -181,7 +178,6 @@ export default function Services() {
           )}
         </AnimatePresence>
       </div>
-
     </section>
   );
 }

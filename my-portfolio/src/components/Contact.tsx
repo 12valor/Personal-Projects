@@ -70,21 +70,22 @@ export default function Contact() {
     <section 
       id="contact" 
       ref={containerRef}
-      className="relative py-24 md:py-32 px-6 bg-white border-t border-gray-100 overflow-hidden"
+      className="relative py-16 md:py-32 px-4 md:px-6 bg-white border-t border-gray-100 overflow-hidden"
     >
       
-      {/* --- BACKGROUND WATERMARK (Editorial Style) --- */}
+      {/* --- BACKGROUND WATERMARK --- */}
       <motion.div 
         style={{ y: yBg }}
         className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none select-none opacity-[0.03]"
       >
-        <h1 className="text-[25vw] font-black text-black leading-none tracking-tighter -ml-10">
+        <h1 className="text-[25vw] font-black text-black leading-none tracking-tighter -ml-4 md:-ml-10">
           LET'S
         </h1>
       </motion.div>
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+        {/* CHANGED: Reduced gap on mobile (gap-12) vs desktop (gap-24) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
           
           {/* --- LEFT COLUMN: Typography & Info --- */}
           <div className="flex flex-col h-full pt-4">
@@ -94,29 +95,31 @@ export default function Contact() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-black mb-2 leading-[0.9]">
+              {/* CHANGED: Responsive font sizes (text-5xl -> text-8xl) to fit mobile screens */}
+              <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-black mb-2 leading-[0.9]">
                 Have an idea?
               </h2>
-              <p className="text-6xl md:text-8xl font-bold tracking-tighter text-gray-300 leading-[0.9]">
+              <p className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-gray-300 leading-[0.9]">
                 Let's build it.
               </p>
             </motion.div>
 
-            <div className="mt-16 md:mt-24">
+            <div className="mt-12 md:mt-24">
               <motion.div 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="group cursor-pointer w-fit" 
+                className="group cursor-pointer w-full md:w-fit" 
                 onClick={handleCopy}
               >
                 <p className="text-sm font-medium text-gray-500 mb-3 tracking-wide uppercase">Drop me an email</p>
-                <div className="flex items-center gap-4">
-                  <h3 className="text-3xl md:text-4xl font-bold text-black border-b-2 border-transparent group-hover:border-black transition-all duration-300">
+                <div className="flex items-center gap-3 md:gap-4 flex-wrap">
+                  {/* CHANGED: Smaller text on mobile (text-xl/2xl) to prevent email overflow, larger on desktop */}
+                  <h3 className="text-xl sm:text-2xl md:text-4xl font-bold text-black border-b-2 border-transparent group-hover:border-black transition-all duration-300 break-all md:break-normal">
                     {email}
                   </h3>
                   <div className="p-2 text-gray-400 group-hover:text-black transition-colors">
-                     {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
+                     {copied ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Copy className="w-5 h-5 md:w-6 md:h-6" />}
                   </div>
                 </div>
                 <AnimatePresence>
@@ -139,7 +142,7 @@ export default function Contact() {
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
                transition={{ delay: 0.4 }}
-               className="flex flex-wrap gap-4 mt-12"
+               className="flex flex-wrap gap-4 mt-8 md:mt-12"
             >
               {socialLinks.map((social, idx) => (
                 <a 
@@ -162,9 +165,10 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-2xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
+            // CHANGED: Reduced padding on mobile (p-6) vs desktop (p-12) for better space usage
+            className="bg-white rounded-2xl p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
               
               {/* Name Input */}
               <div className="space-y-2">

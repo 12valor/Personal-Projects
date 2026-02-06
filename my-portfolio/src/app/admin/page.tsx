@@ -49,8 +49,10 @@ export default function AdminPanel() {
   
   // --- FORM STATE ---
   const [editId, setEditId] = useState<number | null>(null);
+  
+  // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
-    title: "", category: "Web Design", role: "", year: "", description: "", is_featured: false,
+    title: "", category: "Website", role: "", year: "", description: "", is_featured: false,
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -222,12 +224,12 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "Web Design", role: "", year: "", description: "", is_featured: false });
+    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false });
     setSelectedFiles([]);
   };
 
   const getCategoryColor = (cat: string) => {
-    if (cat.includes("Web")) return "bg-blue-50 text-blue-700 border-blue-200";
+    if (cat.includes("Web") || cat === "Website" || cat === "Components") return "bg-blue-50 text-blue-700 border-blue-200";
     if (cat.includes("Video")) return "bg-purple-50 text-purple-700 border-purple-200";
     if (cat.includes("Graphic") || cat === "GFX") return "bg-orange-50 text-orange-700 border-orange-200";
     return "bg-gray-100 text-gray-700 border-gray-200";

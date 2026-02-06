@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Layers } from "lucide-react"; // Added Layers icon
 import { useRef, useState, useMemo } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import GalleryModal from "./GalleryModal"; // Ensure you import this here too!
 
 interface Project {
   id: number;
   title: string;
   category: string;
   image_url: string;
-  is_featured?: boolean; // NEW FIELD (Optional to prevent errors on old types)
+  gallery_urls?: string[] | null; // Ensure this is in type
+  is_featured?: boolean;
 }
 
 const CATEGORY_MAP: Record<string, string[]> = {
@@ -19,7 +21,23 @@ const CATEGORY_MAP: Record<string, string[]> = {
   "Video Editing": ["Reels", "Long Form"],
 };
 
-const ParallaxCard = ({ project, index }: { project: Project; index: number }) => {
+// Helper to determine view mode
+const isBatchView = (category: string) => {
+    const lowerCat = category.toLowerCase();
+    return lowerCat.includes("poster") || lowerCat.includes("gfx") || lowerCat.includes("graphic");
+};
+
+// --- UPDATED CARD COMPONENT ---
+// Now accepts an onOpenModal callback instead of hardcoding Links
+const ParallaxCard = ({ 
+    project, 
+    index, 
+    onOpenModal 
+}: { 
+    project: Project; 
+    index: number; 
+    onOpenModal: (p: Project) => void;
+}) => {
   const cardRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -28,22 +46,17 @@ const ParallaxCard = ({ project, index }: { project: Project; index: number }) =
 
   const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
   const scale = useTransform(scrollYProgress, [0, 1], [1.1, 1.15]);
+  
+  const isModal = isBatchView(project.category);
 
-  return (
-    <motion.div
-      layout
-      ref={cardRef}
-      initial={{ opacity: 0, y: 100 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, margin: "-10%" }}
-      transition={{ duration: 0.7, ease: "easeOut", delay: index % 2 === 0 ? 0 : 0.2 }}
-      className="group w-full"
-    >
-      <Link href={`/work/${project.id}`} className="block w-full">
+  // Common inner content
+  const CardContent = (
+    <>
         <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm rounded-sm">
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-20 flex items-center justify-center">
             <div className="w-12 h-12 bg-white rounded-full items-center justify-center hidden group-hover:flex opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-lg">
-              <ArrowUpRight className="w-5 h-5 text-black" />
+               {/* Show different icon based on interaction type */}
+               {isModal ? <Layers className="w-5 h-5 text-black" /> : <ArrowUpRight className="w-5 h-5 text-black" />}
             </div>
           </div>
           <motion.div style={{ y, scale }} className="relative w-full h-full">
@@ -64,7 +77,29 @@ const ParallaxCard = ({ project, index }: { project: Project; index: number }) =
             {project.title}
           </h3>
         </div>
-      </Link>
+    </>
+  );
+
+  return (
+    <motion.div
+      layout
+      ref={cardRef}
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, margin: "-10%" }}
+      transition={{ duration: 0.7, ease: "easeOut", delay: index % 2 === 0 ? 0 : 0.2 }}
+      className="group w-full cursor-pointer"
+    >
+      {/* Conditional Wrapping: Link vs Div */}
+      {isModal ? (
+        <div onClick={() => onOpenModal(project)} className="block w-full">
+            {CardContent}
+        </div>
+      ) : (
+        <Link href={`/work/${project.id}`} className="block w-full">
+            {CardContent}
+        </Link>
+      )}
     </motion.div>
   );
 };
@@ -72,17 +107,18 @@ const ParallaxCard = ({ project, index }: { project: Project; index: number }) =
 export default function WorkParallax({ projects }: { projects: Project[] }) {
   const [activeParent, setActiveParent] = useState("Highlights");
   const [activeSub, setActiveSub] = useState("All");
+  
+  // -- NEW STATE FOR MODAL --
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const filteredProjects = useMemo(() => {
     const clean = (str: string) => str.toLowerCase().trim();
 
-    // --- 1. HIGHLIGHTS VIEW ---
-    // Show only projects where `is_featured` is true
     if (activeParent === "Highlights") {
       return projects.filter((p) => p.is_featured === true);
     }
 
-    // --- 2. SPECIFIC CATEGORY VIEW ---
     const allowedSubs = CATEGORY_MAP[activeParent] || [];
 
     if (activeSub === "All") {
@@ -103,6 +139,18 @@ export default function WorkParallax({ projects }: { projects: Project[] }) {
   return (
     <div className="flex flex-col gap-12">
       
+      {/* --- ADDED GALLERY MODAL --- */}
+      <GalleryModal 
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        images={
+            selectedProject?.gallery_urls && selectedProject.gallery_urls.length > 0
+            ? selectedProject.gallery_urls 
+            : [selectedProject?.image_url || ""]
+        }
+        title={selectedProject?.title || "Project"}
+      />
+
       {/* FILTERS */}
       <div className="flex flex-col gap-8 items-center md:items-start">
         <div className="flex flex-wrap gap-4 justify-center md:justify-start">
@@ -159,7 +207,15 @@ export default function WorkParallax({ projects }: { projects: Project[] }) {
       <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24 md:gap-y-32">
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project, index) => (
-            <ParallaxCard key={project.id} project={project} index={index} />
+            <ParallaxCard 
+                key={project.id} 
+                project={project} 
+                index={index} 
+                onOpenModal={(p) => {
+                    setSelectedProject(p);
+                    setIsGalleryOpen(true);
+                }}
+            />
           ))}
         </AnimatePresence>
         {filteredProjects.length === 0 && (

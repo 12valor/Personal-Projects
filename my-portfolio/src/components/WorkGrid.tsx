@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Image from "next/image";
-import { Layers, ArrowUpRight, Filter } from "lucide-react";
+import { Layers, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import GalleryModal from "./GalleryModal"; // Ensure this path is correct
+import { useRouter } from "next/navigation"; // Import Router
+import GalleryModal from "./GalleryModal"; 
 
 // --- TYPES ---
 interface Project {
@@ -24,6 +25,8 @@ export default function WorkGrid() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  const router = useRouter(); // Initialize Router
 
   // --- FETCH DATA ---
   useEffect(() => {
@@ -43,31 +46,33 @@ export default function WorkGrid() {
   // --- FILTER LOGIC ---
   const filteredProjects = projects.filter((project) => {
     if (activeCategory === "All") return true;
-    // Flexible matching (e.g., "Posters/Pubmats" matches "Graphic Design" if you map it, 
-    // or exact string matching depending on your DB)
     if (activeCategory === "Graphic Design") return project.category.includes("Graphic") || project.category.includes("Posters") || project.category === "GFX";
     if (activeCategory === "Video Editing") return project.category.includes("Video") || project.category.includes("Reels");
     return project.category === activeCategory;
   });
 
+  // --- HELPER: CHECK IF BATCH VIEW (MODAL) OR PAGE VIEW ---
+  const isBatchView = (category: string) => {
+    const lowerCat = category.toLowerCase();
+    return lowerCat.includes("poster") || lowerCat.includes("gfx") || lowerCat.includes("graphic");
+  };
+
   // --- HANDLE CLICK ---
   const handleProjectClick = (project: Project) => {
-    // If it's a gallery (multiple images), open modal
-    if (project.gallery_urls && project.gallery_urls.length > 0) {
+    if (isBatchView(project.category)) {
+      // CASE 1: POSTERS/GFX -> Open Modal (Batch View)
       setSelectedProject(project);
       setIsGalleryOpen(true);
-    } else if (project.image_url) {
-       // Optional: Open single image in modal too, or just do nothing
-       // For now, we allow single images to open in the modal for a consistent "premium" feel
-       setSelectedProject(project);
-       setIsGalleryOpen(true);
+    } else {
+      // CASE 2: WEBSITE/COMPONENTS -> Navigate to Page
+      router.push(`/work/${project.id}`);
     }
   };
 
   return (
     <section id="work" className="relative px-6 md:px-16 py-24 bg-background border-t border-border font-poppins">
       
-      {/* --- GALLERY MODAL --- */}
+      {/* --- GALLERY MODAL (Only used for Posters/GFX) --- */}
       <GalleryModal 
         isOpen={isGalleryOpen}
         onClose={() => setIsGalleryOpen(false)}
@@ -146,30 +151,29 @@ export default function WorkGrid() {
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">No Preview</div>
                     )}
 
-                    {/* Dark Gradient Overlay (Instead of blur/explosions) */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* INDICATOR ICONS */}
-                    {project.gallery_urls && project.gallery_urls.length > 1 ? (
-                      <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        <Layers size={16} />
-                      </div>
-                    ) : (
-                      <div className="absolute top-4 right-4 bg-white text-black p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        <ArrowUpRight size={16} />
-                      </div>
-                    )}
+                    {/* INDICATOR ICONS: Dynamic based on Category */}
+                    <div className="absolute top-4 right-4 transition-all duration-300 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0">
+                        {isBatchView(project.category) ? (
+                            <div className="bg-black/50 backdrop-blur-md text-white p-2 rounded-full">
+                                <Layers size={16} />
+                            </div>
+                        ) : (
+                            <div className="bg-white text-black p-2 rounded-full">
+                                <ArrowUpRight size={16} />
+                            </div>
+                        )}
+                    </div>
                   </div>
 
-                  {/* TEXT INFO - Clean Hierarchy */}
+                  {/* TEXT INFO */}
                   <div className="px-1">
                     <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
                       {project.title}
                     </h3>
                     <div className="flex items-center justify-between mt-1">
-                       <p className="text-sm text-muted-foreground font-medium">{project.category}</p>
-                       {/* Optional Year or Tag */}
-                       {/* <span className="text-xs text-gray-400 font-mono">2024</span> */}
+                        <p className="text-sm text-muted-foreground font-medium">{project.category}</p>
                     </div>
                   </div>
                 </motion.div>

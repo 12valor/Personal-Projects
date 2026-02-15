@@ -39,7 +39,7 @@ The following technologies were utilized across the projects in this repository 
 
 ## Personal Identity
 
-### AG Evangelista Portfolio
+### AG.Portolio
 **Personal Brand & Content Management System**
 
 A dynamic portfolio website featuring a secure, custom-built admin panel. This project serves as a live demonstration of full-stack capabilities, allowing for real-time management of projects, media assets, and client inquiries without touching the codebase.

@@ -4,6 +4,7 @@ import WorkGrid from "../components/WorkGrid";
 import Services from "../components/Services";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import TechStack from "../components/TechStack";
 
 export default function Home() {

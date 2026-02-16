@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
@@ -12,17 +12,18 @@ const navLinks = [
 ];
 
 // --- FRAMER MOTION VARIANTS ---
-// This handles the parent menu slide and automatically staggers the children
-const menuVariants = {
+// The 'as [number, number, number, number]' strictly tells TypeScript 
+// that this is a 4-number tuple, fixing the Vercel build error.
+const menuVariants: Variants = {
   initial: { opacity: 0, y: "-100%" },
   animate: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
-      staggerChildren: 0.1, // Delay between each link appearing
-      delayChildren: 0.2,   // Wait a moment for the menu to drop before showing links
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number], 
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
   },
   exit: {
@@ -30,15 +31,14 @@ const menuVariants = {
     y: "-100%",
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
-      staggerChildren: 0.05,    // Faster stagger on exit
-      staggerDirection: -1,     // -1 means it exits in reverse order (bottom to top)
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+      staggerChildren: 0.05,
+      staggerDirection: -1,
     },
   },
 };
 
-// This handles the individual link fade and slide
-const linkVariants = {
+const linkVariants: Variants = {
   initial: { opacity: 0, y: 20 },
   animate: { 
     opacity: 1, 
@@ -138,8 +138,8 @@ export default function Navbar() {
       >
         {isMenuVisible && (
           <motion.div
-            key="mobile-menu" // FIXED: Added key here so Framer Motion tracks the unmount
-            variants={menuVariants} // Applied parent variants
+            key="mobile-menu"
+            variants={menuVariants}
             initial="initial"
             animate="animate"
             exit="exit"
@@ -149,7 +149,7 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <motion.div
                   key={link.name}
-                  variants={linkVariants} // Applied child variants (automatically inherits initial/animate/exit states from parent)
+                  variants={linkVariants}
                 >
                   <Link
                     href={link.href}

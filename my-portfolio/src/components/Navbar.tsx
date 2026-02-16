@@ -11,6 +11,47 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
+// --- FRAMER MOTION VARIANTS ---
+// This handles the parent menu slide and automatically staggers the children
+const menuVariants = {
+  initial: { opacity: 0, y: "-100%" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.1, // Delay between each link appearing
+      delayChildren: 0.2,   // Wait a moment for the menu to drop before showing links
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: "-100%",
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+      staggerChildren: 0.05,    // Faster stagger on exit
+      staggerDirection: -1,     // -1 means it exits in reverse order (bottom to top)
+    },
+  },
+};
+
+// This handles the individual link fade and slide
+const linkVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.4 } 
+  },
+  exit: { 
+    opacity: 0, 
+    y: 10, 
+    transition: { duration: 0.2 } 
+  },
+};
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -97,19 +138,18 @@ export default function Navbar() {
       >
         {isMenuVisible && (
           <motion.div
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            key="mobile-menu" // FIXED: Added key here so Framer Motion tracks the unmount
+            variants={menuVariants} // Applied parent variants
+            initial="initial"
+            animate="animate"
+            exit="exit"
             className="fixed inset-0 bg-background z-40 flex flex-col items-center justify-center"
           >
             <div className="flex flex-col gap-8 text-center">
-              {navLinks.map((link, i) => (
+              {navLinks.map((link) => (
                 <motion.div
                   key={link.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.1 }}
+                  variants={linkVariants} // Applied child variants (automatically inherits initial/animate/exit states from parent)
                 >
                   <Link
                     href={link.href}

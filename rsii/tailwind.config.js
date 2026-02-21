@@ -7,7 +7,13 @@ module.exports = {
     "./lib/**/*.{js,ts,jsx,tsx,mdx}", 
   ],
   theme: {
-    extend: {},
+    extend: {
+      // THIS IS THE NEW PART
+      fontFamily: {
+        // This tells Tailwind to use the Poppins CSS variable as the default sans-serif font
+        sans: ['var(--font-poppins)', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

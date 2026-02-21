@@ -6,13 +6,21 @@ import L from 'leaflet'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
-// 1. Custom Alert Icon
-// Using a warning/alert icon for high visibility
-const AlertIcon = new L.Icon({
+// Custom alert icons
+const AlertIconRed = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/564/564619.png', 
-  iconSize: [35, 35],
-  iconAnchor: [17, 35],
+  iconSize: [35, 35], 
+  iconAnchor: [17, 35], 
   popupAnchor: [0, -35],
+});
+
+// A green version of the icon for "responded" using a CSS hue-rotate trick
+const AlertIconGreen = new L.Icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/564/564619.png', 
+  iconSize: [35, 35], 
+  iconAnchor: [17, 35], 
+  popupAnchor: [0, -35],
+  className: 'hue-rotate-[240deg]' 
 });
 
 const getRadiusInMeters = (hectares: number) => Math.sqrt((hectares * 10000) / Math.PI);
@@ -24,98 +32,139 @@ export default function Map() {
   const [activeReportId, setActiveReportId] = useState<string | null>(null);
 
   useEffect(() => {
-    // 2. Load and filter Boundary for the Inverted Shroud
+    // 1. Fetch Boundary Mask
     fetch('/talisay-boundary.json')
       .then(res => res.json())
       .then(data => {
         if (data.features) {
-          // EXCLUSION LOGIC: Keep only Polygons. This removes any blue pins or points
-          // that might be bundled in the GeoJSON export.
           const cityFeature = data.features.find((f: any) => 
             f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon"
           );
-
           if (cityFeature) {
-            // World Coordinates (Outer Ring)
             const worldCoords = [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]];
-            // City Coordinates (Inner Hole)
-            const cityCoords = cityFeature.geometry.coordinates;
-
             setInvertedMask({
               type: "Feature",
-              geometry: {
-                type: "Polygon",
-                coordinates: [...worldCoords, ...cityCoords]
-              }
+              geometry: { type: "Polygon", coordinates: [...worldCoords, ...cityFeature.geometry.coordinates] }
             });
           }
         }
       });
 
-    // 3. Fetch Initial Reports
+    // 2. Initial Data Fetch
     const fetchReports = async () => {
       const { data } = await supabase.from('rssi_reports').select('*');
       if (data) setReports(data);
     };
     fetchReports();
 
-    // 4. Real-time Subscription
+    // 3. Realtime Listener
     const channel = supabase.channel('realtime-alerts')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'rssi_reports' }, 
-      (payload) => setReports(prev => [...prev, payload.new]))
+        (payload) => setReports(prev => [...prev, payload.new]))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rssi_reports' }, 
+        (payload) => setReports(prev => prev.map(r => r.id === payload.new.id ? payload.new : r)))
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, [])
 
+  // ADMIN ACTION: Optimistic UI Update for Instant Interaction
+  const updateStatus = async (id: string, newStatus: string) => {
+    // 1. Instantly update the local state so the UI reacts without waiting for the network
+    setReports((prev) => 
+      prev.map((report) => 
+        report.id === id ? { ...report, status: newStatus } : report
+      )
+    );
+    
+    // 2. Immediately close the popup if we are archiving/clearing the map
+    if (newStatus === 'archived') {
+      setActiveReportId(null); 
+    }
+
+    // 3. Fire the database update in the background
+    const { error } = await supabase.from('rssi_reports').update({ status: newStatus }).eq('id', id);
+    if (error) {
+      console.error("Failed to update status in DB:", error);
+    }
+  };
+
+  // FILTER: 'archived' items vanish from the map completely
+  const activeReports = reports.filter(r => r.lat && r.lng && r.status !== 'archived');
+
   return (
-    <div className="h-full w-full bg-[#020617] overflow-hidden relative">
+    // Added transform-gpu here to force hardware acceleration during swipes
+    <div className="h-full w-full bg-[#020617] overflow-hidden relative transform-gpu">
       <MapContainer 
         center={[10.7305, 122.9712]} 
         zoom={13} 
-        className="h-full w-full"
+        className="h-full w-full" 
         attributionControl={false}
+        preferCanvas={true} // Switched to canvas rendering for better performance with markers/polygons
       >
-        {/* BASE LAYER: Satellite Imagery */}
-        <TileLayer url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" />
+        <TileLayer 
+          url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" 
+          keepBuffer={8}            // Massively increases the pre-rendered off-screen tiles
+          updateWhenIdle={false}    // Forces tiles to download while your finger is swiping
+          updateWhenZooming={false} // Keeps tiles downloading smoothly while pinching
+        />
 
-        {/* MASK LAYER: The Black Shroud (Excludes everything outside Talisay) */}
         {invertedMask && (
           <GeoJSON 
             data={invertedMask} 
-            style={{
-              fillColor: "#020617", 
-              fillOpacity: 0.65, 
-              color: "#22d3ee", // Cyan Border
-              weight: 2,
-            }} 
+            style={{ fillColor: "#020617", fillOpacity: 0.7, color: "#22d3ee", weight: 2 }} 
             interactive={false}
           />
         )}
 
-        {/* DYNAMIC LAYERS: Alerts and Interactive Zones */}
-        {reports.filter(r => r.lat && r.lng).map((report) => (
+        {activeReports.map((report) => (
           <div key={report.id}>
-            {/* The Pin - Always Visible */}
             <Marker 
               position={[Number(report.lat), Number(report.lng)]}
-              icon={AlertIcon}
-              eventHandlers={{
-                click: () => setActiveReportId(report.id),
-              }}
+              icon={report.status === 'responded' ? AlertIconGreen : AlertIconRed}
+              eventHandlers={{ click: () => setActiveReportId(report.id) }}
             >
               <Popup onClose={() => setActiveReportId(null)}>
-                <div className="p-1 min-w-[120px]">
-                  <h3 className="font-black text-red-600 uppercase text-[10px] mb-1">Outbreak Site</h3>
-                  <div className="text-[11px] border-t pt-2 space-y-1">
-                    <p><strong>Severity:</strong> Lvl {report.severity_level}</p>
-                    <p><strong>Impact:</strong> {report.hectares_affected} ha</p>
+                <div className="p-2 min-w-[180px] font-sans">
+                  {/* Status Header */}
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-bold text-neutral-800 uppercase text-xs">Site Intel</h3>
+                    <span className={`text-[9px] font-bold px-2 py-1 rounded-sm uppercase tracking-widest text-white ${
+                      report.status === 'responded' ? 'bg-teal-600' : 
+                      report.status === 'dispatched' ? 'bg-orange-600' : 'bg-red-600'
+                    }`}>
+                      {report.status || 'pending'}
+                    </span>
                   </div>
+                  
+                  {/* Incident Details */}
+                  <div className="text-xs border-t border-slate-200 pt-3 space-y-2 mb-4">
+                    <p className="flex justify-between"><span className="text-neutral-500 font-semibold">Severity</span> <strong>Lvl {report.severity_level}</strong></p>
+                    <p className="flex justify-between"><span className="text-neutral-500 font-semibold">Impact Area</span> <strong>{report.hectares_affected} ha</strong></p>
+                    {report.farmer_name && <p className="flex justify-between"><span className="text-neutral-500 font-semibold">Contact</span> <strong>{report.farmer_name}</strong></p>}
+                  </div>
+
+                  {/* ADMIN CONTROLS */}
+                  {(!report.status || report.status === 'pending') && (
+                    <button onClick={() => updateStatus(report.id, 'dispatched')} className="w-full py-2 text-[10px] font-bold uppercase tracking-widest rounded bg-black text-white hover:bg-neutral-800 transition-colors">
+                      Dispatch Response Team
+                    </button>
+                  )}
+                  {report.status === 'dispatched' && (
+                    <div className="w-full py-2 text-[10px] font-bold uppercase tracking-widest rounded bg-neutral-200 text-neutral-500 text-center">
+                      Awaiting Team Arrival
+                    </div>
+                  )}
+                  {report.status === 'responded' && (
+                    <button onClick={() => updateStatus(report.id, 'archived')} className="w-full py-2 text-[10px] font-bold uppercase tracking-widest rounded bg-teal-600 text-white hover:bg-teal-700 transition-colors shadow-md">
+                      Acknowledge & Clear Map
+                    </button>
+                  )}
                 </div>
               </Popup>
             </Marker>
 
-            {/* The Circle - Only Visible when the corresponding Pin is active */}
+            {/* Impact Area Circle */}
             {activeReportId === report.id && (
               <Circle
                 center={[Number(report.lat), Number(report.lng)]}
@@ -132,22 +181,6 @@ export default function Map() {
           </div>
         ))}
       </MapContainer>
-
-      {/* Optional: Legend Overlay */}
-      <div className="absolute bottom-6 right-6 z-[1000] bg-black/80 backdrop-blur-md p-3 rounded-xl border border-white/10 text-white pointer-events-none">
-        <h4 className="text-[9px] uppercase tracking-widest font-bold mb-2 text-slate-400">Alert Priority</h4>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[10px]">
-            <div className="w-2 h-2 rounded-full bg-[#ef4444]"></div> Level 5 (Extreme)
-          </div>
-          <div className="flex items-center gap-2 text-[10px]">
-            <div className="w-2 h-2 rounded-full bg-[#fb923c]"></div> Level 3 (Moderate)
-          </div>
-          <div className="flex items-center gap-2 text-[10px]">
-            <div className="w-2 h-2 rounded-full bg-[#facc15]"></div> Level 1 (Low)
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

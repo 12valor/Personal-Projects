@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { submitOutbreakReport } from '@/app/actions'
+import { supabase } from '@/lib/supabase'
 
 export default function ReportForm() {
   const [coords, setCoords] = useState({ lat: '', lng: '' })
   const [isLocating, setIsLocating] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState('')
 
   useEffect(() => {
     const handleMapClick = (e: any) => {
@@ -43,9 +46,38 @@ export default function ReportForm() {
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Math.random()}.${fileExt}`
+    const filePath = `reports/${fileName}`
+
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('report-photos')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage
+        .from('report-photos')
+        .getPublicUrl(filePath)
+
+      setPhotoUrl(data.publicUrl)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert('Error uploading image. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true)
-    // Execution will fall through to the submitOutbreakReport Server Action
+    // Execution falls through to submitOutbreakReport
   }
 
   return (
@@ -63,6 +95,8 @@ export default function ReportForm() {
         </p>
       </div>
       
+      <input type="hidden" name="photo_url" value={photoUrl} />
+
       {/* 1. REPORTING ENTITY */}
       <fieldset className="space-y-5">
         <legend className="text-xs font-bold text-neutral-500 uppercase tracking-widest border-b-2 border-neutral-200 w-full pb-2 mb-4">
@@ -82,6 +116,18 @@ export default function ReportForm() {
         </div>
 
         <div>
+          <label htmlFor="contact_number" className="block text-sm font-bold text-neutral-900 uppercase mb-2">Contact Number</label>
+          <input 
+            type="tel"
+            id="contact_number"
+            name="contact_number" 
+            placeholder="09XXXXXXXXX" 
+            className="w-full p-4 text-base font-bold text-neutral-900 bg-neutral-50 border-2 border-neutral-300 rounded-none focus:border-black focus:ring-0 outline-none transition-colors uppercase placeholder:text-neutral-400" 
+            required 
+          />
+        </div>
+
+        <div>
           <label htmlFor="barangay" className="block text-sm font-bold text-neutral-900 uppercase mb-2">Barangay Location</label>
           <input 
             type="text"
@@ -94,11 +140,23 @@ export default function ReportForm() {
         </div>
       </fieldset>
 
-      {/* 2. INCIDENT METRICS */}
+      {/* 2. INCIDENT EVIDENCE & METRICS */}
       <fieldset className="space-y-5">
         <legend className="text-xs font-bold text-neutral-500 uppercase tracking-widest border-b-2 border-neutral-200 w-full pb-2 mb-4">
-          Incident Assessment Metrics
+          Evidence & Assessment Metrics
         </legend>
+
+        <div>
+          <label className="block text-sm font-bold text-neutral-900 uppercase mb-2">Evidence Photo</label>
+          <input 
+            type="file" 
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="w-full p-3 text-sm font-bold text-neutral-900 bg-neutral-50 border-2 border-neutral-300 rounded-none file:mr-4 file:py-2 file:px-4 file:rounded-none file:border-0 file:text-xs file:font-black file:uppercase file:bg-neutral-900 file:text-white hover:file:bg-black"
+          />
+          {isUploading && <p className="text-[10px] font-bold text-neutral-500 mt-2 uppercase animate-pulse">Uploading evidence...</p>}
+          {photoUrl && <p className="text-[10px] font-bold text-emerald-600 mt-2 uppercase">✓ Photo attached to record</p>}
+        </div>
 
         <div>
           <label htmlFor="hectares_affected" className="block text-sm font-bold text-neutral-900 uppercase mb-2">Estimated Affected Area (Hectares)</label>
@@ -179,7 +237,7 @@ export default function ReportForm() {
       
       <button 
         type="submit" 
-        disabled={isSubmitting}
+        disabled={isSubmitting || isUploading}
         className="w-full bg-neutral-900 text-white p-5 rounded-none font-black text-lg uppercase tracking-widest hover:bg-black transition-colors disabled:opacity-70 disabled:cursor-not-allowed mt-4 border-2 border-transparent"
       >
         {isSubmitting ? 'TRANSMITTING DATA...' : 'SUBMIT OFFICIAL RECORD'}

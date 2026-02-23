@@ -1,6 +1,6 @@
 'use client'
 
-import { MapContainer, TileLayer, GeoJSON, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, Marker, Popup, useMap, Circle } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useEffect, useState } from 'react'
@@ -28,50 +28,40 @@ const IconBlue = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png' 
 });
 
-function HeatLayer({ points }: { points: any[] }) {
+function MapController({ hotZoneBarangay, boundaryData }: { hotZoneBarangay?: string, boundaryData: any }) {
   const map = useMap();
-  
+
   useEffect(() => {
-    if (!map || !map.getContainer() || !points.length) return;
+    if (!map || !boundaryData || !boundaryData.features) return;
 
-    let heatLayerInstance: any;
+    if (!hotZoneBarangay || hotZoneBarangay === "Clear") {
+      map.flyTo([10.7305, 122.9712], 13, { duration: 1.5 });
+      return;
+    }
 
-    const initHeat = async () => {
-      // @ts-ignore
-      await import('leaflet.heat');
+    const hotZoneFeature = boundaryData.features.find((f: any) => f.properties?.NAME_2 === hotZoneBarangay);
 
-      const size = map.getSize();
-      if (size.y === 0) {
-        map.invalidateSize();
-        requestAnimationFrame(initHeat);
-        return;
+    if (hotZoneFeature) {
+      const layer = L.geoJSON(hotZoneFeature);
+      const bounds = layer.getBounds();
+      if (bounds.isValid()) {
+        map.flyToBounds(bounds, { padding: [50, 50], duration: 1.5 });
       }
-
-      const heatData = points.map(p => [Number(p.lat), Number(p.lng), Number(p.severity_level) / 5]);
-      
-      // @ts-ignore
-      heatLayerInstance = L.heatLayer(heatData, {
-        radius: 50, blur: 35, maxZoom: 13, minOpacity: 0.4,
-        gradient: { 0.4: '#3b82f6', 0.6: '#22d3ee', 0.7: '#10b981', 0.8: '#fbbf24', 1.0: '#ef4444' }
-      });
-      
-      if (map && map.getContainer()) {
-          heatLayerInstance.addTo(map);
-      }
-    };
-
-    const timer = setTimeout(initHeat, 250);
-
-    return () => {
-      clearTimeout(timer);
-      if (heatLayerInstance && map && map.hasLayer(heatLayerInstance)) {
-        map.removeLayer(heatLayerInstance);
-      }
-    };
-  }, [map, points]);
+    }
+  }, [map, hotZoneBarangay, boundaryData]);
 
   return null;
 }
+
+// EXACT HEX MATCH for Severity Levels
+const getSeverityColor = (level: number) => {
+  const severity = Number(level);
+  if (severity >= 5) return '#ef4444'; // Red
+  if (severity === 4) return '#fbbf24'; // Yellow
+  if (severity === 3) return '#10b981'; // Green
+  if (severity === 2) return '#22d3ee'; // Cyan
+  return '#3b82f6'; // Blue
+};
 
 export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
   const [reports, setReports] = useState<any[]>([]);
@@ -120,6 +110,28 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
 
   return (
     <div className="h-full w-full bg-[#020617] overflow-hidden relative">
+      
+      {/* Absolute Severity Indicator */}
+      <div className="absolute bottom-6 left-6 z-[1000] bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-4 rounded-xl shadow-2xl w-72 pointer-events-none">
+        <h4 className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-3 flex items-center gap-2">
+          <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 19.125c-2.875 2.875-7.625 2.875-10.5 0-2.875-2.875-2.875-7.625 0-10.5l5.25-5.25 5.25 5.25c2.875 2.875 2.875 7.625 0 10.5z"/></svg>
+          Severity Indicator
+        </h4>
+        
+        <div 
+          className="h-2.5 w-full rounded-full mb-1.5 shadow-inner"
+          style={{ background: 'linear-gradient(to right, #3b82f6 0%, #22d3ee 25%, #10b981 50%, #fbbf24 75%, #ef4444 100%)' }}
+        ></div>
+        
+        <div className="flex justify-between text-[10px] font-bold text-slate-400 px-1">
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+        </div>
+      </div>
+
       <MapContainer 
         center={[10.7305, 122.9712]} 
         zoom={13} 
@@ -128,8 +140,24 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
       >
         <TileLayer url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" />
         
-        <HeatLayer points={activeReports} />
+        <MapController hotZoneBarangay={hotZoneBarangay} boundaryData={boundaryData} />
         
+        {/* NEW: Discrete Severity Glow Zones instead of a blended HeatLayer */}
+        {activeReports.map((report) => (
+          <Circle
+            key={`glow-${report.id}`}
+            center={[Number(report.lat), Number(report.lng)]}
+            radius={150 + (Number(report.severity_level) * 100)} // Higher severity = larger zone (in meters)
+            pathOptions={{
+              fillColor: getSeverityColor(report.severity_level),
+              fillOpacity: 0.35, // Clear, non-washing out opacity
+              color: getSeverityColor(report.severity_level),
+              weight: 1, // Crisp outer ring
+              opacity: 0.8
+            }}
+          />
+        ))}
+
         {invertedMask && (
             <GeoJSON 
                 key="inverted-mask" 
@@ -156,7 +184,7 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
 
         {activeReports.map((report) => (
           <Marker 
-            key={report.id} 
+            key={`marker-${report.id}`} 
             position={[Number(report.lat), Number(report.lng)]} 
             icon={
               report.status === 'responded' ? IconBlue : 
@@ -188,19 +216,16 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
                 </div>
 
                 <div className="space-y-1.5">
-                  {/* ADMIN ACTION: Dispatch */}
                   {(!report.status || report.status === 'pending') && (
                     <button onClick={() => updateStatus(report.id, 'dispatched')} className="w-full py-2 text-xs font-medium rounded bg-slate-900 text-white hover:bg-slate-800 transition-colors">Dispatch Team</button>
                   )}
                   
-                  {/* READ-ONLY STATUS: Waiting for responder to arrive */}
                   {(report.status === 'dispatched' || report.status === 'navigating') && (
                     <div className="w-full py-2 text-xs font-medium rounded bg-orange-50 text-orange-700 text-center border border-orange-100">
                       Team En Route
                     </div>
                   )}
 
-                  {/* ADMIN ACTION: Resolve */}
                   {report.status === 'responded' && (
                     <button onClick={() => updateStatus(report.id, 'archived')} className="w-full py-2 text-xs font-medium rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">Resolve & Clear</button>
                   )}

@@ -26,7 +26,7 @@ export default function Dashboard() {
   
   const [toast, setToast] = useState<{ title: string, message: string, type: 'new' | 'update' | 'message', id: number } | null>(null);
   
-  // NEW: State for global sidebar chat feed
+  // State for global sidebar chat feed
   const [recentMessages, setRecentMessages] = useState<any[]>([]);
 
   const showToast = (title: string, message: string, type: 'new' | 'update' | 'message' = 'new') => {
@@ -100,7 +100,7 @@ export default function Dashboard() {
     };
   }, []);
 
-  // NEW: Function to open report directly from sidebar chat click
+  // Function to open report directly from sidebar chat click
   const handleOpenReportFromChat = (reportId: string) => {
     const report = reports.find(r => r.id === reportId);
     if (report) {
@@ -123,9 +123,13 @@ export default function Dashboard() {
     return ((totalMinutes / responded.length) / 60).toFixed(1);
   };
 
-  const resolutionEfficiency = () => {
-    const resolved = reports.filter(r => r.status === 'responded' || r.status === 'archived').length;
-    return reports.length > 0 ? ((resolved / reports.length) * 100).toFixed(0) : "0";
+  // --- NEW METRICS LOGIC ---
+  const criticalCount = reports.filter(r => Number(r.severity_level) >= 4 && r.status !== 'archived').length;
+
+  const getVerificationRate = () => {
+    if (reports.length === 0) return "0";
+    const verified = reports.filter(r => r.farmer_name && r.farmer_name !== "Anonymous").length;
+    return ((verified / reports.length) * 100).toFixed(0);
   };
 
   const getHotZoneData = () => {
@@ -141,12 +145,6 @@ export default function Dashboard() {
   };
 
   const hotZone = getHotZoneData();
-
-  const getResponseTime = (created: string, responded: string | null) => {
-    if (!responded) return "Pending";
-    const diff = (new Date(responded).getTime() - new Date(created).getTime()) / (1000 * 60);
-    return diff < 60 ? `${Math.round(diff)} mins` : `${(diff / 60).toFixed(1)} hrs`;
-  };
 
   return (
     <div className={`${poppins.className} flex h-screen bg-slate-50 text-slate-800 overflow-hidden relative`}>
@@ -181,7 +179,7 @@ export default function Dashboard() {
           </Link>
         </nav>
 
-        {/* LIVE COMMS SIDEBAR FEED (Hidden on tablet/mobile) */}
+        {/* LIVE COMMS SIDEBAR FEED */}
         <div className="flex-1 hidden lg:flex flex-col border-t border-white/10 overflow-hidden bg-slate-900/10">
           <div className="px-6 py-4 bg-[#002244] border-b border-white/5 shrink-0 shadow-sm flex items-center justify-between">
             <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-widest flex items-center gap-2">
@@ -228,34 +226,39 @@ export default function Dashboard() {
             <h2 className="text-2xl font-medium text-slate-900 tracking-tight">Active Operations</h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-6 border border-slate-200 rounded-lg shadow-sm">
-                <p className="text-sm text-slate-500 mb-1">Active Impact Area</p>
-                <div className="flex items-baseline gap-2 overflow-hidden">
-                  <span className="text-3xl font-medium text-slate-900 truncate">{loading ? "--" : totalArea.toFixed(1)}</span>
-                  <span className="text-sm text-slate-500 shrink-0">Hectares</span>
+          {/* --- UPDATED METRICS GRID --- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Critical Alerts</p>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-4xl font-bold ${criticalCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+                    {loading ? "--" : criticalCount}
+                  </span>
+                  <span className="text-sm text-slate-400 font-medium">High Priority</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-lg shadow-sm relative group cursor-help">
-                <p className="text-sm text-slate-500 mb-1">Hot Zone (Critical)</p>
-                <div className="flex items-baseline gap-2 overflow-hidden">
-                  <span className="text-3xl font-medium text-red-600 truncate">{hotZone.name}</span>
+            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Verified Reports</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : getVerificationRate()}%</span>
+                  <span className="text-sm text-slate-400 font-medium">Identity Match</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-lg shadow-sm">
-                <p className="text-sm text-slate-500 mb-1">Resolution Rate</p>
-                <div className="flex items-baseline gap-2 overflow-hidden">
-                  <span className="text-3xl font-medium text-slate-900 truncate">{loading ? "--" : resolutionEfficiency()}%</span>
+            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Total Impact Area</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : totalArea.toFixed(1)}</span>
+                  <span className="text-sm text-slate-400 font-medium">Hectares</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-lg shadow-sm">
-                <p className="text-sm text-slate-500 mb-1">Response Time (Avg)</p>
-                <div className="flex items-baseline gap-2 overflow-hidden">
-                  <span className="text-3xl font-medium text-slate-900 truncate">{loading ? "--" : calculateAvgResponseTime()}</span>
-                  <span className="text-sm text-slate-500 shrink-0">Hours</span>
+            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Avg. Response</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : calculateAvgResponseTime()}</span>
+                  <span className="text-sm text-slate-400 font-medium">Hours</span>
                 </div>
             </div>
           </div>

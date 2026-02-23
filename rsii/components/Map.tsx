@@ -6,7 +6,6 @@ import L from 'leaflet'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
-// PERMANENT FIX: Reliable CDN for traditional Leaflet map pins
 const baseIconOptions = {
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   iconSize: [25, 41],
@@ -15,18 +14,9 @@ const baseIconOptions = {
   shadowSize: [41, 41]
 };
 
-const IconRed = new L.Icon({ 
-  ...baseIconOptions, 
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' 
-});
-const IconOrange = new L.Icon({ 
-  ...baseIconOptions, 
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png' 
-});
-const IconBlue = new L.Icon({ 
-  ...baseIconOptions, 
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png' 
-});
+const IconRed = new L.Icon({ ...baseIconOptions, iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png' });
+const IconOrange = new L.Icon({ ...baseIconOptions, iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png' });
+const IconBlue = new L.Icon({ ...baseIconOptions, iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png' });
 
 function MapController({ hotZoneBarangay, boundaryData }: { hotZoneBarangay?: string, boundaryData: any }) {
   const map = useMap();
@@ -53,14 +43,13 @@ function MapController({ hotZoneBarangay, boundaryData }: { hotZoneBarangay?: st
   return null;
 }
 
-// EXACT HEX MATCH for Severity Levels
 const getSeverityColor = (level: number) => {
   const severity = Number(level);
-  if (severity >= 5) return '#ef4444'; // Red
-  if (severity === 4) return '#fbbf24'; // Yellow
-  if (severity === 3) return '#10b981'; // Green
-  if (severity === 2) return '#22d3ee'; // Cyan
-  return '#3b82f6'; // Blue
+  if (severity >= 5) return '#ef4444'; 
+  if (severity === 4) return '#fbbf24'; 
+  if (severity === 3) return '#10b981'; 
+  if (severity === 2) return '#22d3ee'; 
+  return '#3b82f6'; 
 };
 
 export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
@@ -110,62 +99,37 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
 
   return (
     <div className="h-full w-full bg-[#020617] overflow-hidden relative">
-      
-      {/* Absolute Severity Indicator */}
       <div className="absolute bottom-6 left-6 z-[1000] bg-slate-900/80 backdrop-blur-md border border-slate-700/50 p-4 rounded-xl shadow-2xl w-72 pointer-events-none">
         <h4 className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-3 flex items-center gap-2">
           <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 19.125c-2.875 2.875-7.625 2.875-10.5 0-2.875-2.875-2.875-7.625 0-10.5l5.25-5.25 5.25 5.25c2.875 2.875 2.875 7.625 0 10.5z"/></svg>
           Severity Indicator
         </h4>
-        
-        <div 
-          className="h-2.5 w-full rounded-full mb-1.5 shadow-inner"
-          style={{ background: 'linear-gradient(to right, #3b82f6 0%, #22d3ee 25%, #10b981 50%, #fbbf24 75%, #ef4444 100%)' }}
-        ></div>
-        
+        <div className="h-2.5 w-full rounded-full mb-1.5 shadow-inner" style={{ background: 'linear-gradient(to right, #3b82f6 0%, #22d3ee 25%, #10b981 50%, #fbbf24 75%, #ef4444 100%)' }}></div>
         <div className="flex justify-between text-[10px] font-bold text-slate-400 px-1">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
-          <span>5</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
         </div>
       </div>
 
-      <MapContainer 
-        center={[10.7305, 122.9712]} 
-        zoom={13} 
-        style={{ height: '100%', width: '100%' }} 
-        attributionControl={false}
-      >
+      <MapContainer center={[10.7305, 122.9712]} zoom={13} style={{ height: '100%', width: '100%' }} attributionControl={false}>
         <TileLayer url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" />
-        
         <MapController hotZoneBarangay={hotZoneBarangay} boundaryData={boundaryData} />
         
-        {/* NEW: Discrete Severity Glow Zones instead of a blended HeatLayer */}
         {activeReports.map((report) => (
           <Circle
             key={`glow-${report.id}`}
             center={[Number(report.lat), Number(report.lng)]}
-            radius={150 + (Number(report.severity_level) * 100)} // Higher severity = larger zone (in meters)
+            radius={150 + (Number(report.severity_level) * 100)}
             pathOptions={{
               fillColor: getSeverityColor(report.severity_level),
-              fillOpacity: 0.35, // Clear, non-washing out opacity
+              fillOpacity: 0.35,
               color: getSeverityColor(report.severity_level),
-              weight: 1, // Crisp outer ring
+              weight: 1,
               opacity: 0.8
             }}
           />
         ))}
 
-        {invertedMask && (
-            <GeoJSON 
-                key="inverted-mask" 
-                data={invertedMask} 
-                style={{ fillColor: "#020617", fillOpacity: 0.7, color: "#22d3ee", weight: 2 }} 
-                interactive={false} 
-            />
-        )}
+        {invertedMask && <GeoJSON key="inverted-mask" data={invertedMask} style={{ fillColor: "#020617", fillOpacity: 0.7, color: "#22d3ee", weight: 2 }} interactive={false} />}
         
         {boundaryData && (
           <GeoJSON 
@@ -175,8 +139,7 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
               fillColor: f.properties?.NAME_2 === hotZoneBarangay ? "#ef4444" : "transparent",
               fillOpacity: f.properties?.NAME_2 === hotZoneBarangay ? 0.2 : 0,
               color: f.properties?.NAME_2 === hotZoneBarangay ? "#22d3ee" : "transparent",
-              weight: 4, 
-              dashArray: "5, 10"
+              weight: 4, dashArray: "5, 10"
             })} 
             interactive={false} 
           />
@@ -186,49 +149,24 @@ export default function Map({ hotZoneBarangay }: { hotZoneBarangay?: string }) {
           <Marker 
             key={`marker-${report.id}`} 
             position={[Number(report.lat), Number(report.lng)]} 
-            icon={
-              report.status === 'responded' ? IconBlue : 
-              report.status === 'dispatched' || report.status === 'navigating' ? IconOrange : 
-              IconRed
-            }
+            icon={report.status === 'responded' ? IconBlue : report.status === 'dispatched' || report.status === 'navigating' ? IconOrange : IconRed}
           >
             <Popup>
               <div className="p-1 min-w-[200px] font-sans text-slate-800">
                 <div className="flex justify-between items-center mb-3">
                   <span className="font-medium text-slate-900 text-xs">Incident #{report.id.toString().substring(0,6)}</span>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded capitalize ${
-                    report.status === 'responded' ? 'bg-blue-100 text-blue-700' : 
-                    report.status === 'dispatched' || report.status === 'navigating' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'
-                  }`}>
+                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded capitalize ${report.status === 'responded' ? 'bg-blue-100 text-blue-700' : report.status === 'dispatched' || report.status === 'navigating' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>
                     {report.status || 'pending'}
                   </span>
                 </div>
-
                 <div className="text-xs border-y border-slate-100 py-2.5 mb-3 space-y-1.5">
-                  <p className="flex justify-between">
-                    <span className="text-slate-500">Reported By</span> 
-                    <span className="font-medium">{report.farmer_name || "Anonymous"}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-slate-500">Impact Area</span> 
-                    <span className="font-medium">{report.hectares_affected} ha</span>
-                  </p>
+                  <p className="flex justify-between"><span className="text-slate-500">Reported By</span> <span className="font-medium">{report.farmer_name || "Anonymous"}</span></p>
+                  <p className="flex justify-between"><span className="text-slate-500">Impact Area</span> <span className="font-medium">{report.hectares_affected} ha</span></p>
                 </div>
-
                 <div className="space-y-1.5">
-                  {(!report.status || report.status === 'pending') && (
-                    <button onClick={() => updateStatus(report.id, 'dispatched')} className="w-full py-2 text-xs font-medium rounded bg-slate-900 text-white hover:bg-slate-800 transition-colors">Dispatch Team</button>
-                  )}
-                  
-                  {(report.status === 'dispatched' || report.status === 'navigating') && (
-                    <div className="w-full py-2 text-xs font-medium rounded bg-orange-50 text-orange-700 text-center border border-orange-100">
-                      Team En Route
-                    </div>
-                  )}
-
-                  {report.status === 'responded' && (
-                    <button onClick={() => updateStatus(report.id, 'archived')} className="w-full py-2 text-xs font-medium rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">Resolve & Clear</button>
-                  )}
+                  {(!report.status || report.status === 'pending') && <button onClick={() => updateStatus(report.id, 'dispatched')} className="w-full py-2 text-xs font-medium rounded bg-slate-900 text-white hover:bg-slate-800 transition-colors">Dispatch Team</button>}
+                  {(report.status === 'dispatched' || report.status === 'navigating') && <div className="w-full py-2 text-xs font-medium rounded bg-orange-50 text-orange-700 text-center border border-orange-100">Team En Route</div>}
+                  {report.status === 'responded' && <button onClick={() => updateStatus(report.id, 'archived')} className="w-full py-2 text-xs font-medium rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">Resolve & Clear</button>}
                 </div>
               </div>
             </Popup>

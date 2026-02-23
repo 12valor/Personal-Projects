@@ -15,7 +15,7 @@ const poppins = Poppins({
 
 const Map = dynamic(() => import("@/components/Map"), { 
   ssr: false,
-  loading: () => <div className="h-[500px] w-full bg-slate-100 animate-pulse flex items-center justify-center text-sm text-slate-400">Loading map...</div>
+  loading: () => <div className="h-[500px] w-full bg-slate-50 flex items-center justify-center text-sm font-medium uppercase tracking-widest text-slate-400 border border-slate-200">Initializing Map Interface...</div>
 });
 
 export default function Dashboard() {
@@ -23,11 +23,17 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedReport, setSelectedReport] = useState<any | null>(null); 
   const [emergencyAlert, setEmergencyAlert] = useState<any | null>(null); 
-  
   const [toast, setToast] = useState<{ title: string, message: string, type: 'new' | 'update' | 'message', id: number } | null>(null);
-  
-  // State for global sidebar chat feed
   const [recentMessages, setRecentMessages] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const [weather, setWeather] = useState<{ temp: number; wind: number; humidity: number; direction: string } | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+
+  const getWindDirection = (degree: number) => {
+    const sectors = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    return sectors[Math.round(degree / 45) % 8];
+  };
 
   const showToast = (title: string, message: string, type: 'new' | 'update' | 'message' = 'new') => {
     const id = Date.now();
@@ -37,59 +43,71 @@ export default function Dashboard() {
     }, 5000); 
   };
 
-  const fetchData = async () => {
-    // 1. Fetch active reports
-    const { data: reportsData } = await supabase
-      .from('rssi_reports')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (reportsData) setReports(reportsData);
-    setLoading(false);
+  const fetchWeather = async () => {
+    try {
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=10.7305&longitude=122.9712&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m');
+      const data = await res.json();
+      setWeather({
+        temp: Math.round(data.current.temperature_2m),
+        humidity: Math.round(data.current.relative_humidity_2m),
+        wind: Math.round(data.current.wind_speed_10m),
+        direction: getWindDirection(data.current.wind_direction_10m)
+      });
+    } catch (err) {
+      console.error("Failed to fetch atmospheric data:", err);
+    } finally {
+      setWeatherLoading(false);
+    }
+  };
 
-    // 2. Fetch recent global messages for the sidebar
-    const { data: chatData } = await supabase
-      .from('incident_chats')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(20);
-    if (chatData) setRecentMessages(chatData);
+  const fetchData = async () => {
+    try {
+      const { data: reportsData, error: reportsError } = await supabase
+        .from('rssi_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (reportsError) console.error("Reports Fetch Error:", reportsError);
+      if (reportsData) setReports(reportsData);
+
+      const { data: chatData, error: chatError } = await supabase
+        .from('incident_chats')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+        
+      if (chatError) console.error("Chat Fetch Error:", chatError);
+      if (chatData) setRecentMessages(chatData);
+      
+    } catch (err) {
+      console.error("Unexpected error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
+    setIsMounted(true);
     fetchData();
+    fetchWeather();
 
     const reportChannel = supabase.channel('dashboard-sync')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'rssi_reports' }, (payload) => {
         setEmergencyAlert(payload.new);
-        setReports(prev => [payload.new, ...prev]);
-        showToast(
-          "New Incident Detected", 
-          `Location: ${payload.new.barangay || 'Sector Unspecified'}`, 
-          'new'
-        );
+        setReports(prev => [payload.new, ...(prev || [])]);
+        showToast("New Incident Logged", `Sector: ${payload.new.barangay || 'Unspecified'}`, 'new');
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rssi_reports' }, (payload) => {
         fetchData();
-        showToast(
-          "Incident Updated", 
-          `Reference #${payload.new.id.substring(0,8).toUpperCase()}`, 
-          'update'
-        );
+        showToast("Status Updated", `REF: #${payload.new.id.substring(0,8).toUpperCase()}`, 'update');
       })
       .subscribe();
 
     const chatChannel = supabase.channel('dashboard-chat-sync')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'incident_chats' }, (payload) => {
-        
-        // Add new message to the top of the sidebar feed
-        setRecentMessages(prev => [payload.new, ...prev].slice(0, 20));
-
+        setRecentMessages(prev => [payload.new, ...(prev || [])].slice(0, 20));
         if (payload.new.sender_role === 'responder') {
-          showToast(
-            "New Message Received", 
-            "Field unit has updated the incident log", 
-            'message'
-          );
+          showToast("Comms Update", "Field unit added to log", 'message');
         }
       })
       .subscribe();
@@ -100,42 +118,44 @@ export default function Dashboard() {
     };
   }, []);
 
-  // Function to open report directly from sidebar chat click
   const handleOpenReportFromChat = (reportId: string) => {
     const report = reports.find(r => r.id === reportId);
     if (report) {
       setSelectedReport(report);
     } else {
-      showToast("Notice", "This incident has already been cleared or archived.", "update");
+      showToast("Notice", "Record cleared or archived.", "update");
     }
   };
 
-  const activeReports = reports.filter(r => r.status !== 'archived');
+  const safeReports = reports || [];
+  const activeReports = safeReports.filter(r => r.status !== 'archived');
+  
   const totalArea = activeReports.reduce((sum, r) => sum + (Number(r.hectares_affected) || 0), 0);
-
-  const calculateAvgResponseTime = () => {
-    const responded = reports.filter(r => r.created_at && r.responded_at);
-    if (responded.length === 0) return "0.0";
-    const totalMinutes = responded.reduce((acc, curr) => {
-      const diff = new Date(curr.responded_at).getTime() - new Date(curr.created_at).getTime();
-      return acc + (diff / (1000 * 60));
-    }, 0);
-    return ((totalMinutes / responded.length) / 60).toFixed(1);
-  };
-
-  // --- NEW METRICS LOGIC ---
-  const criticalCount = reports.filter(r => Number(r.severity_level) >= 4 && r.status !== 'archived').length;
+  const criticalCount = activeReports.filter(r => Number(r.severity_level) >= 4).length;
 
   const getVerificationRate = () => {
-    if (reports.length === 0) return "0";
-    const verified = reports.filter(r => r.farmer_name && r.farmer_name !== "Anonymous").length;
-    return ((verified / reports.length) * 100).toFixed(0);
+    if (safeReports.length === 0) return "0";
+    const verified = safeReports.filter(r => r.farmer_name && r.farmer_name !== "Anonymous").length;
+    return ((verified / safeReports.length) * 100).toFixed(0);
   };
 
+  const getSlaCompliance = () => {
+    const handled = safeReports.filter(r => r.responded_at && r.created_at);
+    if (handled.length === 0) return "100";
+    const metSla = handled.filter(r => {
+      const mins = (new Date(r.responded_at).getTime() - new Date(r.created_at).getTime()) / 60000;
+      return mins <= 60;
+    });
+    return ((metSla.length / handled.length) * 100).toFixed(0);
+  };
+
+  const activeDeployments = safeReports.filter(r => r.status === 'dispatched' || r.status === 'navigating').length;
+  const affectedHouseholds = Math.round(totalArea * 1.5);
+
   const getHotZoneData = () => {
-    if (!reports || reports.length === 0) return { name: "Clear", count: 0 };
+    if (safeReports.length === 0) return { name: "Clear", count: 0 };
     const counts: Record<string, number> = {};
-    reports.forEach(r => {
+    safeReports.forEach(r => {
       if (Number(r.severity_level) >= 4 && r.barangay) {
         counts[r.barangay] = (counts[r.barangay] || 0) + 1;
       }
@@ -146,72 +166,80 @@ export default function Dashboard() {
 
   const hotZone = getHotZoneData();
 
+  const handlePrintBriefing = () => {
+    window.print();
+  };
+
+  if (!isMounted) {
+    return (
+      <div className={`${poppins.className} flex h-screen bg-slate-50 items-center justify-center`}>
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin"></div>
+          <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Establishing Secure Connection</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`${poppins.className} flex h-screen bg-slate-50 text-slate-800 overflow-hidden relative`}>
+    <div className={`${poppins.className} flex h-screen bg-slate-50 text-slate-800 overflow-hidden relative print:bg-white print:h-auto print:overflow-visible`}>
       
       {/* TOAST NOTIFICATION */}
-      <div className={`fixed top-6 right-6 z-[300] transition-all duration-300 transform ${
+      <div className={`fixed top-6 right-6 z-[300] transition-all duration-300 transform print:hidden ${
         toast ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'
       }`}>
         {toast && (
-          <div className="bg-white px-5 py-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-200 flex items-start gap-3 min-w-[320px]">
-            <div className={`mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 ${
-              toast.type === 'new' ? 'bg-red-500 animate-pulse' : 
-              toast.type === 'message' ? 'bg-indigo-500 animate-pulse' : 'bg-blue-500'
-            }`}></div>
+          <div className="bg-white px-5 py-4 border border-slate-200 shadow-sm flex items-start gap-4 min-w-[320px]">
+            <div className={`mt-1.5 w-2 h-2 shrink-0 ${toast.type === 'new' ? 'bg-red-600 animate-pulse' : toast.type === 'message' ? 'bg-indigo-600 animate-pulse' : 'bg-blue-600'}`}></div>
             <div>
-              <p className="text-sm font-medium text-slate-900">{toast.title}</p>
-              <p className="text-sm text-slate-500 mt-0.5">{toast.message}</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-slate-900">{toast.title}</p>
+              <p className="text-sm text-slate-600 mt-1">{toast.message}</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* EXTENDED SIDEBAR WITH LIVE CHAT FEED */}
-      <aside className="w-20 lg:w-80 bg-[#002244] border-r border-slate-900 hidden md:flex flex-col shrink-0 z-20 h-full overflow-hidden">
-        <div className="h-20 flex items-center lg:px-6 border-b border-white/10 bg-slate-900/20 shrink-0">
-          <h1 className="text-xl font-bold text-white tracking-tight hidden lg:block">Talisay LGU</h1>
+      {/* OPERATIONS CONSOLE SIDEBAR */}
+      <aside className="w-20 lg:w-80 bg-slate-900 border-r border-slate-800 hidden md:flex flex-col shrink-0 z-20 h-full overflow-hidden print:hidden">
+        <div className="h-20 flex items-center justify-center lg:justify-start lg:px-8 border-b border-slate-800 shrink-0">
+          <h1 className="text-lg font-medium text-slate-100 tracking-wide hidden lg:block">Talisay LGU</h1>
         </div>
         
-        <nav className="py-6 shrink-0">
-          <Link href="/dashboard" className="flex items-center gap-4 px-6 py-4 bg-white/5 text-white border-l-4 border-blue-500">
-            <span className="text-sm font-medium hidden lg:block">Operations Console</span>
+        <nav className="py-6 shrink-0 border-b border-slate-800">
+          <Link href="/dashboard" className="flex items-center gap-4 px-8 py-3 bg-slate-800/30 text-white border-l-2 border-blue-500">
+            <span className="text-sm font-medium tracking-wide hidden lg:block">Operations Console</span>
           </Link>
         </nav>
 
-        {/* LIVE COMMS SIDEBAR FEED */}
-        <div className="flex-1 hidden lg:flex flex-col border-t border-white/10 overflow-hidden bg-slate-900/10">
-          <div className="px-6 py-4 bg-[#002244] border-b border-white/5 shrink-0 shadow-sm flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-widest flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div className="flex-1 hidden lg:flex flex-col overflow-hidden">
+          <div className="px-8 py-5 border-b border-slate-800 shrink-0 flex items-center justify-between">
+            <h3 className="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
               Live Comms Feed
             </h3>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
             {recentMessages.length === 0 ? (
-              <p className="text-xs text-slate-500 text-center py-4">No active communications.</p>
+              <p className="text-sm text-slate-500 text-center py-8 font-mono">No active transmissions</p>
             ) : (
               recentMessages.map(msg => (
-                <div 
-                  key={msg.id} 
-                  onClick={() => handleOpenReportFromChat(msg.report_id)}
-                  className="bg-slate-800/60 p-3.5 rounded-lg border border-white/5 hover:border-white/20 hover:bg-slate-800 transition-all cursor-pointer group"
-                >
-                  <div className="flex justify-between items-center mb-1.5">
-                    <span className={`text-[10px] font-medium uppercase tracking-wider ${
-                      msg.sender_role === 'admin' ? 'text-blue-400' : 'text-emerald-400'
-                    }`}>
-                      {msg.sender_role === 'admin' ? 'Command' : 'Field Unit'}
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-mono group-hover:text-blue-300 transition-colors">
-                      #{msg.report_id.substring(0,6)}
+                <div key={msg.id} onClick={() => handleOpenReportFromChat(msg.report_id)} className="px-8 py-4 border-b border-slate-800/50 hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                  <div className="flex justify-between items-baseline mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-1.5 h-1.5 rounded-full ${msg.sender_role === 'admin' ? 'bg-blue-400' : 'bg-emerald-400'}`}></div>
+                      <span className="text-xs font-medium uppercase tracking-wide text-slate-300">
+                        {msg.sender_role === 'admin' ? 'Command' : 'Field Unit'}
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-500 font-mono">
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-200 line-clamp-3 leading-snug">{msg.message}</p>
-                  <p className="text-[9px] text-slate-500 mt-2 text-right">
-                    {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  <p className="text-sm text-slate-300 leading-relaxed">{msg.message}</p>
+                  <div className="mt-2 flex justify-start">
+                    <span className="text-xs text-slate-500 font-mono group-hover:text-blue-400 transition-colors">REF: #{msg.report_id.substring(0,8).toUpperCase()}</span>
+                  </div>
                 </div>
               ))
             )}
@@ -219,78 +247,151 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-4 md:p-8">
-        <div className="max-w-[1600px] mx-auto space-y-8">
+      <main className="flex-1 overflow-y-auto p-6 md:p-10 print:p-0 print:overflow-visible">
+        <div className="max-w-[1600px] mx-auto space-y-8 print:space-y-8">
           
-          <div className="border-b border-slate-200 pb-6 flex justify-between items-end">
-            <h2 className="text-2xl font-medium text-slate-900 tracking-tight">Active Operations</h2>
+          <div className="hidden print:block text-center border-b border-slate-800 pb-8 mb-10 mt-6">
+            <h1 className="text-3xl font-medium text-slate-900 tracking-wide">City of Talisay</h1>
+            <h2 className="text-xl font-normal text-slate-700 mt-2">CDRRMO Daily Operations Briefing</h2>
+            <p className="text-sm text-slate-500 mt-4 font-mono">
+              Generated: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+            </p>
           </div>
 
-          {/* --- UPDATED METRICS GRID --- */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Critical Alerts</p>
-                <div className="flex items-baseline gap-2">
-                  <span className={`text-4xl font-bold ${criticalCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                    {loading ? "--" : criticalCount}
-                  </span>
-                  <span className="text-sm text-slate-400 font-medium">High Priority</span>
+          <div className="border-b border-slate-200 pb-6 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 print:hidden">
+            <div>
+              <h2 className="text-2xl font-medium text-slate-900 tracking-tight">Active Operations</h2>
+              <p className="text-sm text-slate-500 mt-2 tracking-wide">CDRRMO Command Center</p>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-5 px-5 py-3 bg-white text-slate-700 border border-slate-200 text-sm tabular-nums">
+                {weatherLoading ? (
+                  <span className="text-slate-400 font-medium">Synchronizing telemetry...</span>
+                ) : weather ? (
+                  <>
+                    <div className="flex items-center gap-2" title="Local Temperature">
+                      <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Temp</span>
+                      <span className="text-base font-medium text-slate-800">{weather.temp}°C</span>
+                    </div>
+                    <div className="w-px h-4 bg-slate-200"></div>
+                    <div className="flex items-center gap-2" title="Relative Humidity">
+                      <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Hum</span>
+                      <span className="text-base font-medium text-slate-800">{weather.humidity}%</span>
+                    </div>
+                    <div className="w-px h-4 bg-slate-200"></div>
+                    <div className="flex items-center gap-2" title="Wind Speed & Direction">
+                      <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">Wind</span>
+                      <span className="text-base font-medium text-slate-800">{weather.wind} km/h {weather.direction}</span>
+                    </div>
+                  </>
+                ) : (
+                  <span className="text-red-600 font-medium">Telemetry Offline</span>
+                )}
+              </div>
+
+              <button onClick={handlePrintBriefing} className="px-6 py-3 bg-slate-800 text-white text-sm font-medium hover:bg-slate-900 transition-colors shrink-0">
+                Generate Official Report
+              </button>
+            </div>
+          </div>
+
+          {/* LGU METRICS GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-3 print:gap-6 print:page-break-inside-avoid">
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">Critical Alerts</p>
+                <div className="flex items-baseline gap-3">
+                  <span className={`text-4xl leading-none ${criticalCount > 0 ? 'text-red-600' : 'text-slate-800'}`}>{loading ? "--" : criticalCount}</span>
+                  <span className="text-sm text-slate-400">Lvl 4-5 Severity</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Verified Reports</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : getVerificationRate()}%</span>
-                  <span className="text-sm text-slate-400 font-medium">Identity Match</span>
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">Active Deployments</p>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl leading-none text-slate-800">{loading ? "--" : activeDeployments}</span>
+                  <span className="text-sm text-slate-400">Units in Field</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Total Impact Area</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : totalArea.toFixed(1)}</span>
-                  <span className="text-sm text-slate-400 font-medium">Hectares</span>
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">SLA Compliance</p>
+                <div className="flex items-baseline gap-3">
+                  <span className={`text-4xl leading-none ${Number(getSlaCompliance()) >= 90 ? 'text-slate-800' : 'text-orange-600'}`}>{loading ? "--" : getSlaCompliance()}%</span>
+                  <span className="text-sm text-slate-400">&lt; 60m Response</span>
                 </div>
             </div>
 
-            <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                <p className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Avg. Response</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-slate-900">{loading ? "--" : calculateAvgResponseTime()}</span>
-                  <span className="text-sm text-slate-400 font-medium">Hours</span>
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">Total Impact Area</p>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl leading-none text-slate-800">{loading ? "--" : totalArea.toFixed(1)}</span>
+                  <span className="text-sm text-slate-400">Hectares</span>
+                </div>
+            </div>
+
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">Est. Households</p>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl leading-none text-slate-800">{loading ? "--" : affectedHouseholds}</span>
+                  <span className="text-sm text-slate-400">Families Affected</span>
+                </div>
+            </div>
+
+            <div className="bg-white p-8 border border-slate-200 exact-color">
+                <p className="text-sm font-medium text-slate-500 mb-4 uppercase tracking-wide">Verified Identity</p>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl leading-none text-slate-800">{loading ? "--" : getVerificationRate()}%</span>
+                  <span className="text-sm text-slate-400">Non-Anonymous</span>
                 </div>
             </div>
           </div>
 
-          <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
-            <div className="h-14 border-b border-slate-100 flex items-center px-6 bg-slate-50 text-sm font-medium text-slate-700">Live Map</div>
-            <div className="relative z-0 w-full h-[500px]">
+          {/* MAP */}
+          <div className="border border-slate-200 bg-white print:hidden">
+            <div className="h-16 border-b border-slate-200 flex items-center px-8">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wide">Live Map Overview</h3>
+            </div>
+            <div className="relative z-0 w-full h-[550px]">
               <Map hotZoneBarangay={hotZone.name} />
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+          {/* DATA TABLE */}
+          <div className="bg-white border border-slate-200 print:border-slate-300 print:mt-12">
+            <div className="h-16 border-b border-slate-200 px-8 flex items-center">
+              <h3 className="text-sm font-medium text-slate-800 uppercase tracking-wide">Official Incident Log</h3>
+            </div>
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-sm text-slate-500">
-                  <th className="px-6 py-4 font-medium">Reference</th>
-                  <th className="px-6 py-4 font-medium">Reported By</th>
-                  <th className="px-6 py-4 font-medium">Location</th>
-                  <th className="px-6 py-4 font-medium text-right">Action</th>
+                <tr className="bg-slate-50 border-b border-slate-200 print:bg-slate-50 exact-color">
+                  <th className="px-8 py-4 text-xs font-medium text-slate-500 uppercase tracking-wide">Reference</th>
+                  <th className="px-8 py-4 text-xs font-medium text-slate-500 uppercase tracking-wide">Reported By</th>
+                  <th className="px-8 py-4 text-xs font-medium text-slate-500 uppercase tracking-wide">Location</th>
+                  <th className="px-8 py-4 text-xs font-medium text-slate-500 uppercase tracking-wide">Status</th>
+                  <th className="px-8 py-4 text-xs font-medium text-slate-500 uppercase tracking-wide text-right print:hidden">Action</th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
-                {reports.slice(0, 15).map((report) => (
-                  <tr key={report.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-mono text-slate-500">#{report.id.toString().substring(0, 8)}</td>
-                    <td className="px-6 py-4 font-medium text-slate-900">{report.farmer_name || "Anonymous"}</td>
-                    <td className="px-6 py-4">
-                      {report.barangay ? <p className="text-slate-700">{report.barangay}</p> : <p className="text-slate-400 italic">Sector Unspecified</p>}
-                      <p className="text-[10px] text-slate-400 font-mono mt-0.5">{report.lat}, {report.lng}</p>
+              <tbody>
+                {safeReports.slice(0, 15).map((report) => (
+                  <tr key={report.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td className="px-8 py-5 font-mono text-sm text-slate-500">#{report.id.toString().substring(0, 8).toUpperCase()}</td>
+                    <td className="px-8 py-5 text-sm font-medium text-slate-800">{report.farmer_name || "Anonymous"}</td>
+                    <td className="px-8 py-5">
+                      {report.barangay ? <p className="text-sm text-slate-800">{report.barangay}</p> : <p className="text-sm text-slate-400 italic">Sector Unspecified</p>}
+                      <p className="text-xs text-slate-500 font-mono mt-1">{report.lat}, {report.lng}</p>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <button onClick={() => setSelectedReport(report)} className="text-sm font-medium text-blue-600 hover:text-blue-800">View Details</button>
+                    <td className="px-8 py-5">
+                      <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium uppercase tracking-wide exact-color ${
+                        report.status === 'responded' ? 'text-blue-700 bg-blue-50' : 
+                        report.status === 'archived' ? 'text-emerald-700 bg-emerald-50' :
+                        report.status === 'dispatched' ? 'text-orange-700 bg-orange-50' : 'text-red-700 bg-red-50'
+                      }`}>
+                        {report.status || 'pending'}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-right print:hidden">
+                      <button onClick={() => setSelectedReport(report)} className="text-sm font-medium text-blue-600 hover:text-blue-800">Review Log</button>
                     </td>
                   </tr>
                 ))}
@@ -300,82 +401,75 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* EMERGENCY ALERT MODAL */}
+      {/* MODALS */}
       {emergencyAlert && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-sm rounded-xl shadow-2xl overflow-hidden border border-slate-100">
-            <div className="p-6">
-              <h3 className="text-lg font-medium text-slate-900">New Incident Reported</h3>
-              <p className="text-slate-500 mt-2 text-sm leading-relaxed">
-                A new report has been filed in <strong className="text-slate-700">{emergencyAlert.barangay || "an unspecified sector"}</strong>.
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white w-full max-w-md border border-slate-200">
+            <div className="p-8 border-b border-slate-200">
+              <h3 className="text-base font-medium text-red-600 uppercase tracking-wide flex items-center gap-3">
+                <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse"></span>
+                Incident Alert
+              </h3>
+              <p className="text-slate-600 mt-4 text-base leading-relaxed">
+                New report filed in sector: <strong className="text-slate-900 font-medium">{emergencyAlert.barangay || "Unspecified"}</strong>.
               </p>
             </div>
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-              <button 
-                onClick={() => setEmergencyAlert(null)} 
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
-              >
-                Dismiss
-              </button>
-              <button 
-                onClick={() => { setSelectedReport(emergencyAlert); setEmergencyAlert(null); }} 
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                View Details
-              </button>
+            <div className="px-8 py-5 bg-slate-50 flex justify-end gap-4">
+              <button onClick={() => setEmergencyAlert(null)} className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Dismiss</button>
+              <button onClick={() => { setSelectedReport(emergencyAlert); setEmergencyAlert(null); }} className="px-5 py-2.5 bg-slate-800 text-white text-sm font-medium hover:bg-slate-900 transition-colors">Assess Target</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* DETAIL MODAL & CHAT */}
       {selectedReport && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-3xl rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
-              <h3 className="text-xl font-medium text-slate-900">
-                Incident Details <span className="text-slate-400 text-base ml-2 font-normal">#{selectedReport.id.substring(0, 8)}</span>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white w-full max-w-4xl flex flex-col max-h-[90vh] border border-slate-200">
+            <div className="px-8 py-6 border-b border-slate-200 flex justify-between items-center shrink-0 bg-white">
+              <h3 className="text-base font-medium text-slate-800 uppercase tracking-wide">
+                Incident Report <span className="text-slate-400 ml-3 font-mono">REF: #{selectedReport.id.substring(0, 8).toUpperCase()}</span>
               </h3>
-              <button onClick={() => setSelectedReport(null)} className="p-2 text-slate-400 hover:text-slate-800 transition-colors rounded-full hover:bg-slate-100">
+              <button onClick={() => setSelectedReport(null)} className="text-slate-400 hover:text-slate-800 transition-colors">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
-            <div className="overflow-y-auto p-8 space-y-8 flex-1 custom-scrollbar">
+            <div className="overflow-y-auto p-8 space-y-10 flex-1 custom-scrollbar">
               {selectedReport.photo_url ? (
-                <img src={selectedReport.photo_url} alt="Incident Evidence" className="w-full h-80 object-cover rounded-lg border border-slate-200" />
+                <img src={selectedReport.photo_url} alt="Field Evidence" className="w-full h-80 object-cover border border-slate-200" />
               ) : (
-                <div className="h-64 bg-slate-50 border border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-base">No photo attached to this report.</div>
+                <div className="h-48 bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-medium text-slate-400 uppercase tracking-widest">No Visual Evidence Attached</div>
               )}
               <div className="grid grid-cols-2 gap-y-8 gap-x-12">
                 <div>
-                  <span className="block text-sm text-slate-500 mb-1">Reported By</span>
+                  <span className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Reported By</span>
                   <p className="text-lg text-slate-900 font-normal">{selectedReport.farmer_name || "Anonymous"}</p>
-                  <p className="text-base text-blue-600 font-normal mt-1">{selectedReport.contact_number || "No contact provided"}</p>
+                  <p className="text-sm text-slate-500 font-mono mt-1">{selectedReport.contact_number || "No contact provided"}</p>
                 </div>
                 <div>
-                  <span className="block text-sm text-slate-500 mb-1">Location</span>
+                  <span className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Location Data</span>
                   <p className="text-lg text-slate-900 font-normal">{selectedReport.barangay || "Unspecified Sector"}</p>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">{selectedReport.lat}, {selectedReport.lng}</p>
+                  <p className="text-sm text-slate-500 font-mono mt-1">{selectedReport.lat}, {selectedReport.lng}</p>
                 </div>
                 <div>
-                  <span className="block text-sm text-slate-500 mb-1">Impact Area</span>
+                  <span className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Impact Assessment</span>
                   <p className="text-lg text-slate-900 font-normal">{selectedReport.hectares_affected} Hectares</p>
                 </div>
                 <div>
-                  <span className="block text-sm text-slate-500 mb-1">Current Status</span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className={`w-2.5 h-2.5 rounded-full ${
-                      selectedReport.status === 'responded' ? 'bg-blue-500' : 
-                      selectedReport.status === 'archived' ? 'bg-emerald-500' :
-                      selectedReport.status === 'dispatched' ? 'bg-orange-500' : 'bg-red-500'
-                    }`} />
-                    <p className="text-lg text-slate-900 font-normal capitalize">{selectedReport.status || 'Pending'}</p>
+                  <span className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wide">Current Status</span>
+                  <div className="mt-2">
+                    <span className={`inline-flex items-center px-3 py-1 text-sm font-medium uppercase tracking-wide exact-color ${
+                        selectedReport.status === 'responded' ? 'text-blue-700 bg-blue-50' : 
+                        selectedReport.status === 'archived' ? 'text-emerald-700 bg-emerald-50' :
+                        selectedReport.status === 'dispatched' ? 'text-orange-700 bg-orange-50' : 'text-red-700 bg-red-50'
+                      }`}>
+                        {selectedReport.status || 'pending'}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="pt-8 border-t border-slate-100">
-                <h4 className="text-lg font-medium text-slate-900 mb-4">Communications</h4>
-                <div className="h-[400px]">
+              <div className="pt-8 border-t border-slate-200">
+                <h4 className="text-sm font-medium text-slate-800 uppercase tracking-wide mb-6">Communications Channel</h4>
+                <div className="h-[400px] border border-slate-200">
                   <ChatPanel reportId={selectedReport.id} currentUserRole="admin" status={selectedReport.status} />
                 </div>
               </div>
@@ -384,14 +478,26 @@ export default function Dashboard() {
         </div>
       )}
       
-      {/* Optional: Add minimal scrollbar styling globally or in global.css */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.1); border-radius: 10px; }
-        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); }
-      `}</style>
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(148, 163, 184, 0.4); border-radius: 0px; }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb { background-color: rgba(148, 163, 184, 0.7); }
+        
+        aside .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.15); }
+        aside .custom-scrollbar:hover::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.3); }
 
+        @media print {
+          .exact-color {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          @page {
+            margin: 1.5cm;
+            size: landscape;
+          }
+        }
+      `}</style>
     </div>
   );
 }

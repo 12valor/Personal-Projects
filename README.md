@@ -31,15 +31,15 @@ The following technologies were utilized across the projects in this repository 
 
 ## Project Gallery
 
-| **Portfolio** | **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> |
+| **Portfolio** | **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** | **RSSI System** |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> | <img src="Showcase%20Screenshots/rssi.png" height="180"> |
 
 ---
 
 ## Personal Identity
 
-### AG.Portolio
+### AG.Portfolio
 **Personal Brand & Content Management System**
 
 A dynamic portfolio website featuring a secure, custom-built admin panel. This project serves as a live demonstration of full-stack capabilities, allowing for real-time management of projects, media assets, and client inquiries without touching the codebase.
@@ -75,7 +75,17 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 
 ---
 
-## Institutions
+## Institutions & Government
+
+### RSSI Report System
+**Emergency Response & Field Operations Dashboard**
+
+A production-ready incident reporting system designed specifically for Philippine City Disaster Risk Reduction and Management Offices (CDRRMO). Built to manage critical operations with real-time data handling through Next.js and Supabase.
+
+* **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
+* **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
+* **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
+* **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
 
 ### TUPV Website
 **Institutional Portal**

@@ -12,7 +12,7 @@ module.exports = {
           100: '#e0edff',
           500: '#3b82f6',
           700: '#1d4ed8',
-          900: '#1e3a8a', // Deep premium blue
+          900: '#1e3a8a', 
           950: '#172554',
         }
       },
@@ -21,11 +21,19 @@ module.exports = {
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+        // Add the shine animation here
+        'shine': 'shine 1.5s ease-out infinite', 
       },
       keyframes: {
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        // Add the shine keyframes here
+        shine: {
+          '0%': { left: '-100px' },
+          '60%': { left: '100%' },
+          '100%': { left: '100%' },
         }
       }
     },

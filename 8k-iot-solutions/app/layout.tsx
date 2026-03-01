@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 // Load Poppins with specific weights for strong visual hierarchy
 const poppins = Poppins({ 
   subsets: ["latin"],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['100', '300', '400', '500', '600', '700'], // Added '100'
   variable: '--font-poppins',
 });
 

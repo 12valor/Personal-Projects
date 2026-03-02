@@ -37,20 +37,19 @@ export default function Navbar() {
       >
         
         {/* 1. Left: Logo Area */}
-        {/* Using flex-1 gives it 50% of the remaining space, balancing the right side naturally */}
         <div className="flex flex-1 items-center justify-start">
-          {/* Increased height dramatically and added scale to guarantee it renders large */}
+          {/* Removed extreme scaling, using standard heights (65px top, 45px scrolled) */}
           <Link 
             href="#home" 
             className={`relative flex items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left 
-              ${isScrolled ? 'h-[70px] scale-110' : 'h-[100px] scale-[1.35]'}`
+              ${isScrolled ? 'h-[45px]' : 'h-[65px]'}`
             }
           >
             <Image 
               src="/8k.png" 
               alt="8K IoT Solutions Logo" 
-              width={600} 
-              height={200} 
+              width={400} 
+              height={133} 
               className="h-full w-auto object-contain object-left" 
               priority 
             />
@@ -72,7 +71,6 @@ export default function Navbar() {
         </div>
 
         {/* 3. Right: Independent Expanding Social Buttons */}
-        {/* flex-1 gives the buttons unlimited room to expand to the left without squishing */}
         <div className="hidden md:flex flex-1 items-center justify-end gap-3">
           
           {/* Facebook */}

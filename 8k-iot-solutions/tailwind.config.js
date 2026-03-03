@@ -17,7 +17,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-poppins)', 'sans-serif'],
+        sans: ['var(--font-inter)', 'sans-serif'], // Sets Inter as the default body font
+        poppins: ['var(--font-poppins)', 'sans-serif'], // Keeps Poppins for headings
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.8s ease-out forwards',

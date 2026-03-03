@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-// Load Poppins with specific weights for strong visual hierarchy
+// Load Poppins and Inter with specific variables
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const poppins = Poppins({ 
   subsets: ["latin"], 
-  weight: ['100', '300', '400', '500', '600', '700'], // Added '100'
+  weight: ['100', '300', '400', '500', '600', '700'],
   variable: '--font-poppins',
 });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${poppins.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
+      <body className={`${inter.variable} ${poppins.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <Navbar />
         <main className="flex-grow w-full">
           {children}

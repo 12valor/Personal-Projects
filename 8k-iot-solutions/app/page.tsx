@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import About from '@/components/About';
+import Testimonials from '@/components/Testimonials';
 
 export default function Home() {
   
@@ -102,7 +103,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      <Testimonials />
       {/* ================= ABOUT SECTION ================= */}
       <About />
       

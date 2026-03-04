@@ -32,6 +32,7 @@ module.exports = {
         'scroll-up': 'scrollUp 25s linear infinite',
         'heroPop': 'heroPop 240ms ease-out forwards',
         'shimmer': 'shimmer 2s linear infinite',
+        'scroll-horizontal': 'scrollHorizontal 40s linear infinite',
       },
       keyframes: {
         fadeInUp: {
@@ -62,6 +63,10 @@ module.exports = {
         heroPop: {
           '0%': { opacity: '0', transform: 'translateY(12px) scale(0.98)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        scrollHorizontal: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         }
       }
     },

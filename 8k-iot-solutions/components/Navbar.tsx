@@ -16,6 +16,29 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Custom function to handle smooth scrolling to sections
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      const targetId = href.replace('#', '');
+      const element = document.getElementById(targetId);
+      
+      if (element) {
+        e.preventDefault();
+        // Offset to account for your fixed navbar height so it doesn't cover the section title
+        const navbarOffset = 100; 
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - navbarOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+      // Always close the mobile menu on click
+      setMobileMenuOpen(false);
+    }
+  };
+
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
@@ -42,6 +65,7 @@ export default function Navbar() {
           <div className="flex flex-1 items-center justify-start">
             <Link 
               href="#home" 
+              onClick={(e) => handleScrollToSection(e, '#home')}
               className={`relative flex items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left 
                 ${isScrolled ? 'h-[45px]' : 'h-[65px]'}`
               }
@@ -63,6 +87,7 @@ export default function Navbar() {
               <Link 
                 key={link.name} 
                 href={link.href}
+                onClick={(e) => handleScrollToSection(e, link.href)}
                 className="text-[15px] font-semibold relative group text-brand-950 hover:text-brand-600 transition-colors duration-300 py-2 tracking-wide"
               >
                 {link.name}
@@ -113,7 +138,12 @@ export default function Navbar() {
       <div className={`md:hidden absolute left-0 right-0 mx-auto w-[95%] transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top pointer-events-auto ${mobileMenuOpen ? 'opacity-100 scale-y-100 translate-y-0' : 'opacity-0 scale-y-95 -translate-y-4 pointer-events-none'} ${isScrolled ? 'top-[90px]' : 'top-[110px]'}`}>
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 flex flex-col space-y-1 mt-2">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3.5 text-base font-medium text-brand-900 hover:text-brand-700 hover:bg-brand-50 rounded-xl transition-colors">
+            <Link 
+              key={link.name} 
+              href={link.href} 
+              onClick={(e) => handleScrollToSection(e, link.href)} 
+              className="block px-4 py-3.5 text-base font-medium text-brand-900 hover:text-brand-700 hover:bg-brand-50 rounded-xl transition-colors"
+            >
               {link.name}
             </Link>
           ))}

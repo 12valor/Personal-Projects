@@ -4,11 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
+import ServicesSection from '@/components/Services';
 
 export default function Home() {
   
   // Using the co-founders image for all slots to create the seamless vertical flow
-  const scrollImages = ['/co-founders.jpg', '/co-founders.jpg', '/co-founders.jpg', '/co-founders.jpg'];
+  const scrollImages = ['/client.jpg', '/client.jpg', '/client.jpg', '/client.jpg'];
 
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200">
@@ -104,9 +105,9 @@ export default function Home() {
         </div>
       </section>
       <Testimonials />
-      {/* ================= ABOUT SECTION ================= */}
       <About />
-      
+      <ServicesSection />
+  
     </div>
   );
 }

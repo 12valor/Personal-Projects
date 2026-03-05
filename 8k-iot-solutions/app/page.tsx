@@ -38,12 +38,12 @@ export default function Home() {
               {/* Eyebrow removed as per request */}
 
               <h1 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.5rem] text-slate-900 tracking-tight leading-[1.12] mb-6">
-                Building the <br className="hidden sm:block" />
-                <span className="text-brand-900">Connected Future.</span>
+                Building Ideas <br className="hidden sm:block" />
+                <span className="text-brand-900">Into Reality</span>
               </h1>
               
               <p className="font-poppins font-normal text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10">
-                We deliver bespoke hardware prototyping, sensor network integration, and highly responsive web dashboards. Precision engineering for the modern internet of things.
+                We offer a range of hardware and software services, including device prototyping, system integration, and web-based solutions, tailored to help students and innovators bring their ideas to life.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">

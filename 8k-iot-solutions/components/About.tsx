@@ -1,11 +1,42 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Cpu, Briefcase } from 'lucide-react';
+
+// --- Lightweight Intersection Observer Hook ---
+function useInView(options = { threshold: 0.15 }) {
+  const [ref, setRef] = useState<HTMLElement | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (!ref) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setInView(true);
+        observer.disconnect(); // Trigger only once
+      }
+    }, options);
+    observer.observe(ref);
+    return () => observer.disconnect();
+  }, [ref, options]);
+
+  return [setRef, inView] as const;
+}
 
 export default function About() {
+  const [setRef, inView] = useInView();
+
   return (
     <section id="about" className="relative py-24 lg:py-32 bg-white overflow-hidden z-0">
       
+      {/* Required Animation Easing */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .cubic-out {
+          transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+      `}} />
+
       {/* Engineered Technical Blueprint Background */}
       <div 
         className="absolute inset-0 z-[-1] pointer-events-none opacity-[0.15] animate-blueprintShift" 
@@ -16,12 +47,15 @@ export default function About() {
         aria-hidden="true"
       />
       
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={setRef as any}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
-          {/* We use animate-fade-in-up (matches the config) */}
-          <div className="lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0 animate-fade-in-up">
+          <div 
+            className={`lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0 transition-all duration-[800ms] cubic-out
+              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
+            `}
+          >
             
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px w-6 bg-brand-600 rounded-full" />
@@ -44,22 +78,26 @@ export default function About() {
               </p>
             </div>
 
-            {/* Metrics Row */}
+            {/* Metrics Row with Lucide Icons */}
             <div className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px]">
+              {/* Metric 1 */}
               <div className="group flex flex-col items-start border-l-[3px] border-gray-200 hover:border-brand-500 bg-gray-50/80 p-4 transition-colors duration-300">
-                <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-center justify-between w-full mb-1">
                   <span className="text-2xl sm:text-3xl font-bold text-gray-900 font-sans tracking-tight">10+</span>
+                  <Cpu className="w-5 h-5 text-gray-400 group-hover:text-brand-500 transition-colors duration-300" strokeWidth={2} />
                 </div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider">
+                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider mt-1">
                   Projects Completed
                 </div>
               </div>
 
+              {/* Metric 2 */}
               <div className="group flex flex-col items-start border-l-[3px] border-gray-200 hover:border-brand-500 bg-gray-50/80 p-4 transition-colors duration-300">
-                <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-center justify-between w-full mb-1">
                   <span className="text-2xl sm:text-3xl font-bold text-gray-900 font-sans tracking-tight">2+</span>
+                  <Briefcase className="w-5 h-5 text-gray-400 group-hover:text-brand-500 transition-colors duration-300" strokeWidth={2} />
                 </div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider">
+                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider mt-1">
                   Years Experience
                 </div>
               </div>
@@ -79,8 +117,13 @@ export default function About() {
           </div>
 
           {/* ----- RIGHT COLUMN: Founders Photo ----- */}
-          <div className="lg:col-span-5 relative order-1 lg:order-2 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate">
+          <div 
+            className={`lg:col-span-5 relative order-1 lg:order-2 transition-all duration-[800ms] cubic-out
+              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
+            `} 
+            style={{ transitionDelay: '200ms' }}
+          >
+            <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500">
               <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden isolate">
                  <Image 
                   src="/co-founders.jpg" 
@@ -92,7 +135,7 @@ export default function About() {
                 />
               </div>
             </div>
-            <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block" />
+            <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block transition-transform duration-500 hover:translate-x-4 hover:translate-y-4" />
           </div>
 
         </div>

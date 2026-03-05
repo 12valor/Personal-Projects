@@ -5,6 +5,8 @@ import Link from 'next/link';
 import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
 import ServicesSection from '@/components/Services';
+import Contact from '@/components/Contact';
+import { ContactIcon } from 'lucide-react';
 
 export default function Home() {
   
@@ -47,23 +49,23 @@ export default function Home() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                <Link 
-                  href="#contact" 
-                  className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-bold font-sans rounded-[6px] transition-all duration-300 hover:bg-brand-700 active:scale-[0.98] shadow-sm"
-                >
-                  <span>Start a Project</span>
-                  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Link>
+  <a 
+    href="#contact" 
+    className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-bold font-sans rounded-[6px] transition-all duration-300 hover:bg-brand-700 active:scale-[0.98] shadow-sm"
+  >
+    <span>Start a Project</span>
+    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+    </svg>
+  </a>
 
-                <Link 
-                  href="#services" 
-                  className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-gray-200 bg-white text-gray-900 text-[15px] font-bold font-sans rounded-[6px] transition-all duration-300 hover:border-brand-600 hover:text-brand-600 active:scale-[0.98] shadow-sm"
-                >
-                  <span>Explore Services</span>
-                </Link>
-              </div>
+  <a 
+    href="#services" 
+    className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-gray-200 bg-white text-gray-900 text-[15px] font-bold font-sans rounded-[6px] transition-all duration-300 hover:border-brand-600 hover:text-brand-600 active:scale-[0.98] shadow-sm"
+  >
+    <span>Explore Services</span>
+  </a>
+</div>
             </div>
 
             {/* ----- RIGHT COLUMN: Asymmetric Scrolling Grid ----- */}
@@ -107,7 +109,8 @@ export default function Home() {
       <Testimonials />
       <About />
       <ServicesSection />
-  
+      <Contact />
+
     </div>
   );
 }

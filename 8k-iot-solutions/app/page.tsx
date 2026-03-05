@@ -6,6 +6,7 @@ import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
 import ServicesSection from '@/components/Services';
 import Contact from '@/components/Contact';
+import Footer from '@/components/Footer';
 import { ContactIcon } from 'lucide-react';
 
 export default function Home() {
@@ -110,6 +111,7 @@ export default function Home() {
       <About />
       <ServicesSection />
       <Contact />
+      <Footer />
 
     </div>
   );

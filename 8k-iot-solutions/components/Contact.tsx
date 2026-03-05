@@ -24,8 +24,8 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
           
-          {/* ----- LEFT SIDE: Contact Info ----- */}
-          <div className="lg:col-span-5 flex flex-col items-start">
+          {/* ----- LEFT SIDE: Contact Info (System Metadata Style) ----- */}
+          <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-8">
             
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 mb-6 opacity-0 animate-[fadeInUp_600ms_ease-out_100ms_forwards]">
@@ -48,33 +48,56 @@ const Contact = () => {
               Whether you need precise hardware prototyping or a scalable data dashboard, we're ready to architect the solution. Based in Talisay City, serving visionaries everywhere.
             </p>
 
-            {/* Glass Contact Cards */}
-            <div className="w-full space-y-4 opacity-0 animate-[fadeInUp_600ms_ease-out_400ms_forwards]">
+            {/* ----- EDITORIAL SIGNAL ROWS ----- */}
+            <div className="w-full flex flex-col opacity-0 animate-[fadeInUp_600ms_ease-out_400ms_forwards]">
               
-              {/* Location Card */}
-              <div className="group flex items-center gap-5 p-4 rounded-xl bg-white/[0.02] backdrop-blur-md border border-white/[0.05] hover:bg-white/[0.04] hover:border-brand-500/30 transition-all duration-300">
-                <div className="bg-brand-500/10 w-12 h-12 rounded-lg flex items-center justify-center shrink-0 border border-brand-500/20 group-hover:border-brand-400/50 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all">
-                  <svg className="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-slate-200 text-[15px]">Headquarters</h4>
-                  <p className="font-poppins text-slate-500 text-[13px] mt-0.5">Talisay City, Negros Occidental</p>
+              {/* Signal Row 1: Location */}
+              <div className="group flex items-start py-8 border-t border-white/[0.05] w-full transition-colors duration-500 relative overflow-hidden">
+                {/* Subtle interaction highlight */}
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+                
+                <div className="flex items-start gap-8 w-full">
+                  {/* Thin Line Icon */}
+                  <div className="text-slate-600 group-hover:text-brand-400 transition-colors duration-300 mt-1 shrink-0">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+                  {/* Metadata Text */}
+                  <div className="flex-1">
+                    <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
+                      Terminal Location
+                    </h4>
+                    <p className="font-sans text-xl font-light text-slate-200 tracking-wide leading-relaxed">
+                      Talisay City, <br />
+                      Negros Occidental
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Email Card */}
-              <a href="mailto:8kiotsolutions@gmail.com" className="group flex items-center gap-5 p-4 rounded-xl bg-white/[0.02] backdrop-blur-md border border-white/[0.05] hover:bg-white/[0.04] hover:border-brand-500/30 transition-all duration-300 cursor-pointer">
-                <div className="bg-brand-500/10 w-12 h-12 rounded-lg flex items-center justify-center shrink-0 border border-brand-500/20 group-hover:border-brand-400/50 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all">
-                  <svg className="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0l-10.5 7.5L3 6.75" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-slate-200 text-[15px]">Direct Email</h4>
-                  <p className="font-poppins text-slate-500 text-[13px] mt-0.5 group-hover:text-brand-300 transition-colors">8kiotsolutions@gmail.com</p>
+              {/* Signal Row 2: Email */}
+              <a href="mailto:8kiotsolutions@gmail.com" className="group flex items-start py-8 border-t border-b border-white/[0.05] w-full transition-colors duration-500 relative overflow-hidden cursor-pointer">
+                {/* Subtle interaction highlight */}
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+                
+                <div className="flex items-start gap-8 w-full">
+                  {/* Thin Line Icon */}
+                  <div className="text-slate-600 group-hover:text-brand-400 transition-colors duration-300 mt-1 shrink-0">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0l-10.5 7.5L3 6.75" />
+                    </svg>
+                  </div>
+                  {/* Metadata Text */}
+                  <div className="flex-1">
+                    <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
+                      Direct Transmission
+                    </h4>
+                    <p className="font-sans text-xl font-light text-slate-200 tracking-wide group-hover:text-brand-300 transition-colors duration-300">
+                      8kiotsolutions@gmail.com
+                    </p>
+                  </div>
                 </div>
               </a>
 

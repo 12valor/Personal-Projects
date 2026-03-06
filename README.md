@@ -31,84 +31,91 @@ The following technologies were utilized across the projects in this repository 
 
 ## Project Gallery
 
-| **Portfolio** | **CreatorLens** | **CRITIQUE** | **Flow** | **TUPV** | **Technowatch** | **RSSI System** |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> | <img src="Showcase%20Screenshots/rssi.png" height="180"> |
+|                         **Portfolio**                         |                         **CreatorLens**                         |                         **CRITIQUE**                         |                         **Flow**                         |                         **TUPV**                         |                          **Technowatch**                           |                     **RSSI System**                      |                         **8K IoT**                         |
+| :-----------------------------------------------------------: | :-------------------------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------------------------------: | :------------------------------------------------------: | :--------------------------------------------------------: |
+| <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> | <img src="Showcase%20Screenshots/rssi.png" height="180"> | <img src="Showcase%20Screenshots/8k-iot.png" height="180"> |
 
 ---
 
 ## Personal Identity
 
 ### AG.Portfolio
+
 **Personal Brand & Content Management System**
 
 A dynamic portfolio website featuring a secure, custom-built admin panel. This project serves as a live demonstration of full-stack capabilities, allowing for real-time management of projects, media assets, and client inquiries without touching the codebase.
 
-* **Custom Admin Panel:** Secured via server-side authentication (Next.js Server Actions & Cookies) to manage content.
-* **Media Optimization:** Integrated **Cloudinary** API for handling high-resolution uploads and optimized video/image delivery.
-* **Dynamic CMS:** Built on Supabase to handle project data, enabling "Highlight" features and category sorting instantly.
-* **Interactive UI:** Utilizes Framer Motion for scroll-triggered animations and parallax effects.
+- **Custom Admin Panel:** Secured via server-side authentication (Next.js Server Actions & Cookies) to manage content.
+- **Media Optimization:** Integrated **Cloudinary** API for handling high-resolution uploads and optimized video/image delivery.
+- **Dynamic CMS:** Built on Supabase to handle project data, enabling "Highlight" features and category sorting instantly.
+- **Interactive UI:** Utilizes Framer Motion for scroll-triggered animations and parallax effects.
 
 ---
 
 ## Tools & Platforms
 
 ### CreatorLens
+
 **YouTube Channel Management Dashboard**
 
 CreatorLens is a comprehensive dashboard for YouTube creators to track growth and analyze content performance. It provides real-time insights and actionable tools to optimize engagement strategies.
 
-* **Growth Tracking:** Real-time monitoring of subscriber and view trends.
-* **Optimization:** Analysis of viewership patterns to suggest optimal posting schedules.
-* **Predictive Analytics:** Performance estimation based on historical data.
-* **Content Tools:** Automatic generation of highlight clips from high-engagement segments.
+- **Growth Tracking:** Real-time monitoring of subscriber and view trends.
+- **Optimization:** Analysis of viewership patterns to suggest optimal posting schedules.
+- **Predictive Analytics:** Performance estimation based on historical data.
+- **Content Tools:** Automatic generation of highlight clips from high-engagement segments.
 
 ### CRITIQUE
+
 **Creator Feedback Platform**
 
 CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
 
-* **Structured Submissions:** Creators request feedback on specific areas like engagement or branding.
-* **Threaded Discussion:** Organized feedback loops rather than unstructured comments.
-* **Blind Review:** A "First Impression" mode to gather unbiased feedback before revealing channel identity.
-* **User Management:** Secure authentication via multiple providers.
+- **Structured Submissions:** Creators request feedback on specific areas like engagement or branding.
+- **Threaded Discussion:** Organized feedback loops rather than unstructured comments.
+- **Blind Review:** A "First Impression" mode to gather unbiased feedback before revealing channel identity.
+- **User Management:** Secure authentication via multiple providers.
 
 ---
 
 ## Institutions & Government
 
 ### RSSI Report System
+
 **Emergency Response & Field Operations Dashboard**
 
 A production-ready incident reporting system designed specifically for Philippine City Disaster Risk Reduction and Management Offices (CDRRMO). Built to manage critical operations with real-time data handling through Next.js and Supabase.
 
-* **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
-* **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
-* **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
-* **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
+- **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
+- **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
+- **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
+- **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
 
 ### TUPV Website
+
 **Institutional Portal**
 
 A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
 
-* **Information Hub:** Centralized access to announcements, news, and events.
-* **Academic Resources:** Sections dedicated to departmental information and academic calendars.
-* **Responsive Design:** Optimized for accessibility across mobile and desktop devices.
+- **Information Hub:** Centralized access to announcements, news, and events.
+- **Academic Resources:** Sections dedicated to departmental information and academic calendars.
+- **Responsive Design:** Optimized for accessibility across mobile and desktop devices.
 
 ### Technowatch
+
 **Organization Website Prototype**
 
 A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
 
-* **Status:** Early-stage concept.
-* **Focus:** Visual hierarchy and mobile responsiveness.
+- **Status:** Early-stage concept.
+- **Focus:** Visual hierarchy and mobile responsiveness.
 
 ---
 
 ## Commissions
 
 ### Retrieve
+
 **Lost & Found Management System**
 
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
@@ -117,22 +124,37 @@ A prototype developed for the Technowatch school organization. This project focu
 
 A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
 
-* **Item Tracking:** Status updates for reported lost and found items.
-* **Search & Filter:** Robust filtering by category, date, and location.
-* **User Claims:** Verification process for claiming matched items.
+- **Item Tracking:** Status updates for reported lost and found items.
+- **Search & Filter:** Robust filtering by category, date, and location.
+- **User Claims:** Verification process for claiming matched items.
 
 ---
 
 ## Commerce
 
 ### Flow
+
 **Natural Products Marketplace**
 
 Flow is an e-commerce platform for organic products. It demonstrates full-stack capabilities including product management, dynamic cart logic, and a streamlined checkout flow.
 
-* **Brand Identity:** Nature-inspired, minimalist user interface.
-* **Inventory Management:** Dynamic filtering for sustainable product categories.
-* **Full-Stack Integration:** Seamless cart persistence and checkout processing.
+- **Brand Identity:** Nature-inspired, minimalist user interface.
+- **Inventory Management:** Dynamic filtering for sustainable product categories.
+- **Full-Stack Integration:** Seamless cart persistence and checkout processing.
+
+---
+
+## Services
+
+### 8K IoT Solutions
+
+**Hardware & Software Services Platform**
+
+A comprehensive service platform offering a range of robust hardware and software solutions. It is tailored to help students and innovators bring their ideas to life through custom engineering and development.
+
+- **Device Prototyping:** Custom hardware prototyping for IoT applications and smart devices.
+- **System Integration:** Seamless integration of hardware systems with intuitive web-based solutions.
+- **Modern Architecture:** Built featuring a Next.js frontend with Tailwind CSS and a Supabase backend for reliable inquiry management.
 
 ---
 

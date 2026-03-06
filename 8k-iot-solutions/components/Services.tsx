@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
 import { Check } from 'lucide-react';
+import Link from 'next/link';
 
 // --- Lightweight Intersection Observer Hook ---
 function useInView(options = { threshold: 0.15 }) {
@@ -134,9 +135,12 @@ export default function ServicesSection() {
                 ))}
               </ul>
 
-              <button className="w-full bg-white border border-zinc-200 text-zinc-800 font-semibold text-sm py-3.5 rounded-xl hover:bg-zinc-50 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-sm">
+              <Link 
+                href="/projects/hardware"
+                className="block text-center w-full bg-white border border-zinc-200 text-zinc-800 font-semibold text-sm py-3.5 rounded-xl hover:bg-zinc-50 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-sm"
+              >
                 Explore Hardware
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -195,9 +199,12 @@ export default function ServicesSection() {
                 ))}
               </ul>
 
-              <button className="w-full bg-indigo-600 text-white font-semibold text-sm py-3.5 rounded-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-md shadow-indigo-600/20">
+              <Link 
+                href="/projects/software"
+                className="block text-center w-full bg-indigo-600 text-white font-semibold text-sm py-3.5 rounded-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-md shadow-indigo-600/20"
+              >
                 Explore Software
-              </button>
+              </Link>
             </div>
           </div>
 

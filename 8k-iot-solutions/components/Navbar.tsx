@@ -7,12 +7,28 @@ import Image from 'next/image';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentScrollY = window.scrollY;
+      
+      setIsScrolled(currentScrollY > 50);
+
+      // Smart scroll behavior
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false); // Hide on scroll down
+        setMobileMenuOpen(false); // Close mobile menu when hiding
+      } else if (currentScrollY < lastScrollY) {
+        setIsVisible(true); // Show on scroll up
+      }
+      
+      lastScrollY = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -47,7 +63,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 w-full z-50 flex justify-center pointer-events-none font-sans">
+    <header className={`fixed top-0 w-full z-50 flex justify-center pointer-events-none font-sans transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
       
       {/* Morphing Navbar Container */}
       <nav 

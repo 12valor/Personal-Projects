@@ -23,6 +23,28 @@ function useInView(options = { threshold: 0.15 }) {
   return [setRef, inView] as const;
 }
 
+// --- Local Scroll Parallax Hook ---
+function useParallax(speedMultiplier = 0.05) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        // Calculate distance from center of viewport
+        const centerDistance = (window.innerHeight / 2) - (rect.top + rect.height / 2);
+        setOffset(centerDistance * speedMultiplier);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial set
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [speedMultiplier]);
+
+  return { parallaxRef: ref, offset };
+}
+
 // --- Data ---
 const HARDWARE_FEATURES = [
   "IoT Project Development",
@@ -39,27 +61,36 @@ const SOFTWARE_FEATURES = [
 
 export default function ServicesSection() {
   const [setRef, inView] = useInView();
+  const { parallaxRef, offset } = useParallax(0.04);
 
   return (
-    <section id="services" className="relative w-full py-24 bg-[#FAFAFA] text-zinc-900 overflow-hidden font-inter">
-      {/* Import Fonts */}
+    <section id="services" className="relative w-full py-24 bg-transparent text-zinc-900 overflow-hidden font-inter z-0">
+      {/* Import Fonts & Custom Animations */}
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
         .font-inter { font-family: 'Inter', sans-serif; }
         .font-poppins { font-family: 'Poppins', sans-serif; }
         
-        .service-grid-bg {
-          background-size: 24px 24px;
-          background-image: radial-gradient(circle, #e4e4e7 1px, transparent 1px);
-        }
-        
         .cubic-out {
           transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
         }
-      `}} />
 
-      {/* Subtle Main Background Grid */}
-      <div className="absolute inset-0 service-grid-bg opacity-60 pointer-events-none" />
+        /* Loopable Pop-Up (Floating) Animation */
+        @keyframes popFloat {
+          0% { transform: scale(1) translateY(0); }
+          50% { transform: scale(1.02) translateY(-10px); }
+          100% { transform: scale(1) translateY(0); }
+        }
+        
+        .animate-pop-loop-1 {
+          animation: popFloat 6s ease-in-out infinite;
+        }
+        
+        .animate-pop-loop-2 {
+          animation: popFloat 7s ease-in-out infinite;
+          animation-delay: 1.5s;
+        }
+      `}} />
 
       <div className="max-w-4xl mx-auto px-6 relative z-10" ref={setRef as any}>
         
@@ -77,137 +108,143 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        {/* Cards Container */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
-          
-          {/* ========================================= */}
-          {/* CARD 1: Hardware Services                 */}
-          {/* ========================================= */}
+        {/* Parallax Container Context */}
+        <div ref={parallaxRef}>
+          {/* Cards Container with Parallax transformation */}
           <div 
-            className={`
-              group flex flex-col bg-white rounded-2xl border border-zinc-200 
-              shadow-sm hover:shadow-lg transition-all duration-[250ms] ease-out 
-              hover:-translate-y-[6px] overflow-hidden cubic-out
-              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
-            `}
-            style={{ transitionDuration: '600ms', transitionDelay: '0ms' }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch"
+            style={{ transform: `translateY(${-offset}px)` }}
           >
-            {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-            <div className="relative bg-zinc-50/50 border-b border-zinc-100 px-8 pt-8 pb-8 overflow-hidden">
-              {/* Subtle Dot Pattern - Masked to fade out towards the bottom */}
-              <div 
-                className="absolute inset-0 opacity-60 pointer-events-none"
-                style={{
-                  backgroundImage: 'radial-gradient(#d4d4d8 1px, transparent 1px)',
-                  backgroundSize: '16px 16px',
-                  WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
-                  maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
-                }}
-              />
+            
+            {/* ========================================= */}
+            {/* CARD 1: Hardware Services                 */}
+            {/* ========================================= */}
+            <div 
+              className={`
+                group flex flex-col bg-white rounded-2xl border border-zinc-200 
+                shadow-sm hover:shadow-lg transition-all duration-[250ms] ease-out 
+                overflow-hidden cubic-out
+                ${inView ? 'opacity-100 translate-y-0 animate-pop-loop-1' : 'opacity-0 translate-y-12'}
+              `}
+              style={!inView ? { transitionDuration: '600ms', transitionDelay: '0ms' } : {}}
+            >
+              {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
+              <div className="relative bg-zinc-50/50 border-b border-zinc-100 px-8 pt-8 pb-8 overflow-hidden">
+                {/* Subtle Dot Pattern - Masked to fade out towards the bottom */}
+                <div 
+                  className="absolute inset-0 opacity-60 pointer-events-none"
+                  style={{
+                    backgroundImage: 'radial-gradient(#d4d4d8 1px, transparent 1px)',
+                    backgroundSize: '16px 16px',
+                    WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
+                  }}
+                />
 
-              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-poppins font-semibold text-zinc-900">Hardware Services</h3>
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-poppins font-semibold text-zinc-900">Hardware Services</h3>
+                  </div>
+                  
+                  {/* Descriptive Subtitle for better text hierarchy */}
+                  <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
+                    End-to-end custom embedded systems, sensor arrays, and physical prototyping.
+                  </p>
+                  
+                  {/* Pricing Block Highlight */}
+                  <div className="flex items-baseline gap-1 mt-auto">
+                    <span className="text-sm font-semibold text-zinc-400">PHP</span>
+                    <span className="text-5xl font-poppins font-bold tracking-tighter text-zinc-900">2,000</span>
+                    <span className="text-sm font-medium text-zinc-500 ml-1">/project</span>
+                  </div>
                 </div>
-                
-                {/* Descriptive Subtitle for better text hierarchy */}
-                <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
-                  End-to-end custom embedded systems, sensor arrays, and physical prototyping.
-                </p>
-                
-                {/* Pricing Block Highlight */}
-                <div className="flex items-baseline gap-1 mt-auto">
-                  <span className="text-sm font-semibold text-zinc-400">PHP</span>
-                  <span className="text-5xl font-poppins font-bold tracking-tighter text-zinc-900">2,000</span>
-                  <span className="text-sm font-medium text-zinc-500 ml-1">/project</span>
-                </div>
+              </div>
+
+              {/* --- BODY BLOCK (Features & CTA) --- */}
+              <div className="p-8 flex flex-col flex-1 bg-white relative z-10">
+                <ul className="space-y-4 flex-1 mb-8">
+                  {HARDWARE_FEATURES.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                      <span className="text-sm text-zinc-700 font-medium leading-snug">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link 
+                  href="/projects/hardware"
+                  className="block text-center w-full bg-white border border-zinc-200 text-zinc-800 font-semibold text-sm py-3.5 rounded-xl hover:bg-zinc-50 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-sm"
+                >
+                  Explore Hardware
+                </Link>
               </div>
             </div>
 
-            {/* --- BODY BLOCK (Features & CTA) --- */}
-            <div className="p-8 flex flex-col flex-1 bg-white relative z-10">
-              <ul className="space-y-4 flex-1 mb-8">
-                {HARDWARE_FEATURES.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
-                    <span className="text-sm text-zinc-700 font-medium leading-snug">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+            {/* ========================================= */}
+            {/* CARD 2: Software Services (Highlighted)   */}
+            {/* ========================================= */}
+            <div 
+              className={`
+                group flex flex-col bg-white rounded-2xl border border-zinc-200 
+                shadow-md hover:shadow-xl transition-all duration-[250ms] ease-out 
+                overflow-hidden cubic-out ring-1 ring-indigo-50
+                ${inView ? 'opacity-100 translate-y-0 animate-pop-loop-2' : 'opacity-0 translate-y-12'}
+              `}
+              style={!inView ? { transitionDuration: '600ms', transitionDelay: '150ms' } : {}}
+            >
+              {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
+              <div className="relative bg-gradient-to-b from-indigo-50/80 to-white border-b border-indigo-50/80 px-8 pt-8 pb-8 overflow-hidden">
+                {/* Indigo Dot Pattern - Masked to fade out towards the bottom */}
+                <div 
+                  className="absolute inset-0 opacity-70 pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    backgroundImage: 'radial-gradient(#c7d2fe 1px, transparent 1px)',
+                    backgroundSize: '16px 16px',
+                    WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
+                    maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
+                  }}
+                />
 
-              <Link 
-                href="/projects/hardware"
-                className="block text-center w-full bg-white border border-zinc-200 text-zinc-800 font-semibold text-sm py-3.5 rounded-xl hover:bg-zinc-50 hover:border-zinc-300 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-sm"
-              >
-                Explore Hardware
-              </Link>
-            </div>
-          </div>
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-poppins font-semibold text-zinc-900">Software Services</h3>
+                  </div>
 
-          {/* ========================================= */}
-          {/* CARD 2: Software Services (Highlighted)   */}
-          {/* ========================================= */}
-          <div 
-            className={`
-              group flex flex-col bg-white rounded-2xl border border-zinc-200 
-              shadow-md hover:shadow-xl transition-all duration-[250ms] ease-out 
-              hover:-translate-y-[6px] overflow-hidden cubic-out ring-1 ring-indigo-50
-              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
-            `}
-            style={{ transitionDuration: '600ms', transitionDelay: '150ms' }}
-          >
-            {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-            <div className="relative bg-gradient-to-b from-indigo-50/80 to-white border-b border-indigo-50/80 px-8 pt-8 pb-8 overflow-hidden">
-              {/* Indigo Dot Pattern - Masked to fade out towards the bottom */}
-              <div 
-                className="absolute inset-0 opacity-70 pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
-                style={{
-                  backgroundImage: 'radial-gradient(#c7d2fe 1px, transparent 1px)',
-                  backgroundSize: '16px 16px',
-                  WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
-                  maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
-                }}
-              />
+                  {/* Descriptive Subtitle for better text hierarchy */}
+                  <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
+                    Scalable web applications, modern dashboards, and API integrations.
+                  </p>
 
-              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-poppins font-semibold text-zinc-900">Software Services</h3>
+                  {/* Pricing Block Highlight */}
+                  <div className="flex items-baseline gap-1 mt-auto">
+                    <span className="text-sm font-semibold text-indigo-400">PHP</span>
+                    <span className="text-5xl font-poppins font-bold tracking-tighter text-indigo-950">2,000</span>
+                    <span className="text-sm font-medium text-zinc-500 ml-1">/project</span>
+                  </div>
                 </div>
+              </div>
 
-                {/* Descriptive Subtitle for better text hierarchy */}
-                <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
-                  Scalable web applications, modern dashboards, and API integrations.
-                </p>
+              {/* --- BODY BLOCK (Features & CTA) --- */}
+              <div className="p-8 flex flex-col flex-1 bg-white relative z-10">
+                <ul className="space-y-4 flex-1 mb-8">
+                  {SOFTWARE_FEATURES.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" strokeWidth={2.5} />
+                      <span className="text-sm text-zinc-700 font-medium leading-snug">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
 
-                {/* Pricing Block Highlight */}
-                <div className="flex items-baseline gap-1 mt-auto">
-                  <span className="text-sm font-semibold text-indigo-400">PHP</span>
-                  <span className="text-5xl font-poppins font-bold tracking-tighter text-indigo-950">2,000</span>
-                  <span className="text-sm font-medium text-zinc-500 ml-1">/project</span>
-                </div>
+                <Link 
+                  href="/projects/software"
+                  className="block text-center w-full bg-indigo-600 text-white font-semibold text-sm py-3.5 rounded-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-md shadow-indigo-600/20"
+                >
+                  Explore Software
+                </Link>
               </div>
             </div>
 
-            {/* --- BODY BLOCK (Features & CTA) --- */}
-            <div className="p-8 flex flex-col flex-1 bg-white relative z-10">
-              <ul className="space-y-4 flex-1 mb-8">
-                {SOFTWARE_FEATURES.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" strokeWidth={2.5} />
-                    <span className="text-sm text-zinc-700 font-medium leading-snug">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link 
-                href="/projects/software"
-                className="block text-center w-full bg-indigo-600 text-white font-semibold text-sm py-3.5 rounded-xl hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-md shadow-indigo-600/20"
-              >
-                Explore Software
-              </Link>
-            </div>
           </div>
-
         </div>
       </div>
     </section>

@@ -15,21 +15,23 @@ export default function Home() {
   const scrollImages = ['/client.jpg', '/client.jpg', '/client.jpg', '/client.jpg'];
 
   return (
-    <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200">
+    <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
+      
+      {/* GLOBAL FIXED BACKGROUND GRID */}
+      <div 
+        className="fixed inset-0 z-[-10] pointer-events-none opacity-[0.15] animate-blueprintShift" 
+        style={{
+          backgroundImage: 'linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }}
+        aria-hidden="true"
+      />
       
       {/* ================= HERO SECTION ================= */}
       {/* Reduced top padding and adjusted items-start to move text higher */}
-      <section id="home" className="relative pt-24 lg:pt-32 pb-20 min-h-[90vh] flex items-start overflow-hidden bg-white">
+      <section id="home" className="relative pt-24 lg:pt-32 pb-20 min-h-[90vh] flex items-start overflow-hidden bg-transparent">
         
-        {/* Engineered Blueprint Grid Background */}
-        <div 
-          className="absolute inset-0 z-0 pointer-events-none opacity-[0.15]" 
-          style={{
-            backgroundImage: 'linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-          aria-hidden="true"
-        />
+
 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">

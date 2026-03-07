@@ -35,17 +35,7 @@ const duplicatedTestimonials = [...testimonials, ...testimonials];
 
 const Testimonials = () => {
   return (
-    <section className="relative py-20 bg-white overflow-hidden z-0">
-      
-      {/* Subtle Background Parallax (Blueprint Grid) */}
-      <div 
-        className="absolute inset-0 z-[-1] pointer-events-none opacity-[0.1] animate-blueprintShift" 
-        style={{
-          backgroundImage: 'linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
-        }}
-        aria-hidden="true"
-      />
+    <section className="relative py-10 md:py-12 bg-transparent overflow-hidden z-0">
 
       {/* Floating Gradient Orbs for Depth */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-brand-50 rounded-full blur-[120px] opacity-60 pointer-events-none" />
@@ -53,7 +43,7 @@ const Testimonials = () => {
       <div className="relative z-10">
         {/* Continuous Horizontal Scroll Track */}
         <div className="flex overflow-hidden">
-          <div className="flex animate-scroll-horizontal whitespace-nowrap py-10">
+          <div className="flex animate-scroll-horizontal whitespace-nowrap py-6">
             {duplicatedTestimonials.map((item, idx) => (
               <div 
                 key={idx} 

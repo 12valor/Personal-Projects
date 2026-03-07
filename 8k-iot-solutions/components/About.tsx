@@ -28,7 +28,7 @@ export default function About() {
   const [setRef, inView] = useInView();
 
   return (
-    <section id="about" className="relative py-24 lg:py-32 bg-white overflow-hidden z-0">
+    <section id="about" className="relative py-24 lg:py-32 bg-transparent overflow-hidden z-0">
       
       {/* Required Animation Easing */}
       <style dangerouslySetInnerHTML={{ __html: `
@@ -36,16 +36,6 @@ export default function About() {
           transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
         }
       `}} />
-
-      {/* Engineered Technical Blueprint Background */}
-      <div 
-        className="absolute inset-0 z-[-1] pointer-events-none opacity-[0.15] animate-blueprintShift" 
-        style={{
-          backgroundImage: 'linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)',
-          backgroundSize: '50px 50px'
-        }}
-        aria-hidden="true"
-      />
       
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={setRef as any}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">

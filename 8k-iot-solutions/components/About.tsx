@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Cpu, Briefcase } from 'lucide-react';
+import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // --- Lightweight Intersection Observer Hook ---
 function useInView(options = { threshold: 0.15 }) {
@@ -26,6 +26,21 @@ function useInView(options = { threshold: 0.15 }) {
 
 export default function About() {
   const [setRef, inView] = useInView();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const images = [
+    "/co-founders.jpg",
+    "/about-img-2.jpg", // Placeholder paths for the additional images
+    "/about-img-3.jpg"  // Will fall back natively or user will provide them
+  ];
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
 
   return (
     <section id="about" className="relative py-24 lg:py-32 bg-transparent overflow-hidden z-0">
@@ -95,37 +110,77 @@ export default function About() {
 
             <div>
               <a 
-  href="#contact" 
-  className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[14.5px] font-medium font-poppins rounded-[8px] overflow-hidden transition-all duration-300 hover:bg-brand-700 active:scale-[0.98]"
->
-  <span>Contact Us</span>
-  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-  </svg>
-</a>
+                href="#contact" 
+                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[14.5px] font-medium font-poppins rounded-[8px] overflow-hidden transition-all duration-300 hover:bg-brand-700 active:scale-[0.98]"
+              >
+                <span>Contact Us</span>
+                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
             </div>
           </div>
 
-          {/* ----- RIGHT COLUMN: Founders Photo ----- */}
+          {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
           <div 
             className={`lg:col-span-5 relative order-1 lg:order-2 transition-all duration-[800ms] cubic-out
               ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
             `} 
             style={{ transitionDelay: '200ms' }}
           >
-            <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500">
+            <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">
               <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden isolate">
-                 <Image 
-                  src="/co-founders.jpg" 
-                  alt="Founders of 8K IoT Solutions"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  className="object-cover"
-                  priority
-                />
+                
+                {images.map((src, idx) => (
+                  <Image 
+                    key={src}
+                    src={src} 
+                    alt={`About 8K IoT Solutions Image ${idx + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    className={`object-cover transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                    priority={idx === 0}
+                  />
+                ))}
+
+                {/* Carousel Controls */}
+                <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 z-20">
+                  <button 
+                    onClick={prevImage}
+                    className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={nextImage}
+                    className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Carousel Indicators (Dots) */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                  {images.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        idx === currentImageIndex 
+                          ? 'w-4 bg-white shadow-sm' 
+                          : 'w-1.5 bg-white/50 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
+                </div>
+
               </div>
             </div>
-            <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block transition-transform duration-500 hover:translate-x-4 hover:translate-y-4" />
+            
+            <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block transition-transform duration-500 group-hover/carousel:translate-x-4 group-hover/carousel:translate-y-4" />
           </div>
 
         </div>

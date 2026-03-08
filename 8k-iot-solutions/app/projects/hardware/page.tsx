@@ -2,8 +2,8 @@ import { getProjectsByCategory } from '@/lib/projects';
 import ProjectGrid from '@/components/ProjectGrid';
 import Link from 'next/link';
 
-export default function HardwareProjectsPage() {
-  const projects = getProjectsByCategory('hardware');
+export default async function HardwareProjectsPage() {
+  const projects = await getProjectsByCategory('hardware');
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-sans">

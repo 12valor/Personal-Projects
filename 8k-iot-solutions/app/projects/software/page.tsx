@@ -2,8 +2,8 @@ import { getProjectsByCategory } from '@/lib/projects';
 import ProjectGrid from '@/components/ProjectGrid';
 import Link from 'next/link';
 
-export default function SoftwareProjectsPage() {
-  const projects = getProjectsByCategory('software');
+export default async function SoftwareProjectsPage() {
+  const projects = await getProjectsByCategory('software');
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-sans">

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     notFound();

@@ -20,6 +20,7 @@ The following technologies were utilized across the projects in this repository 
 
 **Backend & Infrastructure**
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
 ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=cloudinary&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
@@ -153,8 +154,8 @@ Flow is an e-commerce platform for organic products. It demonstrates full-stack 
 A comprehensive service platform offering a range of robust hardware and software solutions. It is tailored to help students and innovators bring their ideas to life through custom engineering and development.
 
 - **Device Prototyping:** Custom hardware prototyping for IoT applications and smart devices.
-- **System Integration:** Seamless integration of hardware systems with intuitive web-based solutions.
-- **Modern Architecture:** Built featuring a Next.js frontend with Tailwind CSS and a Supabase backend for reliable inquiry management.
+- **Dynamic Projects Management:** Built-in secure full-stack Admin Panel showcasing real-time synchronization with a local SQLite database using **Prisma** ORM.
+- **Modern Architecture:** Built featuring a Next.js App Router frontend with Tailwind CSS, advanced Server-Side skeleton loaders, and a Supabase backend for reliable inquiry management.
 
 ---
 

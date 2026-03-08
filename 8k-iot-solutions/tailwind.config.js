@@ -31,7 +31,7 @@ module.exports = {
         'scroll-down': 'scrollDown 25s linear infinite',
         'scroll-up': 'scrollUp 25s linear infinite',
         'heroPop': 'heroPop 240ms ease-out forwards',
-        'shimmer': 'shimmer 2s linear infinite',
+        'shimmer': 'shimmer 1.4s ease-in-out infinite',
         'scroll-horizontal': 'scrollHorizontal 40s linear infinite',
       },
       keyframes: {

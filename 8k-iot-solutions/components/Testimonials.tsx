@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
 const testimonials = [
   {
@@ -34,8 +35,10 @@ const testimonials = [
 const duplicatedTestimonials = [...testimonials, ...testimonials];
 
 const Testimonials = () => {
+  const [setRef, inView] = useInView();
+
   return (
-    <section className="relative py-10 md:py-12 bg-transparent overflow-hidden z-0">
+    <section className="relative py-10 md:py-12 bg-transparent overflow-hidden z-0" ref={setRef as any}>
 
       {/* Floating Gradient Orbs for Depth */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-brand-50 rounded-full blur-[120px] opacity-60 pointer-events-none" />
@@ -51,14 +54,19 @@ const Testimonials = () => {
               >
                 <div className="flex items-center gap-4 mb-6">
                   {/* Avatar Frame */}
-                  <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-brand-100 group-hover:border-brand-500 transition-colors duration-300">
-                    <Image 
-                      src={item.avatar} 
-                      alt={item.name}
-                      width={56}
-                      height={56}
-                      className="object-cover w-full h-full"
-                    />
+                  <div 
+                    className={`relative z-10 ${getFadeUpClasses(inView, 'translate-y-12')}`}
+                    style={getStaggerStyle(inView, 0)}
+                  >
+                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-brand-100 group-hover:border-brand-500 transition-colors duration-300">
+                      <Image 
+                        src={item.avatar} 
+                        alt={item.name}
+                        width={56}
+                        height={56}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
                   </div>
                   <div>
                     <h4 className="font-sans font-bold text-gray-900 text-lg leading-tight">

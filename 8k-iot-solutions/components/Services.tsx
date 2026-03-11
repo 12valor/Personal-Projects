@@ -3,26 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 import ServiceCardSkeleton from './Skeletons/ServiceCardSkeleton';
-
-// --- Lightweight Intersection Observer Hook ---
-function useInView(options = { threshold: 0.15 }) {
-  const [ref, setRef] = useState<HTMLElement | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        observer.disconnect();
-      }
-    }, options);
-    observer.observe(ref);
-    return () => observer.disconnect();
-  }, [ref, options]);
-
-  return [setRef, inView] as const;
-}
+import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
 // --- Local Scroll Parallax Hook ---
 function useParallax(speedMultiplier = 0.05) {
@@ -135,11 +116,12 @@ export default function ServicesSection() {
                   <div 
                       className={`
                       group flex flex-col bg-white rounded-2xl border border-zinc-200 
-                      shadow-sm hover:shadow-lg transition-all duration-[250ms] ease-out 
-                      overflow-hidden cubic-out
-                      ${inView ? 'opacity-100 translate-y-0 animate-pop-loop-1' : 'opacity-0 translate-y-12'}
+                      shadow-sm hover:shadow-lg transition-shadow duration-[250ms]
+                      overflow-hidden
+                      ${inView ? 'animate-pop-loop-1' : ''}
+                      ${getFadeUpClasses(inView, 'translate-y-12')}
                       `}
-                      style={!inView ? { transitionDuration: '600ms', transitionDelay: '0ms' } : {}}
+                      style={getStaggerStyle(inView, 1)}
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
                       <div className="relative bg-zinc-50/50 border-b border-zinc-100 px-8 pt-8 pb-8 overflow-hidden h-[210px] flex flex-col">
@@ -199,11 +181,12 @@ export default function ServicesSection() {
                   <div 
                       className={`
                       group flex flex-col bg-white rounded-2xl border border-zinc-200 
-                      shadow-md hover:shadow-xl transition-all duration-[250ms] ease-out 
-                      overflow-hidden cubic-out ring-1 ring-indigo-50
-                      ${inView ? 'opacity-100 translate-y-0 animate-pop-loop-2' : 'opacity-0 translate-y-12'}
+                      shadow-md hover:shadow-xl transition-shadow duration-[250ms]
+                      overflow-hidden ring-1 ring-indigo-50
+                      ${inView ? 'animate-pop-loop-2' : ''}
+                      ${getFadeUpClasses(inView, 'translate-y-12')}
                       `}
-                      style={!inView ? { transitionDuration: '600ms', transitionDelay: '150ms' } : {}}
+                      style={getStaggerStyle(inView, 2)}
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
                       <div className="relative bg-gradient-to-b from-indigo-50/80 to-white border-b border-indigo-50/80 px-8 pt-8 pb-8 overflow-hidden h-[210px] flex flex-col">

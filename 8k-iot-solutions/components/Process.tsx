@@ -2,25 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Search, LayoutTemplate, Cpu, Rocket } from 'lucide-react';
 
-// Lightweight Intersection Observer Hook
-function useInView(options = { threshold: 0.15 }) {
-  const [ref, setRef] = useState<HTMLElement | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        observer.disconnect();
-      }
-    }, options);
-    observer.observe(ref);
-    return () => observer.disconnect();
-  }, [ref, options]);
-
-  return [setRef, inView] as const;
-}
+import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
 const steps = [
   {
@@ -77,9 +59,8 @@ export default function Process() {
         
         {/* Section Header */}
         <div 
-          className={`text-center mb-16 md:mb-24 transition-all duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
+          className={`text-center mb-16 md:mb-24 ${getFadeUpClasses(inView, 'translate-y-8')}`}
+          style={getStaggerStyle(inView, 0)}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 mb-6 font-poppins text-xs font-semibold text-brand-600 uppercase tracking-widest">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
@@ -112,10 +93,8 @@ export default function Process() {
               return (
                 <div 
                   key={step.number}
-                  className={`group relative flex lg:flex-col items-start lg:items-start gap-6 lg:gap-8 transition-all duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                    inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-                  }`}
-                  style={{ transitionDelay: `${index * 150}ms` }}
+                  className={`group relative flex lg:flex-col items-start lg:items-start gap-6 lg:gap-8 ${getFadeUpClasses(inView, 'translate-y-12')}`}
+                  style={getStaggerStyle(inView, index + 1, 0)}
                 >
                   {/* Node Point */}
                   <div className="relative z-20 shrink-0 mt-0 lg:mt-0 lg:mx-auto">

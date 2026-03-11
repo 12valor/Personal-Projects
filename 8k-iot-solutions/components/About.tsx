@@ -4,25 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// --- Lightweight Intersection Observer Hook ---
-function useInView(options = { threshold: 0.15 }) {
-  const [ref, setRef] = useState<HTMLElement | null>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (!ref) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        observer.disconnect(); // Trigger only once
-      }
-    }, options);
-    observer.observe(ref);
-    return () => observer.disconnect();
-  }, [ref, options]);
-
-  return [setRef, inView] as const;
-}
+import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
 export default function About() {
   const [setRef, inView] = useInView();
@@ -57,19 +39,23 @@ export default function About() {
           
           {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
           <div 
-            className={`lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0 transition-all duration-[800ms] cubic-out
-              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
-            `}
+            className={`lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0 ${getFadeUpClasses(inView, 'translate-y-12')}`}
+            style={getStaggerStyle(inView, 0)}
           >
             
-            <div className="flex items-center gap-3 mb-6">
+            <div 
+              className={`flex items-center gap-3 mb-6 ${getFadeUpClasses(inView, 'translate-y-6')}`}
+              style={getStaggerStyle(inView, 1, 0)}
+            >
               <div className="h-px w-6 bg-brand-600 rounded-full" />
               <h3 className="text-[12px] font-bold text-brand-900 uppercase tracking-widest font-sans">
                 Who We Are
               </h3>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 font-sans leading-[1.12] tracking-tight">
+            <h2 className={`text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 font-sans leading-[1.12] tracking-tight ${getFadeUpClasses(inView, 'translate-y-6')}`}
+              style={getStaggerStyle(inView, 2, 0)}
+            >
               Hardware precision meets <br className="hidden md:block"/>
               <span className="text-brand-900">software intelligence.</span>
             </h2>
@@ -123,10 +109,8 @@ export default function About() {
 
           {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
           <div 
-            className={`lg:col-span-5 relative order-1 lg:order-2 transition-all duration-[800ms] cubic-out
-              ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
-            `} 
-            style={{ transitionDelay: '200ms' }}
+            className={`lg:col-span-5 relative order-1 lg:order-2 ${getFadeUpClasses(inView, 'translate-y-12')}`}
+            style={getStaggerStyle(inView, 3, 0)}
           >
             <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">
               <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden isolate">

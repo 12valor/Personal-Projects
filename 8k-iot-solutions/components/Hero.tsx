@@ -1,28 +1,46 @@
 "use client";
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
 export default function Hero() {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Using the co-founders image for all slots to create the seamless vertical flow
   const scrollImages = ['/client.jpg', '/client.jpg', '/client.jpg', '/client.jpg'];
 
   return (
-    <section id="home" className="relative pt-24 lg:pt-32 pb-20 min-h-[90vh] flex items-start overflow-hidden bg-transparent">
+    <section id="home" className="relative min-h-[100vh] lg:min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden z-0 bg-transparent">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
           
           {/* ----- LEFT COLUMN: Content Stack ----- */}
           {/* pt-8 and lg:pt-12 moves this stack higher up the page */}
           <div className="lg:col-span-6 flex flex-col items-start text-left pt-8 lg:pt-16 opacity-0 animate-heroPop">
-            <h1 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.5rem] text-slate-900 tracking-tight leading-[1.12] mb-6">
+            <h1 
+              className={`font-sans font-bold text-4xl sm:text-5xl lg:text-[3.5rem] text-slate-900 tracking-tight leading-[1.12] mb-6 ${getFadeUpClasses(mounted, 'translate-y-8')}`}
+              style={getStaggerStyle(mounted, 1)}
+            >
               Building Ideas <br className="hidden sm:block" />
               <span className="text-brand-900">Into Reality</span>
             </h1>
             
-            <p className="font-poppins font-normal text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10">
+            <p 
+              className={`font-poppins font-normal text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10 ${getFadeUpClasses(mounted, 'translate-y-8')}`}
+              style={getStaggerStyle(mounted, 2)}
+            >
               We offer a range of hardware and software services, including device prototyping, system integration, and web-based solutions, tailored to help students and innovators bring their ideas to life.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <div 
+              className={`flex flex-col sm:flex-row gap-4 w-full sm:w-auto ${getFadeUpClasses(mounted, 'translate-y-8')}`}
+              style={getStaggerStyle(mounted, 3)}
+            >
               <a 
                 href="#contact" 
                 className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-bold font-sans rounded-[6px] transition-all duration-300 hover:bg-brand-700 active:scale-[0.98] shadow-sm"
@@ -43,7 +61,10 @@ export default function Hero() {
           </div>
 
           {/* ----- RIGHT COLUMN: Asymmetric Scrolling Grid ----- */}
-          <div className="lg:col-span-6 relative h-[500px] sm:h-[650px] w-full rounded-3xl overflow-hidden lg:ml-8 mt-12 lg:mt-0">
+          <div 
+            className={`lg:col-span-6 relative h-[500px] sm:h-[650px] w-full rounded-3xl overflow-hidden lg:ml-8 mt-12 lg:mt-0 ${getFadeUpClasses(mounted, 'translate-y-8')}`}
+            style={getStaggerStyle(mounted, 2)}
+          >
             
             {/* Gradient masks to ensure images don't look cut off at the edges */}
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/80 to-transparent z-20 pointer-events-none" />

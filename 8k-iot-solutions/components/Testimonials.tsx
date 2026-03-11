@@ -52,11 +52,12 @@ const Testimonials = () => {
                 <div className="flex items-center gap-4 mb-6">
                   {/* Avatar Frame */}
                   <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-brand-100 group-hover:border-brand-500 transition-colors duration-300">
-                    <img 
+                    <Image 
                       src={item.avatar} 
                       alt={item.name}
+                      width={56}
+                      height={56}
                       className="object-cover w-full h-full"
-                      // Replace with <Image /> if paths are verified
                     />
                   </div>
                   <div>

@@ -57,7 +57,14 @@ export default function Hero() {
                 <div className="flex flex-col gap-4 animate-scroll-down">
                   {scrollImages.map((src, idx) => (
                     <div key={`down-${idx}`} className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
-                      <Image src={src} alt="Work Showcase" fill className="object-cover" />
+                      <Image 
+                        src={src} 
+                        alt="Work Showcase" 
+                        fill 
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                        priority={idx < 2} 
+                      />
                     </div>
                   ))}
                 </div>
@@ -68,7 +75,14 @@ export default function Hero() {
                 <div className="flex flex-col gap-4 animate-scroll-up">
                   {scrollImages.map((src, idx) => (
                     <div key={`up-${idx}`} className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50">
-                      <Image src={src} alt="Work Showcase" fill className="object-cover" />
+                      <Image 
+                        src={src} 
+                        alt="Work Showcase" 
+                        fill 
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                        priority={idx < 2}
+                      />
                     </div>
                   ))}
                 </div>

@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "8K IoT Solutions | Premium Tech Services",
+  title: "8K IoT Solutions",
   description: "Advanced IoT hardware integration and web solutions.",
 };
 

@@ -21,7 +21,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'], 
+        sans: ['"General Sans"', 'sans-serif'], 
         poppins: ['var(--font-poppins)', 'sans-serif'], 
       },
       animation: {

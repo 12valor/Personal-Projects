@@ -109,7 +109,7 @@ export default function About() {
 
           {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
           <div 
-            className={`lg:col-span-5 relative order-1 lg:order-2 ${getFadeUpClasses(inView, 'translate-y-12')}`}
+            className={`hidden md:block lg:col-span-5 relative order-1 lg:order-2 ${getFadeUpClasses(inView, 'translate-y-12')}`}
             style={getStaggerStyle(inView, 3, 0)}
           >
             <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">

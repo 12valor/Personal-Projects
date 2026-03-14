@@ -5,7 +5,6 @@ import Link from 'next/link';
 import ServiceCardSkeleton from './Skeletons/ServiceCardSkeleton';
 import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
 
-// --- Local Scroll Parallax Hook ---
 function useParallax(speedMultiplier = 0.05) {
   const ref = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState(0);
@@ -14,20 +13,19 @@ function useParallax(speedMultiplier = 0.05) {
     const handleScroll = () => {
       if (ref.current) {
         const rect = ref.current.getBoundingClientRect();
-        // Calculate distance from center of viewport
+      
         const centerDistance = (window.innerHeight / 2) - (rect.top + rect.height / 2);
         setOffset(centerDistance * speedMultiplier);
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial set
+    handleScroll(); 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [speedMultiplier]);
 
   return { parallaxRef: ref, offset };
 }
 
-// --- Data ---
 const HARDWARE_FEATURES = [
   "IoT Project Development",
   "Arduino Programming",

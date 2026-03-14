@@ -6,8 +6,7 @@ const Contact = () => {
   return (
     <section id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
       
-      {/* ----- ANIMATED TECHNICAL BACKGROUND ----- */}
-      {/* Animated Dot Matrix */}
+
       <div 
         className="absolute inset-0 z-[-2] opacity-20" 
         style={{
@@ -17,17 +16,17 @@ const Contact = () => {
         aria-hidden="true"
       />
       
-      {/* Slow Pulsing Ambient Orbs */}
+   
       <div className="absolute top-0 left-0 w-[40vw] h-[40vw] bg-brand-600/10 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 z-[-1] animate-[pulse_6s_ease-in-out_infinite]" />
       <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-blue-500/10 rounded-full blur-[120px] translate-y-1/3 translate-x-1/3 z-[-1] animate-[pulse_8s_ease-in-out_infinite_alternate]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
           
-          {/* ----- LEFT SIDE: Contact Info (System Metadata Style) ----- */}
+      
           <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-8">
             
-            {/* Eyebrow */}
+          
             <div className="inline-flex items-center gap-2 mb-6 opacity-0 animate-[fadeInUp_600ms_ease-out_100ms_forwards]">
               <span className="h-[2px] w-6 bg-brand-400 rounded-full shadow-[0_0_8px_rgba(96,165,250,0.6)]"></span>
               <span className="font-poppins font-semibold text-brand-400 tracking-[0.1em] text-[12px] uppercase">
@@ -35,7 +34,7 @@ const Contact = () => {
               </span>
             </div>
 
-            {/* Headline */}
+          
             <h2 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.25rem] text-white tracking-tight leading-[1.12] mb-6 opacity-0 animate-[fadeInUp_600ms_ease-out_200ms_forwards]">
               Let&apos;s engineer your <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-blue-200 drop-shadow-[0_0_20px_rgba(96,165,250,0.3)]">

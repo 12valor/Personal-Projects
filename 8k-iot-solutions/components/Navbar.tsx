@@ -42,10 +42,11 @@ export default function Navbar() {
     // Always close mobile menu on click
     setMobileMenuOpen(false);
 
+    const targetId = href === '/' ? 'home' : href.replace('/', '');
+
     // If we're on the homepage, scroll smoothly
     if (pathname === '/') {
-      const targetId = href.replace('/', '');
-      const element = document.getElementById(targetId === '' ? 'home' : targetId);
+      const element = document.getElementById(targetId);
       
       if (element) {
         const navbarOffset = 100; 
@@ -58,9 +59,9 @@ export default function Navbar() {
         });
       }
     } else {
-      // If we're not on the homepage, route to the target root path
-      // Because we set up rewrites in next.config.ts, router.push('/services') works cleanly
-      router.push(href);
+      // If we're not on the homepage, store our intended destination and client-side route to home
+      sessionStorage.setItem('pendingSectionScroll', targetId);
+      router.push('/');
     }
   };
 
@@ -121,7 +122,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* 3. Right: Social Buttons */}
+          {/* 3. Right: Social & CTA Buttons */}
           <div className="hidden md:flex flex-1 items-center justify-end gap-3">
             {/* Facebook */}
             <a href="#" className="shrink-0 group flex items-center justify-start h-[50px] w-[50px] bg-white rounded-[10px] shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition-all duration-300 hover:w-[190px] hover:rounded-[8px] overflow-hidden border border-gray-100">
@@ -139,8 +140,19 @@ export default function Navbar() {
               <span className="w-0 overflow-hidden whitespace-nowrap text-left text-[15px] font-bold text-black transition-all duration-300 group-hover:w-[140px] group-hover:pl-1">@8k_solutions</span>
             </a>
 
-            {/* GitHub */}
-           
+            {/* CTA Button */}
+            <a 
+              href="#contact" 
+              onClick={(e) => handleNavigation(e, '/contact')}
+              className="group flex items-center justify-center gap-3 pl-5 pr-1.5 py-1.5 ml-1 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full transition-all duration-300 shadow-sm border border-zinc-800 h-[50px]"
+            >
+              <span className="text-[14px] font-poppins font-medium ml-1">Let's Talk</span>
+              <div className="flex items-center justify-center w-9 h-9 bg-white rounded-full transition-transform duration-300 group-hover:scale-[1.05]">
+                <svg className="w-4 h-4 text-zinc-900 transition-transform duration-300 group-hover:translate-x-[1.5px] group-hover:-translate-y-[1.5px]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                </svg>
+              </div>
+            </a>
           </div>
 
           {/* Mobile Menu Hamburger */}

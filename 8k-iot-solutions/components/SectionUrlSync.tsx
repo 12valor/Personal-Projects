@@ -8,11 +8,34 @@ export default function SectionUrlSync() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const initialScrollHandled = useRef(false);
 
-  // 1. Handle initial load scrolling
+  // 1. Handle initial load scrolling AND client-side cross-page routing
   useEffect(() => {
+    // Check if we arrived here from another page clicking a nav link
+    const pendingScroll = sessionStorage.getItem('pendingSectionScroll');
+    
+    if (pendingScroll) {
+      sessionStorage.removeItem('pendingSectionScroll');
+      
+      // We wait just an instant for the layout to finish mounting
+      setTimeout(() => {
+        const element = document.getElementById(pendingScroll);
+        if (element) {
+          const navbarOffset = 100;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - navbarOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+      
+      return; // Skip normal initial load logic if we handled a pending scroll
+    }
+
     if (initialScrollHandled.current) return;
     
-    // We only care if we loaded distinctly at a known section path 
+    // We only care if we loaded distinctly at a known section path (direct link visit)
     const isSectionPath = ['/about', '/services', '/contact'].includes(pathname);
     
     if (isSectionPath) {

@@ -104,10 +104,10 @@ export default function Navbar() {
                 key={link.name} 
                 href={link.href}
                 onClick={(e) => handleScrollToSection(e, link.href)}
-                className="text-[15px] font-semibold relative group text-brand-950 hover:text-brand-600 transition-colors duration-300 py-2 tracking-wide"
+                className="text-[15px] font-poppins font-medium relative group text-zinc-900 hover:text-brand-900 transition-colors duration-300 py-2 tracking-wide"
               >
                 {link.name}
-                <span className="absolute bottom-0 left-0 w-0 h-[2px] transition-all duration-300 ease-out group-hover:w-full bg-brand-500 rounded-full"></span>
+                <span className="absolute bottom-1 left-0 w-0 h-[2px] transition-all duration-300 ease-out group-hover:w-full bg-brand-500 rounded-full opacity-0 group-hover:opacity-100"></span>
               </Link>
             ))}
           </div>

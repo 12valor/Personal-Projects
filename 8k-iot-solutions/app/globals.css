@@ -8,3 +8,30 @@ html.project-modal-open #main-navbar {
   pointer-events: none !important;
   visibility: hidden !important;
 }
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 50s linear infinite;
+  width: max-content;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 50s linear infinite;
+  width: max-content;
+}
+
+@media (hover: hover) {
+  .animate-scroll-left:hover,
+  .animate-scroll-right:hover {
+    animation-play-state: paused;
+  }
+}

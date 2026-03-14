@@ -4,7 +4,7 @@ import React from 'react';
 
 const Contact = () => {
   return (
-    <section id="contact" className="relative py-24 lg:py-32 bg-slate-950 overflow-hidden z-0 font-sans">
+    <section id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
       
       {/* ----- ANIMATED TECHNICAL BACKGROUND ----- */}
       {/* Animated Dot Matrix */}

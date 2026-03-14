@@ -24,7 +24,7 @@ export default function About() {
   };
 
   return (
-    <section id="about" className="relative py-24 lg:py-32 bg-transparent overflow-hidden z-0">
+    <section id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
       
       {/* Required Animation Easing */}
       <style dangerouslySetInnerHTML={{ __html: `

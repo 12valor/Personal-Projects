@@ -39,7 +39,7 @@ export default function Process() {
   const [setRef, inView] = useInView({ threshold: 0.1 });
 
   return (
-    <section id="process" className="relative w-full pt-8 pb-24 lg:pt-12 lg:pb-32 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b">
+    <section id="process" className="relative w-full pt-8 pb-12 lg:pt-12 lg:pb-16 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b">
       
       {/* 1. Subtle Premium Background Layers */}
       {/* Soft Aurora Glows */}

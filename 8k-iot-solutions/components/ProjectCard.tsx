@@ -1,10 +1,15 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { Project } from '@/lib/projects';
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({ project, onClick }: { project: Project, onClick: () => void }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="group relative flex flex-col bg-white rounded-2xl overflow-hidden ring-1 ring-zinc-200 shadow-sm hover:shadow-xl hover:ring-zinc-300 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 block">
+    <div 
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if(e.key === 'Enter') onClick() }}
+      className="text-left cursor-pointer group relative flex flex-col bg-white rounded-2xl overflow-hidden ring-1 ring-zinc-200 shadow-sm hover:shadow-xl hover:ring-zinc-300 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 block"
+    >
       {/* Image Container */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
         <Image 
@@ -43,6 +48,6 @@ export default function ProjectCard({ project }: { project: Project }) {
           {project.description}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }

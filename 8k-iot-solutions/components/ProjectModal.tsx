@@ -17,10 +17,12 @@ export default function ProjectModal({
     };
     if (project) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('project-modal-open');
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.classList.remove('project-modal-open');
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [project, onClose]);
@@ -38,7 +40,7 @@ export default function ProjectModal({
       
       {/* Modal Content */}
       <div 
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl md:rounded-[2rem] shadow-2xl animate-heroPop flex flex-col"
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl md:rounded-[2rem] shadow-2xl animate-heroPop flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         role="dialog"
         aria-modal="true"
       >

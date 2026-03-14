@@ -1,5 +1,4 @@
 import ProjectGridSkeleton from '@/components/Skeletons/ProjectGridSkeleton';
-import Link from 'next/link';
 import { Skeleton } from '@/components/Skeleton';
 
 export default function LoadingSoftwareProjects() {

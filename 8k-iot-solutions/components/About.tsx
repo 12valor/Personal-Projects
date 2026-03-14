@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
@@ -34,6 +33,7 @@ export default function About() {
         }
       `}} />
       
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={setRef as any}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           

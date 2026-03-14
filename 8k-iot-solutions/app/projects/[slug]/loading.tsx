@@ -1,5 +1,4 @@
 import { Skeleton } from '@/components/Skeleton';
-import Link from 'next/link';
 
 export default function LoadingProjectDetail() {
   return (

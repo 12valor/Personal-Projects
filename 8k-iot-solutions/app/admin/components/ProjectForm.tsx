@@ -1,9 +1,8 @@
 'use client';
 
 import { saveProject } from '../actions';
-import { useActionState } from 'react';
-
 // Using a basic form to avoid complex state management since Server Actions handle it well
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ProjectForm({ project }: { project?: any }) {
   // Parse existing JSON
   let tags = '';

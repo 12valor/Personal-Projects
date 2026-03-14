@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Search, LayoutTemplate, Cpu, Rocket } from 'lucide-react';
 
 import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
@@ -46,6 +46,7 @@ export default function Process() {
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none" />
 
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" ref={setRef as any}>
         
         {/* Section Header */}

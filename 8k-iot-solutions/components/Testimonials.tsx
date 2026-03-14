@@ -37,6 +37,7 @@ const duplicatedTestimonials = [...testimonials, ...testimonials];
 const Testimonials = () => {
   const [setRef, inView] = useInView();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (
     <section className="relative py-10 md:py-12 bg-transparent overflow-hidden z-0" ref={setRef as any}>
 

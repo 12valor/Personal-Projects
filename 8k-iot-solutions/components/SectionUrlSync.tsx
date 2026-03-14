@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default function SectionUrlSync() {
   const pathname = usePathname();
-  const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const initialScrollHandled = useRef(false);
 

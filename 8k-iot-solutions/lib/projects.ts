@@ -15,6 +15,7 @@ export interface Project {
   client?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapPrismaToProject(p: any): Project {
   return {
     id: p.id,

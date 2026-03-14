@@ -92,7 +92,7 @@ export default function Hero() {
             animate={mounted ? "show" : "hidden"}
             className="lg:col-span-6 flex flex-col items-start text-left pt-8 lg:pt-16"
           >
-            <h1 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.12] mb-6 flex flex-col">
+            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.12] mb-6 flex flex-col">
               <motion.span variants={itemVariants} className="block text-slate-900">Building Ideas</motion.span>
               <motion.span variants={itemVariants} className="block text-brand-900 mt-1 sm:mt-2">Into Reality</motion.span>
             </h1>
@@ -113,7 +113,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 href="#contact" 
-                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-bold font-sans rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] transform-gpu"
+                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-semibold font-poppins rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] transform-gpu"
               >
                 <span>Start a Project</span>
                 <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
@@ -126,7 +126,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 href="#services" 
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-gray-200 bg-white text-gray-900 text-[15px] font-bold font-sans rounded-[6px] transition-colors duration-300 hover:border-brand-600 hover:text-brand-600 shadow-sm transform-gpu"
+                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-gray-200 bg-white text-gray-900 text-[15px] font-semibold font-poppins rounded-[6px] transition-colors duration-300 hover:border-brand-600 hover:text-brand-600 shadow-sm transform-gpu"
               >
                 <span>Explore Services</span>
               </motion.a>

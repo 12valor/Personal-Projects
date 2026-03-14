@@ -55,7 +55,7 @@ export default function ServicesSection() {
   }, []);
 
   return (
-    <section id="services" className="relative w-full py-24 bg-transparent text-zinc-900 overflow-hidden font-inter z-0">
+    <section id="services" className="relative w-full pt-24 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden font-inter z-0">
       {/* Import Fonts & Custom Animations */}
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');

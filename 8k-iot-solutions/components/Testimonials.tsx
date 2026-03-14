@@ -79,7 +79,7 @@ const Testimonials = () => {
                 </div>
 
                 <blockquote className="font-poppins text-gray-600 text-[15px] leading-relaxed italic whitespace-normal line-clamp-3">
-                  "{item.text}"
+                  &quot;{item.text}&quot;
                 </blockquote>
               </div>
             ))}

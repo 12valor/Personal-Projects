@@ -37,7 +37,7 @@ const Contact = () => {
 
             {/* Headline */}
             <h2 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.25rem] text-white tracking-tight leading-[1.12] mb-6 opacity-0 animate-[fadeInUp_600ms_ease-out_200ms_forwards]">
-              Let's engineer your <br className="hidden sm:block" />
+              Let&apos;s engineer your <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-blue-200 drop-shadow-[0_0_20px_rgba(96,165,250,0.3)]">
                 next ecosystem.
               </span>
@@ -45,7 +45,7 @@ const Contact = () => {
             
             {/* Subtext */}
             <p className="font-poppins text-slate-400 text-[15px] sm:text-[16px] leading-[1.7] mb-12 max-w-md opacity-0 animate-[fadeInUp_600ms_ease-out_300ms_forwards]">
-              Whether you need precise hardware prototyping or a scalable data dashboard, we're ready to architect the solution. Based in Talisay City, serving visionaries everywhere.
+              Whether you need precise hardware prototyping or a scalable data dashboard, we&apos;re ready to architect the solution. Based in Talisay City, serving visionaries everywhere.
             </p>
 
             {/* ----- EDITORIAL SIGNAL ROWS ----- */}

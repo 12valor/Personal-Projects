@@ -39,21 +39,12 @@ export default function Process() {
   const [setRef, inView] = useInView({ threshold: 0.1 });
 
   return (
-    <section id="process" className="relative w-full py-24 lg:py-32 bg-white text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b">
+    <section id="process" className="relative w-full pt-8 pb-24 lg:pt-12 lg:pb-32 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b">
       
       {/* 1. Subtle Premium Background Layers */}
       {/* Soft Aurora Glows */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none" />
-      
-      {/* Technical Grid Background Layer */}
-      <div 
-        className="absolute inset-0 z-0 opacity-50 pointer-events-none" 
-        style={{ 
-          backgroundImage: 'linear-gradient(to right, #e4e4e7 1px, transparent 1px), linear-gradient(to bottom, #e4e4e7 1px, transparent 1px)',
-          backgroundSize: '32px 32px'
-        }}
-      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10" ref={setRef as any}>
         

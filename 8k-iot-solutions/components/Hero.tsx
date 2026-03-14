@@ -8,7 +8,10 @@ export default function Hero() {
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
-    setMounted(true);
+    // Adding a slight delay prevents the synchronous set-state-in-effect warning
+    // and naturally creates the cascading entrance animation intended here
+    const timer = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timer);
   }, []);
 
   // Using the co-founders image for all slots to create the seamless vertical flow

@@ -7,10 +7,12 @@ import ServicesSection from '@/components/Services';
 import Process from '@/components/Process';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import SectionUrlSync from '@/components/SectionUrlSync';
 
 export default function Home() {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
+      <SectionUrlSync />
       
       {/* GLOBAL FIXED BACKGROUND GRID */}
       <div 

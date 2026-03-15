@@ -78,6 +78,28 @@ export default function Hero() {
       onMouseLeave={handleMouseLeave}
       className="relative min-h-[85vh] lg:min-h-[80vh] flex items-center pt-24 pb-8 overflow-hidden z-0 bg-transparent"
     >
+      {/* ----- MOBILE CROSSFADE BACKGROUND ----- */}
+      <div className="absolute inset-0 z-[1] lg:hidden" aria-hidden="true">
+        <Image
+          src="/client.jpg"
+          alt=""
+          fill
+          className="object-cover hero-crossfade-img"
+          sizes="100vw"
+          priority
+        />
+        <Image
+          src="/client2.jpg"
+          alt=""
+          fill
+          className="object-cover hero-crossfade-img-delayed"
+          sizes="100vw"
+          priority
+        />
+        {/* Dark brand tint for text legibility */}
+        <div className="absolute inset-0 bg-brand-900/[0.88]" />
+      </div>
+
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
           
@@ -93,13 +115,13 @@ export default function Hero() {
             className="lg:col-span-6 flex flex-col items-start text-left pt-8 lg:pt-16"
           >
             <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.12] mb-6 flex flex-col">
-              <motion.span variants={itemVariants} className="block text-slate-900">Building Ideas</motion.span>
-              <motion.span variants={itemVariants} className="block text-brand-900 mt-1 sm:mt-2">Into Reality</motion.span>
+              <motion.span variants={itemVariants} className="block text-white lg:text-slate-900">Building Ideas</motion.span>
+              <motion.span variants={itemVariants} className="block text-brand-200 lg:text-brand-900 mt-1 sm:mt-2">Into Reality</motion.span>
             </h1>
             
             <motion.p 
               variants={itemVariants}
-              className="font-poppins font-normal text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10"
+              className="font-poppins font-normal text-white/80 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10"
             >
               We offer a range of hardware and software services, including device prototyping, system integration, and web-based solutions, tailored to help students and innovators bring their ideas to life.
             </motion.p>
@@ -126,7 +148,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 href="#services" 
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-gray-200 bg-white text-gray-900 text-[15px] font-semibold font-poppins rounded-[6px] transition-colors duration-300 hover:border-brand-600 hover:text-brand-600 shadow-sm transform-gpu"
+                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-white/30 lg:border-gray-200 bg-white/90 lg:bg-white text-gray-900 text-[15px] font-semibold font-poppins rounded-[6px] transition-colors duration-300 hover:border-brand-600 hover:text-brand-600 shadow-sm transform-gpu"
               >
                 <span>Explore Services</span>
               </motion.a>
@@ -134,7 +156,7 @@ export default function Hero() {
           </motion.div>
 
           {/* ----- RIGHT COLUMN: Interactive 3D Grid ----- */}
-          <div className="lg:col-span-6 relative h-[500px] sm:h-[650px] w-full rounded-3xl overflow-hidden lg:ml-8 mt-12 lg:mt-0 [perspective:1200px]">
+          <div className="hidden lg:block lg:col-span-6 relative h-[500px] sm:h-[650px] w-full rounded-3xl overflow-hidden lg:ml-8 mt-12 lg:mt-0 [perspective:1200px]">
             
             {/* Gradient masks to ensure images don't look cut off at the edges */}
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/80 to-transparent z-20 pointer-events-none" />

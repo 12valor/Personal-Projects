@@ -35,3 +35,18 @@ html.project-modal-open #main-navbar {
     animation-play-state: paused;
   }
 }
+
+/* Hero background crossfade — mobile only */
+@keyframes heroCrossfade {
+  0%, 45% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+
+.hero-crossfade-img {
+  animation: heroCrossfade 6s ease-in-out infinite;
+}
+
+.hero-crossfade-img-delayed {
+  animation: heroCrossfade 6s ease-in-out infinite;
+  animation-delay: -3s;
+}

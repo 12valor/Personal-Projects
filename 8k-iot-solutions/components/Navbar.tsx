@@ -141,7 +141,7 @@ export default function Navbar() {
             <a 
               href="#contact" 
               onClick={(e) => handleNavigation(e, '/contact')}
-              className="group flex items-center justify-center gap-3 pl-5 pr-1.5 py-1.5 ml-1 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full transition-all duration-300 shadow-sm border border-zinc-800 h-[50px]"
+              className="group hidden lg:flex items-center justify-center gap-3 pl-5 pr-1.5 py-1.5 ml-1 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full transition-all duration-300 shadow-sm border border-zinc-800 h-[50px]"
             >
               <span className="text-[14px] font-poppins font-medium ml-1">Let's Talk</span>
               <div className="flex items-center justify-center w-9 h-9 bg-white rounded-full transition-transform duration-300 group-hover:scale-[1.05]">

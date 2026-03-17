@@ -2,6 +2,22 @@ import { getProjectBySlug } from '@/lib/projects';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  
+  if (!project) {
+    return {
+      title: 'Project Not Found',
+    };
+  }
+
+  return {
+    title: project.title,
+  };
+}
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -22,6 +38,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <main className="pb-20">
         {/* Hero Section */}
         <div className="w-full h-[40vh] md:h-[60vh] relative bg-zinc-900 overflow-hidden">
+        {project.image && (
           <Image 
             src={project.image} 
             alt={project.title}
@@ -29,6 +46,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             className="object-cover opacity-60 mix-blend-overlay"
             priority
           />
+        )}
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
           
           {/* Hero Content positioned at the bottom of the hero banner */}

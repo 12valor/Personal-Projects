@@ -90,10 +90,10 @@ export default function ServicesSection() {
           }`}
         >
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold tracking-tight text-zinc-900">
-            Engineering & Software
+            Hardware & Software
           </h2>
           <p className="mt-3 text-sm text-zinc-500 font-medium">
-            Specialized solutions for government and enterprise infrastructure.
+            Specialized solutions for student projects and enterprise clients.
           </p>
         </div>
 
@@ -141,7 +141,7 @@ export default function ServicesSection() {
                           
                           {/* Descriptive Subtitle for better text hierarchy */}
                           <p className="text-[11px] sm:text-sm text-zinc-500 font-medium mb-3 sm:mb-6 line-clamp-2 leading-tight">
-                          End-to-end custom embedded systems, sensor arrays, and physical prototyping.
+                          Custom hardware solutions and prototypes designed per client request.
                           </p>
                           
                           {/* Pricing Block Highlight */}

@@ -64,13 +64,15 @@ export default function ProjectModal({
         <div className="relative z-10 flex flex-col">
           {/* Header Image */}
           <div className="relative w-full h-64 sm:h-80 md:h-96">
-            <Image
-              src={project.image}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 1024px"
-            />
+            {project.image && (
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 1024px"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/60 via-zinc-900/10 to-transparent" />
             <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 right-6 text-white">
               <span className="inline-block px-3 py-1 mb-3 text-xs font-poppins font-semibold tracking-wider uppercase bg-brand-500/90 backdrop-blur-sm rounded-lg">

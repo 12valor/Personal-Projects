@@ -4,6 +4,10 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+export const metadata = {
+  title: "Admin Dashboard",
+};
+
 export default async function AdminDashboardPage() {
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: 'desc' }

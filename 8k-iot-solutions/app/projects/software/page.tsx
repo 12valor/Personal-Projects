@@ -2,6 +2,10 @@ import { getProjectsByCategory } from '@/lib/projects';
 import ProjectGrid from '@/components/ProjectGrid';
 import Link from 'next/link';
 
+export const metadata = {
+  title: "Software Solutions",
+};
+
 export default async function SoftwareProjectsPage() {
   const projects = await getProjectsByCategory('software');
 

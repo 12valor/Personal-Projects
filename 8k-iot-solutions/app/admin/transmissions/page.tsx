@@ -2,8 +2,12 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 
+export const metadata = {
+  title: "Inquiries",
+};
+
 export default async function TransmissionsPage() {
-  const inquiries = await prisma.inquiry.findMany({
+  const inquiries = await (prisma as any).inquiry.findMany({
     orderBy: { createdAt: 'desc' },
   });
 
@@ -12,7 +16,7 @@ export default async function TransmissionsPage() {
     const id = formData.get('id') as string;
     const currentStatus = formData.get('isRead') === 'true';
     if (id) {
-      await prisma.inquiry.update({
+      await (prisma as any).inquiry.update({
         where: { id },
         data: { isRead: !currentStatus },
       });
@@ -24,12 +28,12 @@ export default async function TransmissionsPage() {
     'use server';
     const id = formData.get('id') as string;
     if (id) {
-      await prisma.inquiry.delete({ where: { id } });
+      await (prisma as any).inquiry.delete({ where: { id } });
       revalidatePath('/admin/transmissions');
     }
   }
 
-  const unreadCount = inquiries.filter((i) => !i.isRead).length;
+  const unreadCount = inquiries.filter((i: any) => !i.isRead).length;
 
   // Map inquiry type values to readable labels
   const inquiryTypeLabels: Record<string, string> = {
@@ -107,7 +111,7 @@ export default async function TransmissionsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 bg-white">
-                  {inquiries.map((inquiry) => (
+                  {inquiries.map((inquiry: any) => (
                     <tr key={inquiry.id} className={inquiry.isRead ? 'bg-white' : 'bg-blue-50/50'}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <span className={inquiry.isRead ? 'text-zinc-900' : 'font-semibold text-zinc-900'}>

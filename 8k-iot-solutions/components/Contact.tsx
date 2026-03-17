@@ -1,8 +1,16 @@
 "use client";
 
-import React from 'react';
+import React, { useActionState } from 'react';
+import { submitContactForm } from '@/app/contact';
 
 const Contact = () => {
+  const [state, formAction, isPending] = useActionState(
+    async (_prevState: { success?: boolean; message?: string; error?: string } | null, formData: FormData) => {
+      return await submitContactForm(formData);
+    },
+    null
+  );
+
   return (
     <section id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
       
@@ -116,7 +124,27 @@ const Contact = () => {
               {/* Internal top highlight */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-              <form className="space-y-6 relative z-10">
+              {/* Success Message */}
+              {state?.success && (
+                <div className="mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm font-poppins text-center animate-[fadeInUp_400ms_ease-out_forwards]">
+                  <svg className="w-5 h-5 inline-block mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {state.message}
+                </div>
+              )}
+
+              {/* Error Message */}
+              {state?.error && (
+                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm font-poppins text-center animate-[fadeInUp_400ms_ease-out_forwards]">
+                  <svg className="w-5 h-5 inline-block mr-2 -mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  </svg>
+                  {state.error}
+                </div>
+              )}
+
+              <form action={formAction} className="space-y-6 relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   
                   {/* Name Input */}
@@ -125,7 +153,9 @@ const Contact = () => {
                       Full Name
                     </label>
                     <input 
-                      type="text" 
+                      type="text"
+                      name="fullName"
+                      required
                       placeholder="e.g. AG Evangelista"
                       className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300"
                     />
@@ -137,7 +167,9 @@ const Contact = () => {
                       Email Address
                     </label>
                     <input 
-                      type="email" 
+                      type="email"
+                      name="email"
+                      required
                       placeholder="name@domain.com"
                       className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300"
                     />
@@ -151,6 +183,8 @@ const Contact = () => {
                   </label>
                   <div className="relative">
                     <select 
+                      name="inquiryType"
+                      required
                       defaultValue=""
                       className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-slate-300 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300 appearance-none cursor-pointer [&>option]:bg-slate-900 [&>option]:text-white"
                     >
@@ -175,6 +209,8 @@ const Contact = () => {
                     Project Details
                   </label>
                   <textarea 
+                    name="message"
+                    required
                     rows={4}
                     placeholder="Tell us about your technical requirements..."
                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300 resize-none"
@@ -184,12 +220,22 @@ const Contact = () => {
                 {/* Submit Button */}
                 <button 
                   type="submit"
-                  className="w-full relative group flex justify-center items-center gap-2 bg-brand-600 text-white font-poppins font-medium text-[15px] py-3.5 rounded-lg overflow-hidden transition-all duration-300 hover:bg-brand-500 active:scale-[0.98] shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] mt-2 border border-brand-400/50"
+                  disabled={isPending}
+                  className="w-full relative group flex justify-center items-center gap-2 bg-brand-600 text-white font-poppins font-medium text-[15px] py-3.5 rounded-lg overflow-hidden transition-all duration-300 hover:bg-brand-500 active:scale-[0.98] shadow-[0_0_20px_rgba(37,99,235,0.2)] hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] mt-2 border border-brand-400/50 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <span className="relative z-10">Send Transmission</span>
-                  <svg className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                  </svg>
+                  <span className="relative z-10">
+                    {isPending ? 'Transmitting...' : 'Send Transmission'}
+                  </span>
+                  {isPending ? (
+                    <svg className="w-4 h-4 relative z-10 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                    </svg>
+                  )}
                   {/* Shimmer Effect */}
                   <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1s_infinite] pointer-events-none z-0"></div>
                 </button>

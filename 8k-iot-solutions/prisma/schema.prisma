@@ -21,3 +21,13 @@ model Project {
   client           String?
   createdAt        DateTime @default(now())
 }
+
+model Inquiry {
+  id              String   @id @default(cuid())
+  fullName        String
+  email           String
+  inquiryType     String
+  message         String
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}

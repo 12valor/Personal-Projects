@@ -52,15 +52,15 @@ export default function Hero() {
     // Column 1
     [
       { id: '1', src: '/client.jpg', depth: 40, duration: 4.5, delay: 0 },
-      { id: '2', src: '/client.jpg', depth: 15, duration: 5.2, delay: 0.7 },
+      { id: '2', src: '/client2.jpg', depth: 15, duration: 5.2, delay: 0.7 },
       { id: '3', src: '/client.jpg', depth: 25, duration: 4.8, delay: 0.3 },
-      { id: '4', src: '/client.jpg', depth: 10, duration: 6.1, delay: 1.2 },
+      { id: '4', src: '/client2.jpg', depth: 10, duration: 6.1, delay: 1.2 },
     ],
     // Column 2
     [
-      { id: '5', src: '/client.jpg', depth: 20, duration: 5.8, delay: 0.5 },
+      { id: '5', src: '/client2.jpg', depth: 20, duration: 5.8, delay: 0.5 },
       { id: '6', src: '/client.jpg', depth: 35, duration: 4.2, delay: 0.2 },
-      { id: '7', src: '/client.jpg', depth: 10, duration: 6.5, delay: 0.9 },
+      { id: '7', src: '/client2.jpg', depth: 10, duration: 6.5, delay: 0.9 },
       { id: '8', src: '/client.jpg', depth: 30, duration: 4.6, delay: 0.6 },
     ]
   ];

@@ -2,14 +2,16 @@ import TestimonialForm from '../../components/TestimonialForm';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
-export default async function EditTestimonial({ params }: { params: { id: string } }) {
+export default async function EditTestimonial({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   if (!(prisma as any).testimonial) {
     notFound();
   }
   
   // @ts-ignore
   const testimonial = await (prisma as any).testimonial.findUnique({
-    where: { id: params.id }
+    where: { id }
   });
 
   if (!testimonial) {

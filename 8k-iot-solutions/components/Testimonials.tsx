@@ -6,42 +6,24 @@ import { useInView } from '@/lib/animations';
 import { Star, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const testimonials = [
-  {
-    name: "Sir Jayson",
-    position: "Thesis Adviser • TUPV",
-    text: "The technical precision 8K IoT Solutions brings to hardware prototyping is impressive. Their parking detection system is a testament to their engineering growth.",
-    avatar: "/avatars/jayson.jpg"
-  },
-  {
-    name: "Sherack Dojillo",
-    position: "Project Partner • Hardware",
-    text: "Collaborating with AG on IoT projects like the automatic fish skin dryer showed me how hardware and software can truly be integrated seamlessly.",
-    avatar: "/avatars/sherack.jpg"
-  },
-  {
-    name: "Technowatch Admin",
-    position: "Admin • Operations Team",
-    text: "8K built our organizational platform with a focus on speed and clean UI. Their student-led approach doesn't compromise on professional standards.",
-    avatar: "/avatars/tech.jpg"
-  },
-  {
-    name: "Adriano's Coffee",
-    position: "Business Owner • Retail",
-    text: "From marketing logos to technical advice, 8K has been an essential partner in launching our physical and digital presence.",
-    avatar: "/avatars/coffee.jpg"
-  }
-];
-
-// Separate rows for the 2-lane mobile design to handle infinite scroll
-const topRowTestimonials = [testimonials[0], testimonials[1]];
-const bottomRowTestimonials = [testimonials[2], testimonials[3]];
-const duplicatedTopRow = [...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials]; // 4 sets to ensure wide enough track
-const duplicatedBottomRow = [...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials]; 
-const duplicatedDesktopRow = [...testimonials, ...testimonials, ...testimonials];
-
-export default function Testimonials() {
+export default function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
   const [setRef, inView] = useInView();
+
+  // Purely dynamic - if no testimonials in DB, don't show the section
+  const testimonials = initialTestimonials;
+
+  if (testimonials.length === 0) {
+    return null; // Side-step rendering if no content
+  }
+
+  // Separate rows for the 2-lane mobile design to handle infinite scroll
+  const half = Math.ceil(testimonials.length / 2);
+  const topRowTestimonials = testimonials.slice(0, half);
+  const bottomRowTestimonials = testimonials.slice(half);
+
+  const duplicatedTopRow = [...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials]; 
+  const duplicatedBottomRow = [...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials]; 
+  const duplicatedDesktopRow = [...testimonials, ...testimonials, ...testimonials];
 
   return (
     <section className="relative py-8 md:py-10 bg-transparent overflow-hidden z-0" ref={setRef as unknown as React.LegacyRef<HTMLElement>}>

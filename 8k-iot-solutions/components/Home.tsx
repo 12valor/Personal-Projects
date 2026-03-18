@@ -9,7 +9,7 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
 
-export default function HomeContent() {
+export default function HomeContent({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
       <SectionUrlSync />
@@ -25,7 +25,7 @@ export default function HomeContent() {
       />
       
       <Hero />
-      <Testimonials />
+      <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />
       <Process />

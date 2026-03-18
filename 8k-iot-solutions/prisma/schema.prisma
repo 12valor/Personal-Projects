@@ -31,3 +31,13 @@ model Inquiry {
   isRead          Boolean  @default(false)
   createdAt       DateTime @default(now())
 }
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  position  String?
+  text      String
+  avatar    String?
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+}

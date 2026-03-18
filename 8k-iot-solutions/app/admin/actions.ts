@@ -81,3 +81,73 @@ export async function saveProject(formData: FormData) {
   
   redirect('/admin');
 }
+
+// --- TESTIMONIAL ACTIONS ---
+
+export async function saveTestimonial(formData: FormData) {
+  const id = formData.get('id') as string | null;
+  const name = formData.get('name') as string;
+  const position = formData.get('position') as string | null;
+  const text = formData.get('text') as string;
+  const rating = parseInt(formData.get('rating') as string || '5');
+  
+  // Handle avatar upload or URL
+  let avatar = formData.get('existingAvatar') as string || '';
+  const avatarFile = formData.get('avatarFile') as File | null;
+  const avatarUrl = formData.get('avatarUrl') as string | null;
+
+  if (avatarFile && avatarFile.size > 0 && avatarFile.name) {
+    const bytes = await avatarFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const uploadDir = path.join(process.cwd(), 'public/uploads');
+    try { await fs.access(uploadDir); } catch { await fs.mkdir(uploadDir, { recursive: true }); }
+    const uniqueName = `avatar-${Date.now()}-${avatarFile.name.replace(/\s+/g, '-')}`;
+    const filePath = path.join(uploadDir, uniqueName);
+    await fs.writeFile(filePath, buffer);
+    avatar = `/uploads/${uniqueName}`;
+  } else if (avatarUrl) {
+    avatar = avatarUrl;
+  }
+
+  const testimonialData = {
+    name,
+    position: position || null,
+    text,
+    avatar: avatar || null,
+    rating,
+  };
+
+  if (!(prisma as any).testimonial) {
+    throw new Error("Testimonial model not found. Please run 'npx prisma db push' after stopping the dev server.");
+  }
+
+  if (id) {
+    // @ts-ignore
+    await (prisma as any).testimonial.update({
+      where: { id },
+      data: testimonialData,
+    });
+  } else {
+    // @ts-ignore
+    await (prisma as any).testimonial.create({
+      data: testimonialData,
+    });
+  }
+
+  revalidatePath('/admin/testimonials');
+  revalidatePath('/'); // Revalidate home page where testimonials are shown
+  
+  redirect('/admin/testimonials');
+}
+
+export async function deleteTestimonial(id: string) {
+  if (!(prisma as any).testimonial) return;
+  
+  // @ts-ignore
+  await (prisma as any).testimonial.delete({
+    where: { id },
+  });
+  
+  revalidatePath('/admin/testimonials');
+  revalidatePath('/');
+}

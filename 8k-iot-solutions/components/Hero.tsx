@@ -27,10 +27,18 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const mobileUrl1 = getImageSource(0);
   const mobileUrl2 = safeHeroImages.length > 1 ? safeHeroImages[1].url : (safeHeroImages.length > 0 ? safeHeroImages[0].url : '/client2.jpg');
   
+  const [isMobile, setIsMobile] = useState(false);
+  
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
     // Small delay to ensure smooth entrance
     const timer = setTimeout(() => setMounted(true), 100);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -138,28 +146,75 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
               variants={itemVariants}
               className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
             >
-              <motion.a 
-                whileHover={{ scale: 1.03 }}
+              {/* Primary CTA Wrapper */}
+              <motion.div
+                animate={{ 
+                  y: [0, isMobile ? -4 : -6, 0],
+                }}
+                whileHover={{ 
+                  scale: 1.04,
+                  y: 0,
+                }}
                 whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                href="#contact" 
-                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-semibold font-poppins rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] transform-gpu"
+                transition={{ 
+                  y: {
+                    repeat: Infinity, 
+                    duration: 3, 
+                    ease: "easeInOut" 
+                  },
+                  scale: {
+                    type: "spring", 
+                    stiffness: 400, 
+                    damping: 25
+                  }
+                }}
+                className="group relative inline-flex w-full sm:w-auto overflow-visible"
+                style={{ willChange: "transform" }}
               >
-                <span>Start a Project</span>
-                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </motion.a>
+                <a 
+                  href="#contact" 
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-semibold font-poppins rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] group-hover:shadow-[0_15px_30px_-5px_rgba(30,58,138,0.3)] transition-shadow duration-300 transform-gpu"
+                >
+                  <span>Start a Project</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </motion.div>
               
-              <motion.a 
-                whileHover={{ scale: 1.03 }}
+              {/* Secondary CTA Wrapper */}
+              <motion.div
+                animate={{ 
+                  y: [0, isMobile ? -4 : -6, 0],
+                }}
+                whileHover={{ 
+                  scale: 1.04,
+                  y: 0,
+                }}
                 whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                href="#services" 
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-white/30 lg:border-gray-200 bg-white/90 lg:bg-white text-gray-900 text-[15px] font-semibold font-poppins rounded-[6px] transition-colors duration-300 hover:border-brand-600 hover:text-brand-600 shadow-sm transform-gpu"
+                transition={{ 
+                  y: {
+                    repeat: Infinity, 
+                    duration: 3, 
+                    ease: "easeInOut",
+                    delay: 0.6
+                  },
+                  scale: {
+                    type: "spring", 
+                    stiffness: 400, 
+                    damping: 25
+                  }
+                }}
+                className="group relative inline-flex w-full sm:w-auto overflow-visible"
+                style={{ willChange: "transform" }}
               >
-                <span>Explore Services</span>
-              </motion.a>
+                <a 
+                  href="#services" 
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-white/30 lg:border-gray-200 bg-white/90 lg:bg-white text-gray-900 text-[15px] font-semibold font-poppins rounded-[6px] shadow-sm hover:border-brand-600 hover:text-brand-600 group-hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300 transform-gpu"
+                >
+                  <span>Explore Services</span>
+                </a>
+              </motion.div>
             </motion.div>
           </motion.div>
 

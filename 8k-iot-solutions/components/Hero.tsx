@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { motion, useTransform, useScroll, Variants } from 'framer-motion';
 
+// Version 1.0.2 - Design Sync Restoration
 export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const [mounted, setMounted] = useState(false);
   
@@ -92,8 +93,14 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
         <div className="absolute inset-0 bg-brand-900/[0.88]" />
       </div>
 
-      <div className="w-full max-w-[1728px] mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 justify-between relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 xl:gap-32 items-start">
+      <div 
+        suppressHydrationWarning
+        className="w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:pl-10 lg:pr-16 xl:pl-16 xl:pr-24 justify-between relative z-10"
+      >
+        <div 
+          suppressHydrationWarning
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 xl:gap-32 items-start"
+        >
           <motion.div 
             style={{ y: textY }}
             variants={{
@@ -102,31 +109,35 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             }}
             initial="hidden"
             animate={mounted ? "show" : "hidden"}
-            className="lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left pt-6 lg:pt-8 max-w-[640px]"
+            className="lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left pt-6 lg:pt-14 max-w-[500px]"
           >
-            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-10 sm:mb-12 flex flex-col relative">
+            <h1 className="font-boldonse text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-4 sm:mb-6 flex flex-col relative">
               <motion.div 
                 variants={itemVariants} 
                 className="flex items-baseline gap-x-3 sm:gap-x-4"
               >
+                <span className="text-slate-900 leading-none inline-block">
+                  Building
+                </span>
                 <motion.span 
-                  className="font-lobster text-[1.8em] sm:text-[2.1em] text-brand-900 lg:text-brand-900 leading-none inline-block -ml-1 sm:-ml-2"
+                  suppressHydrationWarning
+                  className="text-[2.2em] text-brand-900 lg:text-brand-900 leading-none inline-block -ml-1 normal-case"
                   initial={{ opacity: 0, y: 15 }}
                   animate={mounted ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  Building
+                  Ideas
                 </motion.span>
-                <span className="text-white lg:text-slate-900">Ideas</span>
               </motion.div>
               
               <motion.div 
                 variants={itemVariants} 
-                className="mt-[-0.1em] sm:mt-[-0.2em] flex items-baseline gap-x-3 sm:gap-x-4"
+                className="mt-10 sm:mt-14 flex items-baseline gap-x-3 sm:gap-x-4"
               >
-                <span>Into</span>
+                <span className="text-slate-900">Into</span>
                 <motion.span 
-                  className="font-lobster text-[1.8em] sm:text-[2.1em] text-brand-900 lg:text-brand-900 normal-case tracking-normal inline-block"
+                  suppressHydrationWarning
+                  className="text-[2.2em] text-brand-900 lg:text-brand-900 normal-case tracking-tight inline-block"
                   initial={{ opacity: 0, y: 10 }}
                   animate={mounted ? { opacity: 1, y: 0 } : {}}
                   transition={{ 
@@ -145,7 +156,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             
             <motion.p 
               variants={itemVariants}
-              className="font-poppins font-normal text-white/80 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-10"
+              className="font-poppins font-normal text-white/80 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-6"
             >
               We offer a range of hardware and software services, including device prototyping, system integration, and web-based solutions, tailored to help students and innovators bring their ideas to life.
             </motion.p>

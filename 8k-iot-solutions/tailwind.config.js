@@ -23,7 +23,7 @@ module.exports = {
       fontFamily: {
         sans: ['"General Sans"', 'sans-serif'], 
         poppins: ['var(--font-poppins)', 'sans-serif'], 
-        lobster: ['var(--font-lobster)', 'cursive'], 
+        boldonse: ['var(--font-boldonse)', 'sans-serif'], 
       },
       animation: {
         // FIXED: Explicitly mapping the animation name to the keyframe

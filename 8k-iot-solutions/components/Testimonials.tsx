@@ -71,6 +71,7 @@ type TestimonialProps = {
     position: string;
     text: string;
     avatar: string;
+    rating: number;
   };
   idx: number;
   inView: boolean;
@@ -123,10 +124,13 @@ function TestimonialCard({ item, idx, inView }: TestimonialProps) {
         </div>
       </div>
 
-      {/* 5-Star Rating Row */}
+      {/* Dynamic Rating Row */}
       <div className="relative z-10 flex gap-0.5 md:gap-1 mb-3 md:mb-4">
         {[...Array(5)].map((_, i) => (
-          <Star key={i} className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-400 fill-amber-400" />
+          <Star 
+            key={i} 
+            className={`w-3.5 h-3.5 md:w-4 md:h-4 ${i < item.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 fill-zinc-200'}`} 
+          />
         ))}
       </div>
 

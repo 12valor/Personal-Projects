@@ -1,7 +1,7 @@
 "use client";
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useScroll, Variants } from 'framer-motion';
+import { motion, useTransform, useScroll, Variants } from 'framer-motion';
 
 export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const [mounted, setMounted] = useState(false);
@@ -46,30 +46,6 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const { scrollY } = useScroll();
   const textY = useTransform(scrollY, [0, 800], [0, 100]);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-  
-  const springConfig = { damping: 40, stiffness: 120, mass: 1 };
-  const smoothMouseX = useSpring(mouseX, springConfig);
-  const smoothMouseY = useSpring(mouseY, springConfig);
-
-  const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [4, -4]);
-  const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-4, 4]);
-
   const cardsData = [
     [
       { id: '1', src: getImageSource(0), alt: getAltText(0), depth: 40, duration: 4.5, delay: 0 },
@@ -94,8 +70,6 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
     <section 
       id="home" 
       ref={sectionRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       className="relative min-h-[85vh] lg:min-h-[80vh] flex items-center pt-24 pb-8 overflow-hidden z-0 bg-transparent"
     >
       <div className="absolute inset-0 z-[1] lg:hidden" aria-hidden="true">
@@ -223,9 +197,8 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/80 to-transparent z-20 pointer-events-none" />
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-20 pointer-events-none" />
 
-            <motion.div 
-              style={{ rotateX, rotateY }}
-              className="grid grid-cols-2 gap-4 h-full [transform-style:preserve-3d] scale-[1.15] -rotate-3 pl-4 pr-2"
+            <div 
+              className="grid grid-cols-2 gap-4 h-full scale-[1.15] rotate-0 pl-4 pr-2"
             >
               {cardsData.map((col, colIdx) => (
                 <div 
@@ -239,13 +212,11 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                       idx={idx} 
                       colIdx={colIdx} 
                       mounted={mounted} 
-                      smoothMouseX={smoothMouseX} 
-                      smoothMouseY={smoothMouseY} 
                     />
                   ))}
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
@@ -255,13 +226,9 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
 
 // Sub-component to safely call framer-motion Hooks per card
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function HeroCard({ card, idx, colIdx, mounted, smoothMouseX, smoothMouseY }: any) {
-  const parallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-card.depth, card.depth]);
-  const parallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-card.depth, card.depth]);
-
+function HeroCard({ card, idx, colIdx, mounted }: any) {
   return (
     <motion.div
-      style={{ x: parallaxX, y: parallaxY }}
       className="w-full aspect-[4/5] flex-shrink-0 z-10"
       initial={{ opacity: 0, y: 60 }}
       animate={mounted ? { opacity: 1, y: 0 } : {}}

@@ -1,2 +1,62 @@
+# Global ignores for Personal Projects
+.DS_Store
 .gemini/
 gha-creds-*.json
+*.pem
+
+# Dependencies (recursive)
+node_modules/
+.pnp/
+.pnp.*
+.yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js & Build outputs (recursive)
+.next/
+out/
+build/
+dist/
+target/
+bin/
+obj/
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Cache & Logs
+.cache/
+.npm/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# IDE-specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Project-specific
+next-env.d.ts
+*.tsbuildinfo
+lib/generated/prisma

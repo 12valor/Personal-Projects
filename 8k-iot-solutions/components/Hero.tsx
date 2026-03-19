@@ -10,23 +10,35 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   // Safe array access
   const safeHeroImages = Array.isArray(heroImages) ? heroImages : [];
   
-  // Helper to get image source with fallback for any specific slot
-  const getImageSource = (index: number) => {
-    if (safeHeroImages.length > 0) {
-      return safeHeroImages[index % safeHeroImages.length].url;
-    }
-    return '/client.jpg';
+  // 1. Build a unified pool of available images (DB ONLY)
+  const imagePool = safeHeroImages.length > 0 
+    ? safeHeroImages.map(img => img.url)
+    : [];
+
+  // 2. Deterministic distribution to avoid side-by-side duplicates
+  // Uses a diagonal/checkerboard offset pattern: (row + col) % total
+  const getDistributedSource = (row: number, col: number) => {
+    const total = imagePool.length;
+    if (total === 0) return '/client.jpg'; // Basic fallback if no DB images exist
+    
+    const index = (row + col) % total;
+    return imagePool[index];
   };
 
-  const getAltText = (index: number) => {
-    if (safeHeroImages.length > 0) {
-      return safeHeroImages[index % safeHeroImages.length].alt || "Work Showcase";
-    }
-    return "";
+  const getDistributedAlt = (row: number, col: number) => {
+    const total = safeHeroImages.length;
+    if (total === 0) return "Work Showcase";
+    
+    const index = (row + col) % total;
+    return safeHeroImages[index].alt || "Work Showcase";
   };
+
+  // Helper for background/mobile images (legacy support for single-slot access)
+  const getImageSource = (index: number) => getDistributedSource(index, 0);
+  const getAltText = (index: number) => getDistributedAlt(index, 0);
 
   const mobileUrl1 = getImageSource(0);
-  const mobileUrl2 = safeHeroImages.length > 1 ? safeHeroImages[1].url : (safeHeroImages.length > 0 ? safeHeroImages[0].url : '/client2.jpg');
+  const mobileUrl2 = getImageSource(1);
   
   const [isMobile, setIsMobile] = useState(false);
   
@@ -49,16 +61,16 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
 
   const cardsData = [
     [
-      { id: '1', src: getImageSource(0), alt: getAltText(0), depth: 40, duration: 4.5, delay: 0 },
-      { id: '2', src: getImageSource(1), alt: getAltText(1), depth: 15, duration: 5.2, delay: 0.7 },
-      { id: '3', src: getImageSource(2), alt: getAltText(2), depth: 25, duration: 4.8, delay: 0.3 },
-      { id: '4', src: getImageSource(4), alt: getAltText(3), depth: 10, duration: 6.1, delay: 1.2 },
+      { id: '1', src: getDistributedSource(0, 0), alt: getDistributedAlt(0, 0), depth: 40, duration: 4.5, delay: 0 },
+      { id: '2', src: getDistributedSource(1, 0), alt: getDistributedAlt(1, 0), depth: 15, duration: 5.2, delay: 0.7 },
+      { id: '3', src: getDistributedSource(2, 0), alt: getDistributedAlt(2, 0), depth: 25, duration: 4.8, delay: 0.3 },
+      { id: '4', src: getDistributedSource(3, 0), alt: getDistributedAlt(3, 0), depth: 10, duration: 6.1, delay: 1.2 },
     ],
     [
-      { id: '5', src: getImageSource(4), alt: getAltText(4), depth: 20, duration: 5.8, delay: 0.5 },
-      { id: '6', src: getImageSource(5), alt: getAltText(5), depth: 35, duration: 4.2, delay: 0.2 },
-      { id: '7', src: getImageSource(6), alt: getAltText(6), depth: 10, duration: 6.5, delay: 0.9 },
-      { id: '8', src: getImageSource(7), alt: getAltText(7), depth: 30, duration: 4.6, delay: 0.6 },
+      { id: '5', src: getDistributedSource(0, 1), alt: getDistributedAlt(0, 1), depth: 20, duration: 5.8, delay: 0.5 },
+      { id: '6', src: getDistributedSource(1, 1), alt: getDistributedAlt(1, 1), depth: 35, duration: 4.2, delay: 0.2 },
+      { id: '7', src: getDistributedSource(2, 1), alt: getDistributedAlt(2, 1), depth: 10, duration: 6.5, delay: 0.9 },
+      { id: '8', src: getDistributedSource(3, 1), alt: getDistributedAlt(3, 1), depth: 30, duration: 4.6, delay: 0.6 },
     ]
   ];
 

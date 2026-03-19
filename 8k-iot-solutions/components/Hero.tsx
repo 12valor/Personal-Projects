@@ -102,7 +102,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
           sizes="100vw"
           priority
         />
-        <div className="absolute inset-0 bg-brand-900/[0.88]" />
+        <div className="absolute inset-0 bg-white/80" />
       </div>
 
       <div 
@@ -123,7 +123,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             animate={mounted ? "show" : "hidden"}
             className="lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left pt-6 lg:pt-14 max-w-[500px]"
           >
-            <h1 className="font-boldonse text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-4 sm:mb-6 flex flex-col relative">
+            <h1 className="font-boldonse text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.1] mb-4 sm:mb-6 flex flex-col relative">
               <motion.div 
                 variants={itemVariants} 
                 className="flex items-baseline gap-x-3 sm:gap-x-4"
@@ -133,7 +133,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 </span>
                 <motion.span 
                   suppressHydrationWarning
-                  className="text-[2.2em] text-brand-900 lg:text-brand-900 leading-none inline-block -ml-1 normal-case"
+                  className="text-[1.7em] sm:text-[2.2em] text-brand-900 lg:text-brand-900 leading-none inline-block -ml-1 normal-case"
                   initial={{ opacity: 0, y: 15 }}
                   animate={mounted ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
@@ -149,7 +149,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 <span className="text-slate-900">Into</span>
                 <motion.span 
                   suppressHydrationWarning
-                  className="text-[2.2em] text-brand-900 lg:text-brand-900 normal-case tracking-tight inline-block"
+                  className="text-[1.7em] sm:text-[2.2em] text-brand-900 lg:text-brand-900 normal-case tracking-tight inline-block"
                   initial={{ opacity: 0, y: 10 }}
                   animate={mounted ? { opacity: 1, y: 0 } : {}}
                   transition={{ 
@@ -168,7 +168,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             
             <motion.p 
               variants={itemVariants}
-              className="font-poppins font-normal text-white/80 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-6"
+              className="font-poppins font-normal text-neutral-800 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-6"
             >
               We offer hardware and software services, including device prototyping and web-based solutions, tailored to help students and innovators bring their ideas to life.
             </motion.p>
@@ -204,7 +204,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
               >
                 <a 
                   href="#contact" 
-                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[15px] font-semibold font-poppins rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] group-hover:shadow-[0_15px_30px_-5px_rgba(30,58,138,0.3)] transition-shadow duration-300 transform-gpu"
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-neutral-100 lg:bg-brand-900 text-neutral-900 lg:text-white text-[15px] font-semibold font-poppins rounded-[6px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] group-hover:shadow-[0_15px_30px_-5px_rgba(30,58,138,0.3)] transition-all duration-300 transform-gpu"
                 >
                   <span>Start a Project</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">

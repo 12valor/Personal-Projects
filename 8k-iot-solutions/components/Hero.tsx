@@ -158,7 +158,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
               variants={itemVariants}
               className="font-poppins font-normal text-white/80 lg:text-slate-600 text-[15px] sm:text-[16px] leading-[1.7] max-w-[58ch] mb-6"
             >
-              We offer a range of hardware and software services, including device prototyping, system integration, and web-based solutions, tailored to help students and innovators bring their ideas to life.
+              We offer hardware and software services, including device prototyping and web-based solutions, tailored to help students and innovators bring their ideas to life.
             </motion.p>
             
             <motion.div 

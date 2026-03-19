@@ -54,8 +54,8 @@ export default function HeroImageList({ images }: { images: any[] }) {
                 onClick={() => toggleActiveHeroImage(image.id)}
                 className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors ${
                   image.isActive 
-                    ? 'bg-zinc-900 text-white hover:bg-zinc-800' 
-                    : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'
+                    ? 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200' 
+                    : 'bg-zinc-900 text-white hover:bg-zinc-800'
                 }`}
               >
                 {image.isActive ? 'Deactivate' : 'Activate'}

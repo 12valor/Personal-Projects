@@ -48,7 +48,7 @@ export default async function HeroAdminPage() {
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 font-poppins">Hero Images</h1>
           <p className="mt-2 text-sm text-zinc-600">
-            Manage the images displayed in the home page hero section. Only one image can be active at a time.
+            Manage the images displayed in the home page hero section. You can activate multiple images to create a dynamic rotation.
           </p>
         </div>
       </div>

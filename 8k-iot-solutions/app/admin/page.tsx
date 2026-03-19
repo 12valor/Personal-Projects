@@ -54,6 +54,12 @@ export default async function AdminDashboardPage() {
           >
             Testimonials
           </Link>
+          <Link
+            href="/admin/hero"
+            className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors"
+          >
+            Hero
+          </Link>
         </nav>
       </div>
 

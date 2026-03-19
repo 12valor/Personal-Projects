@@ -10,6 +10,36 @@ export default async function TestimonialsAdmin() {
 
   return (
     <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="border-b border-zinc-200 mb-8">
+        <nav className="-mb-px flex gap-6" aria-label="Tabs">
+          <Link
+            href="/admin"
+            className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors"
+          >
+            Projects
+          </Link>
+          <Link
+            href="/admin/transmissions"
+            className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors"
+          >
+            Inquiries
+          </Link>
+          <Link
+            href="/admin/testimonials"
+            className="border-b-2 border-zinc-900 px-1 pb-3 text-sm font-medium text-zinc-900"
+          >
+            Testimonials
+          </Link>
+          <Link
+            href="/admin/hero"
+            className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors"
+          >
+            Hero
+          </Link>
+        </nav>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-zinc-900">Testimonials</h2>

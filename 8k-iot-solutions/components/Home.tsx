@@ -9,7 +9,13 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
 
-export default function HomeContent({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
+export default function HomeContent({ 
+  initialTestimonials = [], 
+  heroImage = null 
+}: { 
+  initialTestimonials?: any[], 
+  heroImage?: any 
+}) {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
       <SectionUrlSync />
@@ -24,7 +30,7 @@ export default function HomeContent({ initialTestimonials = [] }: { initialTesti
         aria-hidden="true"
       />
       
-      <Hero />
+      <Hero heroImage={heroImage} />
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />

@@ -41,3 +41,13 @@ model Testimonial {
   rating    Int      @default(5)
   createdAt DateTime @default(now())
 }
+
+model HeroImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  label     String?
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

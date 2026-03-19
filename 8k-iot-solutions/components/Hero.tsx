@@ -3,9 +3,26 @@ import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useScroll, Variants } from 'framer-motion';
 
-export default function Hero({ heroImage = null }: { heroImage?: any }) {
+export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const [mounted, setMounted] = useState(false);
-  const heroUrl = heroImage?.url || '/client.jpg';
+  
+  // Helper to get image source with fallback for any specific slot
+  const getImageSource = (index: number) => {
+    if (heroImages.length > 0) {
+      return heroImages[index % heroImages.length].url;
+    }
+    return '/client.jpg';
+  };
+
+  const getAltText = (index: number) => {
+    if (heroImages.length > 0) {
+      return heroImages[index % heroImages.length].alt || "Work Showcase";
+    }
+    return "";
+  };
+
+  const mobileUrl1 = getImageSource(0);
+  const mobileUrl2 = heroImages.length > 1 ? heroImages[1].url : (heroImages.length > 0 ? heroImages[0].url : '/client2.jpg');
   
   useEffect(() => {
     // Adding a slight delay prevents the synchronous set-state-in-effect warning
@@ -52,17 +69,17 @@ export default function Hero({ heroImage = null }: { heroImage?: any }) {
   const cardsData = [
     // Column 1
     [
-      { id: '1', src: heroUrl, depth: 40, duration: 4.5, delay: 0 },
-      { id: '2', src: heroUrl, depth: 15, duration: 5.2, delay: 0.7 },
-      { id: '3', src: heroUrl, depth: 25, duration: 4.8, delay: 0.3 },
-      { id: '4', src: heroUrl, depth: 10, duration: 6.1, delay: 1.2 },
+      { id: '1', src: getImageSource(0), alt: getAltText(0), depth: 40, duration: 4.5, delay: 0 },
+      { id: '2', src: getImageSource(1), alt: getAltText(1), depth: 15, duration: 5.2, delay: 0.7 },
+      { id: '3', src: getImageSource(2), alt: getAltText(2), depth: 25, duration: 4.8, delay: 0.3 },
+      { id: '4', src: getImageSource(3), alt: getAltText(3), depth: 10, duration: 6.1, delay: 1.2 },
     ],
     // Column 2
     [
-      { id: '5', src: heroUrl, depth: 20, duration: 5.8, delay: 0.5 },
-      { id: '6', src: heroUrl, depth: 35, duration: 4.2, delay: 0.2 },
-      { id: '7', src: heroUrl, depth: 10, duration: 6.5, delay: 0.9 },
-      { id: '8', src: heroUrl, depth: 30, duration: 4.6, delay: 0.6 },
+      { id: '5', src: getImageSource(4), alt: getAltText(4), depth: 20, duration: 5.8, delay: 0.5 },
+      { id: '6', src: getImageSource(5), alt: getAltText(5), depth: 35, duration: 4.2, delay: 0.2 },
+      { id: '7', src: getImageSource(6), alt: getAltText(6), depth: 10, duration: 6.5, delay: 0.9 },
+      { id: '8', src: getImageSource(7), alt: getAltText(7), depth: 30, duration: 4.6, delay: 0.6 },
     ]
   ];
 
@@ -82,16 +99,16 @@ export default function Hero({ heroImage = null }: { heroImage?: any }) {
       {/* ----- MOBILE CROSSFADE BACKGROUND ----- */}
       <div className="absolute inset-0 z-[1] lg:hidden" aria-hidden="true">
         <Image
-          src={heroUrl}
-          alt={heroImage?.alt || ""}
+          src={mobileUrl1}
+          alt={heroImages[0]?.alt || ""}
           fill
           className="object-cover hero-crossfade-img"
           sizes="100vw"
           priority
         />
         <Image
-          src={heroImage?.url || "/client2.jpg"}
-          alt={heroImage?.alt || ""}
+          src={mobileUrl2}
+          alt={heroImages[1]?.alt || heroImages[0]?.alt || ""}
           fill
           className="object-cover hero-crossfade-img-delayed"
           sizes="100vw"
@@ -182,7 +199,6 @@ export default function Hero({ heroImage = null }: { heroImage?: any }) {
                       mounted={mounted} 
                       smoothMouseX={smoothMouseX} 
                       smoothMouseY={smoothMouseY} 
-                      alt={heroImage?.alt || "Work Showcase"}
                     />
                   ))}
                 </div>
@@ -198,7 +214,7 @@ export default function Hero({ heroImage = null }: { heroImage?: any }) {
 
 // Sub-component to safely call framer-motion Hooks per card
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function HeroCard({ card, idx, colIdx, mounted, smoothMouseX, smoothMouseY, alt }: any) {
+function HeroCard({ card, idx, colIdx, mounted, smoothMouseX, smoothMouseY }: any) {
   const parallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-card.depth, card.depth]);
   const parallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-card.depth, card.depth]);
 
@@ -232,7 +248,7 @@ function HeroCard({ card, idx, colIdx, mounted, smoothMouseX, smoothMouseY, alt 
         >
           <Image 
             src={card.src} 
-            alt={alt} 
+            alt={card.alt} 
             fill 
             className="object-cover transition-transform duration-700 group-hover:scale-105" 
             sizes="(max-width: 768px) 50vw, 33vw" 

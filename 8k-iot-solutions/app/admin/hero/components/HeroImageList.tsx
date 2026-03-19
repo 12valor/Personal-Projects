@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteHeroImage, setActiveHeroImage } from '../actions';
+import { deleteHeroImage, toggleActiveHeroImage } from '../actions';
 import Image from 'next/image';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,15 +51,14 @@ export default function HeroImageList({ images }: { images: any[] }) {
             
             <div className="flex items-center justify-between gap-2">
               <button
-                onClick={() => setActiveHeroImage(image.id)}
-                disabled={image.isActive}
+                onClick={() => toggleActiveHeroImage(image.id)}
                 className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors ${
                   image.isActive 
-                    ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' 
-                    : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    ? 'bg-zinc-900 text-white hover:bg-zinc-800' 
+                    : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'
                 }`}
               >
-                Set Active
+                {image.isActive ? 'Deactivate' : 'Activate'}
               </button>
               
               <button

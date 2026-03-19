@@ -11,10 +11,10 @@ import SectionUrlSync from '@/components/SectionUrlSync';
 
 export default function HomeContent({ 
   initialTestimonials = [], 
-  heroImage = null 
+  heroImages = [] 
 }: { 
   initialTestimonials?: any[], 
-  heroImage?: any 
+  heroImages?: any[] 
 }) {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
@@ -30,7 +30,7 @@ export default function HomeContent({
         aria-hidden="true"
       />
       
-      <Hero heroImage={heroImage} />
+      <Hero heroImages={heroImages} />
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />

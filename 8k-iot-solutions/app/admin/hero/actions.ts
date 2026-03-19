@@ -50,14 +50,6 @@ export async function saveHeroImage(formData: FormData) {
     throw new Error('Image URL or file is required');
   }
 
-  if (makeActive) {
-    // Deactivate all other hero images
-    await (prisma as any).heroImage.updateMany({
-      where: { isActive: true },
-      data: { isActive: false },
-    });
-  }
-
   const data = {
     url: imageUrl,
     alt: alt || null,
@@ -108,17 +100,13 @@ export async function deleteHeroImage(id: string) {
   revalidatePath('/');
 }
 
-export async function setActiveHeroImage(id: string) {
-  // Deactivate all
-  await (prisma as any).heroImage.updateMany({
-    where: { isActive: true },
-    data: { isActive: false },
-  });
+export async function toggleActiveHeroImage(id: string) {
+  const image = await (prisma as any).heroImage.findUnique({ where: { id } });
+  if (!image) return;
 
-  // Activate selected
   await (prisma as any).heroImage.update({
     where: { id },
-    data: { isActive: true },
+    data: { isActive: !image.isActive },
   });
 
   revalidatePath('/admin/hero');

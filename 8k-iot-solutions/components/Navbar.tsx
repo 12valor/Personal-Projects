@@ -79,13 +79,13 @@ export default function Navbar() {
       <nav 
         className={`pointer-events-auto relative flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${isScrolled 
-            ? 'mt-4 md:mt-6 w-[98%] max-w-7xl rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/50 py-2' 
+            ? 'mt-4 md:mt-6 w-[98%] max-w-[1728px] rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/50 py-2' 
             : 'mt-0 w-full rounded-none bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-3'
           }
         `}
       >
         {/* Inner Content Wrapper - This pulls the elements together to match the hero width */}
-        <div className={`flex w-full items-center justify-between max-w-7xl transition-all duration-700 px-4 sm:px-6 lg:px-8`}>
+        <div className={`flex w-full items-center justify-between max-w-[1728px] transition-all duration-700 px-4 sm:px-10 lg:px-16 xl:px-20`}>
           
           {/* 1. Left: Logo Area */}
           <div className="flex flex-1 items-center justify-start">

@@ -92,8 +92,8 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
         <div className="absolute inset-0 bg-brand-900/[0.88]" />
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+      <div className="w-full max-w-[1728px] mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 justify-between relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 xl:gap-32 items-start">
           <motion.div 
             style={{ y: textY }}
             variants={{
@@ -102,9 +102,9 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             }}
             initial="hidden"
             animate={mounted ? "show" : "hidden"}
-            className="lg:col-span-6 flex flex-col items-start text-left pt-8 lg:pt-16"
+            className="lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left pt-6 lg:pt-8 max-w-[640px]"
           >
-            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-6 flex flex-col relative">
+            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-10 sm:mb-12 flex flex-col relative">
               <motion.div 
                 variants={itemVariants} 
                 className="flex items-baseline gap-x-3 sm:gap-x-4"
@@ -226,8 +226,8 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             </motion.div>
           </motion.div>
 
-          {/* Interactive 3D Grid */}
-          <div className="hidden lg:block lg:col-span-6 relative h-[500px] sm:h-[650px] w-full rounded-3xl overflow-hidden lg:ml-8 mt-12 lg:mt-0 [perspective:1200px]">
+          {/* Interactive Showcase Grid */}
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-6 relative h-[550px] sm:h-[650px] w-full max-w-[680px] justify-self-end rounded-3xl overflow-hidden mt-12 lg:mt-0 [perspective:1200px]">
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/80 to-transparent z-20 pointer-events-none" />
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-20 pointer-events-none" />
 

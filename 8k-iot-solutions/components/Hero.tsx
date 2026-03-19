@@ -104,9 +104,43 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             animate={mounted ? "show" : "hidden"}
             className="lg:col-span-6 flex flex-col items-start text-left pt-8 lg:pt-16"
           >
-            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.12] mb-6 flex flex-col">
-              <motion.span variants={itemVariants} className="block text-white lg:text-slate-900">Building Ideas</motion.span>
-              <motion.span variants={itemVariants} className="block text-brand-200 lg:text-brand-900 mt-1 sm:mt-2">Into Reality</motion.span>
+            <h1 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.15] mb-6 flex flex-col relative">
+              <motion.div 
+                variants={itemVariants} 
+                className="flex items-baseline gap-x-3 sm:gap-x-4"
+              >
+                <motion.span 
+                  className="font-lobster text-[1.8em] sm:text-[2.1em] text-brand-900 lg:text-brand-900 leading-none inline-block -ml-1 sm:-ml-2"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={mounted ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  Building
+                </motion.span>
+                <span className="text-white lg:text-slate-900">Ideas</span>
+              </motion.div>
+              
+              <motion.div 
+                variants={itemVariants} 
+                className="mt-[-0.1em] sm:mt-[-0.2em] flex items-baseline gap-x-3 sm:gap-x-4"
+              >
+                <span>Into</span>
+                <motion.span 
+                  className="font-lobster text-[1.8em] sm:text-[2.1em] text-brand-900 lg:text-brand-900 normal-case tracking-normal inline-block"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={mounted ? { opacity: 1, y: 0 } : {}}
+                  transition={{ 
+                    delay: 0.9, 
+                    duration: 0.8, 
+                    ease: [0.22, 1, 0.36, 1] 
+                  }}
+                  style={{ 
+                    marginTop: "-0.05em" 
+                  }}
+                >
+                  Reality
+                </motion.span>
+              </motion.div>
             </h1>
             
             <motion.p 

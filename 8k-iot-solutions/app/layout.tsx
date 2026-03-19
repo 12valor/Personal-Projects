@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Lobster } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -8,6 +8,12 @@ const poppins = Poppins({
   subsets: ["latin"], 
   weight: ['100', '300', '400', '500', '600', '700'],
   variable: '--font-poppins',
+});
+
+const lobster = Lobster({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-lobster",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${poppins.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
+      <body className={`${poppins.variable} ${lobster.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <Navbar />
         <main className="flex-grow w-full">
           {children}

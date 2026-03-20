@@ -3,7 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 import ServiceCardSkeleton from './Skeletons/ServiceCardSkeleton';
-import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
+import { motion, Variants } from 'framer-motion';
+
 
 function useParallax(speedMultiplier = 0.05) {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,8 +40,42 @@ const SOFTWARE_FEATURES = [
   "Embedded System Development",
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const headerVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1], // easeOutQuart
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
 export default function ServicesSection() {
-  const [setRef, inView] = useInView();
   const { parallaxRef, offset } = useParallax(0.04);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -81,13 +116,17 @@ export default function ServicesSection() {
         }
       `}} />
 
-      <div className="max-w-4xl mx-auto px-6 relative z-10" ref={setRef as any}>
+      <motion.div 
+        className="max-w-4xl mx-auto px-6 relative z-10"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false, amount: 0.2 }}
+      >
         
         {/* Section Header */}
-        <div 
-          className={`text-center mb-12 transition-all duration-700 cubic-out ${
-            inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
+        <motion.div 
+          variants={headerVariants}
+          className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold tracking-tight text-zinc-900">
             Hardware & Software
@@ -95,12 +134,15 @@ export default function ServicesSection() {
           <p className="mt-3 text-sm text-zinc-500 font-medium">
             Specialized solutions for student projects and enterprise clients.
           </p>
-        </div>
+        </motion.div>
 
         {/* Parallax Container Context */}
         <div ref={parallaxRef}>
           {/* Cards Container with Parallax transformation */}
-          <div style={{ transform: `translateY(${-offset}px)` }}>
+          <motion.div 
+            style={{ transform: `translateY(${-offset}px)` }}
+            variants={containerVariants}
+          >
             {isLoading ? (
                 <div className="grid grid-cols-2 gap-6 md:gap-8 items-stretch pt-4">
                   <ServiceCardSkeleton />
@@ -111,15 +153,9 @@ export default function ServicesSection() {
                   {/* ========================================= */}
                   {/* CARD 1: Hardware Services                 */}
                   {/* ========================================= */}
-                  <div 
-                      className={`
-                      group flex flex-col bg-white rounded-2xl border border-zinc-200 
-                      shadow-sm hover:shadow-lg transition-shadow duration-[250ms]
-                      overflow-hidden
-                      ${inView ? 'animate-pop-loop-1' : ''}
-                      ${getFadeUpClasses(inView, 'translate-y-12')}
-                      `}
-                      style={getStaggerStyle(inView, 1)}
+                  <motion.div 
+                      variants={cardVariants}
+                      className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-lg transition-shadow duration-[250ms] overflow-hidden animate-pop-loop-1"
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
                       <div className="relative bg-zinc-50/50 border-b border-zinc-100 p-4 sm:p-8 overflow-hidden h-auto sm:h-[210px] flex flex-col">
@@ -171,20 +207,14 @@ export default function ServicesSection() {
                           Explore Hardware
                       </Link>
                       </div>
-                  </div>
+                  </motion.div>
           
                   {/* ========================================= */}
                   {/* CARD 2: Software Services (Highlighted)   */}
                   {/* ========================================= */}
-                  <div 
-                      className={`
-                      group flex flex-col bg-white rounded-2xl border border-zinc-200 
-                      shadow-md hover:shadow-xl transition-shadow duration-[250ms]
-                      overflow-hidden ring-1 ring-indigo-50
-                      ${inView ? 'animate-pop-loop-2' : ''}
-                      ${getFadeUpClasses(inView, 'translate-y-12')}
-                      `}
-                      style={getStaggerStyle(inView, 2)}
+                  <motion.div 
+                      variants={cardVariants}
+                      className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-md hover:shadow-xl transition-shadow duration-[250ms] overflow-hidden ring-1 ring-indigo-50 animate-pop-loop-2"
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
                       <div className="relative bg-gradient-to-b from-indigo-50/80 to-white border-b border-indigo-50/80 p-4 sm:p-8 overflow-hidden h-auto sm:h-[210px] flex flex-col">
@@ -236,12 +266,12 @@ export default function ServicesSection() {
                           Explore Software
                       </Link>
                       </div>
-                  </div>
+                  </motion.div>
                 </div>
             )}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

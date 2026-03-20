@@ -123,7 +123,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             animate={mounted ? "show" : "hidden"}
             className="lg:col-span-7 xl:col-span-6 flex flex-col items-start text-left pt-6 lg:pt-14 max-w-[500px]"
           >
-            <h1 className="font-boldonse text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.1] mb-4 sm:mb-6 flex flex-col relative">
+            <h1 className="font-boldonse text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight leading-[1.1] mb-10 sm:mb-14 flex flex-col relative">
               <motion.div 
                 variants={itemVariants} 
                 className="flex items-baseline gap-x-3 sm:gap-x-4"

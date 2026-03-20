@@ -2,11 +2,33 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
 
-import { useInView, getFadeUpClasses, getStaggerStyle } from '@/lib/animations';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
 
 export default function About() {
-  const [setRef, inView] = useInView();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const images = [
@@ -34,43 +56,56 @@ export default function About() {
       `}} />
       
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ref={setRef as any}>
+      <motion.div 
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false, amount: 0.25 }}
+        variants={containerVariants}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
-          <div 
-            className={`lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0 ${getFadeUpClasses(inView, 'translate-y-12')}`}
-            style={getStaggerStyle(inView, 0)}
+          <motion.div 
+            variants={itemVariants}
+            className="lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0"
           >
             
-            <div 
-              className={`flex items-center gap-3 mb-6 ${getFadeUpClasses(inView, 'translate-y-6')}`}
-              style={getStaggerStyle(inView, 1, 0)}
+            <motion.div 
+              variants={itemVariants}
+              className="flex items-center gap-3 mb-6"
             >
               <div className="h-px w-6 bg-brand-600 rounded-full" />
               <h3 className="text-[12px] font-bold text-brand-900 uppercase tracking-widest font-sans">
                 Who We Are
               </h3>
-            </div>
+            </motion.div>
 
-            <h2 className={`text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 font-sans leading-[1.12] tracking-tight ${getFadeUpClasses(inView, 'translate-y-6')}`}
-              style={getStaggerStyle(inView, 2, 0)}
+            <motion.h2 
+              variants={itemVariants}
+              className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 font-sans leading-[1.12] tracking-tight"
             >
               Hardware precision meets <br className="hidden md:block"/>
               <span className="text-brand-900">software intelligence.</span>
-            </h2>
+            </motion.h2>
 
-            <div className="max-w-[600px] text-[15px] sm:text-base text-gray-600 font-poppins leading-relaxed mb-10 space-y-4">
+            <motion.div 
+              variants={itemVariants}
+              className="max-w-[600px] text-[15px] sm:text-base text-gray-600 font-poppins leading-relaxed mb-10 space-y-4"
+            >
               <p>
                 As dedicated freelance IoT specialists based in Talisay City, Negros Occidental, we partner with visionaries and businesses to architect custom solutions from the ground up.
               </p>
               <p>
                 From designing custom microcontroller circuits to deploying responsive cloud dashboards, our student-centered approach focuses on building robust ecosystems that seamlessly connect the physical world to actionable digital insights.
               </p>
-            </div>
+            </motion.div>
 
             {/* Metrics Row with Lucide Icons */}
-            <div className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px]">
+            <motion.div 
+              variants={itemVariants}
+              className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px]"
+            >
               {/* Metric 1 */}
               <div className="group flex flex-col items-start border-l-[3px] border-gray-200 hover:border-brand-500 bg-gray-50/80 p-4 transition-colors duration-300">
                 <div className="flex items-center justify-between w-full mb-1">
@@ -92,9 +127,9 @@ export default function About() {
                   Years Experience
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div variants={itemVariants}>
               <a 
                 href="#contact" 
                 className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[14.5px] font-medium font-poppins rounded-[8px] overflow-hidden transition-all duration-300 hover:bg-brand-700 active:scale-[0.98]"
@@ -104,13 +139,13 @@ export default function About() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </a>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
-          <div 
-            className={`hidden md:block lg:col-span-5 relative order-1 lg:order-2 ${getFadeUpClasses(inView, 'translate-y-12')}`}
-            style={getStaggerStyle(inView, 3, 0)}
+          <motion.div 
+            variants={itemVariants}
+            className="hidden md:block lg:col-span-5 relative order-1 lg:order-2"
           >
             <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">
               <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden isolate">
@@ -165,10 +200,10 @@ export default function About() {
             </div>
             
             <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block transition-transform duration-500 group-hover/carousel:translate-x-4 group-hover/carousel:translate-y-4" />
-          </div>
+          </motion.div>
 
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

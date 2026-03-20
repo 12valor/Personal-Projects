@@ -3,8 +3,10 @@ import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { motion, useTransform, useScroll, Variants } from 'framer-motion';
 
+import { memo } from 'react';
+
 // Version 1.0.2 - Design Sync Restoration
-export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
+const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const [mounted, setMounted] = useState(false);
   
   // Safe array access
@@ -57,7 +59,7 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   
   const { scrollY } = useScroll();
-  const textY = useTransform(scrollY, [0, 800], [0, 100]);
+  const textY = useTransform(scrollY, [0, 500], [0, 30]);
 
   const cardsData = [
     [
@@ -279,22 +281,33 @@ export default function Hero({ heroImages = [] }: { heroImages?: any[] }) {
       </div>
     </section>
   );
-}
+});
+
+export default Hero;
 
 // Sub-component to safely call framer-motion Hooks per card
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function HeroCard({ card, idx, colIdx, mounted }: any) {
+  const { scrollY } = useScroll();
+  // Very subtle speeds to minimize repaint cost
+  const parallaxOffset = colIdx === 0 ? 15 : 30;
+  const parallaxY = useTransform(scrollY, [0, 500], [0, -parallaxOffset]);
+
   return (
     <motion.div
+      style={{ y: parallaxY }}
       className="w-full aspect-[4/5] flex-shrink-0 z-10"
-      initial={{ opacity: 0, y: 60 }}
-      animate={mounted ? { opacity: 1, y: 0 } : {}}
-      transition={{ 
-        duration: 0.8, 
-        ease: "easeOut", 
-        delay: 0.6 + idx * 0.15 + colIdx * 0.2 
-      }}
     >
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={mounted ? { opacity: 1, y: 0 } : {}}
+        transition={{ 
+          duration: 0.8, 
+          ease: "easeOut", 
+          delay: 0.6 + idx * 0.15 + colIdx * 0.2 
+        }}
+        className="w-full h-full"
+      >
       <motion.div
         animate={{ y: [0, -12, 0] }}
         transition={{ 
@@ -320,6 +333,7 @@ function HeroCard({ card, idx, colIdx, mounted }: any) {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
         </motion.div>
       </motion.div>
+    </motion.div>
     </motion.div>
   );
 }

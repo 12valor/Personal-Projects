@@ -18,14 +18,16 @@ export default function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      setIsScrolled(currentScrollY > 50);
+      // Only set state if the boolean flag would actually change
+      const scrolled = currentScrollY > 50;
+      setIsScrolled(prev => prev !== scrolled ? scrolled : prev);
 
-      // Smart scroll behavior
+      // Smart scroll behavior - use functional updates to check previous state
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false); // Hide on scroll down
-        setMobileMenuOpen(false); // Close mobile menu when hiding
+        setIsVisible(prev => prev !== false ? false : prev);
+        setMobileMenuOpen(prev => prev !== false ? false : prev);
       } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true); // Show on scroll up
+        setIsVisible(prev => prev !== true ? true : prev);
       }
       
       lastScrollY = currentScrollY;

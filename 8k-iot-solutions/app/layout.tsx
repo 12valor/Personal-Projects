@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Boldonse } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import SmoothScroll from "@/components/SmoothScroll";
 
 // Load Poppins with specific variables
 const poppins = Poppins({ 
@@ -30,12 +31,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body className={`${poppins.variable} ${boldonse.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
-        <Navbar />
-        <main className="flex-grow w-full">
-          {children}
-        </main>
+        <SmoothScroll>
+          <Navbar />
+          <main className="flex-grow w-full">
+            {children}
+          </main>
+        </SmoothScroll>
       </body>
     </html>
   );

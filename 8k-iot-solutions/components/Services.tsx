@@ -1,31 +1,12 @@
 "use client";
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 import ServiceCardSkeleton from './Skeletons/ServiceCardSkeleton';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 
-function useParallax(speedMultiplier = 0.05) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [offset, setOffset] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-      
-        const centerDistance = (window.innerHeight / 2) - (rect.top + rect.height / 2);
-        setOffset(centerDistance * speedMultiplier);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [speedMultiplier]);
-
-  return { parallaxRef: ref, offset };
-}
 
 const HARDWARE_FEATURES = [
   "IoT Project Development",
@@ -75,8 +56,16 @@ const cardVariants: Variants = {
   },
 };
 
-export default function ServicesSection() {
-  const { parallaxRef, offset } = useParallax(0.04);
+const ServicesSection = memo(function ServicesSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  
+  // map scroll progress to a subtle offset range [-40, 40]
+  const yOffset = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -137,10 +126,10 @@ export default function ServicesSection() {
         </motion.div>
 
         {/* Parallax Container Context */}
-        <div ref={parallaxRef}>
+        <div ref={containerRef}>
           {/* Cards Container with Parallax transformation */}
           <motion.div 
-            style={{ transform: `translateY(${-offset}px)` }}
+            style={{ y: yOffset }}
             variants={containerVariants}
           >
             {isLoading ? (
@@ -274,4 +263,6 @@ export default function ServicesSection() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default ServicesSection;

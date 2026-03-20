@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from 'react';
+import React, { useRef, memo } from 'react';
 import { Search, LayoutTemplate, Cpu, Rocket } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -84,7 +84,7 @@ const cardContentVariants = {
   },
 };
 
-export default function Process() {
+const Process = memo(function Process() {
   const containerRef = useRef<HTMLElement>(null);
   
   // Parallax Background Logic
@@ -215,4 +215,6 @@ export default function Process() {
       </div>
     </motion.section>
   );
-}
+});
+
+export default Process;

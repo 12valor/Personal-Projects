@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useActionState } from 'react';
+import React, { useActionState, memo } from 'react';
 import { submitContactForm } from '@/app/contact';
 
-const Contact = () => {
+const Contact = memo(() => {
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; message?: string; error?: string } | null, formData: FormData) => {
       return await submitContactForm(formData);
@@ -248,6 +248,6 @@ const Contact = () => {
       </div>
     </section>
   );
-};
+});
 
 export default Contact;

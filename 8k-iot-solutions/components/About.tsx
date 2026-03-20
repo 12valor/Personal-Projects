@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import Image from 'next/image';
 import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
@@ -28,7 +28,7 @@ const itemVariants: Variants = {
   },
 };
 
-export default function About() {
+const About = memo(function About() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const images = [
@@ -206,4 +206,6 @@ export default function About() {
       </motion.div>
     </section>
   );
-}
+});
+
+export default About;

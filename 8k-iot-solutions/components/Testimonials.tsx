@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import Image from 'next/image';
-import { useInView } from '@/lib/animations';
 import { Star, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
-  const [setRef, inView] = useInView();
+const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
 
   // Purely dynamic - if no testimonials in DB, don't show the section
   const testimonials = initialTestimonials;
@@ -26,7 +24,12 @@ export default function Testimonials({ initialTestimonials = [] }: { initialTest
   const duplicatedDesktopRow = [...testimonials, ...testimonials, ...testimonials];
 
   return (
-    <section className="relative py-8 md:py-10 bg-transparent overflow-hidden z-0" ref={setRef as unknown as React.LegacyRef<HTMLElement>}>
+    <motion.section 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: 0.1 }}
+      className="relative py-8 md:py-10 bg-transparent overflow-hidden z-0"
+    >
 
       {/* Floating Gradient Orbs for Depth */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-brand-50 rounded-full blur-[120px] opacity-60 pointer-events-none" />
@@ -38,14 +41,14 @@ export default function Testimonials({ initialTestimonials = [] }: { initialTest
           {/* Row 1: Scrolls Left */}
           <div className="flex animate-scroll-left py-2">
             {duplicatedTopRow.map((item, idx) => (
-              <TestimonialCard key={`top-${idx}`} item={item} idx={idx} inView={inView} />
+              <TestimonialCard key={`top-${idx}`} item={item} idx={idx} />
             ))}
           </div>
           
           {/* Row 2: Scrolls Right */}
           <div className="flex animate-scroll-right py-2">
             {duplicatedBottomRow.map((item, idx) => (
-              <TestimonialCard key={`bottom-${idx}`} item={item} idx={idx} inView={inView} />
+              <TestimonialCard key={`bottom-${idx}`} item={item} idx={idx} />
             ))}
           </div>
         </div>
@@ -54,15 +57,18 @@ export default function Testimonials({ initialTestimonials = [] }: { initialTest
         <div className="hidden md:flex overflow-hidden">
           <div className="flex animate-scroll-left py-6">
             {duplicatedDesktopRow.map((item, idx) => (
-              <TestimonialCard key={`desk-${idx}`} item={item} idx={idx} inView={inView} />
+              <TestimonialCard key={`desk-${idx}`} item={item} idx={idx} />
             ))}
           </div>
         </div>
 
       </div>
-    </section>
+    </motion.section>
   );
-}
+});
+
+
+export default Testimonials;
 
 // Ensure the specific type matches the mapped arrays layout
 type TestimonialProps = {
@@ -74,10 +80,9 @@ type TestimonialProps = {
     rating: number;
   };
   idx: number;
-  inView: boolean;
 };
 
-function TestimonialCard({ item, idx, inView }: TestimonialProps) {
+function TestimonialCard({ item, idx }: TestimonialProps) {
   const [imgError, setImgError] = useState(false);
   
   // Extract initials if Image fails (e.g. "Sir Jayson" -> "SJ")
@@ -85,9 +90,14 @@ function TestimonialCard({ item, idx, inView }: TestimonialProps) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: "easeOut", delay: (idx % 4) * 0.15 }}
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: { 
+          opacity: 1, 
+          y: 0, 
+          transition: { duration: 0.6, ease: "easeOut", delay: (idx % 4) * 0.15 } 
+        }
+      }}
       whileHover={{ y: -6, scale: 1.02 }}
       className="relative inline-block w-[300px] sm:w-[450px] mx-3 md:mx-4 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-shadow duration-300 group select-none whitespace-normal align-top overflow-hidden flex-shrink-0"
     >

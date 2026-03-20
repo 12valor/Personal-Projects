@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { memo } from 'react';
 import Image from 'next/image';
 
-const Footer = () => {
+const Footer = memo(() => {
   return (
     <footer className="relative bg-white pt-16 pb-8 overflow-hidden z-0 font-sans">
       
@@ -132,6 +132,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;

@@ -3,6 +3,7 @@
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
+import SchoolLogos from '@/components/SchoolLogos';
 import ServicesSection from '@/components/Services';
 import Process from '@/components/Process';
 import Contact from '@/components/Contact';
@@ -31,6 +32,7 @@ export default function HomeContent({
       />
       
       <Hero heroImages={heroImages} />
+      <SchoolLogos />
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />

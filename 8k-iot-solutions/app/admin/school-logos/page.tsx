@@ -20,7 +20,6 @@ export default async function SchoolLogosAdminPage() {
     await deleteSchoolLogo(id);
   }
 
-  // A basic setup for manual ordering without drag and drop library dependencies
   async function moveUp(formData: FormData) {
     'use server';
     const id = formData.get('id') as string;
@@ -135,7 +134,9 @@ export default async function SchoolLogosAdminPage() {
                           <Image src={logo.image} alt={logo.name || 'Logo'} fill className="object-contain" unoptimized />
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-zinc-900">{logo.name || '-'}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-zinc-900">
+                        {logo.name || '-'}
+                      </td>
                       <td className="px-3 py-4 text-sm text-zinc-500 max-w-[200px] truncate">
                         {logo.link ? <a href={logo.link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{logo.link}</a> : '-'}
                       </td>

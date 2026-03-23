@@ -53,12 +53,12 @@ model HeroImage {
 }
 
 model SchoolLogo {
-  id        String   @id @default(cuid())
-  name      String?
-  link      String?  
-  image     String   
-  order     Int      @default(0)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  name       String?
+  link       String?  
+  image      String   
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

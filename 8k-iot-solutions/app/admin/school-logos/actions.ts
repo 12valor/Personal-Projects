@@ -101,14 +101,14 @@ export async function reorderSchoolLogos(items: { id: string, order: number }[])
   if (!prismaClient.schoolLogo) return;
 
   // Use a transaction to perform batch updates
-  const transactions = items.map(item => 
+  const transactions = items.map((item: any) => 
     prismaClient.schoolLogo.update({
       where: { id: item.id },
       data: { order: item.order },
     })
   );
 
-  await prisma.$transaction(transactions);
+  await prismaClient.$transaction(transactions);
   
   revalidatePath('/admin/school-logos');
   revalidatePath('/');

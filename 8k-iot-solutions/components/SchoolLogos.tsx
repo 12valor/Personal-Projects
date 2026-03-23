@@ -16,10 +16,10 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
           </span>
         </div>
 
-        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 lg:gap-8">
+        <div className="flex flex-nowrap overflow-x-auto md:flex-wrap justify-center items-center gap-4 md:gap-6 lg:gap-8 pb-4 px-4 md:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] w-full">
           {logos.map((logo, idx) => {
             const logoContent = (
-              <div className="relative h-20 md:h-24 lg:h-32 w-48 md:w-56 lg:w-72 p-2 transition-transform duration-300 hover:scale-110">
+              <div className="relative h-16 md:h-24 lg:h-32 w-32 md:w-56 lg:w-72 p-2 transition-transform duration-300 hover:scale-110">
                 <Image 
                   src={logo.image} 
                   alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 
@@ -31,7 +31,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
             );
 
             return (
-              <div key={logo.id || idx} className="flex items-center justify-center">
+              <div key={logo.id || idx} className="flex items-center justify-center snap-center shrink-0">
                 {logo.link ? (
                   <a href={logo.link} target="_blank" rel="noreferrer" className="block">
                     {logoContent}

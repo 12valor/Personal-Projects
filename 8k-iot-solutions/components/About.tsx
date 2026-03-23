@@ -73,11 +73,11 @@ const About = memo(function About() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
-          <div className="lg:col-span-7 flex flex-col justify-center order-2 lg:order-1 pt-8 lg:pt-0">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left justify-center order-2 lg:order-1 pt-8 lg:pt-0 max-w-2xl mx-auto lg:mx-0 w-full">
             
             <motion.div 
               variants={itemVariants}
-              className="flex items-center gap-3 mb-6"
+              className="flex items-center justify-center lg:justify-start gap-3 mb-6"
               style={{ willChange: 'transform, opacity' }}
             >
               <div className="h-px w-6 bg-brand-600 rounded-full" />
@@ -111,7 +111,7 @@ const About = memo(function About() {
             {/* Metrics Row with Lucide Icons */}
             <motion.div 
               variants={itemVariants}
-              className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px]"
+              className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px] w-full text-left"
               style={{ willChange: 'transform, opacity' }}
             >
               {/* Metric 1 */}
@@ -153,7 +153,7 @@ const About = memo(function About() {
           {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
           <motion.div 
             variants={itemVariants}
-            className="hidden md:block lg:col-span-5 relative order-1 lg:order-2"
+            className="hidden lg:block lg:col-span-5 relative order-1 lg:order-2"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">

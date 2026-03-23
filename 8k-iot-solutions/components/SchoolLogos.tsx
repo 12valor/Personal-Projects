@@ -2,8 +2,6 @@
 
 import React, { memo } from 'react';
 import { motion, Variants } from 'framer-motion';
-import { GraduationCap, Building2, Library, School, BookOpen, Globe2, Shapes } from 'lucide-react';
-
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -35,13 +33,10 @@ const itemVariants: Variants = {
 };
 
 const baseLogos = [
-  { name: 'Quantum University', icon: GraduationCap, color: 'text-brand-600' },
-  { name: 'Global Institute', icon: Globe2, color: 'text-blue-600' },
-  { name: 'Nexus Academy', icon: Building2, color: 'text-emerald-600' },
-  { name: 'Tech Foundation', icon: Shapes, color: 'text-purple-600' },
-  { name: 'National Library', icon: Library, color: 'text-amber-600' },
-  { name: 'State College', icon: School, color: 'text-rose-600' },
-  { name: 'Open Learning', icon: BookOpen, color: 'text-cyan-600' },
+  { name: 'Harvard', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/512px-Harvard_University_logo.svg.png' },
+  { name: 'MIT', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/512px-MIT_logo.svg.png' },
+  { name: 'Cambridge', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/University_of_Cambridge_coat_of_arms_official.svg/512px-University_of_Cambridge_coat_of_arms_official.svg.png' },
+  { name: 'Columbia', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Columbia_University_shield.svg/512px-Columbia_University_shield.svg.png' },
 ];
 
 const SchoolLogos = memo(function SchoolLogos() {
@@ -93,7 +88,6 @@ const SchoolLogos = memo(function SchoolLogos() {
           <div className="flex flex-nowrap gap-12 sm:gap-16 lg:gap-24 items-center w-max animate-custom-marquee pr-12 sm:pr-16 lg:pr-24">
             
             {duplicatedLogos.map((logo, idx) => {
-              const Icon = logo.icon;
               // Add slight sizing variation to feel natural, based on index
               const scaleVariation = idx % 2 === 0 ? 'scale-[1.02]' : 'scale-[0.98]';
 
@@ -102,12 +96,14 @@ const SchoolLogos = memo(function SchoolLogos() {
                   key={idx}
                   variants={itemVariants}
                   style={{ willChange: 'transform, opacity' }}
-                  className={`flex items-center gap-3 shrink-0 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500 ease-out hover:scale-[1.06] cursor-default ${scaleVariation}`}
+                  className={`flex items-center justify-center shrink-0 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500 ease-out hover:scale-[1.1] cursor-default ${scaleVariation}`}
                 >
-                  <Icon className={`w-8 h-8 ${logo.color}`} strokeWidth={1.5} />
-                  <span className="text-xl sm:text-2xl font-bold font-sans text-gray-800 whitespace-nowrap tracking-tight">
-                    {logo.name}
-                  </span>
+                  <img 
+                    src={logo.src} 
+                    alt={`${logo.name} Logo`} 
+                    className="h-16 md:h-20 lg:h-24 w-auto object-contain" 
+                    loading="lazy"
+                  />
                 </motion.div>
               );
             })}

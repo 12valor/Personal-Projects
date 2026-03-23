@@ -16,16 +16,16 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
         </div>
 
         {/* Logos Flex Container */}
-        <div className="flex flex-wrap justify-center items-center gap-12 sm:gap-16 lg:gap-24">
+        <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 lg:gap-12">
           {logos.map((logo, idx) => {
             const logoContent = (
-              <div className="relative h-24 md:h-28 lg:h-36 w-48 md:w-64 lg:w-80 p-2">
+              <div className="relative h-24 md:h-28 lg:h-32 w-32 md:w-40 lg:w-48 p-2">
                 <Image 
                   src={logo.image} 
                   alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 
                   fill
                   className="object-contain p-2" 
-                  sizes="(max-width: 768px) 192px, (max-width: 1024px) 256px, 320px"
+                  sizes="(max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
                 />
               </div>
             );
@@ -33,7 +33,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
             return (
               <div
                 key={logo.id || idx}
-                className={`flex items-center justify-center shrink-0 opacity-80 hover:opacity-100 transition-opacity duration-300 ${logo.link ? 'cursor-pointer' : 'cursor-default'}`}
+                className={`flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-300 ease-in-out ${logo.link ? 'cursor-pointer' : 'cursor-default'}`}
               >
                 {logo.link ? (
                   <a href={logo.link} target="_blank" rel="noreferrer" className="block w-full h-full">

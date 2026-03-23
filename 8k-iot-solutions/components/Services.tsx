@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState, useRef, memo } from 'react';
+import React, { useRef, memo } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
-import ServiceCardSkeleton from './Skeletons/ServiceCardSkeleton';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 
@@ -65,16 +64,6 @@ const ServicesSection = memo(function ServicesSection() {
   
   // map scroll progress to a subtle offset range [-40, 40]
   const yOffset = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate a brief loading state to show skeletons
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <section id="services" className="relative w-full pt-12 lg:pt-16 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden font-inter z-0">
@@ -109,7 +98,7 @@ const ServicesSection = memo(function ServicesSection() {
         className="max-w-4xl mx-auto px-6 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         
         {/* Section Header */}
@@ -129,17 +118,11 @@ const ServicesSection = memo(function ServicesSection() {
         <div ref={containerRef}>
           {/* Cards Container with Parallax transformation */}
           <motion.div style={{ y: yOffset }}>
-            {isLoading ? (
-                <div className="grid grid-cols-2 gap-6 md:gap-8 items-stretch pt-4">
-                  <ServiceCardSkeleton />
-                  <ServiceCardSkeleton isHighlighted />
-                </div>
-            ) : (
                 <motion.div 
                   className="grid grid-cols-2 gap-6 md:gap-8 items-stretch"
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, amount: 0.1 }}
+                  viewport={{ once: true, amount: 0.1 }}
                   variants={containerVariants}
                 >
                   {/* ========================================= */}
@@ -260,7 +243,6 @@ const ServicesSection = memo(function ServicesSection() {
                       </div>
                   </motion.div>
                 </motion.div>
-            )}
           </motion.div>
         </div>
       </motion.div>

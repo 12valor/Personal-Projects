@@ -67,30 +67,32 @@ export default function SectionUrlSync() {
 
     const sections = ['home', 'about', 'services', 'contact'];
     
+    let scrollTimeout: NodeJS.Timeout;
+    
     const handleIntersect = (entries: IntersectionObserverEntry[]) => {
       // Find the most prominent intersecting entry
       const visibleEntries = entries.filter((entry) => entry.isIntersecting);
       
       if (visibleEntries.length > 0) {
-        // Find the entry that has the largest intersection ratio
         const bestEntry = visibleEntries.reduce((prev, current) => 
           prev.intersectionRatio > current.intersectionRatio ? prev : current
         );
         
-        const currentHash = window.location.pathname;
         const targetPath = bestEntry.target.id === 'home' ? '/' : `/${bestEntry.target.id}`;
 
-        // Only update if it actually changed and we aren't rapidly scrolling
-        if (currentHash !== targetPath) {
-           window.history.replaceState(null, '', targetPath);
+        if (window.location.pathname !== targetPath) {
+           clearTimeout(scrollTimeout);
+           scrollTimeout = setTimeout(() => {
+             window.history.replaceState(null, '', targetPath);
+           }, 150);
         }
       }
     };
 
     observerRef.current = new IntersectionObserver(handleIntersect, {
       root: null,
-      rootMargin: '-20% 0px -40% 0px', // Triggers when section is roughly in the middle 60% of viewport
-      threshold: [0, 0.25, 0.5, 0.75, 1], // Provide multiple thresholds for better detection
+      rootMargin: '-20% 0px -40% 0px', 
+      threshold: [0.5], 
     });
 
     sections.forEach((id) => {

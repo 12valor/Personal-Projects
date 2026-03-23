@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useMemo } from 'react';
 import Image from 'next/image';
 import { Star, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -19,15 +19,15 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
   const topRowTestimonials = testimonials.slice(0, half);
   const bottomRowTestimonials = testimonials.slice(half);
 
-  const duplicatedTopRow = [...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials]; 
-  const duplicatedBottomRow = [...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials]; 
-  const duplicatedDesktopRow = [...testimonials, ...testimonials, ...testimonials];
+  const duplicatedTopRow = useMemo(() => [...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials], [topRowTestimonials]); 
+  const duplicatedBottomRow = useMemo(() => [...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials], [bottomRowTestimonials]); 
+  const duplicatedDesktopRow = useMemo(() => [...testimonials, ...testimonials, ...testimonials], [testimonials]);
 
   return (
     <motion.section 
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.1 }}
+      viewport={{ once: true, amount: 0.1 }}
       className="relative py-8 md:py-10 bg-transparent overflow-hidden z-0"
     >
 
@@ -82,7 +82,7 @@ type TestimonialProps = {
   idx: number;
 };
 
-function TestimonialCard({ item, idx }: TestimonialProps) {
+const TestimonialCard = memo(function TestimonialCard({ item, idx }: TestimonialProps) {
   const [imgError, setImgError] = useState(false);
   
   // Extract initials if Image fails (e.g. "Sir Jayson" -> "SJ")
@@ -149,4 +149,4 @@ function TestimonialCard({ item, idx }: TestimonialProps) {
       </blockquote>
     </motion.div>
   );
-}
+});

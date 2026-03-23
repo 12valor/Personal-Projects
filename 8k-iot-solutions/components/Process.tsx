@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, memo } from 'react';
 import { Search, LayoutTemplate, Cpu, Rocket } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 
 const steps = [
   {
@@ -47,39 +47,39 @@ const containerVariants = {
   },
 };
 
-const headerVariants = {
+const headerVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.8,
-      ease: [0.16, 1, 0.3, 1], // easeOutQuart
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.8,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as const,
       staggerChildren: 0.1,
     },
   },
 };
 
-const cardContentVariants = {
+const cardContentVariants: Variants = {
   hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
+      ease: "easeOut" as const,
     },
   },
 };
@@ -103,7 +103,7 @@ const Process = memo(function Process() {
       className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.2 }}
     >
       
       {/* 1. Subtle Premium Background Layers (Parallax) */}

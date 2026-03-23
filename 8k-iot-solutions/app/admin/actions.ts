@@ -3,8 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import fs from 'fs/promises';
-import path from 'path';
+import { saveImageFile } from '@/lib/upload';
 
 export async function saveProject(formData: FormData) {
   const id = formData.get('id') as string | null;
@@ -22,22 +21,7 @@ export async function saveProject(formData: FormData) {
   const imageFile = formData.get('coverImage') as File | null;
   
   if (imageFile && imageFile.size > 0 && imageFile.name) {
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    // Save to public/uploads
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
-    
-    const uniqueName = `${Date.now()}-${imageFile.name.replace(/\s+/g, '-')}`;
-    const filePath = path.join(uploadDir, uniqueName);
-    
-    await fs.writeFile(filePath, buffer);
-    coverImage = `/uploads/${uniqueName}`;
+    coverImage = await saveImageFile(imageFile, 'project');
   }
 
   // Parse arrays
@@ -97,14 +81,7 @@ export async function saveTestimonial(formData: FormData) {
   const avatarUrl = formData.get('avatarUrl') as string | null;
 
   if (avatarFile && avatarFile.size > 0 && avatarFile.name) {
-    const bytes = await avatarFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try { await fs.access(uploadDir); } catch { await fs.mkdir(uploadDir, { recursive: true }); }
-    const uniqueName = `avatar-${Date.now()}-${avatarFile.name.replace(/\s+/g, '-')}`;
-    const filePath = path.join(uploadDir, uniqueName);
-    await fs.writeFile(filePath, buffer);
-    avatar = `/uploads/${uniqueName}`;
+    avatar = await saveImageFile(avatarFile, 'avatar');
   } else if (avatarUrl) {
     avatar = avatarUrl;
   }

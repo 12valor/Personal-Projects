@@ -271,6 +271,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                       idx={idx} 
                       colIdx={colIdx} 
                       mounted={mounted} 
+                      scrollY={scrollY}
                     />
                   ))}
                 </div>
@@ -287,8 +288,7 @@ export default Hero;
 
 // Sub-component to safely call framer-motion Hooks per card
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function HeroCard({ card, idx, colIdx, mounted }: any) {
-  const { scrollY } = useScroll();
+const HeroCard = memo(function HeroCard({ card, idx, colIdx, mounted, scrollY }: any) {
   // Very subtle speeds to minimize repaint cost
   const parallaxOffset = colIdx === 0 ? 15 : 30;
   const parallaxY = useTransform(scrollY, [0, 500], [0, -parallaxOffset]);
@@ -336,4 +336,4 @@ function HeroCard({ card, idx, colIdx, mounted }: any) {
     </motion.div>
     </motion.div>
   );
-}
+});

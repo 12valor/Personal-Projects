@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import fs from 'fs/promises';
 import path from 'path';
+import { saveImageFile } from '@/lib/upload';
 
 export async function saveSchoolLogo(formData: FormData) {
   const id = formData.get('id') as string | null;
@@ -18,22 +19,7 @@ export async function saveSchoolLogo(formData: FormData) {
   const imageFile = formData.get('image') as File | null;
   
   if (imageFile && imageFile.size > 0 && imageFile.name) {
-    const bytes = await imageFile.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    // Save to public/uploads
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
-    
-    const uniqueName = `logo-${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '-')}`;
-    const filePath = path.join(uploadDir, uniqueName);
-    
-    await fs.writeFile(filePath, buffer);
-    image = `/uploads/${uniqueName}`;
+    image = await saveImageFile(imageFile, 'logo');
   }
 
   const logoData = {

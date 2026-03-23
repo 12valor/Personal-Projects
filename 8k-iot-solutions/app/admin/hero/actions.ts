@@ -3,8 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import fs from 'fs/promises';
-import path from 'path';
+import { saveImageFile } from '@/lib/upload';
 
 export async function getHeroImages() {
   return await (prisma as any).heroImage.findMany({
@@ -29,21 +28,7 @@ export async function saveHeroImage(formData: FormData) {
   let imageUrl = urlInput || '';
 
   if (file && file.size > 0 && file.name) {
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    const uploadDir = path.join(process.cwd(), 'public/uploads');
-    try {
-      await fs.access(uploadDir);
-    } catch {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
-    
-    const uniqueName = `hero-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-    const filePath = path.join(uploadDir, uniqueName);
-    
-    await fs.writeFile(filePath, buffer);
-    imageUrl = `/uploads/${uniqueName}`;
+    imageUrl = await saveImageFile(file, 'hero');
   }
 
   if (!imageUrl) {

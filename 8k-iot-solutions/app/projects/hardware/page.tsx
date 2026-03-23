@@ -1,6 +1,6 @@
 import { getProjectsByCategory } from '@/lib/projects';
 import ProjectGrid from '@/components/ProjectGrid';
-import Link from 'next/link';
+import BackToServicesButton from '@/components/BackToServicesButton';
 
 export const metadata = {
   title: "Hardware Engineering",
@@ -24,12 +24,7 @@ export default async function HardwareProjectsPage() {
         
         {/* Header Section */}
         <div className="mb-12 md:mb-16">
-          <Link href="/#services" className="inline-flex items-center text-sm font-semibold text-zinc-500 hover:text-zinc-800 transition-colors mb-6">
-            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Services
-          </Link>
+          <BackToServicesButton />
           
           <h1 className="text-4xl md:text-5xl font-poppins font-bold tracking-tight text-zinc-900 mb-4">
             Hardware Engineering

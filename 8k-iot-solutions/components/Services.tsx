@@ -128,17 +128,20 @@ const ServicesSection = memo(function ServicesSection() {
         {/* Parallax Container Context */}
         <div ref={containerRef}>
           {/* Cards Container with Parallax transformation */}
-          <motion.div 
-            style={{ y: yOffset }}
-            variants={containerVariants}
-          >
+          <motion.div style={{ y: yOffset }}>
             {isLoading ? (
                 <div className="grid grid-cols-2 gap-6 md:gap-8 items-stretch pt-4">
                   <ServiceCardSkeleton />
                   <ServiceCardSkeleton isHighlighted />
                 </div>
             ) : (
-                <div className="grid grid-cols-2 gap-6 md:gap-8 items-stretch">
+                <motion.div 
+                  className="grid grid-cols-2 gap-6 md:gap-8 items-stretch"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: false, amount: 0.1 }}
+                  variants={containerVariants}
+                >
                   {/* ========================================= */}
                   {/* CARD 1: Hardware Services                 */}
                   {/* ========================================= */}
@@ -256,7 +259,7 @@ const ServicesSection = memo(function ServicesSection() {
                       </Link>
                       </div>
                   </motion.div>
-                </div>
+                </motion.div>
             )}
           </motion.div>
         </div>

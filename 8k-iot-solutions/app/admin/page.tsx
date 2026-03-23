@@ -60,6 +60,12 @@ export default async function AdminDashboardPage() {
           >
             Hero
           </Link>
+          <Link
+            href="/admin/school-logos"
+            className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors"
+          >
+            School Logos
+          </Link>
         </nav>
       </div>
 

@@ -2,6 +2,7 @@
 
 import React, { memo } from 'react';
 import { motion, Variants } from 'framer-motion';
+import Image from 'next/image';
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -32,16 +33,11 @@ const itemVariants: Variants = {
   },
 };
 
-const baseLogos = [
-  { name: 'Harvard', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Harvard_University_logo.svg/512px-Harvard_University_logo.svg.png' },
-  { name: 'MIT', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/512px-MIT_logo.svg.png' },
-  { name: 'Cambridge', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/University_of_Cambridge_coat_of_arms_official.svg/512px-University_of_Cambridge_coat_of_arms_official.svg.png' },
-  { name: 'Columbia', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Columbia_University_shield.svg/512px-Columbia_University_shield.svg.png' },
-];
+const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] }) {
+  if (!logos || logos.length === 0) return null;
 
-const SchoolLogos = memo(function SchoolLogos() {
   // Duplicate array 3 times to ensure a seamless infinite scroll across ultra-wide monitors
-  const duplicatedLogos = [...baseLogos, ...baseLogos, ...baseLogos];
+  const duplicatedLogos = [...logos, ...logos, ...logos];
 
   return (
     <section className="relative py-14 lg:py-20 overflow-hidden bg-transparent z-0">
@@ -91,19 +87,32 @@ const SchoolLogos = memo(function SchoolLogos() {
               // Add slight sizing variation to feel natural, based on index
               const scaleVariation = idx % 2 === 0 ? 'scale-[1.02]' : 'scale-[0.98]';
 
+              const logoContent = (
+                <div className="relative h-16 md:h-20 lg:h-24 w-40 md:w-48 lg:w-56">
+                  <Image 
+                    src={logo.image} 
+                    alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 
+                    fill
+                    className="object-contain" 
+                    sizes="(max-width: 768px) 160px, (max-width: 1024px) 192px, 224px"
+                  />
+                </div>
+              );
+
               return (
                 <motion.div
                   key={idx}
                   variants={itemVariants}
                   style={{ willChange: 'transform, opacity' }}
-                  className={`flex items-center justify-center shrink-0 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500 ease-out hover:scale-[1.1] cursor-default ${scaleVariation}`}
+                  className={`flex items-center justify-center shrink-0 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500 ease-out hover:scale-[1.1] ${logo.link ? 'cursor-pointer' : 'cursor-default'} ${scaleVariation}`}
                 >
-                  <img 
-                    src={logo.src} 
-                    alt={`${logo.name} Logo`} 
-                    className="h-16 md:h-20 lg:h-24 w-auto object-contain" 
-                    loading="lazy"
-                  />
+                  {logo.link ? (
+                    <a href={logo.link} target="_blank" rel="noreferrer" className="block w-full h-full">
+                      {logoContent}
+                    </a>
+                  ) : (
+                    logoContent
+                  )}
                 </motion.div>
               );
             })}

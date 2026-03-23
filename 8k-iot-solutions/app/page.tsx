@@ -18,5 +18,9 @@ export default async function Home() {
     ? await (prisma as any).heroImage.findMany({ where: { isActive: true } })
     : [];
 
-  return <HomeContent initialTestimonials={testimonials} heroImages={heroImages} />;
+  const schoolLogos = (prisma as any).schoolLogo
+    ? await (prisma as any).schoolLogo.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } })
+    : [];
+
+  return <HomeContent initialTestimonials={testimonials} heroImages={heroImages} schoolLogos={schoolLogos} />;
 }

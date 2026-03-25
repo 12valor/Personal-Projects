@@ -8,7 +8,7 @@ export async function submitContactForm(formData: FormData) {
   const inquiryType = formData.get('inquiryType') as string;
   const message = formData.get('message') as string;
 
-  // Basic validation
+  //validation (pls check for err)
   if (!fullName || !email || !inquiryType || !message) {
     return { success: false, error: 'Please fill out all required fields.' };
   }

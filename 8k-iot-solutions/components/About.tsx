@@ -45,6 +45,8 @@ const About = memo(function About() {
     offset: ["start end", "end start"]
   });
   const imageY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const textY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
+  const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   const images = [
     "/co-founders.jpg",
@@ -62,6 +64,12 @@ const About = memo(function About() {
 
   return (
     <section ref={containerRef} id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
+
+      {/* Ambient Depth Orb */}
+      <motion.div 
+        style={{ y: bgOrbY }}
+        className="absolute top-[-5%] left-[10%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[120px] pointer-events-none will-change-transform" 
+      />
       
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <motion.div 
@@ -74,7 +82,10 @@ const About = memo(function About() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left justify-center order-2 lg:order-1 pt-8 lg:pt-0 max-w-2xl mx-auto lg:mx-0 w-full">
+          <motion.div 
+            style={{ y: textY }}
+            className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left justify-center order-2 lg:order-1 pt-8 lg:pt-0 max-w-2xl mx-auto lg:mx-0 w-full"
+          >
             
             <motion.div 
               variants={itemVariants}
@@ -149,7 +160,7 @@ const About = memo(function About() {
                 </svg>
               </a>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* ----- RIGHT COLUMN: Founders Photo — Blueprint Specimen Frame ----- */}
           <motion.div 

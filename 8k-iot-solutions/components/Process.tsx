@@ -95,6 +95,8 @@ const Process = memo(function Process() {
 
   const bgY1 = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
   const bgY2 = useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]);
+  const headerY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const cardsY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
     <motion.section 
@@ -121,6 +123,7 @@ const Process = memo(function Process() {
         {/* Section Header */}
         <motion.div 
           variants={headerVariants}
+          style={{ y: headerY }}
           className="text-center mb-16 md:mb-24"
         >
           <motion.h2 
@@ -139,6 +142,7 @@ const Process = memo(function Process() {
         <motion.div 
           className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6 relative z-10 pt-2 lg:pt-0"
           variants={containerVariants}
+          style={{ y: cardsY }}
         >
           {steps.map((step) => {
             const Icon = step.icon;

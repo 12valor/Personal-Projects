@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useActionState, memo } from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useRef, useActionState, memo } from 'react';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 import { submitContactForm } from '@/app/contact';
 
 const sectionVariants: Variants = {
@@ -29,6 +29,14 @@ const columnVariants: Variants = {
 };
 
 const Contact = memo(() => {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const formY = useTransform(scrollYProgress, [0, 1], [25, -25]);
+  const dotGridY = useTransform(scrollYProgress, [0, 1], [0, -15]);
+
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; message?: string; error?: string } | null, formData: FormData) => {
       return await submitContactForm(formData);
@@ -37,11 +45,12 @@ const Contact = memo(() => {
   );
 
   return (
-    <section id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
+    <section ref={containerRef} id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
 
-      <div 
+      <motion.div 
         className="absolute inset-0 z-[-2] opacity-20" 
         style={{
+          y: dotGridY,
           backgroundImage: 'radial-gradient(circle, #64748b 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
@@ -129,7 +138,7 @@ const Contact = memo(() => {
 
 
           {/* ----- RIGHT SIDE: Clean Form Panel ----- */}
-          <motion.div variants={columnVariants} className="lg:col-span-6 lg:col-start-7 w-full relative">
+          <motion.div variants={columnVariants} style={{ y: formY }} className="lg:col-span-6 lg:col-start-7 w-full relative">
 
             {/* The Form Container — clean, no glass tricks */}
             <div className="bg-white/[0.04] p-8 md:p-10 rounded-2xl border border-white/[0.06] shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">

@@ -65,9 +65,17 @@ const ServicesSection = memo(function ServicesSection() {
   
   // map scroll progress to a subtle offset range [-40, 40]
   const yOffset = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const headerY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    <section id="services" className="relative w-full pt-12 lg:pt-16 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
+    <section id="services" ref={containerRef} className="relative w-full pt-12 lg:pt-16 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
+
+      {/* Ambient Depth Orb */}
+      <motion.div 
+        style={{ y: bgOrbY }}
+        className="absolute top-[-5%] left-[15%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[100px] pointer-events-none will-change-transform" 
+      />
 
       <motion.div 
         className="max-w-4xl mx-auto px-6 relative z-10"
@@ -79,6 +87,7 @@ const ServicesSection = memo(function ServicesSection() {
         {/* Section Header */}
         <motion.div 
           variants={headerVariants}
+          style={{ y: headerY }}
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold tracking-tight text-zinc-900">
@@ -90,7 +99,7 @@ const ServicesSection = memo(function ServicesSection() {
         </motion.div>
 
         {/* Parallax Container Context */}
-        <div ref={containerRef}>
+        <div>
           {/* Cards Container with Parallax transformation */}
           <motion.div style={{ y: yOffset }}>
                 <motion.div 

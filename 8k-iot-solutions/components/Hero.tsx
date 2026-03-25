@@ -47,6 +47,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   });
   const textY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const gridY = useTransform(scrollYProgress, [0, 1], [0, -30]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   // Define 4 uniquely distributed static grid images
   const gridImages = [
@@ -97,7 +98,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
         >
           {/* Left Column: Typography */}
           <motion.div 
-            style={{ y: textY }}
+            style={{ y: textY, opacity: textOpacity }}
             variants={{
               hidden: { opacity: 0 },
               show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }

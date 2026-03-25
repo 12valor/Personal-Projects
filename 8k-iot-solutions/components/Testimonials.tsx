@@ -55,6 +55,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
 
   const bgY1 = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const bgY2 = useTransform(scrollYProgress, [0, 1], ["6%", "-6%"]);
+  const headerY = useTransform(scrollYProgress, [0, 1], [15, -15]);
 
   return (
     <motion.section 
@@ -78,7 +79,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
+        <motion.div variants={headerVariants} style={{ y: headerY }} className="text-center mb-10 md:mb-14">
           <div className="inline-flex items-center gap-3 mb-5">
             <div className="h-px w-8 bg-brand-400" />
             <span className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">

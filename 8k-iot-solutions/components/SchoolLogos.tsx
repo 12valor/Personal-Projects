@@ -1,8 +1,8 @@
 "use client";
 
-import React, { memo } from 'react';
+import React, { useRef, memo } from 'react';
 import Image from 'next/image';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0 },
@@ -37,8 +37,22 @@ const logoVariants: Variants = {
 const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] }) {
   if (!logos || logos.length === 0) return null;
 
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const logoRowY = useTransform(scrollYProgress, [0, 1], [15, -15]);
+  const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+
   return (
-    <section className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
+    <section ref={containerRef} className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
+
+      {/* Ambient Depth Orb */}
+      <motion.div 
+        style={{ y: bgOrbY }}
+        className="absolute top-[-10%] right-[20%] w-[350px] h-[350px] bg-brand-50/30 rounded-full blur-[100px] pointer-events-none will-change-transform" 
+      />
 
       <motion.div
         className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
@@ -60,7 +74,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
         </motion.div>
 
         {/* All logos visible, centered, single row, no masking */}
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
+        <motion.div style={{ y: logoRowY }} className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
           {logos.map((logo, idx) => {
             const logoContent = (
               <div className="relative h-16 md:h-20 lg:h-24 w-36 md:w-48 lg:w-56 transition-transform duration-500 hover:scale-105 will-change-transform">
@@ -86,7 +100,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
       </motion.div>
     </section>

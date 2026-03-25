@@ -85,7 +85,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
 
       <div 
         suppressHydrationWarning
-        className="w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:pl-10 lg:pr-16 xl:pl-16 xl:pr-24 relative z-10 lg:pt-0 pt-4"
+        className="w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-16 relative z-10 lg:pt-0 pt-4"
       >
         <div 
           suppressHydrationWarning
@@ -175,7 +175,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
           {/* Right Column: Clean Orthogonal 2x2 Grid */}
           <div className="hidden lg:block lg:col-span-6 xl:col-span-6 w-full justify-self-end mt-12 lg:mt-0 relative z-10">
             {/* The Strict 20px gap grid without any fading gradients */}
-            <div className="grid grid-cols-2 gap-[20px] h-[500px] xl:h-[600px] w-full max-w-[650px] ml-auto">
+            <div className="grid grid-cols-2 gap-[20px] h-[500px] xl:h-[600px] w-full">
               {gridImages.map((img, idx) => (
                 <motion.div
                   key={img.id}

@@ -41,8 +41,12 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   }, []);
 
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollY } = useScroll();
-  const textY = useTransform(scrollY, [0, 500], [0, 20]);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 40]);
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   // Define 4 uniquely distributed static grid images
   const gridImages = [
@@ -173,7 +177,10 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
           </motion.div>
 
           {/* Right Column: Clean Orthogonal 2x2 Grid */}
-          <div className="hidden lg:block lg:col-span-6 xl:col-span-6 w-full justify-self-end mt-12 lg:mt-0 relative z-10">
+          <motion.div 
+            style={{ y: gridY }}
+            className="hidden lg:block lg:col-span-6 xl:col-span-6 w-full justify-self-end mt-12 lg:mt-0 relative z-10"
+          >
             {/* The Strict 20px gap grid without any fading gradients */}
             <div className="grid grid-cols-2 gap-[20px] h-[500px] xl:h-[600px] w-full">
               {gridImages.map((img, idx) => (
@@ -200,7 +207,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

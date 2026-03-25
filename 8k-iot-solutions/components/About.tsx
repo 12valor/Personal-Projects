@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, memo } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 
 const containerVariants: Variants = {
@@ -20,6 +20,7 @@ const itemVariants: Variants = {
   hidden: { 
     opacity: 0, 
     y: 30,
+    scale: 0.97,
     transition: {
       duration: 0.5,
       ease: [0.22, 1, 0.36, 1],
@@ -28,6 +29,7 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: {
       duration: 0.8,
       ease: [0.22, 1, 0.36, 1],
@@ -37,6 +39,12 @@ const itemVariants: Variants = {
 
 const About = memo(function About() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   const images = [
     "/co-founders.jpg",
@@ -53,14 +61,7 @@ const About = memo(function About() {
   };
 
   return (
-    <section id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
-      
-      {/* Required Animation Easing */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .cubic-out {
-          transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-        }
-      `}} />
+    <section ref={containerRef} id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
       
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <motion.div 
@@ -154,7 +155,7 @@ const About = memo(function About() {
           <motion.div 
             variants={itemVariants}
             className="hidden lg:block lg:col-span-5 relative order-1 lg:order-2"
-            style={{ willChange: 'transform, opacity' }}
+            style={{ willChange: 'transform, opacity', y: imageY }}
           >
             <div className="relative group/carousel">
 

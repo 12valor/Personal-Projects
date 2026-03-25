@@ -1,7 +1,32 @@
 "use client";
 
 import React, { useActionState, memo } from 'react';
+import { motion, Variants } from 'framer-motion';
 import { submitContactForm } from '@/app/contact';
+
+const sectionVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const columnVariants: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
 
 const Contact = memo(() => {
   const [state, formAction, isPending] = useActionState(
@@ -23,10 +48,16 @@ const Contact = memo(() => {
         aria-hidden="true"
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <motion.div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={sectionVariants}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
           
-          <div className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-8">
+          <motion.div variants={columnVariants} className="lg:col-span-5 flex flex-col items-start pr-0 lg:pr-8">
             
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="h-[2px] w-6 bg-brand-400 rounded-full"></span>
@@ -94,11 +125,11 @@ const Contact = memo(() => {
               </a>
 
             </div>
-          </div>
+          </motion.div>
 
 
           {/* ----- RIGHT SIDE: Clean Form Panel ----- */}
-          <div className="lg:col-span-6 lg:col-start-7 w-full relative">
+          <motion.div variants={columnVariants} className="lg:col-span-6 lg:col-start-7 w-full relative">
 
             {/* The Form Container — clean, no glass tricks */}
             <div className="bg-white/[0.04] p-8 md:p-10 rounded-2xl border border-white/[0.06] shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
@@ -218,10 +249,10 @@ const Contact = memo(() => {
                 
               </form>
             </div>
-          </div>
+          </motion.div>
 
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 });

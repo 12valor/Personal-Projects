@@ -150,65 +150,77 @@ const About = memo(function About() {
             </motion.div>
           </div>
 
-          {/* ----- RIGHT COLUMN: Founders Photo Carousel ----- */}
+          {/* ----- RIGHT COLUMN: Founders Photo — Blueprint Specimen Frame ----- */}
           <motion.div 
             variants={itemVariants}
             className="hidden lg:block lg:col-span-5 relative order-1 lg:order-2"
             style={{ willChange: 'transform, opacity' }}
           >
-            <div className="relative p-2 md:p-2.5 bg-white border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.06)] rounded-xl isolate hover:-translate-y-1 transition-transform duration-500 group/carousel">
-              <div className="relative aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden isolate">
-                
-                {images.map((src, idx) => (
-                  <Image 
-                    key={src}
-                    src={src} 
-                    alt={`About 8K IoT Solutions Image ${idx + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 40vw"
-                    className={`object-cover transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                    priority={idx === 0}
-                  />
-                ))}
+            <div className="relative group/carousel">
 
-                {/* Carousel Controls */}
-                <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 z-20">
-                  <button 
-                    onClick={prevImage}
-                    className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button 
-                    onClick={nextImage}
-                    className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
+              {/* Corner Crosshair Marks — Technical registration reference */}
+              <div className="absolute -top-3 -left-3 w-6 h-6 z-30 pointer-events-none">
+                <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
+                <div className="absolute left-1/2 top-0 h-full w-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
+              </div>
+              <div className="absolute -bottom-3 -right-3 w-6 h-6 z-30 pointer-events-none">
+                <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
+                <div className="absolute left-1/2 top-0 h-full w-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
+              </div>
 
-                {/* Carousel Indicators (Dots) */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-                  {images.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      aria-label={`Go to slide ${idx + 1}`}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === currentImageIndex 
-                          ? 'w-4 bg-white shadow-sm' 
-                          : 'w-1.5 bg-white/50 hover:bg-white/80'
-                      }`}
+              {/* Main Frame */}
+              <div className="relative border-2 border-zinc-200 hover:border-brand-300 rounded-2xl p-1.5 transition-colors duration-500 bg-white/50 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_40px_-8px_rgba(30,58,138,0.1)]">
+                <div className="relative aspect-[4/5] bg-zinc-100 rounded-xl overflow-hidden isolate">
+                  
+                  {images.map((src, idx) => (
+                    <Image 
+                      key={src}
+                      src={src} 
+                      alt={`About 8K IoT Solutions Image ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 40vw"
+                      className={`object-cover transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                      priority={idx === 0}
                     />
                   ))}
-                </div>
 
+                  {/* Carousel Controls */}
+                  <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 z-20">
+                    <button 
+                      onClick={prevImage}
+                      className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button 
+                      onClick={nextImage}
+                      className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Carousel Indicators (Dots) */}
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                    {images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        aria-label={`Go to slide ${idx + 1}`}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          idx === currentImageIndex 
+                            ? 'w-4 bg-white shadow-sm' 
+                            : 'w-1.5 bg-white/50 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                </div>
               </div>
             </div>
-            
-            <div className="absolute -inset-0 border border-brand-200 z-[-1] rounded-xl translate-x-3 translate-y-3 hidden md:block transition-transform duration-500 group-hover/carousel:translate-x-4 group-hover/carousel:translate-y-4" />
           </motion.div>
 
         </div>

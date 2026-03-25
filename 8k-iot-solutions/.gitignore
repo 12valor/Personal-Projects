@@ -41,3 +41,44 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# ==============================
+# Auto-added Backend & Security
+# ==============================
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+prisma/dev.db
+prisma/dev.db-journal
+
+# Private keys & certificates
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# Credential & secret files
+**/creds.json
+**/credentials.json
+**/service-account*.json
+**/secrets.yaml
+**/secrets.yml
+
+# OS & IDE
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python (if any scripts)
+__pycache__/
+*.pyc
+venv/
+.venv/

@@ -139,7 +139,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
         stiffness: 400, 
         damping: 25 
       }}
-      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-6 md:p-7 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
+      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-5 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
     >
 
       {/* Oversized Background Number */}
@@ -158,7 +158,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
       </div>
 
       {/* Quote */}
-      <blockquote className="relative z-10 text-[14px] md:text-[15px] text-zinc-600 font-poppins leading-[1.7] mb-5 flex-grow">
+      <blockquote className="relative z-10 text-[13px] sm:text-[14px] md:text-[15px] text-zinc-600 font-poppins leading-[1.65] mb-4 sm:mb-5 flex-grow">
         &ldquo;{item.text}&rdquo;
       </blockquote>
 

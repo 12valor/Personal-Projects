@@ -102,7 +102,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             animate={mounted ? "show" : "hidden"}
             className="lg:col-span-6 xl:col-span-6 flex flex-col items-start text-left max-w-[600px] relative z-20"
           >
-            <h1 className="font-boldonse text-[2.5rem] sm:text-[3.5rem] lg:text-[4rem] tracking-tight leading-[1.2] mb-6 sm:mb-8 flex flex-wrap items-baseline gap-x-3 sm:gap-x-4">
+            <h1 className="font-boldonse text-[2.5rem] sm:text-[3.5rem] lg:text-[4rem] tracking-tight leading-[1.35] mb-6 sm:mb-8 flex flex-wrap items-baseline gap-x-3 sm:gap-x-4">
               <span className="text-slate-900">Building</span>
               <motion.span 
                 suppressHydrationWarning
@@ -140,14 +140,14 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ scale: { type: "spring", stiffness: 400, damping: 25 } }}
-                className="group relative inline-flex w-full sm:w-auto overflow-hidden rounded-[8px]"
+                className="group relative inline-flex w-full sm:w-auto overflow-hidden rounded-[10px]"
               >
                 <a 
                   href="#contact" 
-                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-neutral-100 lg:bg-brand-900 text-neutral-900 lg:text-white text-[16px] font-semibold font-poppins shadow-[0_2px_10px_rgba(0,0,0,0.08)] group-hover:shadow-[0_15px_30px_-5px_rgba(30,58,138,0.3)] transition-all duration-300"
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-neutral-100 lg:bg-brand-900 text-neutral-900 lg:text-white text-[16px] font-semibold font-poppins shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_35px_-5px_rgba(30,58,138,0.35)] lg:hover:bg-brand-700 transition-all duration-300"
                 >
                   <span>Start a Project</span>
-                  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                   </svg>
                 </a>
@@ -157,13 +157,16 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ scale: { type: "spring", stiffness: 400, damping: 25 } }}
-                className="group relative inline-flex w-full sm:w-auto rounded-[8px]"
+                className="group relative inline-flex w-full sm:w-auto rounded-[10px]"
               >
                 <a 
                   href="#services" 
-                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-slate-200 bg-white text-slate-800 text-[16px] font-semibold font-poppins shadow-sm hover:border-brand-600 hover:text-brand-600 group-hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300"
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 border-2 border-slate-200 bg-white text-slate-800 text-[16px] font-semibold font-poppins rounded-[10px] shadow-sm hover:border-brand-700 hover:text-brand-700 hover:bg-brand-50/30 group-hover:shadow-[0_10px_25px_-5px_rgba(30,58,138,0.1)] transition-all duration-300"
                 >
                   <span>Explore Services</span>
+                  <svg className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
                 </a>
               </motion.div>
             </motion.div>

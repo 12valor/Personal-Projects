@@ -7,12 +7,13 @@ export const metadata = {
   title: "Edit School Logo",
 };
 
-export default async function EditSchoolLogoPage({ params }: { params: { id: string } }) {
+export default async function EditSchoolLogoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const prismaClient = prisma as any;
   if (!prismaClient.schoolLogo) return notFound();
 
   const logo = await prismaClient.schoolLogo.findUnique({
-    where: { id: params.id }
+    where: { id }
   });
 
   if (!logo) {

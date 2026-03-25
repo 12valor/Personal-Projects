@@ -1,76 +1,113 @@
 "use client";
 
-import React, { useState, memo, useMemo } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import Image from 'next/image';
-import { Star, Quote } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Star } from 'lucide-react';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+
+// --- Animation Variants (mirroring Process.tsx quality) ---
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const headerVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 35 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
 
 const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
 
-  // Purely dynamic - if no testimonials in DB, don't show the section
   const testimonials = initialTestimonials;
+  if (testimonials.length === 0) return null;
 
-  if (testimonials.length === 0) {
-    return null; // Side-step rendering if no content
-  }
+  const displayTestimonials = testimonials.slice(0, 9);
 
-  // Separate rows for the 2-lane mobile design to handle infinite scroll
-  const half = Math.ceil(testimonials.length / 2);
-  const topRowTestimonials = testimonials.slice(0, half);
-  const bottomRowTestimonials = testimonials.slice(half);
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
 
-  const duplicatedTopRow = useMemo(() => [...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials, ...topRowTestimonials], [topRowTestimonials]); 
-  const duplicatedBottomRow = useMemo(() => [...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials, ...bottomRowTestimonials], [bottomRowTestimonials]); 
-  const duplicatedDesktopRow = useMemo(() => [...testimonials, ...testimonials, ...testimonials], [testimonials]);
+  const bgY1 = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const bgY2 = useTransform(scrollYProgress, [0, 1], ["6%", "-6%"]);
 
   return (
     <motion.section 
+      ref={containerRef}
+      className="relative w-full py-10 md:py-16 bg-transparent overflow-hidden z-0"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }}
-      className="relative py-8 md:py-10 bg-transparent overflow-hidden z-0"
+      viewport={{ once: true, amount: 0.15 }}
     >
 
-      {/* Floating Gradient Orbs for Depth */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-brand-50 rounded-full blur-[120px] opacity-60 pointer-events-none" />
+      {/* Parallax Ambient Light (matches Process.tsx depth technique) */}
+      <motion.div 
+        style={{ y: bgY1 }}
+        className="absolute top-[-10%] right-[10%] w-[500px] h-[500px] bg-brand-100/50 rounded-full blur-[140px] pointer-events-none will-change-transform" 
+      />
+      <motion.div 
+        style={{ y: bgY2 }}
+        className="absolute bottom-[-5%] left-[5%] w-[400px] h-[400px] bg-blue-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
+      />
 
-      <div className="relative z-10">
-        
-        {/* === MOBILE 2-ROW SCROLL === */}
-        <div className="md:hidden flex flex-col gap-4 overflow-hidden w-full">
-          {/* Row 1: Scrolls Left */}
-          <div className="flex animate-scroll-left py-2">
-            {duplicatedTopRow.map((item, idx) => (
-              <TestimonialCard key={`top-${idx}`} item={item} idx={idx} />
-            ))}
-          </div>
-          
-          {/* Row 2: Scrolls Right */}
-          <div className="flex animate-scroll-right py-2">
-            {duplicatedBottomRow.map((item, idx) => (
-              <TestimonialCard key={`bottom-${idx}`} item={item} idx={idx} />
-            ))}
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-        {/* === DESKTOP 1-ROW SCROLL === */}
-        <div className="hidden md:flex overflow-hidden">
-          <div className="flex animate-scroll-left py-6">
-            {duplicatedDesktopRow.map((item, idx) => (
-              <TestimonialCard key={`desk-${idx}`} item={item} idx={idx} />
-            ))}
+        {/* Section Header */}
+        <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
+          <div className="inline-flex items-center gap-3 mb-5">
+            <div className="h-px w-8 bg-brand-400" />
+            <span className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">
+              Client Testimonials
+            </span>
+            <div className="h-px w-8 bg-brand-400" />
           </div>
-        </div>
+          <h2 className="text-3xl md:text-[2.75rem] font-sans font-bold tracking-tight text-zinc-900 leading-tight">
+            What Our Clients <br className="hidden md:block" />
+            <span className="text-brand-900">Have to Say.</span>
+          </h2>
+        </motion.div>
+
+        {/* Testimonial Grid */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
+          variants={containerVariants}
+        >
+          {displayTestimonials.map((item, idx) => (
+            <TestimonialCard key={`testimonial-${item.id || idx}`} item={item} idx={idx} />
+          ))}
+        </motion.div>
 
       </div>
     </motion.section>
   );
 });
 
-
 export default Testimonials;
 
-// Ensure the specific type matches the mapped arrays layout
 type TestimonialProps = {
   item: {
     name: string;
@@ -84,69 +121,73 @@ type TestimonialProps = {
 
 const TestimonialCard = memo(function TestimonialCard({ item, idx }: TestimonialProps) {
   const [imgError, setImgError] = useState(false);
-  
-  // Extract initials if Image fails (e.g. "Sir Jayson" -> "SJ")
   const initials = item.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+  // Alternate large decorative quote numbers for visual rhythm
+  const decorativeNumber = String(idx + 1).padStart(2, '0');
 
   return (
     <motion.div 
-      variants={{
-        hidden: { opacity: 0, y: 30 },
-        visible: { 
-          opacity: 1, 
-          y: 0, 
-          transition: { duration: 0.6, ease: "easeOut", delay: (idx % 4) * 0.15 } 
-        }
+      variants={cardVariants}
+      whileHover={{ 
+        y: -6, 
+        scale: 1.015,
+        backgroundColor: "rgba(255, 255, 255, 0.95)"
       }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      className="relative inline-block w-[300px] sm:w-[450px] mx-3 md:mx-4 bg-white border border-gray-100 p-6 md:p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-shadow duration-300 group select-none whitespace-normal align-top overflow-hidden flex-shrink-0"
+      transition={{ 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 25 
+      }}
+      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-6 md:p-7 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
     >
-      {/* Large faint background Quote Icon for premium watermark effect */}
-      <Quote 
-        className="absolute -top-4 -right-2 w-24 md:w-32 h-24 md:h-32 text-gray-100 opacity-50 rotate-12 pointer-events-none transition-transform duration-500 group-hover:scale-110" 
-        strokeWidth={1}
-      />
 
-      <div className="relative z-10 flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
-        {/* Avatar Frame - Uses fallback state */}
-        <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brand-100 group-hover:border-brand-500 transition-colors duration-300 flex-shrink-0 bg-brand-50 flex items-center justify-center">
-          {!imgError ? (
-            <Image 
-              src={item.avatar} 
-              alt={item.name}
-              width={56}
-              height={56}
-              className="object-cover w-full h-full"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <span className="font-sans font-bold text-brand-700 text-lg">{initials}</span>
-          )}
-        </div>
-        
-        <div>
-          <h4 className="font-sans font-bold text-gray-900 text-base md:text-lg leading-tight line-clamp-1">
-            {item.name}
-          </h4>
-          <p className="font-poppins text-[10px] md:text-xs font-semibold text-brand-600 uppercase tracking-widest mt-0.5 md:mt-1 line-clamp-1">
-            {item.position}
-          </p>
-        </div>
+      {/* Oversized Background Number */}
+      <div className="absolute -top-3 -right-2 text-[6rem] font-poppins font-bold text-zinc-50 -z-10 select-none group-hover:text-brand-50/40 transition-colors duration-500 pointer-events-none tracking-tighter leading-none">
+        {decorativeNumber}
       </div>
 
-      {/* Dynamic Rating Row */}
-      <div className="relative z-10 flex gap-0.5 md:gap-1 mb-3 md:mb-4">
+      {/* Rating */}
+      <div className="flex gap-0.5 mb-4 relative z-10">
         {[...Array(5)].map((_, i) => (
           <Star 
             key={i} 
-            className={`w-3.5 h-3.5 md:w-4 md:h-4 ${i < item.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 fill-zinc-200'}`} 
+            className={`w-3.5 h-3.5 ${i < item.rating ? 'text-amber-400 fill-amber-400' : 'text-zinc-200 fill-zinc-200'}`} 
           />
         ))}
       </div>
 
-      <blockquote className="relative z-10 font-poppins text-gray-600 text-sm md:text-[15px] leading-relaxed italic line-clamp-4">
-        &quot;{item.text}&quot;
+      {/* Quote */}
+      <blockquote className="relative z-10 text-[14px] md:text-[15px] text-zinc-600 font-poppins leading-[1.7] mb-5 flex-grow">
+        &ldquo;{item.text}&rdquo;
       </blockquote>
+
+      {/* Author */}
+      <div className="relative z-10 flex items-center gap-3 mt-auto pt-4 border-t border-zinc-100 group-hover:border-brand-50 transition-colors duration-500">
+        <div className="w-9 h-9 rounded-full bg-zinc-100 group-hover:bg-brand-50 flex items-center justify-center overflow-hidden shrink-0 transition-colors duration-500 relative">
+          {!imgError ? (
+            <Image 
+              src={item.avatar} 
+              alt={item.name}
+              fill
+              className="object-cover"
+              sizes="36px"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="font-poppins font-bold text-zinc-400 group-hover:text-brand-600 text-[10px] transition-colors duration-300">{initials}</span>
+          )}
+        </div>
+        
+        <div className="min-w-0">
+          <h4 className="text-[13px] font-poppins font-bold text-zinc-900 group-hover:text-brand-900 transition-colors duration-300 tracking-tight truncate">
+            {item.name}
+          </h4>
+          <p className="text-[10px] text-zinc-500 font-medium font-poppins uppercase tracking-wider truncate">
+            {item.position}
+          </p>
+        </div>
+      </div>
     </motion.div>
   );
 });

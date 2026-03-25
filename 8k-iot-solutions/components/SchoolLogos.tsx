@@ -7,33 +7,40 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
   if (!logos || logos.length === 0) return null;
 
   return (
-    <section className="relative py-16 lg:py-24 overflow-hidden bg-transparent z-0">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center mb-12 sm:mb-16">
-          <span className="text-[12px] font-bold text-zinc-400 uppercase tracking-widest font-poppins">
-            Trusted by Forward-Thinking Institutions
-          </span>
+    <section className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
+
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+        {/* Label */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-3 mb-1">
+            <div className="h-px w-8 bg-brand-300" />
+            <span className="text-[11px] md:text-xs font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">
+              Trusted By Clients From
+            </span>
+            <div className="h-px w-8 bg-brand-300" />
+          </div>
         </div>
 
-        <div className="flex flex-nowrap overflow-x-auto md:flex-wrap justify-center items-center gap-4 md:gap-6 lg:gap-8 pb-4 px-4 md:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] w-full">
+        {/* All logos visible, centered, single row, no masking */}
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
           {logos.map((logo, idx) => {
             const logoContent = (
-              <div className="relative h-16 md:h-24 lg:h-32 w-32 md:w-56 lg:w-72 p-2 transition-transform duration-300 hover:scale-110">
+              <div className="relative h-16 md:h-20 lg:h-24 w-36 md:w-48 lg:w-56 transition-transform duration-500 hover:scale-105 will-change-transform">
                 <Image 
                   src={logo.image} 
                   alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 
                   fill
-                  className="object-contain" 
-                  sizes="(max-width: 768px) 192px, (max-width: 1024px) 224px, 288px"
+                  className="object-contain drop-shadow-sm" 
+                  sizes="(max-width: 768px) 144px, (max-width: 1024px) 192px, 224px"
                 />
               </div>
             );
 
             return (
-              <div key={logo.id || idx} className="flex items-center justify-center snap-center shrink-0">
+              <div key={logo.id || idx} className="flex items-center justify-center">
                 {logo.link ? (
-                  <a href={logo.link} target="_blank" rel="noreferrer" className="block">
+                  <a href={logo.link} target="_blank" rel="noreferrer" className="block rounded-lg outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-4 cursor-pointer">
                     {logoContent}
                   </a>
                 ) : (
@@ -43,7 +50,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
             );
           })}
         </div>
-        
+
       </div>
     </section>
   );

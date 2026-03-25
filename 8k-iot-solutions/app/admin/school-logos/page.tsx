@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { deleteSchoolLogo, reorderSchoolLogos } from './actions';
 import { revalidatePath } from 'next/cache';
+import AdminTabs from '../components/AdminTabs';
 
 export const metadata = {
   title: "Admin - School Logos",
@@ -54,26 +55,7 @@ export default async function SchoolLogosAdminPage() {
 
   return (
     <div>
-      {/* Tab Navigation */}
-      <div className="border-b border-zinc-200 mb-8">
-        <nav className="-mb-px flex gap-6" aria-label="Tabs" style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
-          <Link href="/admin" className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors">
-            Projects
-          </Link>
-          <Link href="/admin/transmissions" className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors">
-            Inquiries
-          </Link>
-          <Link href="/admin/testimonials" className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors">
-            Testimonials
-          </Link>
-          <Link href="/admin/hero" className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 transition-colors">
-            Hero
-          </Link>
-          <Link href="/admin/school-logos" className="border-b-2 border-zinc-900 px-1 pb-3 text-sm font-medium text-zinc-900">
-            School Logos
-          </Link>
-        </nav>
-      </div>
+      <AdminTabs />
 
       <div className="sm:flex sm:items-center sm:justify-between px-4 sm:px-0">
         <div>

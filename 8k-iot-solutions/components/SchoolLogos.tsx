@@ -44,9 +44,10 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
   });
   const logoRowY = useTransform(scrollYProgress, [0, 1], [15, -15]);
   const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <section ref={containerRef} className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
+    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
 
       {/* Ambient Depth Orb */}
       <motion.div 
@@ -103,7 +104,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
         </motion.div>
 
       </motion.div>
-    </section>
+    </motion.section>
   );
 });
 

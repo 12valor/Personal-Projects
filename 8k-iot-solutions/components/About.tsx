@@ -47,6 +47,7 @@ const About = memo(function About() {
   const imageY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const textY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
   const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   const images = [
     "/co-founders.jpg",
@@ -63,7 +64,7 @@ const About = memo(function About() {
   };
 
   return (
-    <section ref={containerRef} id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
+    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
 
       {/* Ambient Depth Orb */}
       <motion.div 
@@ -237,7 +238,7 @@ const About = memo(function About() {
 
         </div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 });
 

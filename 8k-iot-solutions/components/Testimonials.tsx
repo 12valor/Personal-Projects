@@ -56,11 +56,13 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
   const bgY1 = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const bgY2 = useTransform(scrollYProgress, [0, 1], ["6%", "-6%"]);
   const headerY = useTransform(scrollYProgress, [0, 1], [15, -15]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
     <motion.section 
       ref={containerRef}
       className="relative w-full py-10 md:py-16 bg-transparent overflow-hidden z-0"
+      style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
       viewport={{ amount: 0.15 }}

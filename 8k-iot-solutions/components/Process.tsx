@@ -97,12 +97,14 @@ const Process = memo(function Process() {
   const bgY2 = useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]);
   const headerY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const cardsY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
     <motion.section 
       id="process" 
       ref={containerRef}
       className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b"
+      style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
       viewport={{ amount: 0.2 }}

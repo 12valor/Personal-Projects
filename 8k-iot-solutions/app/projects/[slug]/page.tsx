@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import PageHeaderParallax from '@/components/PageHeaderParallax';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -51,25 +52,27 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           
           {/* Hero Content positioned at the bottom of the hero banner */}
           <div className="absolute bottom-0 w-full">
-            <div className="max-w-4xl mx-auto px-6 pb-8 md:pb-12 text-white">
-              <Link href={backLink} className="inline-flex items-center text-sm font-medium text-zinc-300 hover:text-white transition-colors mb-6 drop-shadow-md">
-                <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to {project.category === 'hardware' ? 'Hardware' : 'Software'} Projects
-              </Link>
-              
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tags.map((tag, i) => (
-                  <span key={i} className="px-3 py-1 text-xs font-semibold tracking-wide text-white bg-white/20 backdrop-blur-md rounded-full border border-white/30">
-                    {tag}
-                  </span>
-                ))}
+            <PageHeaderParallax>
+              <div className="max-w-4xl mx-auto px-6 pb-8 md:pb-12 text-white">
+                <Link href={backLink} className="inline-flex items-center text-sm font-medium text-zinc-300 hover:text-white transition-colors mb-6 drop-shadow-md">
+                  <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Back to {project.category === 'hardware' ? 'Hardware' : 'Software'} Projects
+                </Link>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.tags.map((tag, i) => (
+                    <span key={i} className="px-3 py-1 text-xs font-semibold tracking-wide text-white bg-white/20 backdrop-blur-md rounded-full border border-white/30">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-poppins font-bold tracking-tight mb-4 drop-shadow-lg">
+                  {project.title}
+                </h1>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-poppins font-bold tracking-tight mb-4 drop-shadow-lg">
-                {project.title}
-              </h1>
-            </div>
+            </PageHeaderParallax>
           </div>
         </div>
 

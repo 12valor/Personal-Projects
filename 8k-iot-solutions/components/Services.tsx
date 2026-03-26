@@ -67,9 +67,11 @@ const ServicesSection = memo(function ServicesSection() {
   const yOffset = useTransform(scrollYProgress, [0, 1], [40, -40]);
   const headerY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
     <section id="services" ref={containerRef} className="relative w-full pt-12 lg:pt-16 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
+      <motion.div style={{ opacity: sectionOpacity }} className="w-full h-full relative">
 
       {/* Ambient Depth Orb */}
       <motion.div 
@@ -230,6 +232,7 @@ const ServicesSection = memo(function ServicesSection() {
                 </motion.div>
           </motion.div>
         </div>
+      </motion.div>
       </motion.div>
     </section>
   );

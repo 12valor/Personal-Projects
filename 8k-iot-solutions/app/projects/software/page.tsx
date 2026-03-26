@@ -1,6 +1,7 @@
 import { getProjectsByCategory } from '@/lib/projects';
 import ProjectGrid from '@/components/ProjectGrid';
 import BackToServicesButton from '@/components/BackToServicesButton';
+import PageHeaderParallax from '@/components/PageHeaderParallax';
 
 export const metadata = {
   title: "Software Solutions",
@@ -23,16 +24,18 @@ export default async function SoftwareProjectsPage() {
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         
         {/* Header Section */}
-        <div className="mb-12 md:mb-16">
-          <BackToServicesButton className="inline-flex items-center text-sm font-semibold text-indigo-500 hover:text-indigo-700 transition-colors mb-6 cursor-pointer" />
-          
-          <h1 className="text-4xl md:text-5xl font-poppins font-bold tracking-tight text-zinc-900 mb-4">
-            Software Solutions
-          </h1>
-          <p className="text-lg text-zinc-600 max-w-2xl">
-            Discover our scalable web platforms, custom dashboards, and data-driven applications built to solve complex operational challenges.
-          </p>
-        </div>
+        <PageHeaderParallax>
+          <div className="mb-12 md:mb-16">
+            <BackToServicesButton className="inline-flex items-center text-sm font-semibold text-indigo-500 hover:text-indigo-700 transition-colors mb-6 cursor-pointer" />
+            
+            <h1 className="text-4xl md:text-5xl font-poppins font-bold tracking-tight text-zinc-900 mb-4">
+              Software Solutions
+            </h1>
+            <p className="text-lg text-zinc-600 max-w-2xl">
+              Discover our scalable web platforms, custom dashboards, and data-driven applications built to solve complex operational challenges.
+            </p>
+          </div>
+        </PageHeaderParallax>
 
         {/* Project Grid */}
         <ProjectGrid projects={projects} />

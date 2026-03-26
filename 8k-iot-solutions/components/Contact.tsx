@@ -36,6 +36,7 @@ const Contact = memo(() => {
   });
   const formY = useTransform(scrollYProgress, [0, 1], [25, -25]);
   const dotGridY = useTransform(scrollYProgress, [0, 1], [0, -15]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; message?: string; error?: string } | null, formData: FormData) => {
@@ -45,7 +46,7 @@ const Contact = memo(() => {
   );
 
   return (
-    <section ref={containerRef} id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
+    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
 
       <motion.div 
         className="absolute inset-0 z-[-2] opacity-20" 
@@ -263,7 +264,7 @@ const Contact = memo(() => {
 
         </div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 });
 

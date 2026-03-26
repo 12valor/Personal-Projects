@@ -165,11 +165,10 @@ const About = memo(function About() {
 
           {/* ----- RIGHT COLUMN: Founders Photo — Blueprint Specimen Frame ----- */}
           <motion.div 
-            variants={itemVariants}
             className="hidden lg:block lg:col-span-5 relative order-1 lg:order-2"
             style={{ willChange: 'transform, opacity', y: imageY }}
           >
-            <div className="relative group/carousel">
+            <motion.div variants={itemVariants} className="w-full h-full relative group/carousel">
 
               {/* Corner Crosshair Marks — Technical registration reference */}
               <div className="absolute -top-3 -left-3 w-6 h-6 z-30 pointer-events-none">
@@ -233,7 +232,7 @@ const About = memo(function About() {
 
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
         </div>

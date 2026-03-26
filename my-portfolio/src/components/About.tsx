@@ -89,7 +89,14 @@ export default function About() {
   });
 
   const xScroll = useTransform(scrollYProgress, [0, 1], ["0px", `-${finalDistance}px`]);
-  const textX = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const textX = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  
+  // Asymmetric vertical floating for cards during horizonal scroll
+  const yFloatEven = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const yFloatOdd = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  
+  // Inverse tracking deep orb
+  const orbX = useTransform(scrollYProgress, [0, 1], ["20%", "-40%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [0.4, 0]);
 
   return (
@@ -120,10 +127,15 @@ export default function About() {
         onMouseMove={handleMouseMove} // Track mouse movement over the whole sticky area
       >
         
-        {/* Parallax Background Text */}
+        {/* Multi-layered Backdrops */}
+        <motion.div 
+          style={{ x: orbX, opacity: opacity }}
+          className="absolute top-1/2 left-0 w-[50vw] h-[50vw] bg-accent/[0.03] rounded-full blur-[100px] pointer-events-none z-0"
+        />
+
         <motion.div 
           style={{ x: textX, opacity }}
-          className="absolute top-1/2 -translate-y-1/2 left-10 text-[15rem] md:text-[25rem] font-black text-foreground/5 whitespace-nowrap pointer-events-none select-none z-0"
+          className="absolute top-1/2 -translate-y-1/2 left-10 text-[15rem] md:text-[25rem] font-black text-foreground/[0.02] whitespace-nowrap pointer-events-none select-none z-0"
         >
           JOURNEY
         </motion.div>
@@ -153,8 +165,9 @@ export default function About() {
 
           {/* Timeline Items */}
           {timelineData.map((item, index) => (
-            <div 
+            <motion.div 
               key={index} 
+              style={{ y: index % 2 === 0 ? yFloatEven : yFloatOdd }}
               className="group relative flex flex-col justify-center min-w-[300px] md:min-w-[500px]"
               // SET IMAGE ON HOVER
               onMouseEnter={() => setActiveImg(item.img)}
@@ -178,7 +191,7 @@ export default function About() {
               <p className="text-base md:text-lg text-gray-500 leading-relaxed max-w-sm">
                 {item.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
           
           <div className="min-w-[40vw]"></div>

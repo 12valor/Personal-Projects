@@ -45,6 +45,18 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   });
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
   
+  // Asymmetric Grid Scrolling
+  const yCol1 = useTransform(scrollYProgress, [0, 1], [0, 0]);
+  const yCol2 = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const yCol3 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+
+  const getParallaxY = (index: number) => {
+     const mod = index % 3;
+     if (mod === 0) return yCol1;
+     if (mod === 1) return yCol2;
+     return yCol3;
+  };
+
   const router = useRouter(); 
 
   // --- FILTER LOGIC ---
@@ -201,22 +213,27 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
           >
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project, i) => (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                  transition={{ 
-                    duration: 0.4, 
-                    delay: i * 0.05, 
-                    type: "spring", 
-                    stiffness: 250, 
-                    damping: 25 
-                  }}
-                  key={project.id}
-                  onClick={() => handleProjectClick(project)}
-                  className="group cursor-pointer flex flex-col gap-2 md:gap-3"
+                <motion.div 
+                   key={project.id} 
+                   layout 
+                   style={{ y: getParallaxY(i) }}
+                   className="h-full"
                 >
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ 
+                      duration: 0.4, 
+                      delay: (i % 6) * 0.05, 
+                      type: "spring", 
+                      stiffness: 250, 
+                      damping: 25 
+                    }}
+                    onClick={() => handleProjectClick(project)}
+                    className="group cursor-pointer flex flex-col gap-2 md:gap-3 h-full"
+                  >
                   {/* IMAGE */}
                   <div className="relative aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1 border border-border/50">
                     {project.image_url ? (
@@ -254,6 +271,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                         <p className="text-[10px] md:text-sm text-muted-foreground font-medium">{project.category}</p>
                     </div>
                   </div>
+                </motion.div>
                 </motion.div>
               ))}
             </AnimatePresence>

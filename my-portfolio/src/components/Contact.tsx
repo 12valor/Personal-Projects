@@ -21,6 +21,10 @@ export default function Contact() {
 
   const email = "evangelista.agdiaz@gmail.com";
 
+  const yText = useTransform(scrollYProgress, [0, 0.6], [150, 0]);
+  const scaleText = useTransform(scrollYProgress, [0, 0.6], [0.85, 1]);
+  const yForm = useTransform(scrollYProgress, [0, 0.8], [50, 0]);
+
   // --- HANDLERS ---
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
@@ -77,10 +81,7 @@ export default function Contact() {
           {/* --- LEFT COLUMN: Typography & Info --- */}
           <div className="flex flex-col h-full pt-4">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              style={{ y: yText, scale: scaleText }}
             >
               <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-black mb-2 leading-[0.9]">
                 Have an idea?
@@ -146,10 +147,7 @@ export default function Contact() {
 
           {/* --- RIGHT COLUMN: Form --- */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ y: yForm }}
             className="bg-white rounded-2xl p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
           >
             <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">

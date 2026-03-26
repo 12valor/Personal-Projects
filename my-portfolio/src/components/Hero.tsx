@@ -78,9 +78,20 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const yBackground = useTransform(scrollYProgress, [0, 1], [0, 300]); 
+  // 1. Deep Background (Furthest away) -> Scrolls very slowly
+  const yDeep = useTransform(scrollYProgress, [0, 1], [0, 400]); 
+  
+  // 2. Solid Text (Behind Image) -> Scrolls slowly
+  const ySolid = useTransform(scrollYProgress, [0, 1], [0, 200]);      
+  
+  // 3. Image (Midground) -> Standard tracking
   const yImage = useTransform(scrollYProgress, [0, 1], [0, 100]);      
-  const opacityFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]); 
+  
+  // 4. Hollow Text (Foreground) -> Pops out, moves faster than scroll!
+  const yHollow = useTransform(scrollYProgress, [0, 1], [0, -80]); 
+
+  // Smooth opacity fade
+  const opacityFade = useTransform(scrollYProgress, [0, 0.5, 0.8], [1, 1, 0]); 
 
   const fadeInUp: Variants = { 
     hidden: { opacity: 0, y: 40 },
@@ -99,6 +110,11 @@ export default function Hero() {
       ref={containerRef} 
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >
+      {/* --- LAYER 0: DEEP BACKGROUND (New) --- */}
+      <motion.div 
+         style={{ y: yDeep, opacity: opacityFade }}
+         className="absolute top-[-10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-muted-foreground/[0.03] blur-3xl pointer-events-none z-0"
+      />
       
       {/* --- LAYER 1: SOLID TEXT --- */}
       {/* Z-INDEX LOGIC:
@@ -108,7 +124,7 @@ export default function Hero() {
       
       {/* TOP TEXT */}
       <motion.div 
-        style={{ y: yBackground, opacity: opacityFade }}
+        style={{ y: ySolid, opacity: opacityFade }}
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
@@ -121,7 +137,7 @@ export default function Hero() {
 
       {/* BOTTOM TEXT */}
       <motion.div 
-        style={{ y: yBackground }}
+        style={{ y: ySolid, opacity: opacityFade }}
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
@@ -174,7 +190,7 @@ export default function Hero() {
       */}
       <div className="hidden lg:block absolute inset-0 z-30 pointer-events-none mix-blend-normal">
         <motion.div 
-            style={{ y: yBackground }}
+            style={{ y: yHollow, opacity: opacityFade }}
             initial="hidden"
             animate="visible"
             variants={fadeInUp}

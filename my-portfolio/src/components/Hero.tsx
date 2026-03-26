@@ -3,11 +3,11 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, Variants, useAnimationFrame } from "framer-motion";
 import Image from "next/image";
 
-// --- KAIZEN OPTIMIZATION: ZERO-RENDER SCRAMBLE COMPONENT ---
-// Replaces the CPU-heavy `setInterval` approach with a Framer Motion requestAnimationFrame loop
-// that mutates the DOM directly (`innerText`), completely bypassing React's render engine.
-const ScrambleText = ({ text }: { text: string }) => {
-  const textRef = useRef<HTMLSpanElement>(null);
+// --- KAIZEN OPTIMIZATION: SHARED MULTI-REF SCRAMBLE HOOK ---
+// This hook manages scramble state for multiple DOM elements simultaneously.
+// It mutates refs directly to ensure perfect 1:1 character sync between 
+// different parallax layers (Solid vs Hollow) without React re-renders.
+const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | null>[]) => {
   const progressRef = useRef(0);
   const currentTextRef = useRef(text);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()";
@@ -17,23 +17,17 @@ const ScrambleText = ({ text }: { text: string }) => {
     currentTextRef.current = text;
   }, [text]);
 
-  // @ts-expect-error - framer motion types for useAnimationFrame optionally provide t and delta
-  motion.useAnimationFrame = motion.useAnimationFrame || null; // Just to satisfy strict TS
-  
-  // Use framer motion's animation frame for perfect 60fps syncing
-  // We use `any` to bypass strict TS issues if the framer-motion version is slightly different
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Framer Motion's high-perf loop
   (useAnimationFrame as any)((t: number, delta: number) => {
-    if (!textRef.current) return;
-
     if (progressRef.current >= currentTextRef.current.length) {
-      if (textRef.current.innerText !== currentTextRef.current) {
-         textRef.current.innerText = currentTextRef.current;
-      }
+      refs.forEach(ref => {
+          if (ref.current && ref.current.innerText !== currentTextRef.current) {
+              ref.current.innerText = currentTextRef.current;
+          }
+      });
       return;
     }
 
-    // 0.03 = speed multiplier. Higher = faster descramble
     progressRef.current += delta * 0.03;
 
     let output = "";
@@ -45,10 +39,10 @@ const ScrambleText = ({ text }: { text: string }) => {
       }
     }
 
-    textRef.current.innerText = output;
+    refs.forEach(ref => {
+        if (ref.current) ref.current.innerText = output;
+    });
   });
-
-  return <span ref={textRef}>{text}</span>;
 };
 
 export default function Hero() {
@@ -72,6 +66,15 @@ export default function Hero() {
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
 
+  // Sync Refs for all layers
+  const topSolidRef = useRef<HTMLSpanElement>(null);
+  const bottomSolidRef = useRef<HTMLSpanElement>(null);
+  const bottomHollowRef = useRef<HTMLSpanElement>(null);
+
+  // Unified animations
+  useSyncScramble(topText, [topSolidRef]);
+  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef]);
+
   // --- PARALLAX & ANIMATION ---
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -81,15 +84,11 @@ export default function Hero() {
   // 1. Deep Background (Furthest away) -> Scrolls very slowly
   const yDeep = useTransform(scrollYProgress, [0, 1], [0, 400]); 
   
-  // 2. Solid Text (Behind Image) -> Scrolls slowly
-  const ySolid = useTransform(scrollYProgress, [0, 1], [0, 200]);      
+  // 2. Text Layers (Sandwich) -> Both Solid and Hollow move together for perfect sync
+  const yText = useTransform(scrollYProgress, [0, 1], [0, 200]);      
   
   // 3. Image (Midground) -> Standard tracking
   const yImage = useTransform(scrollYProgress, [0, 1], [0, 100]);      
-  
-  // 4. Hollow Text (Foreground) -> Pops out, moves faster than scroll!
-  const yHollow = useTransform(scrollYProgress, [0, 1], [0, -80]); 
-
   // Smooth opacity fade
   const opacityFade = useTransform(scrollYProgress, [0, 0.5, 0.8], [1, 1, 0]); 
 
@@ -120,52 +119,8 @@ export default function Hero() {
       />
       
       {/* 
-          MOBILE-FIRST RESPONSIVE CONTAINER 
-          Using a flex/relative structure for mobile to prevent overlapping, 
-          then switching to absolute layers for the 'sandwich' effect on desktop.
-      */}
-      <div className="relative z-20 flex flex-col h-full lg:block pointer-events-none">
-        
-        {/* TOP TEXT AREA */}
-        <motion.div 
-          style={{ y: ySolid, opacity: opacityFade }}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="
-            relative mt-[12vh] px-4 
-            md:mt-[15vh] md:px-8 
-            lg:absolute lg:mt-0 lg:top-[12vh] lg:left-16 lg:z-0
-          "
-        >
-          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90">
-            <ScrambleText text={topText} />
-          </h1>
-        </motion.div>
-
-        {/* BOTTOM TEXT AREA (Mobile stack) */}
-        <motion.div 
-          style={{ y: ySolid, opacity: opacityFade }}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ delay: 0.1 }}
-          className="
-            relative mt-2 px-4
-            md:px-8
-            lg:absolute lg:mt-0 lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right lg:z-0
-          "
-        >
-          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase">
-            <ScrambleText text={bottomText} />
-          </h1>
-        </motion.div>
-      </div>
-
-
-      {/* --- LAYER 2: THE IMAGE (Middle) --- */}
-      {/* Always z-10. 
-          On Desktop: Sits ON TOP of Layer 1 (Solid) but BELOW Layer 3 (Hollow).
+          PORTRAIT IMAGE (Layer 2 - Midground) 
+          Always z-10. Sits ON TOP of Layer 1 (Solid) but BELOW Layer 3 (Hollow).
       */}
       <motion.div 
         style={{ y: yImage }}
@@ -186,29 +141,64 @@ export default function Hero() {
         </div>
       </motion.div>
 
-
-      {/* --- LAYER 3: HOLLOW TEXT (Desktop Only) --- */}
-      {/* - Hidden on Mobile/Tablet.
-         - Visible on Desktop (lg:block).
-         - z-30 (Front).
-         - This layer contains the "Outline" text. Because it is z-30, it sits ON TOP of the image.
-         - Since the solid text is z-0 (Behind Image), you see: Solid -> Image -> Outline.
+      {/* 
+          TEXT LAYERS (Layer 1 & 3)
+          We use separate absolute containers for the Top and Bottom text 
+          to ensure precise control over the 'sandwich' per-area.
       */}
-      <div className="hidden lg:block absolute inset-0 z-30 pointer-events-none mix-blend-normal">
+      
+      {/* TOP TEXT (Mostly Solid, usually background) */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <motion.div 
-            style={{ y: yHollow, opacity: opacityFade }}
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            transition={{ delay: 0.1 }}
-            className="absolute bottom-[15vh] right-16 text-right"
+          style={{ y: yText, opacity: opacityFade }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="absolute top-[15vh] left-4 md:top-[18vh] md:left-8 lg:top-[12vh] lg:left-16"
         >
-            <h1 
-                className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent min-w-[5ch]"
-                style={{ WebkitTextStroke: "2px #fff" }}
-            >
-            <ScrambleText text={bottomText} />
-            </h1>
+          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90">
+            <span ref={topSolidRef}>{topText}</span>
+          </h1>
+        </motion.div>
+      </div>
+
+      {/* BOTTOM TEXT (THE SANDWICH) */}
+      {/* 
+          We wrap BOTH the Solid and Hollow bottom text in the SAME coordinate space.
+          Even though they have different Z-indexes, being in the same parent 
+          with identical classes ensures 1:1 pixel alignment.
+      */}
+      <div className="absolute inset-0 pointer-events-none">
+        
+        {/* Layer 1: Solid Background (z-0) */}
+        <motion.div 
+          style={{ y: yText, opacity: opacityFade }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ delay: 0.1 }}
+          className="absolute z-0 top-[24vh] left-4 md:top-[28vh] md:left-8 lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right"
+        >
+          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase">
+            <span ref={bottomSolidRef}>{bottomText}</span>
+          </h1>
+        </motion.div>
+
+        {/* Layer 3: Hollow Foreground (z-30) - Only on Desktop */}
+        <motion.div 
+          style={{ y: yText, opacity: opacityFade }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ delay: 0.1 }}
+          className="hidden lg:block absolute z-30 lg:bottom-[15vh] lg:right-16 lg:text-right"
+        >
+          <h1 
+            className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent"
+            style={{ WebkitTextStroke: "2px #fff" }}
+          >
+            <span ref={bottomHollowRef}>{bottomText}</span>
+          </h1>
         </motion.div>
       </div>
 

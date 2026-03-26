@@ -8,7 +8,7 @@ import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 // --- Animation Variants (mirroring Process.tsx quality) ---
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
@@ -19,7 +19,7 @@ const containerVariants: Variants = {
 };
 
 const headerVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -28,7 +28,7 @@ const headerVariants: Variants = {
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 35, scale: 0.97 },
+  hidden: { opacity: 0, y: 35, scale: 0.97, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -63,7 +63,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       className="relative w-full py-10 md:py-16 bg-transparent overflow-hidden z-0"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ amount: 0.15 }}
     >
 
       {/* Parallax Ambient Light (matches Process.tsx depth technique) */}
@@ -79,7 +79,8 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <motion.div variants={headerVariants} style={{ y: headerY }} className="text-center mb-10 md:mb-14">
+        <motion.div style={{ y: headerY }} className="w-full">
+          <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
           <div className="inline-flex items-center gap-3 mb-5">
             <div className="h-px w-8 bg-brand-400" />
             <span className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">
@@ -91,6 +92,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
             What Our Clients <br className="hidden md:block" />
             <span className="text-brand-900">Have to Say.</span>
           </h2>
+          </motion.div>
         </motion.div>
 
         {/* Testimonial Grid */}

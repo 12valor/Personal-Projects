@@ -36,8 +36,8 @@ const steps = [
 
 // --- Animation Variants ---
 
-const containerVariants = {
-  hidden: { opacity: 0 },
+const containerVariants: Variants = {
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] as const } },
   visible: {
     opacity: 1,
     transition: {
@@ -48,7 +48,7 @@ const containerVariants = {
 };
 
 const headerVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -60,7 +60,7 @@ const headerVariants: Variants = {
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -73,7 +73,7 @@ const cardVariants: Variants = {
 };
 
 const cardContentVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 10, transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -105,7 +105,7 @@ const Process = memo(function Process() {
       className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ amount: 0.2 }}
     >
       
       {/* 1. Subtle Premium Background Layers (Parallax) */}
@@ -121,11 +121,11 @@ const Process = memo(function Process() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <motion.div 
-          variants={headerVariants}
-          style={{ y: headerY }}
-          className="text-center mb-16 md:mb-24"
-        >
+        <motion.div style={{ y: headerY }} className="w-full">
+          <motion.div 
+            variants={headerVariants}
+            className="text-center mb-16 md:mb-24"
+          >
           <motion.h2 
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-6 leading-tight"
           >
@@ -136,6 +136,7 @@ const Process = memo(function Process() {
           >
             From concept to working systems. Our workflow combines rigorous hardware engineering with modern, scalable software development practices.
           </motion.p>
+          </motion.div>
         </motion.div>
 
         {/* Steps Grid */}

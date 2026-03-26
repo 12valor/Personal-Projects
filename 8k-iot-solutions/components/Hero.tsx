@@ -48,6 +48,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
   const textY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const gridY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   // Define 4 uniquely distributed static grid images
   const gridImages = [
@@ -179,7 +180,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
 
           {/* Right Column: Clean Orthogonal 2x2 Grid */}
           <motion.div 
-            style={{ y: gridY }}
+            style={{ y: gridY, opacity: gridOpacity }}
             className="hidden lg:block lg:col-span-6 xl:col-span-6 w-full justify-self-end mt-12 lg:mt-0 relative z-10"
           >
             {/* The Strict 20px gap grid without any fading gradients */}

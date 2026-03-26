@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 const sectionVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
@@ -16,7 +16,7 @@ const sectionVariants: Variants = {
 };
 
 const headerVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 16, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -25,7 +25,7 @@ const headerVariants: Variants = {
 };
 
 const logoVariants: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  hidden: { opacity: 0, y: 20, scale: 0.95, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -58,7 +58,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
         className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ amount: 0.2 }}
         variants={sectionVariants}
       >
 

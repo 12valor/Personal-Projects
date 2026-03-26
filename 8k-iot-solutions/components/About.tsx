@@ -6,7 +6,7 @@ import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
@@ -76,7 +76,7 @@ const About = memo(function About() {
         className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
+        viewport={{ amount: 0.15, margin: "0px 0px -10% 0px" }}
         variants={containerVariants}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">

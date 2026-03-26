@@ -5,7 +5,7 @@ import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 import { submitContactForm } from '@/app/contact';
 
 const sectionVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
@@ -16,7 +16,7 @@ const sectionVariants: Variants = {
 };
 
 const columnVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.97 },
+  hidden: { opacity: 0, y: 30, scale: 0.97, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -61,7 +61,7 @@ const Contact = memo(() => {
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
+        viewport={{ amount: 0.15 }}
         variants={sectionVariants}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
@@ -138,10 +138,10 @@ const Contact = memo(() => {
 
 
           {/* ----- RIGHT SIDE: Clean Form Panel ----- */}
-          <motion.div variants={columnVariants} style={{ y: formY }} className="lg:col-span-6 lg:col-start-7 w-full relative">
-
-            {/* The Form Container — clean, no glass tricks */}
-            <div className="bg-white/[0.04] p-8 md:p-10 rounded-2xl border border-white/[0.06] shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
+          <motion.div style={{ y: formY }} className="lg:col-span-6 lg:col-start-7 w-full relative">
+            <motion.div variants={columnVariants}>
+              {/* The Form Container — clean, no glass tricks */}
+              <div className="bg-white/[0.04] p-8 md:p-10 rounded-2xl border border-white/[0.06] shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
 
               {/* Success Message */}
               {state?.success && (
@@ -259,6 +259,7 @@ const Contact = memo(() => {
               </form>
             </div>
           </motion.div>
+        </motion.div>
 
         </div>
       </motion.div>

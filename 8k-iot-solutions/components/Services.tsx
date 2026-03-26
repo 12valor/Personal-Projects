@@ -21,7 +21,7 @@ const SOFTWARE_FEATURES = [
 ];
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
@@ -32,7 +32,7 @@ const containerVariants: Variants = {
 };
 
 const headerVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -44,7 +44,7 @@ const headerVariants: Variants = {
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.97 },
+  hidden: { opacity: 0, y: 30, scale: 0.97, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     y: 0,
@@ -81,21 +81,22 @@ const ServicesSection = memo(function ServicesSection() {
         className="max-w-4xl mx-auto px-6 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
+        viewport={{ amount: 0.15 }}
       >
         
         {/* Section Header */}
-        <motion.div 
-          variants={headerVariants}
-          style={{ y: headerY }}
-          className="text-center mb-12"
-        >
+        <motion.div style={{ y: headerY }} className="w-full">
+          <motion.div 
+            variants={headerVariants}
+            className="text-center mb-12"
+          >
           <h2 className="text-3xl md:text-4xl font-poppins font-semibold tracking-tight text-zinc-900">
             Hardware & Software
           </h2>
           <p className="mt-3 text-sm text-zinc-500 font-medium">
             Specialized solutions for student projects and enterprise clients.
           </p>
+          </motion.div>
         </motion.div>
 
         {/* Parallax Container Context */}

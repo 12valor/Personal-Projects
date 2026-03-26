@@ -1,40 +1,54 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useScroll, useTransform, Variants, useAnimationFrame } from "framer-motion";
 import Image from "next/image";
 
-// --- CUSTOM HOOK FOR SHUFFLE EFFECT ---
-const useScrambleText = (targetText: string) => {
-  const [displayText, setDisplayText] = useState(targetText);
+// --- KAIZEN OPTIMIZATION: ZERO-RENDER SCRAMBLE COMPONENT ---
+// Replaces the CPU-heavy `setInterval` approach with a Framer Motion requestAnimationFrame loop
+// that mutates the DOM directly (`innerText`), completely bypassing React's render engine.
+const ScrambleText = ({ text }: { text: string }) => {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const progressRef = useRef(0);
+  const currentTextRef = useRef(text);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()";
 
   useEffect(() => {
-    let iteration = 0;
-    let interval: NodeJS.Timeout;
+    progressRef.current = 0;
+    currentTextRef.current = text;
+  }, [text]);
 
-    interval = setInterval(() => {
-      setDisplayText((prev) =>
-        targetText
-          .split("")
-          .map((letter, index) => {
-            if (index < iteration) {
-              return targetText[index];
-            }
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join("")
-      );
+  // @ts-expect-error - framer motion types for useAnimationFrame optionally provide t and delta
+  motion.useAnimationFrame = motion.useAnimationFrame || null; // Just to satisfy strict TS
+  
+  // Use framer motion's animation frame for perfect 60fps syncing
+  // We use `any` to bypass strict TS issues if the framer-motion version is slightly different
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (useAnimationFrame as any)((t: number, delta: number) => {
+    if (!textRef.current) return;
 
-      if (iteration >= targetText.length) {
-        clearInterval(interval);
+    if (progressRef.current >= currentTextRef.current.length) {
+      if (textRef.current.innerText !== currentTextRef.current) {
+         textRef.current.innerText = currentTextRef.current;
       }
-      iteration += 1 / 2; 
-    }, 30); 
+      return;
+    }
 
-    return () => clearInterval(interval);
-  }, [targetText]);
+    // 0.03 = speed multiplier. Higher = faster descramble
+    progressRef.current += delta * 0.03;
 
-  return displayText;
+    let output = "";
+    for (let i = 0; i < currentTextRef.current.length; i++) {
+      if (i < progressRef.current) {
+        output += currentTextRef.current[i];
+      } else {
+        output += chars[Math.floor(Math.random() * chars.length)];
+      }
+    }
+
+    textRef.current.innerText = output;
+  });
+
+  return <span ref={textRef}>{text}</span>;
 };
 
 export default function Hero() {
@@ -55,8 +69,8 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, []);
 
-  const topText = useScrambleText(phrases[index][0]);
-  const bottomText = useScrambleText(phrases[index][1]);
+  const topText = phrases[index][0];
+  const bottomText = phrases[index][1];
 
   // --- PARALLAX & ANIMATION ---
   const { scrollYProgress } = useScroll({
@@ -101,7 +115,7 @@ export default function Hero() {
         className="absolute top-[8vh] left-4 md:top-[10vh] md:left-8 lg:top-[12vh] lg:left-16 z-20 lg:z-0 pointer-events-none"
       >
         <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90 min-w-[5ch]">
-          {topText}
+          <ScrambleText text={topText} />
         </h1>
       </motion.div>
 
@@ -122,7 +136,7 @@ export default function Hero() {
           z-20 lg:z-0 pointer-events-none"
       >
         <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase min-w-[5ch]">
-          {bottomText}
+          <ScrambleText text={bottomText} />
         </h1>
       </motion.div>
 
@@ -171,7 +185,7 @@ export default function Hero() {
                 className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent min-w-[5ch]"
                 style={{ WebkitTextStroke: "2px #fff" }}
             >
-            {bottomText}
+            <ScrambleText text={bottomText} />
             </h1>
         </motion.div>
       </div>

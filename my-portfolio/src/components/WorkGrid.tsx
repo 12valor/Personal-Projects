@@ -3,18 +3,23 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Image from "next/image";
 import { Layers, ArrowUpRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation"; 
+import { useRef } from "react";
 import GalleryModal from "./GalleryModal"; 
 
 // --- TYPES ---
-interface Project {
+export interface Project {
   id: number;
   title: string;
   category: string;
   image_url: string;
   gallery_urls: string[] | null;
   description: string;
+}
+
+interface WorkGridProps {
+  initialProjects: Project[];
 }
 
 // --- CONFIGURATION ---
@@ -24,32 +29,23 @@ const CATEGORY_MAP: Record<string, string[]> = {
   "Video Editing": ["Reels", "Long Form"],
 };
 
-export default function WorkGrid() {
-  const [projects, setProjects] = useState<Project[]>([]);
+export default function WorkGrid({ initialProjects }: WorkGridProps) {
+  const [projects] = useState<Project[]>(initialProjects);
   
   // State
   const [activeParent, setActiveParent] = useState("All");
   const [activeSub, setActiveSub] = useState("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
   
   const router = useRouter(); 
-
-  // --- FETCH DATA ---
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const { data } = await supabase
-        .from("projects")
-        .select("*")
-        .order("id", { ascending: false });
-      
-      if (data) setProjects(data);
-      setLoading(false);
-    };
-
-    fetchProjects();
-  }, []);
 
   // --- FILTER LOGIC ---
   const filteredProjects = projects.filter((project) => {
@@ -83,7 +79,12 @@ export default function WorkGrid() {
   };
 
   return (
-    <section id="work" className="relative px-4 md:px-16 py-16 md:py-24 bg-background border-t border-border font-poppins">
+    <motion.section 
+      id="work" 
+      ref={containerRef}
+      style={{ opacity: sectionOpacity }}
+      className="relative px-4 md:px-16 py-16 md:py-24 bg-background border-t border-border font-poppins"
+    >
       
       {/* --- GALLERY MODAL --- */}
       <GalleryModal 
@@ -191,23 +192,27 @@ export default function WorkGrid() {
         </div>
 
         {/* --- GRID --- */}
-        {loading ? (
-          <div className="h-64 flex items-center justify-center text-muted-foreground animate-pulse">Loading work...</div>
-        ) : filteredProjects.length === 0 ? (
+        {filteredProjects.length === 0 ? (
           <div className="h-64 flex items-center justify-center text-muted-foreground">No projects found in this category.</div>
         ) : (
           <motion.div 
             layout 
             className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8"
           >
-            <AnimatePresence>
-              {filteredProjects.map((project) => (
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, i) => (
                 <motion.div
                   layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{ 
+                    duration: 0.4, 
+                    delay: i * 0.05, 
+                    type: "spring", 
+                    stiffness: 250, 
+                    damping: 25 
+                  }}
                   key={project.id}
                   onClick={() => handleProjectClick(project)}
                   className="group cursor-pointer flex flex-col gap-2 md:gap-3"
@@ -266,6 +271,6 @@ export default function WorkGrid() {
           scrollbar-width: none;
         }
       `}</style>
-    </section>
+    </motion.section>
   );
 }

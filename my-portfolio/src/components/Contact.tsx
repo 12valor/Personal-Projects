@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { supabase } from "../lib/supabase"; 
 import { ArrowUpRight, Copy, Check, Loader2, Github, Facebook } from "lucide-react";
 
@@ -11,6 +11,13 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   const email = "evangelista.agdiaz@gmail.com";
 
@@ -57,8 +64,10 @@ export default function Contact() {
   ];
 
   return (
-    <section 
+    <motion.section 
       id="contact" 
+      ref={containerRef}
+      style={{ opacity: sectionOpacity }}
       className="relative py-16 md:py-32 px-4 md:px-6 bg-white border-t border-gray-100"
     >
       <div className="max-w-7xl mx-auto w-full">
@@ -229,6 +238,6 @@ export default function Contact() {
 
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

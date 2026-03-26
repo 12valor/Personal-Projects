@@ -110,51 +110,57 @@ export default function Hero() {
       ref={containerRef} 
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >
+      {/* --- NOISE GRAIN OVERLAY (Bespoke Touch) --- */}
+      <div className="absolute inset-0 z-[5] pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
       {/* --- LAYER 0: DEEP BACKGROUND (New) --- */}
       <motion.div 
          style={{ y: yDeep, opacity: opacityFade }}
-         className="absolute top-[-10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-muted-foreground/[0.03] blur-3xl pointer-events-none z-0"
+         className="absolute top-[-10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-muted-foreground/[0.04] blur-3xl pointer-events-none z-0"
       />
       
-      {/* --- LAYER 1: SOLID TEXT --- */}
-      {/* Z-INDEX LOGIC:
-          - Mobile/Tablet (default): z-20. Keeps text clear/above.
-          - Desktop (lg): z-0. Puts solid text BEHIND the image for the sandwich effect.
+      {/* 
+          MOBILE-FIRST RESPONSIVE CONTAINER 
+          Using a flex/relative structure for mobile to prevent overlapping, 
+          then switching to absolute layers for the 'sandwich' effect on desktop.
       */}
-      
-      {/* TOP TEXT */}
-      <motion.div 
-        style={{ y: ySolid, opacity: opacityFade }}
-        initial="hidden"
-        animate="visible"
-        variants={fadeInUp}
-        className="absolute top-[8vh] left-4 md:top-[10vh] md:left-8 lg:top-[12vh] lg:left-16 z-20 lg:z-0 pointer-events-none"
-      >
-        <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90 min-w-[5ch]">
-          <ScrambleText text={topText} />
-        </h1>
-      </motion.div>
+      <div className="relative z-20 flex flex-col h-full lg:block pointer-events-none">
+        
+        {/* TOP TEXT AREA */}
+        <motion.div 
+          style={{ y: ySolid, opacity: opacityFade }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="
+            relative mt-[12vh] px-4 
+            md:mt-[15vh] md:px-8 
+            lg:absolute lg:mt-0 lg:top-[12vh] lg:left-16 lg:z-0
+          "
+        >
+          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase opacity-90">
+            <ScrambleText text={topText} />
+          </h1>
+        </motion.div>
 
-      {/* BOTTOM TEXT */}
-      <motion.div 
-        style={{ y: ySolid, opacity: opacityFade }}
-        initial="hidden"
-        animate="visible"
-        variants={fadeInUp}
-        transition={{ delay: 0.1 }}
-        // MOBILE & TABLET: Stacked Left
-        // DESKTOP: Bottom Right
-        className="
-          absolute 
-          top-[16vh] left-4 text-left 
-          md:top-[20vh] md:left-8 
-          lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right 
-          z-20 lg:z-0 pointer-events-none"
-      >
-        <h1 className="text-[18vw] md:text-[16vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase min-w-[5ch]">
-          <ScrambleText text={bottomText} />
-        </h1>
-      </motion.div>
+        {/* BOTTOM TEXT AREA (Mobile stack) */}
+        <motion.div 
+          style={{ y: ySolid, opacity: opacityFade }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          transition={{ delay: 0.1 }}
+          className="
+            relative mt-2 px-4
+            md:px-8
+            lg:absolute lg:mt-0 lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right lg:z-0
+          "
+        >
+          <h1 className="text-[16vw] md:text-[14vw] lg:text-[14vw] leading-[0.8] font-bold tracking-tighter text-foreground uppercase">
+            <ScrambleText text={bottomText} />
+          </h1>
+        </motion.div>
+      </div>
 
 
       {/* --- LAYER 2: THE IMAGE (Middle) --- */}

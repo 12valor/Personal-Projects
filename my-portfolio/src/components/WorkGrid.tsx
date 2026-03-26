@@ -45,18 +45,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   });
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
   
-  // Asymmetric Grid Scrolling
-  const yCol1 = useTransform(scrollYProgress, [0, 1], [0, 0]);
-  const yCol2 = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const yCol3 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
-
-  const getParallaxY = (index: number) => {
-     const mod = index % 3;
-     if (mod === 0) return yCol1;
-     if (mod === 1) return yCol2;
-     return yCol3;
-  };
-
   const router = useRouter(); 
 
   // --- FILTER LOGIC ---
@@ -213,43 +201,42 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
           >
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project, i) => (
-                <motion.div 
-                   key={project.id} 
-                   layout 
-                   style={{ y: getParallaxY(i) }}
-                   className="h-full"
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ 
+                    duration: 0.4, 
+                    delay: (i % 6) * 0.05, 
+                    type: "spring", 
+                    stiffness: 250, 
+                    damping: 25 
+                  }}
+                  key={project.id}
+                  onClick={() => handleProjectClick(project)}
+                  className="group cursor-pointer flex flex-col gap-2 md:gap-3 h-full"
                 >
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ 
-                      duration: 0.4, 
-                      delay: (i % 6) * 0.05, 
-                      type: "spring", 
-                      stiffness: 250, 
-                      damping: 25 
-                    }}
-                    onClick={() => handleProjectClick(project)}
-                    className="group cursor-pointer flex flex-col gap-2 md:gap-3 h-full"
-                  >
                   {/* IMAGE */}
-                  <div className="relative aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1 border border-border/50">
+                  <div className="relative aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-white/[0.05] group-hover:-translate-y-1.5 border border-border/50">
                     {project.image_url ? (
                       <Image
                         src={project.image_url}
                         alt={project.title}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, 33vw"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Preview</div>
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
-                    {/* Icons */}
-                    <div className="absolute top-2 right-2 md:top-4 md:right-4 transition-all duration-300 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0">
+                    {/* Bespoke Overlays */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                    <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 transition-colors duration-500 rounded-lg md:rounded-2xl z-20" />
+                    
+                    {/* Action Icons */}
+                    <div className="absolute top-2 right-2 md:top-4 md:right-4 transition-all duration-500 translate-y-2 translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 z-30">
                         {isBatchView(project.category) ? (
                             <div className="bg-black/50 backdrop-blur-md text-white p-1.5 md:p-2 rounded-full">
                                 <Layers size={14} className="md:w-4 md:h-4" />
@@ -271,7 +258,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                         <p className="text-[10px] md:text-sm text-muted-foreground font-medium">{project.category}</p>
                     </div>
                   </div>
-                </motion.div>
                 </motion.div>
               ))}
             </AnimatePresence>

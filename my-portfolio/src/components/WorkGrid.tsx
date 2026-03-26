@@ -65,7 +65,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   };
 
   const handleProjectClick = (project: Project) => {
-    router.push(`/work/${project.id}`, { scroll: false });
+    if (isBatchView(project.category)) {
+      setSelectedProject(project);
+      setIsGalleryOpen(true);
+    } else {
+      router.push(`/work/${project.id}`);
+    }
   };
 
   const handleParentClick = (parent: string) => {

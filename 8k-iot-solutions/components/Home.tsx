@@ -23,7 +23,6 @@ export default function HomeContent({
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
       <SectionUrlSync />
       
-      {/* GLOBAL FIXED BACKGROUND GRID */}
       <div 
         className="fixed inset-0 z-[-10] pointer-events-none opacity-[0.15] animate-blueprintShift" 
         style={{

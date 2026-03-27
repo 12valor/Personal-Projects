@@ -26,10 +26,26 @@ export default function Preloader() {
         const increment = Math.random() > 0.6 ? 2 : 1;
         return Math.min(100, prev + increment);
       });
-    }, 40); // Faster, more constant updates
+    }, 40); 
 
     return () => clearInterval(interval);
   }, [finishLoading]);
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Use a ref to check sessionStorage immediately without state-delay
+  const shouldSkip = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("preloader_done") === "true";
+    }
+    return false;
+  }, []);
+
+  if (!isMounted || shouldSkip) return null;
 
   return (
     <AnimatePresence>
@@ -54,7 +70,7 @@ export default function Preloader() {
             </motion.div>
             
             {/* Linear Progress Bar (Minimalist) */}
-            <div className="w-[30vw] md:w-[20vw] h-[1px] bg-white/10 mt-4 overflow-hidden rounded-full">
+            <div className="w-[30vw] md:w-[20vw] h-[1px] bg-white/10 mt-8 md:mt-12 overflow-hidden rounded-full">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -67,7 +83,7 @@ export default function Preloader() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.4 }}
               transition={{ delay: 0.5 }}
-              className="absolute -bottom-8 left-0 right-0 text-center text-[10px] uppercase tracking-[0.3em] text-white font-medium"
+              className="mt-6 md:mt-8 text-center text-[10px] md:text-xs uppercase tracking-[0.4em] text-white font-medium max-w-[80vw]"
             >
               Initializing Studio Environment
             </motion.p>

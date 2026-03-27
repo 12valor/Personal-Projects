@@ -10,16 +10,25 @@ const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
-  const finishLoading = () => setIsLoading(false);
-
-  // Fallback to prevent infinite loading if something fails
   useEffect(() => {
+    setMounted(true);
+    const hasPreloaded = sessionStorage.getItem("preloader_done");
+    if (hasPreloaded === "true") {
+      setIsLoading(false);
+    }
+
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 10000); // 10s max
+    }, 10000);
     return () => clearTimeout(timer);
   }, []);
+
+  const finishLoading = () => {
+    sessionStorage.setItem("preloader_done", "true");
+    setIsLoading(false);
+  };
 
   return (
     <LoadingContext.Provider value={{ isLoading, finishLoading }}>

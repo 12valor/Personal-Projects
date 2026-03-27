@@ -32,13 +32,19 @@ The following technologies were utilized across the projects in this repository 
 
 ## Project Gallery
 
+> **Note on Screenshots:** Some captures below only show the initial viewport or an early section of the page — not the full layout. Several projects use scroll-driven animations and parallax effects that interfere with full-page screenshot tools like GoFullPage, causing the extension to cut off mid-scroll or fail to render sections that depend on scroll position. These screenshots reflect the MVP view of each project rather than the complete visual experience.
+
 |                         **Portfolio**                         |                         **CreatorLens**                         |                         **CRITIQUE**                         |                         **Flow**                         |                         **TUPV**                         |                          **Technowatch**                           |                     **RSSI System**                      |                         **8K IoT**                         |
 | :-----------------------------------------------------------: | :-------------------------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------------------------------: | :------------------------------------------------------: | :--------------------------------------------------------: |
 | <img src="Showcase%20Screenshots/portfolio.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="Showcase%20Screenshots/tupv.png" height="180"> | <img src="Showcase%20Screenshots/technowatchweb.png" height="180"> | <img src="Showcase%20Screenshots/rssi.png" height="180"> | <img src="Showcase%20Screenshots/8k-iot.png" height="180"> |
 
 ---
 
-## Personal Identity
+## 🟢 Active Projects
+
+These are projects currently in active development. They receive regular updates, new features, and ongoing maintenance.
+
+---
 
 ### AG.Portfolio
 
@@ -50,6 +56,37 @@ A dynamic portfolio website featuring a secure, custom-built admin panel. This p
 - **Media Optimization:** Integrated **Cloudinary** API for handling high-resolution uploads and optimized video/image delivery.
 - **Dynamic CMS:** Built on Supabase to handle project data, enabling "Highlight" features and category sorting instantly.
 - **Interactive UI:** Utilizes Framer Motion for scroll-triggered animations and parallax effects.
+
+---
+
+### RSSI Report System
+
+**Emergency Response & Field Operations Dashboard**
+
+A production-ready incident reporting system designed specifically for Philippine City Disaster Risk Reduction and Management Offices (CDRRMO). Built to manage critical operations with real-time data handling through Next.js and Supabase.
+
+- **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
+- **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
+- **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
+- **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
+
+---
+
+### 8K IoT Solutions
+
+**Hardware & Software Services Platform**
+
+A comprehensive service platform offering a range of robust hardware and software solutions. It is tailored to help students and innovators bring their ideas to life through custom engineering and development.
+
+- **Device Prototyping:** Custom hardware prototyping for IoT applications and smart devices.
+- **Dynamic Projects Management:** Built-in secure full-stack Admin Panel showcasing real-time synchronization with a local SQLite database using **Prisma** ORM.
+- **Modern Architecture:** Built featuring a Next.js App Router frontend with Tailwind CSS, advanced Server-Side skeleton loaders, and a Supabase backend for reliable inquiry management.
+
+---
+
+## 🗂️ Past Projects
+
+These projects are no longer actively maintained. They represent completed work, past commissions, and earlier-stage experiments — each one serving as a snapshot of problems explored and lessons learned at a given point in time.
 
 ---
 
@@ -80,17 +117,6 @@ CRITIQUE is a creator-first platform designed for actionable peer review. It shi
 ---
 
 ## Institutions & Government
-
-### RSSI Report System
-
-**Emergency Response & Field Operations Dashboard**
-
-A production-ready incident reporting system designed specifically for Philippine City Disaster Risk Reduction and Management Offices (CDRRMO). Built to manage critical operations with real-time data handling through Next.js and Supabase.
-
-- **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
-- **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
-- **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
-- **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
 
 ### TUPV Website
 
@@ -142,20 +168,6 @@ Flow is an e-commerce platform for organic products. It demonstrates full-stack 
 - **Brand Identity:** Nature-inspired, minimalist user interface.
 - **Inventory Management:** Dynamic filtering for sustainable product categories.
 - **Full-Stack Integration:** Seamless cart persistence and checkout processing.
-
----
-
-## Services
-
-### 8K IoT Solutions
-
-**Hardware & Software Services Platform**
-
-A comprehensive service platform offering a range of robust hardware and software solutions. It is tailored to help students and innovators bring their ideas to life through custom engineering and development.
-
-- **Device Prototyping:** Custom hardware prototyping for IoT applications and smart devices.
-- **Dynamic Projects Management:** Built-in secure full-stack Admin Panel showcasing real-time synchronization with a local SQLite database using **Prisma** ORM.
-- **Modern Architecture:** Built featuring a Next.js App Router frontend with Tailwind CSS, advanced Server-Side skeleton loaders, and a Supabase backend for reliable inquiry management.
 
 ---
 

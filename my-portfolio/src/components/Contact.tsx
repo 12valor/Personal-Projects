@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { supabase } from "../lib/supabase"; 
 import { ArrowUpRight, Copy, Check, Loader2, Github, Facebook } from "lucide-react";
@@ -11,6 +11,15 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size for parallax disabling
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -21,9 +30,9 @@ export default function Contact() {
 
   const email = "evangelista.agdiaz@gmail.com";
 
-  const yText = useTransform(scrollYProgress, [0, 0.6], [150, 0]);
-  const scaleText = useTransform(scrollYProgress, [0, 0.6], [0.85, 1]);
-  const yForm = useTransform(scrollYProgress, [0, 0.8], [50, 0]);
+  const yText = useTransform(scrollYProgress, [0, 0.6], [isMobile ? 0 : 150, 0]);
+  const scaleText = useTransform(scrollYProgress, [0, 0.6], [isMobile ? 1 : 0.85, 1]);
+  const yForm = useTransform(scrollYProgress, [0, 0.8], [isMobile ? 0 : 50, 0]);
 
   // --- HANDLERS ---
   const handleCopy = () => {

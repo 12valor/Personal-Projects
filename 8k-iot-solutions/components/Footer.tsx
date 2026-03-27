@@ -104,7 +104,7 @@ const Footer = memo(() => {
               </a>
 
               {/* TikTok */}
-              <a href="#" className="shrink-0 group flex items-center justify-start h-[40px] w-[40px] bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] transition-all duration-300 hover:w-[190px] overflow-hidden border border-slate-100 hover:border-brand-200 hover:shadow-[0_4px_15px_rgba(59,130,246,0.12)]">
+              <a href="https://www.tiktok.com/@8kiotsolutions" className="shrink-0 group flex items-center justify-start h-[40px] w-[40px] bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] transition-all duration-300 hover:w-[190px] overflow-hidden border border-slate-100 hover:border-brand-200 hover:shadow-[0_4px_15px_rgba(59,130,246,0.12)]">
                 <div className="flex items-center justify-center min-w-[40px] h-[40px]">
                   <svg viewBox="0 0 448 512" className="h-[14px] w-[14px] fill-[#000]" xmlns="http://www.w3.org/2000/svg"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31v89.89a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/></svg>
                 </div>

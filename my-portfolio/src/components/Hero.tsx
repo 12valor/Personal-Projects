@@ -2,12 +2,13 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, Variants, useAnimationFrame } from "framer-motion";
 import Image from "next/image";
+import { useLoading } from "./LoadingProvider";
 
 // --- KAIZEN OPTIMIZATION: SHARED MULTI-REF SCRAMBLE HOOK ---
 // This hook manages scramble state for multiple DOM elements simultaneously.
 // It mutates refs directly to ensure perfect 1:1 character sync between 
 // different parallax layers (Solid vs Hollow) without React re-renders.
-const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | null>[]) => {
+const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | null>[], enabled: boolean) => {
   const progressRef = useRef(0);
   const currentTextRef = useRef(text);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()";
@@ -19,6 +20,7 @@ const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | n
 
   // Framer Motion's high-perf loop
   (useAnimationFrame as any)((t: number, delta: number) => {
+    if (!enabled) return;
     if (progressRef.current >= currentTextRef.current.length) {
       refs.forEach(ref => {
           if (ref.current && ref.current.innerText !== currentTextRef.current) {
@@ -56,12 +58,15 @@ export default function Hero() {
     ["WEB", "DEVELOPER"],
   ];
 
+  const { isLoading } = useLoading();
+
   useEffect(() => {
+    if (isLoading) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
     }, 4500); 
     return () => clearInterval(interval);
-  }, []);
+  }, [isLoading]);
 
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
@@ -71,9 +76,9 @@ export default function Hero() {
   const bottomSolidRef = useRef<HTMLSpanElement>(null);
   const bottomHollowRef = useRef<HTMLSpanElement>(null);
 
-  // Unified animations
-  useSyncScramble(topText, [topSolidRef]);
-  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef]);
+  // Unified animations - only enable after preloader
+  useSyncScramble(topText, [topSolidRef], !isLoading);
+  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef], !isLoading);
 
   // --- PARALLAX & ANIMATION ---
   const { scrollYProgress } = useScroll({
@@ -125,7 +130,7 @@ export default function Hero() {
       <motion.div 
         style={{ y: yImage }}
         initial={{ opacity: 0, scale: 1.05 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={!isLoading ? { opacity: 1, scale: 1 } : { opacity: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none"
       >
@@ -152,7 +157,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate="visible"
+          animate={!isLoading ? "visible" : "hidden"}
           variants={fadeInUp}
           className="absolute top-[15vh] left-4 md:top-[18vh] md:left-8 lg:top-[12vh] lg:left-16"
         >
@@ -174,7 +179,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate="visible"
+          animate={!isLoading ? "visible" : "hidden"}
           variants={fadeInUp}
           transition={{ delay: 0.1 }}
           className="absolute z-0 top-[24vh] left-4 md:top-[28vh] md:left-8 lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right"

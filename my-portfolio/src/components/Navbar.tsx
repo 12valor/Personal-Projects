@@ -52,7 +52,10 @@ const linkVariants: Variants = {
   },
 };
 
+import { useLoading } from "./LoadingProvider";
+
 export default function Navbar() {
+  const { isLoading } = useLoading();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -78,16 +81,19 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-background/80 backdrop-blur-md border-b border-border py-4"
-            : "bg-transparent py-6"
-        }`}
-      >
+      <AnimatePresence>
+        {!isLoading && (
+          <motion.nav
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+              isScrolled
+                ? "bg-background/80 backdrop-blur-md border-b border-border py-4"
+                : "bg-transparent py-6"
+            }`}
+          >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between relative">
 
           {/* MOBILE ICON (LEFT) */}
@@ -131,9 +137,11 @@ export default function Navbar() {
           <div className="w-8 h-8 md:hidden" />
         </div>
       </motion.nav>
+    )}
+  </AnimatePresence>
 
-      {/* MOBILE FULLSCREEN MENU */}
-      <AnimatePresence
+  {/* MOBILE FULLSCREEN MENU */}
+  <AnimatePresence
         onExitComplete={() => setIsMenuOpen(false)}
       >
         {isMenuVisible && (

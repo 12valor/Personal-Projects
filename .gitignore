@@ -63,3 +63,28 @@ lib/generated/prisma
 
 # Agents
 .agents/
+
+# Python & Machine Learning
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.ipynb_checkpoints/
+*.h5
+*.pb
+
+# Arduino & Hardware
+.pio/
+*.elf
+*.bin
+*.hex
+
+#vs code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

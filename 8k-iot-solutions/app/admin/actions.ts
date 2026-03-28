@@ -76,13 +76,19 @@ export async function saveTestimonial(formData: FormData) {
   const rating = parseInt(formData.get('rating') as string || '5');
   
   // Handle avatar upload or URL
+  const removeAvatar = formData.get('removeAvatar') === 'true';
   let avatar = formData.get('existingAvatar') as string || '';
+  
+  if (removeAvatar) {
+    avatar = '';
+  }
+
   const avatarFile = formData.get('avatarFile') as File | null;
   const avatarUrl = formData.get('avatarUrl') as string | null;
 
   if (avatarFile && avatarFile.size > 0 && avatarFile.name) {
     avatar = await saveImageFile(avatarFile, 'avatar');
-  } else if (avatarUrl) {
+  } else if (avatarUrl && !removeAvatar) {
     avatar = avatarUrl;
   }
 

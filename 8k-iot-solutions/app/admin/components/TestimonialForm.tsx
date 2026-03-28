@@ -1,9 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { saveTestimonial } from '../actions';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function TestimonialForm({ testimonial }: { testimonial?: any }) {
+  const [isImageRemoved, setIsImageRemoved] = useState(false);
+
+  const handleRemoveImage = () => {
+    setIsImageRemoved(true);
+  };
   return (
     <form action={saveTestimonial} className="space-y-8 divide-y divide-zinc-200">
       <div className="space-y-8 divide-y divide-zinc-200">
@@ -19,8 +25,9 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             
-            {testimonial && <input type="hidden" name="id" value={testimonial.id} />}
-            {testimonial && <input type="hidden" name="existingAvatar" value={testimonial.avatar} />}
+            {testimonial && <input type="hidden" name="id" value={testimonial.id || ''} />}
+            {testimonial && <input type="hidden" name="existingAvatar" value={testimonial.avatar || ''} />}
+            {testimonial && <input type="hidden" name="removeAvatar" value={String(isImageRemoved)} />}
 
             <div className="sm:col-span-3">
               <label htmlFor="name" className="block text-sm font-medium text-zinc-700">
@@ -32,7 +39,7 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
                   name="name"
                   id="name"
                   required
-                  defaultValue={testimonial?.name}
+                  defaultValue={testimonial?.name || ''}
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border-zinc-300 rounded-md p-2 border"
                 />
               </div>
@@ -48,7 +55,7 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
                   name="position"
                   id="position"
                   placeholder="e.g. CEO at Company"
-                  defaultValue={testimonial?.position}
+                  defaultValue={testimonial?.position || ''}
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border-zinc-300 rounded-md p-2 border"
                 />
               </div>
@@ -64,7 +71,7 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
                   name="text"
                   rows={4}
                   required
-                  defaultValue={testimonial?.text}
+                  defaultValue={testimonial?.text || ''}
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border border-zinc-300 rounded-md p-2"
                 />
               </div>
@@ -95,20 +102,31 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
               <label className="block text-sm font-medium text-zinc-700">Profile Image (Avatar)</label>
               <div className="mt-4 space-y-4">
                 <div className="flex items-center gap-4">
-                  {testimonial?.avatar && (
+                  {testimonial?.avatar && !isImageRemoved && (
                     <span className="h-16 w-16 overflow-hidden bg-zinc-100 rounded-full border shrink-0 relative">
                       <img src={testimonial.avatar} className="w-full h-full object-cover" alt="Preview" />
                     </span>
                   )}
-                  <div className="flex-1">
-                    <label className="block text-xs text-zinc-500 mb-1">Upload File</label>
-                    <input
-                      type="file"
-                      name="avatarFile"
-                      id="avatarFile"
-                      accept="image/*"
-                      className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border border-zinc-300 rounded-md p-1.5"
-                    />
+                  <div className="flex-1 flex items-center gap-4">
+                    {testimonial?.avatar && !isImageRemoved && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors border border-red-100"
+                      >
+                        Remove Photo
+                      </button>
+                    )}
+                    <div className="flex-1">
+                      <label className="block text-xs text-zinc-500 mb-1">Upload New File</label>
+                      <input
+                        type="file"
+                        name="avatarFile"
+                        id="avatarFile"
+                        accept="image/*"
+                        className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border border-zinc-300 rounded-md p-1.5"
+                      />
+                    </div>
                   </div>
                 </div>
                 

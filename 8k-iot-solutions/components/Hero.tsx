@@ -150,7 +150,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
               >
                 <a 
                   href="#contact" 
-                  className="relative w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-zinc-900 lg:bg-brand-900 text-white text-[16px] font-semibold font-poppins shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_35px_-5px_rgba(30,58,138,0.35)] lg:hover:bg-brand-700 hover:bg-zinc-800 transition-all duration-300 overflow-hidden rounded-[10px]"
+                  className="relative w-full inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[16px] font-semibold font-poppins shadow-[0_4px_15px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_35px_-5px_rgba(30,58,138,0.35)] hover:bg-brand-800 transition-all duration-300 overflow-hidden rounded-[10px]"
                 >
                   {/* Subtle animated background gradient glow */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out pointer-events-none" />

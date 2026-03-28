@@ -60,3 +60,6 @@ ehthumbs.db
 next-env.d.ts
 *.tsbuildinfo
 lib/generated/prisma
+
+# Agents
+.agents/

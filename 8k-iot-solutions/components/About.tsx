@@ -1,17 +1,16 @@
 "use client";
-import React, { useState, useRef, memo } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import Image from 'next/image';
-import { Cpu, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, Variants, useScroll, useTransform } from 'framer-motion';
-
+import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
+import { motion, Variants, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0, // Removed stagger for simultaneous display
-      delayChildren: 0,   // Removed delay for immediate simultaneous display
+      staggerChildren: 0, 
+      delayChildren: 0,   
     },
   },
 };
@@ -19,11 +18,11 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: { 
     opacity: 0, 
-    y: 30,
-    scale: 0.97,
+    y: 35,
+    scale: 0.98,
     transition: {
-      duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
+      duration: 0.6,
+      ease: [0.16, 1, 0.3, 1],
     }
   },
   visible: {
@@ -31,213 +30,181 @@ const itemVariants: Variants = {
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
+      duration: 1.2,
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
 
 const About = memo(function About() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(true);
   const containerRef = useRef<HTMLElement>(null);
+  
+  // Safe mobile detection for parallax opt-out
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile(); // Check immediately on mount
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const textY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
-  const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  
+  // Refined Parallax Spring configuration for butter-smooth movement
+  const smoothY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const desktopImageY = useTransform(smoothY, [0, 1], ["-12%", "12%"]);
+
+  // Conditionally disable the parallax y-transform on mobile devices to prevent layout shift & ensure performance
+  const imageY = isMobile ? "0%" : desktopImageY;
 
   const images = [
     "/co-founders.jpg",
-    "/about-img-2.jpg", // Placeholder paths for the additional images
-    "/about-img-3.jpg"  // Will fall back natively or user will provide them
+    "/about-img-2.jpg", 
+    "/about-img-3.jpg"  
   ];
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
+  const prevImage = () => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
+  const nextImage = () => setCurrentImageIndex((p) => (p + 1) % images.length);
 
   return (
-    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} id="about" className="relative py-12 lg:py-16 bg-transparent overflow-hidden z-0">
-
-      {/* Ambient Depth Orb */}
-      <motion.div 
-        style={{ y: bgOrbY }}
-        className="absolute top-[-5%] left-[10%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[120px] pointer-events-none will-change-transform" 
+    <section 
+      ref={containerRef} 
+      id="about" 
+      className="relative py-20 lg:py-32 bg-zinc-50 z-0 isolate overflow-hidden"
+    >
+      {/* Enhanced Background Grid Pattern (Unmasked, full-section) */}
+      <div 
+        className="absolute inset-0 z-[-1] pointer-events-none" 
+        style={{ 
+          backgroundImage: 'linear-gradient(to right, #d4d4d8 1px, transparent 1px), linear-gradient(to bottom, #d4d4d8 1px, transparent 1px)', 
+          backgroundSize: '64px 64px', 
+          opacity: 0.6
+        }} 
       />
-      
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+
+      {/* Main Grid Wrapper */}
       <motion.div 
-        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        className="relative z-10 w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20"
         initial="hidden"
         whileInView="visible"
         viewport={{ amount: 0.15, margin: "0px 0px -10% 0px" }}
         variants={containerVariants}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* Native Staggered Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-0 lg:items-center relative isolate">
           
-          {/* ----- LEFT COLUMN: Narrative & Metrics ----- */}
+          {/* ----- LEFT COLUMN: Massive White Anchor Text Container (Cols 1-9) ----- */}
+          {/* Assigned to cols 1-9. Z-index 0. Solid background */}
           <motion.div 
-            style={{ y: textY }}
-            className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left justify-center order-2 lg:order-1 pt-8 lg:pt-0 max-w-2xl mx-auto lg:mx-0 w-full"
+            className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
+            variants={itemVariants}
           >
-            
-            <motion.div 
-              variants={itemVariants}
-              className="flex items-center justify-center lg:justify-start gap-3 mb-6"
-              style={{ willChange: 'transform, opacity' }}
-            >
-              <div className="h-px w-6 bg-brand-600 rounded-full" />
-              <h3 className="text-[12px] font-bold text-brand-900 uppercase tracking-widest font-sans">
-                Who We Are
-              </h3>
-            </motion.div>
+            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-8 sm:p-12 lg:p-16 xl:p-24 relative overflow-hidden group/card lg:pr-[25%] xl:pr-[30%]">
+              
+              {/* Minimal Section Subhead */}
+              <div className="flex items-center gap-4 mb-8 relative z-10">
+                <div className="h-px w-8 bg-brand-600" />
+                <h3 className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-sans">
+                  The Studio
+                </h3>
+              </div>
 
-            <motion.h2 
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-gray-900 mb-6 font-sans leading-[1.12] tracking-tight"
-              style={{ willChange: 'transform, opacity' }}
-            >
-              Hardware precision meets <br className="hidden md:block"/>
-              <span className="text-brand-900">software intelligence.</span>
-            </motion.h2>
+              {/* Pure Sans-Serif Typography Contrast */}
+              <h2 className="text-[3rem] sm:text-[4rem] lg:text-[4.5rem] xl:text-[5rem] font-sans font-extrabold text-zinc-900 mb-8 leading-[1.05] tracking-tighter relative z-10">
+                Hardware <br className="hidden md:block" />precision meets <br/>
+                <span className="font-normal text-zinc-400 block mt-2 md:mt-1 tracking-tight">software intelligence.</span>
+              </h2>
 
-            <motion.div 
-              variants={itemVariants}
-              className="max-w-[600px] text-[15px] sm:text-base text-gray-600 font-poppins leading-relaxed mb-10 space-y-4"
-              style={{ willChange: 'transform, opacity' }}
-            >
-              <p>
-                As dedicated freelance IoT specialists based in Talisay City, Negros Occidental, we partner with visionaries and businesses to architect custom solutions from the ground up.
-              </p>
-              <p>
-                From designing custom microcontroller circuits to deploying responsive cloud dashboards, our student-centered approach focuses on building robust ecosystems that seamlessly connect the physical world to actionable digital insights.
-              </p>
-            </motion.div>
+              {/* Wide-line-height Scannable Text Blocks */}
+              <div className="flex flex-col gap-6 max-w-[540px] text-zinc-600 text-[17px] lg:text-lg font-sans leading-relaxed mb-16 relative z-10 selection:bg-brand-100">
+                <p>
+                  As dedicated freelance IoT specialists based in Talisay City, Negros Occidental, we partner with visionaries and businesses to architect custom solutions from the ground up.
+                </p>
+                <p>
+                  From designing custom microcontroller circuits to deploying responsive cloud dashboards, our student-centered approach focuses on building robust ecosystems that seamlessly connect the physical world to actionable digital insights.
+                </p>
+              </div>
 
-            {/* Metrics Row with Lucide Icons */}
-            <motion.div 
-              variants={itemVariants}
-              className="grid grid-cols-2 gap-4 md:gap-5 mb-10 max-w-[420px] w-full text-left"
-              style={{ willChange: 'transform, opacity' }}
-            >
-              {/* Metric 1 */}
-              <div className="group flex flex-col items-start border-l-[3px] border-gray-200 hover:border-brand-500 bg-gray-50/80 p-4 transition-colors duration-300">
-                <div className="flex items-center justify-between w-full mb-1">
-                  <span className="text-2xl sm:text-3xl font-bold text-gray-900 font-sans tracking-tight">10+</span>
-                  <Cpu className="w-5 h-5 text-gray-400 group-hover:text-brand-500 transition-colors duration-300" strokeWidth={2} />
+              {/* Clean Inline Counters inside the Text Card */}
+              <div className="flex flex-wrap items-center gap-6 sm:gap-10 mb-12 relative z-10">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">10+</span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Projects<br/>Completed</span>
                 </div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider mt-1">
-                  Projects Completed
+                
+                {/* Thin dividing line visible only on larger screens where they run side-by-side */}
+                <div className="w-[1px] h-10 bg-zinc-200 hidden sm:block" />
+                
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">2+</span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Years<br/>Experience</span>
                 </div>
               </div>
 
-              {/* Metric 2 */}
-              <div className="group flex flex-col items-start border-l-[3px] border-gray-200 hover:border-brand-500 bg-gray-50/80 p-4 transition-colors duration-300">
-                <div className="flex items-center justify-between w-full mb-1">
-                  <span className="text-2xl sm:text-3xl font-bold text-gray-900 font-sans tracking-tight">2+</span>
-                  <Briefcase className="w-5 h-5 text-gray-400 group-hover:text-brand-500 transition-colors duration-300" strokeWidth={2} />
-                </div>
-                <div className="text-[11px] sm:text-xs text-gray-500 font-poppins font-semibold uppercase tracking-wider mt-1">
-                  Years Experience
-                </div>
+              {/* CTA Pill */}
+              <div className="relative z-10">
+                <a 
+                  href="#contact" 
+                  className="group inline-flex items-center gap-4 bg-zinc-900 text-white pl-6 pr-2 py-2 rounded-full font-sans font-medium text-[15px] transition-all duration-500 hover:bg-zinc-800 focus:ring-4 focus:ring-zinc-900/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+                >
+                  <span className="tracking-wide">Let's Collaborate</span>
+                  <span className="flex items-center justify-center w-[38px] h-[38px] bg-white/10 rounded-full transition-all duration-500 group-hover:bg-white group-hover:scale-105">
+                    <ArrowUpRight className="w-5 h-5 text-zinc-300 group-hover:text-zinc-900 transition-colors duration-500 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]" strokeWidth={2} />
+                  </span>
+                </a>
               </div>
-            </motion.div>
 
-            <motion.div variants={itemVariants} style={{ willChange: 'transform, opacity' }}>
-              <a 
-                href="#contact" 
-                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-brand-900 text-white text-[14.5px] font-medium font-poppins rounded-[8px] overflow-hidden transition-all duration-300 hover:bg-brand-700 active:scale-[0.98]"
-              >
-                <span>Contact Us</span>
-                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </a>
-            </motion.div>
+            </div>
           </motion.div>
 
-          {/* ----- RIGHT COLUMN: Founders Photo — Blueprint Specimen Frame ----- */}
+          {/* ----- RIGHT COLUMN: Cinematic Parallax Image Frame (Cols 8-12) ----- */}
+          {/* Hidden entirely on mobile, visible only on lg screens and up. Z-index 10. */}
           <motion.div 
-            className="hidden lg:block lg:col-span-5 relative order-1 lg:order-2"
-            style={{ willChange: 'transform, opacity', y: imageY }}
+            className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0"
+            style={{ y: imageY }}
           >
-            <motion.div variants={itemVariants} className="w-full h-full relative group/carousel">
+            <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100">
+              
+              {images.map((src, idx) => (
+                <Image 
+                  key={src}
+                  src={src} 
+                  alt={`8K IoT Solutions Preview ${idx + 1}`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className={`object-cover transition-transform transition-opacity duration-1000 ease-in-out ${idx === currentImageIndex ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-105'}`}
+                  priority={idx === 0}
+                />
+              ))}
 
-              {/* Corner Crosshair Marks — Technical registration reference */}
-              <div className="absolute -top-3 -left-3 w-6 h-6 z-30 pointer-events-none">
-                <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
-                <div className="absolute left-1/2 top-0 h-full w-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
+              {/* Sophisticated Hover Navigation Pill */}
+              <div className="absolute bottom-4 right-4 lg:bottom-8 lg:right-8 flex items-center gap-1.5 p-1.5 bg-white/90 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/60 z-30 opacity-0 group-hover/carousel:opacity-100 transition-all duration-500 translate-y-4 group-hover/carousel:translate-y-0">
+                <button 
+                  onClick={prevImage}
+                  className="p-2 sm:p-2.5 rounded-full bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors focus:outline-none"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5 -ml-0.5" strokeWidth={1.5} />
+                </button>
+                <div className="w-[1px] h-4 bg-zinc-200" />
+                <button 
+                  onClick={nextImage}
+                  className="p-2 sm:p-2.5 rounded-full bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors focus:outline-none"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-5 h-5 -mr-0.5" strokeWidth={1.5} />
+                </button>
               </div>
-              <div className="absolute -bottom-3 -right-3 w-6 h-6 z-30 pointer-events-none">
-                <div className="absolute top-1/2 left-0 w-full h-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
-                <div className="absolute left-1/2 top-0 h-full w-px bg-zinc-300 group-hover/carousel:bg-brand-400 transition-colors duration-500" />
-              </div>
-
-              {/* Main Frame */}
-              <div className="relative border-2 border-zinc-200 hover:border-brand-300 rounded-2xl p-1.5 transition-colors duration-500 bg-white/50 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_40px_-8px_rgba(30,58,138,0.1)]">
-                <div className="relative aspect-[4/5] bg-zinc-100 rounded-xl overflow-hidden isolate">
-                  
-                  {images.map((src, idx) => (
-                    <Image 
-                      key={src}
-                      src={src} 
-                      alt={`About 8K IoT Solutions Image ${idx + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 40vw"
-                      className={`object-cover transition-opacity duration-700 ease-in-out ${idx === currentImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                      priority={idx === 0}
-                    />
-                  ))}
-
-                  {/* Carousel Controls */}
-                  <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 z-20">
-                    <button 
-                      onClick={prevImage}
-                      className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={nextImage}
-                      className="p-2 rounded-full bg-white/90 text-gray-800 hover:bg-white transition-all shadow-md backdrop-blur-sm hover:scale-105 active:scale-95 focus:outline-none"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Carousel Indicators (Dots) */}
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-                    {images.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        aria-label={`Go to slide ${idx + 1}`}
-                        className={`h-1.5 rounded-full transition-all duration-300 ${
-                          idx === currentImageIndex 
-                            ? 'w-4 bg-white shadow-sm' 
-                            : 'w-1.5 bg-white/50 hover:bg-white/80'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </motion.div>
 
         </div>
       </motion.div>
-    </motion.section>
+    </section>
   );
 });
 

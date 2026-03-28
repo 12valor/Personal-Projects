@@ -47,7 +47,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} className="relative py-14 lg:py-20 bg-transparent z-0 overflow-hidden">
+    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} className="relative pt-14 pb-4 md:py-20 lg:py-20 bg-transparent z-0 overflow-hidden">
 
       {/* Ambient Depth Orb */}
       <motion.div 
@@ -75,10 +75,10 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
         </motion.div>
 
         {/* All logos visible, centered, single row, no masking */}
-        <motion.div style={{ y: logoRowY }} className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
+        <motion.div style={{ y: logoRowY }} className="grid grid-cols-2 gap-4 md:gap-10 lg:flex lg:flex-wrap lg:justify-center lg:gap-14">
           {logos.map((logo, idx) => {
             const logoContent = (
-              <div className="relative h-16 md:h-20 lg:h-24 w-36 md:w-48 lg:w-56 transition-transform duration-500 hover:scale-105 will-change-transform">
+              <div className="relative h-24 sm:h-28 md:h-20 lg:h-24 w-full max-w-[150px] sm:max-w-[180px] md:w-48 lg:w-56 transition-transform duration-500 hover:scale-105 will-change-transform">
                 <Image 
                   src={logo.image} 
                   alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 

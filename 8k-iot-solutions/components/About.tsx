@@ -94,10 +94,10 @@ const About = memo(function About() {
             className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
             variants={itemVariants}
           >
-            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-8 sm:p-12 lg:p-16 xl:p-24 relative overflow-hidden group/card lg:pr-[25%] xl:pr-[30%]">
+            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-6 sm:p-10 lg:p-16 xl:p-24 relative overflow-hidden group/card lg:pr-[25%] xl:pr-[30%]">
               
               {/* Minimal Section Subhead */}
-              <div className="flex items-center gap-4 mb-8 relative z-10">
+              <div className="flex items-center gap-4 mb-6 md:mb-8 relative z-10">
                 <div className="h-px w-8 bg-brand-600" />
                 <h3 className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-sans">
                   The Studio
@@ -105,9 +105,9 @@ const About = memo(function About() {
               </div>
 
               {/* Pure Sans-Serif Typography Contrast */}
-              <h2 className="text-[3rem] sm:text-[4rem] lg:text-[4.5rem] xl:text-[5rem] font-sans font-extrabold text-zinc-900 mb-8 leading-[1.05] tracking-tighter relative z-10">
-                Hardware <br className="hidden md:block" />precision meets <br/>
-                <span className="font-normal text-zinc-400 block mt-2 md:mt-1 tracking-tight">software intelligence.</span>
+              <h2 className="text-[2.25rem] leading-[1.1] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5rem] font-sans font-extrabold text-zinc-900 mb-6 md:mb-8 sm:leading-[1.05] tracking-tighter relative z-10">
+                Hardware <br className="hidden md:block" />precision meets <br className="hidden md:block"/>
+                <span className="font-normal text-zinc-400 block mt-1 tracking-tight">software intelligence.</span>
               </h2>
 
               {/* Wide-line-height Scannable Text Blocks */}
@@ -121,30 +121,30 @@ const About = memo(function About() {
               </div>
 
               {/* Clean Inline Counters inside the Text Card */}
-              <div className="flex flex-wrap items-center gap-6 sm:gap-10 mb-12 relative z-10">
-                <div className="flex items-baseline gap-3">
+              <div className="grid grid-cols-2 sm:flex items-center gap-4 sm:gap-10 mb-8 md:mb-12 relative z-10 w-full overflow-visible">
+                <div className="flex flex-col xl:flex-row xl:items-baseline gap-1 xl:gap-3">
                   <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">10+</span>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Projects<br/>Completed</span>
+                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Projects<br className="block sm:hidden xl:block"/>Completed</span>
                 </div>
                 
                 {/* Thin dividing line visible only on larger screens where they run side-by-side */}
                 <div className="w-[1px] h-10 bg-zinc-200 hidden sm:block" />
                 
-                <div className="flex items-baseline gap-3">
+                <div className="flex flex-col xl:flex-row xl:items-baseline gap-1 xl:gap-3">
                   <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">2+</span>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Years<br/>Experience</span>
+                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Years<br className="block sm:hidden xl:block"/>Experience</span>
                 </div>
               </div>
 
               {/* CTA Pill */}
-              <div className="relative z-10">
+              <div className="relative z-10 mt-2 md:mt-0">
                 <a 
                   href="#contact" 
-                  className="group inline-flex items-center gap-4 bg-zinc-900 text-white pl-6 pr-2 py-2 rounded-full font-sans font-medium text-[15px] transition-all duration-500 hover:bg-zinc-800 focus:ring-4 focus:ring-zinc-900/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+                  className="group inline-flex items-center justify-between w-auto gap-4 sm:gap-3 bg-zinc-900 text-white pl-5 sm:pl-6 pr-1.5 py-1.5 sm:py-2 rounded-full font-sans font-medium text-[14px] sm:text-[16px] transition-all duration-500 hover:bg-zinc-800 focus:ring-4 focus:ring-zinc-900/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
                 >
                   <span className="tracking-wide">Let's Collaborate</span>
-                  <span className="flex items-center justify-center w-[38px] h-[38px] bg-white/10 rounded-full transition-all duration-500 group-hover:bg-white group-hover:scale-105">
-                    <ArrowUpRight className="w-5 h-5 text-zinc-300 group-hover:text-zinc-900 transition-colors duration-500 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]" strokeWidth={2} />
+                  <span className="flex items-center justify-center min-w-[32px] w-[32px] h-[32px] sm:min-w-[38px] sm:w-[38px] sm:h-[38px] bg-white rounded-full transition-all duration-500 group-hover:scale-105 shadow-sm">
+                    <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-900 transition-transform duration-500 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]" strokeWidth={2} />
                   </span>
                 </a>
               </div>

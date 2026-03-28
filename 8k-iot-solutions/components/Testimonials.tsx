@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, memo } from 'react';
+import React, { useState, useRef, memo, useEffect } from 'react';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
@@ -43,9 +43,28 @@ const cardVariants: Variants = {
 const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
 
   const testimonials = initialTestimonials;
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Safe mobile detection for pagination chunking
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Reset to page 1 to prevent out-of-bounds if they resize drastically
+      setCurrentPage(1);
+    };
+    checkMobile(); 
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (testimonials.length === 0) return null;
 
-  const displayTestimonials = testimonials.slice(0, 9);
+  const itemsPerPage = isMobile ? 3 : 6;
+  const totalPages = Math.max(1, Math.ceil(testimonials.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const displayTestimonials = testimonials.slice(startIndex, startIndex + itemsPerPage);
 
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -67,16 +86,6 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       whileInView="visible"
       viewport={{ amount: 0.15 }}
     >
-
-      {/* Parallax Ambient Light (matches Process.tsx depth technique) */}
-      <motion.div 
-        style={{ y: bgY1 }}
-        className="absolute top-[-10%] right-[10%] w-[500px] h-[500px] bg-brand-100/50 rounded-full blur-[140px] pointer-events-none will-change-transform" 
-      />
-      <motion.div 
-        style={{ y: bgY2 }}
-        className="absolute bottom-[-5%] left-[5%] w-[400px] h-[400px] bg-blue-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
-      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -101,11 +110,32 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
           variants={containerVariants}
+          key={`page-${currentPage}-${isMobile}`} // forces animation re-trigger on page change
+          initial="hidden"
+          animate="visible"
         >
           {displayTestimonials.map((item, idx) => (
-            <TestimonialCard key={`testimonial-${item.id || idx}`} item={item} idx={idx} />
+            <TestimonialCard key={`testimonial-${item.id || startIndex + idx}`} item={item} idx={startIndex + idx} />
           ))}
         </motion.div>
+
+        {/* Dynamic Pagination Dots */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2.5 mt-10 md:mt-14">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  currentPage === i + 1 
+                    ? 'w-10 bg-brand-600' 
+                    : 'w-2.5 bg-zinc-300 hover:bg-brand-400'
+                }`}
+                aria-label={`Go to testimonial page ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
 
       </div>
     </motion.section>

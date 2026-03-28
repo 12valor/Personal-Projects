@@ -103,7 +103,7 @@ const Process = memo(function Process() {
     <motion.section 
       id="process" 
       ref={containerRef}
-      className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 overflow-hidden z-0 border-t border-zinc-50 border-b"
+      className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 z-0 border-t border-zinc-50 border-b"
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
@@ -111,14 +111,16 @@ const Process = memo(function Process() {
     >
       
       {/* 1. Subtle Premium Background Layers (Parallax) */}
-      <motion.div 
-        style={{ y: bgY1 }}
-        className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
-      />
-      <motion.div 
-        style={{ y: bgY2 }}
-        className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none will-change-transform" 
-      />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
+        <motion.div 
+          style={{ y: bgY1 }}
+          className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
+        />
+        <motion.div 
+          style={{ y: bgY2 }}
+          className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none will-change-transform" 
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -157,7 +159,7 @@ const Process = memo(function Process() {
               >
                 {/* Node Point */}
                 <motion.div 
-                  className="relative z-20 shrink-0 mt-0 lg:mt-0 lg:mx-auto"
+                  className="sticky top-28 lg:relative lg:top-0 z-20 shrink-0 mt-0 lg:mt-0 lg:mx-auto"
                 >
                   <div className="w-[68px] h-[68px] flex items-center justify-center bg-white border-2 border-zinc-100 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.03)] group-hover:scale-110 group-hover:border-brand-200 group-hover:shadow-[0_8px_24px_rgba(59,130,246,0.12)] transition-all duration-500 ease-out relative isolate">
                      <span className="font-poppins font-bold text-zinc-400 text-sm group-hover:text-brand-600 transition-colors duration-300">

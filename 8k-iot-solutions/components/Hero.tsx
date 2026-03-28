@@ -102,7 +102,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
             style={{ y: textY, opacity: textOpacity }}
             variants={{
               hidden: { opacity: 0 },
-              show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
+              show: { opacity: 1, transition: { staggerChildren: 0, delayChildren: 0 } }
             }}
             initial="hidden"
             animate={mounted ? "show" : "hidden"}
@@ -115,7 +115,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 className="text-brand-900 font-extrabold"
                 initial={{ opacity: 0, y: 15 }}
                 animate={mounted ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.4, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: 0, duration: 1, ease: [0.22, 1, 0.36, 1] }}
               >
                 Ideas
               </motion.span>
@@ -125,7 +125,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                 className="text-brand-900 font-extrabold"
                 initial={{ opacity: 0, y: 10 }}
                 animate={mounted ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.7, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: 0, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               >
                 Reality
               </motion.span>
@@ -193,7 +193,7 @@ const Hero = memo(function Hero({ heroImages = [] }: { heroImages?: any[] }) {
                   transition={{
                     duration: 0.7,
                     ease: "easeOut",
-                    delay: 0.3 + idx * 0.15
+                    delay: 0
                   }}
                   className="relative w-full h-full rounded-2xl overflow-hidden group shadow-[0_4px_25px_rgb(0,0,0,0.05)] bg-slate-50 border border-slate-100"
                 >

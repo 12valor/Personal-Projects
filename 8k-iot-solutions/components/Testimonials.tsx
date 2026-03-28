@@ -3,7 +3,7 @@
 import React, { useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 
 // --- Animation Variants (mirroring Process.tsx quality) ---
 
@@ -45,7 +45,11 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
   const testimonials = initialTestimonials;
   if (testimonials.length === 0) return null;
 
-  const displayTestimonials = testimonials.slice(0, 9);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const displayTestimonials = testimonials.slice(startIndex, startIndex + itemsPerPage);
 
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -98,14 +102,44 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
         </motion.div>
 
         {/* Testimonial Grid */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
-          variants={containerVariants}
-        >
-          {displayTestimonials.map((item, idx) => (
-            <TestimonialCard key={`testimonial-${item.id || idx}`} item={item} idx={idx} />
-          ))}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={currentPage}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+          >
+            {displayTestimonials.map((item, idx) => (
+              <TestimonialCard key={`testimonial-${item.id || item.name || idx}`} item={item} idx={startIndex + idx} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <motion.div variants={headerVariants} className="flex justify-center items-center mt-10 md:mt-12 gap-2">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1;
+              const isActive = currentPage === pageNum;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`px-5 py-2 text-xs sm:text-sm font-poppins font-semibold rounded-full transition-colors duration-300 ${
+                    isActive 
+                      ? 'bg-brand-900 text-white shadow-md' 
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                   }`}
+                  aria-label={`Go to page ${pageNum}`}
+                >
+                  Page {pageNum}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
 
       </div>
     </motion.section>
@@ -145,7 +179,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
         stiffness: 400, 
         damping: 25 
       }}
-      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-5 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
+      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-4 sm:p-5 md:p-6 lg:p-7 rounded-xl sm:rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-colors transition-shadow duration-300 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
     >
 
       {/* Oversized Background Number */}

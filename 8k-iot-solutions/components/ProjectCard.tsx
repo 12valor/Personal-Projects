@@ -27,7 +27,7 @@ export default function ProjectCard({ project, onClick }: { project: Project, on
       </div>
 
       {/* Content Container */}
-      <div className="p-5 flex flex-col flex-1">
+      <div className="p-3.5 sm:p-4 md:p-5 flex flex-col flex-1">
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-3">
           {project.tags.slice(0, 2).map((tag, i) => (
@@ -42,11 +42,11 @@ export default function ProjectCard({ project, onClick }: { project: Project, on
           )}
         </div>
         
-        <h3 className="text-lg font-poppins font-semibold text-zinc-900 group-hover:text-brand-600 transition-colors duration-200 line-clamp-1 mb-1.5">
+        <h3 className="text-base sm:text-lg font-poppins font-semibold text-zinc-900 group-hover:text-brand-600 transition-colors duration-200 line-clamp-1 mb-1.5">
           {project.title}
         </h3>
         
-        <p className="text-sm text-zinc-500 font-medium line-clamp-2 mt-auto">
+        <p className="text-xs sm:text-sm text-zinc-500 font-medium line-clamp-2 mt-auto">
           {project.description}
         </p>
       </div>

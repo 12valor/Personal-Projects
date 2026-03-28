@@ -106,7 +106,7 @@ const ServicesSection = memo(function ServicesSection() {
           {/* Cards Container with Parallax transformation */}
           <motion.div style={{ y: yOffset }}>
                 <motion.div 
-                  className="grid grid-cols-2 gap-6 md:gap-8 items-stretch"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch"
                   variants={containerVariants}
                 >
                   {/* ========================================= */}
@@ -117,7 +117,7 @@ const ServicesSection = memo(function ServicesSection() {
                       className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden"
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-                      <div className="relative bg-zinc-50/50 border-b border-zinc-100 p-4 sm:p-8 overflow-hidden h-auto sm:h-[210px] flex flex-col">
+                      <div className="relative bg-zinc-50/50 border-b border-zinc-100 p-4 sm:p-5 md:p-8 overflow-hidden h-auto sm:h-[180px] md:h-[210px] flex flex-col">
                       {/* Subtle Dot Pattern - Masked to fade out towards the bottom */}
                       <div 
                           className="absolute inset-0 opacity-60 pointer-events-none"
@@ -176,7 +176,7 @@ const ServicesSection = memo(function ServicesSection() {
                       className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden"
                   >
                       {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-                      <div className="relative bg-gradient-to-b from-brand-50/60 to-white border-b border-brand-100/40 p-4 sm:p-8 overflow-hidden h-auto sm:h-[210px] flex flex-col">
+                      <div className="relative bg-gradient-to-b from-brand-50/60 to-white border-b border-brand-100/40 p-4 sm:p-5 md:p-8 overflow-hidden h-auto sm:h-[180px] md:h-[210px] flex flex-col">
                       {/* Brand Dot Pattern - Masked to fade out towards the bottom */}
                       <div 
                           className="absolute inset-0 opacity-70 pointer-events-none transition-opacity duration-500 group-hover:opacity-100"

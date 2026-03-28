@@ -10,8 +10,8 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
+      staggerChildren: 0, // Removed stagger for simultaneous display
+      delayChildren: 0,   // Removed delay for immediate simultaneous display
     },
   },
 };

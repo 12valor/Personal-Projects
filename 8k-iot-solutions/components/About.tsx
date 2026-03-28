@@ -74,17 +74,8 @@ const About = memo(function About() {
     <section 
       ref={containerRef} 
       id="about" 
-      className="relative py-20 lg:py-32 bg-zinc-50 z-0 isolate overflow-hidden"
+      className="relative py-20 lg:py-32 bg-transparent z-0 isolate overflow-hidden"
     >
-      {/* Enhanced Background Grid Pattern (Unmasked, full-section) */}
-      <div 
-        className="absolute inset-0 z-[-1] pointer-events-none" 
-        style={{ 
-          backgroundImage: 'linear-gradient(to right, #d4d4d8 1px, transparent 1px), linear-gradient(to bottom, #d4d4d8 1px, transparent 1px)', 
-          backgroundSize: '64px 64px', 
-          opacity: 0.6
-        }} 
-      />
 
       {/* Main Grid Wrapper */}
       <motion.div 

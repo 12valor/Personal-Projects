@@ -24,10 +24,10 @@ export default function HomeContent({
       <SectionUrlSync />
       
       <div 
-        className="fixed inset-0 z-[-10] pointer-events-none opacity-[0.15] animate-blueprintShift" 
+        className="fixed inset-0 z-[-10] pointer-events-none opacity-[0.6] animate-blueprintShift" 
         style={{
-          backgroundImage: 'linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)',
-          backgroundSize: '50px 50px',
+          backgroundImage: 'linear-gradient(to right, #d4d4d8 1px, transparent 1px), linear-gradient(to bottom, #d4d4d8 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
         }}
         aria-hidden="true"
       />

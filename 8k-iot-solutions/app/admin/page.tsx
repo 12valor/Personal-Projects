@@ -5,6 +5,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AdminTabs from './components/AdminTabs';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Admin Dashboard",
 };
@@ -25,17 +27,8 @@ export default async function AdminDashboardPage() {
     }
   }
 
-  async function handleLogout() {
-    'use server';
-    const cookieStore = await cookies();
-    cookieStore.delete('admin_auth');
-    redirect('/admin/login');
-  }
-
   return (
     <div>
-      <AdminTabs />
-
       <div className="sm:flex sm:items-center sm:justify-between px-4 sm:px-0">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 font-poppins">Projects</h1>
@@ -43,15 +36,7 @@ export default async function AdminDashboardPage() {
             A list of all projects currently displayed on the website.
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 flex gap-4">
-          <form action={handleLogout}>
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 transition-colors"
-            >
-              Logout
-            </button>
-          </form>
+        <div className="mt-4 sm:mt-0">
           <Link
             href="/admin/projects/new"
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 sm:w-auto transition-colors"

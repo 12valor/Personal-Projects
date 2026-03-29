@@ -57,8 +57,6 @@ export default async function SchoolLogosAdminPage() {
 
   return (
     <div>
-      <AdminTabs />
-
       <div className="sm:flex sm:items-center sm:justify-between px-4 sm:px-0">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 font-poppins">School Logos</h1>

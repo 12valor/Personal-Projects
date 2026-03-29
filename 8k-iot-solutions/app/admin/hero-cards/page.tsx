@@ -17,8 +17,6 @@ export default async function HeroCardsPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <AdminTabs />
-
       <div className="mb-10 text-center lg:text-left">
         <h1 className="text-3xl font-bold text-zinc-900 font-poppins tracking-tight">Hero Cards Marquee</h1>
         <p className="mt-2 text-zinc-600 font-poppins text-[15px]">

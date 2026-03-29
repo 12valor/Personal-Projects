@@ -3,7 +3,14 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { saveImageFile } from '@/lib/upload';
+
+export async function logout() {
+  const cookieStore = await cookies();
+  cookieStore.delete('admin_auth');
+  redirect('/admin/login');
+}
 
 export async function saveProject(formData: FormData) {
   const id = formData.get('id') as string | null;

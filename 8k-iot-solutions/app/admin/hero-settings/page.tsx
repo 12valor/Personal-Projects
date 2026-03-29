@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import AdminTabs from '../components/AdminTabs';
 import { updateHeroSection } from './actions';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Hero Text Settings",
 };
@@ -11,8 +13,6 @@ export default async function HeroSettingsPage() {
 
   return (
     <div>
-      <AdminTabs />
-
       <div className="mb-8 px-4 sm:px-0">
         <h1 className="text-2xl font-bold text-zinc-900 font-poppins">Hero Text Settings</h1>
         <p className="mt-2 text-sm text-zinc-600">

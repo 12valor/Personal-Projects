@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import AdminTabs from '../components/AdminTabs';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Inquiries",
 };
@@ -46,8 +48,6 @@ export default async function TransmissionsPage() {
 
   return (
     <div>
-      <AdminTabs />
-
       <div className="sm:flex sm:items-center sm:justify-between px-4 sm:px-0">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900 font-poppins">Inquiries</h1>

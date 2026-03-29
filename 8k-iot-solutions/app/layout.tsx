@@ -3,6 +3,7 @@ import { Poppins, Boldonse } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 // Load Poppins with specific variables
 const poppins = Poppins({ 
@@ -34,7 +35,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} ${boldonse.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <SmoothScroll>
-          <Navbar />
+          <ConditionalNavbar>
+            <Navbar />
+          </ConditionalNavbar>
           <main className="flex-grow w-full">
             {children}
           </main>

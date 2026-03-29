@@ -1,9 +1,9 @@
 "use client";
 import Image from 'next/image';
-import { useEffect, useState, memo } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState, memo, useRef } from 'react';
+import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Zap } from 'lucide-react';
+import { Zap, ArrowRight, Search } from 'lucide-react';
 
 const Hero = memo(function Hero({ 
   heroImages = [],
@@ -19,6 +19,24 @@ const Hero = memo(function Hero({
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
+  const [isBtnHovered, setIsBtnHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { damping: 20, stiffness: 150 });
+  const smoothY = useSpring(mouseY, { damping: 20, stiffness: 150 });
+  const [isHovered, setIsHovered] = useState(false);
+  const spotlightSize = useSpring(isHovered ? 120 : 0, { damping: 20, stiffness: 150 });
+  
+  // Update spotlight size when hover state changes
+  useEffect(() => {
+    spotlightSize.set(isHovered ? 120 : 0);
+  }, [isHovered, spotlightSize]);
+
+  // Create reactive clip-path template
+  // We add 150px because the reveal layer is inset by -150px
+  const clipPath = useMotionTemplate`circle(${spotlightSize}px at calc(${smoothX}px + 150px) calc(${smoothY}px + 150px))`;
+  
+  const containerRef = useRef<HTMLHeadingElement>(null);
   
   const safeHeroImages = Array.isArray(heroImages) ? heroImages : [];
   const safeSchoolLogos = Array.isArray(schoolLogos) ? schoolLogos : [];
@@ -92,6 +110,13 @@ const Hero = memo(function Hero({
   const repetitions = activeCards.length === 0 ? 0 : Math.max(2, Math.ceil(15 / activeCards.length));
   const marqueeItems = Array.from({ length: repetitions }, () => activeCards).flat();
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchInput.trim()) {
@@ -112,15 +137,60 @@ const Hero = memo(function Hero({
       {/* Top Section */}
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center flex-1">
         
-        {/* H1 */}
-        <motion.h1 
-          initial={{ opacity: 0, y: 15 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          className="font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 drop-shadow-sm mt-8"
-        >
-          {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
-        </motion.h1>
+        {/* H1 with Spotlight Reveal */}
+        <div className="relative group w-fit mx-auto">
+          <motion.h1 
+            ref={containerRef}
+            initial={{ opacity: 0, y: 15 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 drop-shadow-sm mt-8 cursor-default py-2"
+          >
+            {/* Base Layer */}
+            <div className="select-none">
+              {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+            </div>
+
+            {/* Reveal Layer (Desktop Only) - Expanded bounds to prevent clipping */}
+            <motion.div 
+              className="absolute pointer-events-none select-none hidden lg:flex items-center justify-center text-center z-10"
+              animate={{
+                backgroundColor: ["rgba(255,255,255,1)", "rgba(239,246,255,1)", "rgba(245,243,255,1)", "rgba(255,255,255,1)"],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                top: "-150px",
+                left: "-150px",
+                right: "-150px",
+                bottom: "-150px",
+                clipPath,
+                WebkitClipPath: clipPath,
+              }}
+            >
+              <div className="px-4 w-full">
+                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-bold tracking-tight leading-[1.3] block">
+                   {(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').reduce((acc: any[][], word: string, i: number) => {
+                      if (i % 2 === 0) acc.push([word]);
+                      else acc[acc.length - 1].push(word);
+                      return acc;
+                   }, []).map((lineWords: string[], idx: number) => (
+                      <div key={idx} className="block whitespace-nowrap">
+                        <span className="text-blue-900">{lineWords[0]} </span>
+                        {lineWords[1] && <span className="text-slate-950">{lineWords[1]}</span>}
+                      </div>
+                   ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.h1>
+        </div>
 
         {/* Subtext */}
         <motion.p 
@@ -137,7 +207,7 @@ const Hero = memo(function Hero({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={mounted ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
-          className="flex items-center gap-4 mb-10 sm:mb-12"
+          className="flex items-center gap-4 mb-4 sm:mb-6"
         >
           {/* Avatar Stack */}
           <div className="flex -space-x-3">
@@ -177,12 +247,10 @@ const Hero = memo(function Hero({
           animate={mounted ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
           onSubmit={handleSearch}
-          className="w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-200/60 ring-4 ring-white/50 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] hover:border-slate-300/80 focus-within:shadow-[0_8px_30px_rgb(30,58,138,0.15)] focus-within:border-brand-300 mx-auto group cursor-text"
+          className="w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-200/60 ring-4 ring-white/50 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text"
         >
-          <div className="pl-6 pr-2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
+          <div className="pl-6 pr-2 text-slate-400 group-focus-within:text-brand-600 transition-colors group-hover:scale-110 duration-300">
+            <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <input 
             type="text" 
@@ -193,18 +261,23 @@ const Hero = memo(function Hero({
           />
           <button 
             type="submit"
-            className="hidden sm:flex items-center justify-center bg-brand-900 text-white font-semibold font-poppins rounded-full px-8 py-3.5 hover:bg-brand-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md ml-2 cursor-pointer"
+            onMouseEnter={() => setIsBtnHovered(true)}
+            onMouseLeave={() => setIsBtnHovered(false)}
+            className={`hidden sm:flex items-center justify-center font-bold font-poppins rounded-full px-8 py-3.5 transition-all duration-300 shadow-lg ml-2 group/btn ${
+              searchInput.trim() || isBtnHovered
+                ? "bg-brand-900 text-white hover:bg-brand-800 scale-[1.02] shadow-brand-900/20"
+                : "bg-blue-50 text-slate-400 opacity-60 scale-100 shadow-none"
+            }`}
           >
-            Start Project
+            <span>Start Project</span>
+            <ArrowRight className={`ml-2 w-5 h-5 transition-transform duration-300 ${searchInput.trim() || isBtnHovered ? "translate-x-1" : "translate-x-0"}`} />
           </button>
           <button 
             type="submit"
             className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-3 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] shadow-md ml-1 cursor-pointer"
             aria-label="Start Project"
           >
-             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-             </svg>
+             <ArrowRight className="w-5 h-5" />
           </button>
         </motion.form>
       </div>

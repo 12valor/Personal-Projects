@@ -70,6 +70,7 @@ model HeroSection {
   heading_highlight_1 String
   heading_part_2      String
   heading_highlight_2 String
+  reveal_text         String?  // The hidden text revealed by the spotlight
   subtext             String
   search_placeholder  String
   updatedAt           DateTime @updatedAt

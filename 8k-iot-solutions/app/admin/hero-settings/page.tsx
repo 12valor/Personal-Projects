@@ -42,6 +42,11 @@ export default async function HeroSettingsPage() {
           </div>
 
           <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-700">Spotlight Reveal Text <span className="text-xs text-zinc-400 font-normal ml-2">(Desktop Only Effect)</span></label>
+            <input type="text" name="reveal_text" defaultValue={heroSection?.reveal_text || "Ready to build something amazing?"} className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" placeholder="Text revealed on hover..." />
+          </div>
+
+          <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700">Subtext Paragraph</label>
             <textarea name="subtext" rows={3} defaultValue={heroSection?.subtext || "We offer hardware and software services..."} className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm" required />
           </div>

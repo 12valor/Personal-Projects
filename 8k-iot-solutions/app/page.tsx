@@ -23,6 +23,7 @@ export default async function Home() {
     heading_highlight_1: "Ideas",
     heading_part_2: "Into",
     heading_highlight_2: "Reality",
+    reveal_text: "Crafting Vision Into Solutions",
     subtext: "We offer hardware and software services, including device prototyping and web-based solutions, tailored to help students and innovators bring their ideas to life.",
     search_placeholder: "Describe your project idea... (e.g., Smart greenhouse)"
   };

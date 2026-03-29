@@ -69,8 +69,9 @@ const Hero = memo(function Hero({
   const fallbackMarqueeItems = [
     {
       id: "quote-1",
-      type: "quote",
+      type: "team",
       content: "I need a custom PCB for my thesis project.",
+      label: "Electronics Design",
       imageUrl: getDistributedSource(0),
     },
     {
@@ -81,15 +82,10 @@ const Hero = memo(function Hero({
       imageUrl: getDistributedSource(1),
     },
     {
-      id: "stat-1",
-      type: "stat",
-      content: "14+ Prototypes Deployed",
-      label: "bg-brand-50 text-brand-900 border-brand-100",
-    },
-    {
       id: "quote-2",
-      type: "quote",
+      type: "team",
       content: "How do I connect these sensors to the cloud?",
+      label: "IoT Integration",
       imageUrl: getDistributedSource(2),
     },
     {
@@ -98,12 +94,6 @@ const Hero = memo(function Hero({
       content: "Jordan",
       label: "Software Dev",
       imageUrl: getDistributedSource(3),
-    },
-    {
-      id: "stat-2",
-      type: "stat",
-      content: "Top Rated by Students",
-      label: "bg-emerald-50 text-emerald-900 border-emerald-100",
     },
   ];
 
@@ -376,25 +366,10 @@ const Hero = memo(function Hero({
           {marqueeItems.map((item, index) => (
             <div 
               key={`${item.id}-${index}`} 
-              className="flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 hover:shadow-lg hover:shadow-brand-900/5 hover:-translate-y-1 transition-all duration-500 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white"
+              className="flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 hover:shadow-lg hover:shadow-brand-900/5 hover:-translate-y-1 transition-all duration-500 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white font-poppins"
             >
               
-              {/* Type 1: Stat / Metric Cards */}
-              {(item.type === "stat" || item.type === "metric") && (
-                <div className="bg-blue-50/50 p-6 flex flex-col flex-1 items-center justify-center text-center">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-6 border border-white/50">
-                    <Zap className="w-5 h-5 text-brand-700 fill-brand-700/20" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-2">
-                    {item.content}
-                  </h3>
-                  <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest leading-tight">
-                    {item.label || "Operational Metric"}
-                  </p>
-                </div>
-              )}
-
-              {/* Type 2: Client / Project Cards */}
+              {/* Type: Client / Project Cards */}
               {(item.type === "team" || item.type === "team_member" || item.type === "client_project") && (
                 <div className="relative w-full h-full flex-1">
                   {item.imageUrl && (

@@ -27,12 +27,12 @@ interface TeamMember {
 
 export default function Team({ members = [] }: { members?: TeamMember[] }) {
   return (
-    <section id="team" className="relative py-24 lg:py-32 bg-transparent overflow-visible font-poppins">
+    <section id="team" className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-visible font-poppins">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Simplified Header Section */}
-        <div className="text-center mb-16 lg:mb-28">
+        <div className="text-center mb-6 lg:mb-10">
            <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

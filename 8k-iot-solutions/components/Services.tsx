@@ -70,7 +70,7 @@ const ServicesSection = memo(function ServicesSection() {
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <section id="services" ref={containerRef} className="relative w-full pt-4 lg:pt-6 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
+    <section id="services" ref={containerRef} className="relative w-full pt-4 lg:pt-6 pb-2 md:pb-4 bg-transparent text-zinc-900 overflow-hidden z-0">
       <motion.div style={{ opacity: sectionOpacity }} className="w-full h-full relative">
 
       {/* Ambient Depth Orb */}

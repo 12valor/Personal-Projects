@@ -63,8 +63,8 @@ const About = memo(function About() {
 
   const images = [
     "/co-founders.jpg",
-    "/about-img-2.jpg", 
-    "/about-img-3.jpg"  
+    "/about-project-1.jpg",
+    "/about-project-2.jpg"
   ];
 
   const prevImage = () => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
@@ -106,10 +106,10 @@ const About = memo(function About() {
               {/* Wide-line-height Scannable Text Blocks */}
               <div className="flex flex-col gap-6 max-w-[480px] text-zinc-600 text-[16px] lg:text-[17px] font-poppins leading-relaxed mb-12 relative z-10 selection:bg-brand-100">
                 <p className="font-medium">
-                  As dedicated freelance IoT specialists based in Talisay City, Negros Occidental, we partner with visionaries and businesses to architect custom solutions from the ground up.
+                  We are a freelance software and hardware team based in Talisay City, dedicated to helping students and local businesses build custom tech solutions. We don&apos;t just build for schools; we partner with anyone who has a vision, providing the technical expertise needed to bring complex projects to life.
                 </p>
                 <p>
-                  From designing custom microcontroller circuits to deploying responsive cloud dashboards, our student-centered approach focuses on building robust ecosystems that seamlessly connect the physical world to actionable digital insights.
+                  From designing custom circuits to deploying easy-to-use software, we focus on creating &quot;smart&quot; systems that connect the real world to digital insights. We pride ourselves on being tech-proficient and hands-on, ensuring that every project we deliver is robust, reliable, and ready to go.
                 </p>
               </div>
 

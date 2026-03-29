@@ -20,6 +20,9 @@ const Hero = memo(function Hero({
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
   const [isBtnHovered, setIsBtnHovered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { damping: 20, stiffness: 150 });
@@ -119,11 +122,28 @@ const Hero = memo(function Hero({
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchInput.trim()) {
-      router.push(`/?project_idea=${encodeURIComponent(searchInput)}#contact`);
-    } else {
-      router.push('/#contact');
+    
+    // 1. Validation Logic
+    if (!searchInput.trim()) {
+      setShake(true);
+      setErrorMessage("Describe your idea");
+      setTimeout(() => {
+        setShake(false);
+        setErrorMessage(null);
+      }, 1000);
+      return;
     }
+
+    // 2. Rate Limiting Logic (2s Cooldown)
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    router.push(`/?project_idea=${encodeURIComponent(searchInput)}#contact`);
+
+    // Reset cooldown after 2 seconds
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 2000);
   };
 
   return (
@@ -244,33 +264,50 @@ const Hero = memo(function Hero({
         {/* Search Bar CTA */}
         <motion.form 
           initial={{ opacity: 0, y: 15 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+          animate={shake ? { 
+            x: [-10, 10, -5, 5, 0],
+            borderColor: "rgba(239, 68, 68, 0.5)"
+          } : mounted ? { opacity: 1, y: 0 } : {}}
+          transition={shake ? { duration: 0.4 } : { duration: 0.5, delay: 0.3, ease: "easeOut" }}
           onSubmit={handleSearch}
-          className="w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-200/60 ring-4 ring-white/50 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text"
+          className={`w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] border ring-4 ring-white/50 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text ${
+            shake ? "border-red-400" : "border-slate-200/60"
+          }`}
         >
-          <div className="pl-6 pr-2 text-slate-400 group-focus-within:text-brand-600 transition-colors group-hover:scale-110 duration-300">
+          <div className={`pl-6 pr-2 transition-colors group-hover:scale-110 duration-300 ${shake ? "text-red-500" : "text-slate-400 group-focus-within:text-brand-600"}`}>
             <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <input 
             type="text" 
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder={heroSection?.search_placeholder || "Describe your project idea... (e.g., Smart greenhouse)"} 
-            className="flex-1 bg-transparent border-none outline-none py-3 sm:py-4 px-2 text-slate-900 placeholder:text-slate-400 font-poppins text-[15px] sm:text-[16px] lg:text-[18px]"
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              if (shake) setShake(false);
+            }}
+            placeholder={errorMessage || heroSection?.search_placeholder || "Describe your project idea... (e.g., Smart greenhouse)"} 
+            className={`flex-1 bg-transparent border-none outline-none py-3 sm:py-4 px-2 text-slate-900 font-poppins text-[15px] sm:text-[16px] lg:text-[18px] transition-colors ${
+              shake ? "placeholder:text-red-400" : "placeholder:text-slate-400"
+            }`}
           />
           <button 
             type="submit"
+            disabled={isSubmitting}
             onMouseEnter={() => setIsBtnHovered(true)}
             onMouseLeave={() => setIsBtnHovered(false)}
             className={`hidden sm:flex items-center justify-center font-bold font-poppins rounded-full px-8 py-3.5 transition-all duration-300 shadow-lg ml-2 group/btn ${
-              searchInput.trim() || isBtnHovered
+              isSubmitting 
+                ? "bg-slate-200 text-slate-500 cursor-wait opacity-80"
+                : (searchInput.trim() || isBtnHovered)
                 ? "bg-brand-900 text-white hover:bg-brand-800 scale-[1.02] shadow-brand-900/20"
+                : shake
+                ? "bg-red-500 text-white animate-pulse"
                 : "bg-blue-50 text-slate-400 opacity-60 scale-100 shadow-none"
             }`}
           >
-            <span>Start Project</span>
-            <ArrowRight className={`ml-2 w-5 h-5 transition-transform duration-300 ${searchInput.trim() || isBtnHovered ? "translate-x-1" : "translate-x-0"}`} />
+            <span>{isSubmitting ? "Syncing..." : shake ? "Describe Idea" : "Start Project"}</span>
+            {!isSubmitting && (
+              <ArrowRight className={`ml-2 w-5 h-5 transition-transform duration-300 ${searchInput.trim() || isBtnHovered ? "translate-x-1" : "translate-x-0"}`} />
+            )}
           </button>
           <button 
             type="submit"

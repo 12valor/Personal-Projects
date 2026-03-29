@@ -50,7 +50,7 @@ const Contact = memo(() => {
   );
 
   return (
-    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-sans">
+    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} id="contact" className="relative py-12 lg:py-16 bg-slate-950 overflow-hidden z-0 font-poppins">
 
       <motion.div 
         className="absolute inset-0 z-[-2] opacity-20" 
@@ -80,7 +80,7 @@ const Contact = memo(() => {
               </span>
             </div>
 
-            <h2 className="font-sans font-bold text-4xl sm:text-5xl lg:text-[3.25rem] text-white tracking-tight leading-[1.12] mb-6">
+            <h2 className="font-poppins font-bold text-4xl sm:text-5xl lg:text-[3.25rem] text-white tracking-tight leading-[1.12] mb-6">
               Let&apos;s engineer your <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-blue-200">
                 next ecosystem.
@@ -109,7 +109,7 @@ const Contact = memo(() => {
                     <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
                       Location
                     </h4>
-                    <p className="font-sans text-xl font-light text-slate-200 tracking-wide leading-relaxed">
+                    <p className="font-poppins text-xl font-light text-slate-200 tracking-wide leading-relaxed">
                       Talisay City, <br />
                       Negros Occidental
                     </p>
@@ -131,7 +131,7 @@ const Contact = memo(() => {
                     <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
                       Email
                     </h4>
-                    <p className="font-sans text-xl font-light text-slate-200 tracking-wide group-hover:text-brand-300 transition-colors duration-300">
+                    <p className="font-poppins text-xl font-light text-slate-200 tracking-wide group-hover:text-brand-300 transition-colors duration-300">
                       8kiotsolutions@gmail.com
                     </p>
                   </div>
@@ -232,6 +232,7 @@ const Contact = memo(() => {
                     Project Details
                   </label>
                   <textarea 
+                    key={initialMessage}
                     name="message"
                     required
                     defaultValue={initialMessage}

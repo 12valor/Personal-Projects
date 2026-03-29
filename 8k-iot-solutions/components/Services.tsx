@@ -142,7 +142,7 @@ const ServicesSection = memo(function ServicesSection() {
                         <ul className="space-y-4 flex-1 mb-10">
                             {HARDWARE_FEATURES.map((feature, i) => (
                             <li key={i} className="flex items-start gap-4">
-                                <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                                <Check className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" strokeWidth={2.5} />
                                 <span className="text-sm md:text-base text-zinc-600 font-poppins font-medium leading-tight">{feature}</span>
                             </li>
                             ))}
@@ -190,7 +190,7 @@ const ServicesSection = memo(function ServicesSection() {
                         <ul className="space-y-4 flex-1 mb-10">
                             {SOFTWARE_FEATURES.map((feature, i) => (
                             <li key={i} className="flex items-start gap-4">
-                                <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                                <Check className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" strokeWidth={2.5} />
                                 <span className="text-sm md:text-base text-zinc-600 font-poppins font-medium leading-tight">{feature}</span>
                             </li>
                             ))}

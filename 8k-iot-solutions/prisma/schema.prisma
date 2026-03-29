@@ -108,3 +108,22 @@ model FaqItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  bio          String
+  tagline      String?  @default("Guided by AI, Powered by you.")
+  motivation   String?  
+  imageUrl     String?
+  facebookUrl  String?
+  linkedinUrl  String?
+  twitterUrl   String?
+  instagramUrl String?
+  portfolioUrl String?
+  order        Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

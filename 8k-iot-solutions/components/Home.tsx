@@ -11,6 +11,7 @@ import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
 import FAQ from '@/components/FAQ';
+import Team from '@/components/Team';
 
 export default function HomeContent({ 
   initialTestimonials = [], 
@@ -18,14 +19,16 @@ export default function HomeContent({
   schoolLogos = [],
   heroSection,
   heroCards = [],
-  faqs = []
+  faqs = [],
+  teamMembers = []
 }: { 
   initialTestimonials?: any[], 
   heroImages?: any[],
   schoolLogos?: any[],
   heroSection?: any,
   heroCards?: any[],
-  faqs?: any[]
+  faqs?: any[],
+  teamMembers?: any[]
 }) {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
@@ -51,6 +54,7 @@ export default function HomeContent({
       <About />
       <ServicesSection />
       <Process />
+      <Team members={teamMembers} />
       <FAQ faqs={faqs} />
       <React.Suspense fallback={<div className="py-12 bg-slate-950 text-center text-white">Loading contact...</div>}>
         <Contact />

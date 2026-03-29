@@ -10,7 +10,8 @@ import {
   Settings, 
   Layers,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  HelpCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { logout } from '../actions';
@@ -28,6 +29,7 @@ export default function AdminNavigation() {
     { name: 'School Logos', href: '/admin/school-logos', icon: ImageIcon },
     { name: 'Hero Settings', href: '/admin/hero-settings', icon: Settings },
     { name: 'Hero Cards', href: '/admin/hero-cards', icon: Layers },
+    { name: 'FAQ', href: '/admin/faq', icon: HelpCircle },
   ];
 
   return (

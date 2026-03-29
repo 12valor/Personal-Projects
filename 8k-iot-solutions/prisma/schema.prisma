@@ -98,3 +98,13 @@ model HeroCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

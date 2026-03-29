@@ -9,7 +9,7 @@ const sectionVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
       delayChildren: 0.1,
     },
   },
@@ -42,49 +42,50 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
     target: containerRef,
     offset: ["start end", "end start"]
   });
-  const logoRowY = useTransform(scrollYProgress, [0, 1], [15, -15]);
-  const bgOrbY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  
+  const logoRowY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <motion.section style={{ opacity: sectionOpacity }} ref={containerRef} className="relative pt-14 pb-4 md:py-20 lg:py-20 bg-transparent z-0 overflow-hidden">
-
-      {/* Ambient Depth Orb */}
-      <motion.div 
-        style={{ y: bgOrbY }}
-        className="absolute top-[-10%] right-[20%] w-[350px] h-[350px] bg-brand-50/30 rounded-full blur-[100px] pointer-events-none will-change-transform" 
-      />
-
-      <motion.div
-        className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ amount: 0.2 }}
-        variants={sectionVariants}
-      >
-
-        {/* Label */}
-        <motion.div variants={headerVariants} className="text-center mb-10">
-          <div className="inline-flex items-center gap-3 mb-1">
-            <div className="h-px w-8 bg-brand-300" />
-            <span className="text-[11px] md:text-xs font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">
-              Trusted By Clients From
-            </span>
-            <div className="h-px w-8 bg-brand-300" />
-          </div>
+    <motion.section 
+      style={{ opacity: sectionOpacity }} 
+      ref={containerRef} 
+      className="relative py-12 md:py-20 bg-transparent z-0 overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
+        
+        {/* Centered Typography */}
+        <motion.div 
+          variants={headerVariants} 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="text-center mb-12 md:mb-16"
+        >
+           <span className="text-brand-900/60 font-bold uppercase tracking-[0.4em] text-[10px] md:text-xs font-poppins">
+             trusted by clients from
+           </span>
         </motion.div>
 
-        {/* All logos visible, centered, single row, no masking */}
-        <motion.div style={{ y: logoRowY }} className="grid grid-cols-2 gap-4 md:gap-10 lg:flex lg:flex-wrap lg:justify-center lg:gap-14">
+        {/* Logo Section - Clean Centered Grid */}
+        <motion.div 
+          style={{ y: logoRowY }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.05 }}
+          variants={sectionVariants}
+          className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-center items-center gap-8 md:gap-12 lg:gap-16 w-full"
+        >
           {logos.map((logo, idx) => {
+            const imgUrl = typeof logo.image === 'string' ? logo.image : logo.image?.src || '';
             const logoContent = (
-              <div className="relative h-24 sm:h-28 md:h-20 lg:h-24 w-full max-w-[150px] sm:max-w-[180px] md:w-48 lg:w-56 transition-transform duration-500 hover:scale-105 will-change-transform">
+              <div className="relative w-32 h-20 sm:w-44 sm:h-28 md:w-48 md:h-32 lg:w-56 lg:h-36 transition-all duration-500 hover:scale-110 flex items-center justify-center group opacity-70 hover:opacity-100 grayscale hover:grayscale-0">
                 <Image 
-                  src={logo.image} 
-                  alt={logo.name ? `${logo.name} Logo` : 'School Logo'} 
+                  src={imgUrl} 
+                  alt={logo.name ? `${logo.name} Logo` : 'Client Logo'} 
                   fill
-                  className="object-contain drop-shadow-sm" 
-                  sizes="(max-width: 768px) 144px, (max-width: 1024px) 192px, 224px"
+                  className="object-contain drop-shadow-sm transition-all duration-700" 
+                  sizes="(max-width: 768px) 150px, (max-width: 1024px) 200px, 250px"
                 />
               </div>
             );
@@ -92,7 +93,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
             return (
               <motion.div key={logo.id || idx} variants={logoVariants} className="flex items-center justify-center">
                 {logo.link ? (
-                  <a href={logo.link} target="_blank" rel="noreferrer" className="block rounded-lg outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-4 cursor-pointer">
+                  <a href={logo.link} target="_blank" rel="noreferrer" className="block outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer">
                     {logoContent}
                   </a>
                 ) : (
@@ -103,7 +104,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
           })}
         </motion.div>
 
-      </motion.div>
+      </div>
     </motion.section>
   );
 });

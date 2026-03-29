@@ -2,6 +2,7 @@
 
 import React, { useRef, useActionState, memo } from 'react';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 import { submitContactForm } from '@/app/contact';
 
 const sectionVariants: Variants = {
@@ -37,6 +38,9 @@ const Contact = memo(() => {
   const formY = useTransform(scrollYProgress, [0, 1], [25, -25]);
   const dotGridY = useTransform(scrollYProgress, [0, 1], [0, -15]);
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+
+  const searchParams = useSearchParams();
+  const initialMessage = searchParams?.get("project_idea") || "";
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; message?: string; error?: string } | null, formData: FormData) => {
@@ -230,6 +234,7 @@ const Contact = memo(() => {
                   <textarea 
                     name="message"
                     required
+                    defaultValue={initialMessage}
                     rows={4}
                     placeholder="Tell us about your technical requirements..."
                     className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300 resize-none"

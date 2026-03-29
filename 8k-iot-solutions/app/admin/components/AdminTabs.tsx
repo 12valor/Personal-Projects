@@ -11,7 +11,9 @@ export default function AdminTabs() {
     { name: 'Inquiries', href: '/admin/transmissions' },
     { name: 'Testimonials', href: '/admin/testimonials' },
     { name: 'School Logos', href: '/admin/school-logos' },
-    { name: 'Hero', href: '/admin/hero' },
+    { name: 'Hero Images', href: '/admin/hero' },
+    { name: 'Hero Settings', href: '/admin/hero-settings' },
+    { name: 'Hero Cards', href: '/admin/hero-cards' },
   ];
 
   return (

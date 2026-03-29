@@ -80,7 +80,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
   return (
     <motion.section 
       ref={containerRef}
-      className="relative w-full pt-4 pb-16 md:py-16 bg-transparent overflow-hidden z-0"
+      className="relative w-full pt-2 pb-12 md:pb-16 md:pt-6 bg-transparent overflow-hidden z-0"
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
@@ -92,16 +92,9 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
         {/* Section Header */}
         <motion.div style={{ y: headerY }} className="w-full">
           <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-3 mb-5">
-            <div className="h-px w-8 bg-brand-400" />
-            <span className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-poppins">
-              Client Testimonials
-            </span>
-            <div className="h-px w-8 bg-brand-400" />
-          </div>
-          <h2 className="text-3xl md:text-[2.75rem] font-sans font-bold tracking-tight text-zinc-900 leading-tight">
+          <h2 className="text-4xl md:text-[3.25rem] font-poppins font-black tracking-tight text-slate-900 leading-tight">
             What Our Clients <br className="hidden md:block" />
-            <span className="text-brand-900">Have to Say.</span>
+            <span className="text-brand-900 font-bold">Have to Say.</span>
           </h2>
           </motion.div>
         </motion.div>

@@ -63,3 +63,26 @@ model SchoolLogo {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+model HeroSection {
+  id                  String   @id @default(cuid())
+  heading_part_1      String
+  heading_highlight_1 String
+  heading_part_2      String
+  heading_highlight_2 String
+  subtext             String
+  search_placeholder  String
+  updatedAt           DateTime @updatedAt
+}
+
+model HeroCard {
+  id        String   @id @default(cuid())
+  type      String   // "quote", "team", "stat"
+  content   String   
+  imageUrl  String?  // Optional for team/avatars
+  label     String?  // "Hardware Engineer", "Project Request"
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

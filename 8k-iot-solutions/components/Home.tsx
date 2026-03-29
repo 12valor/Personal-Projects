@@ -1,5 +1,7 @@
 "use client";
 
+import React from 'react';
+
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
@@ -13,11 +15,15 @@ import SectionUrlSync from '@/components/SectionUrlSync';
 export default function HomeContent({ 
   initialTestimonials = [], 
   heroImages = [],
-  schoolLogos = []
+  schoolLogos = [],
+  heroSection,
+  heroCards = []
 }: { 
   initialTestimonials?: any[], 
   heroImages?: any[],
-  schoolLogos?: any[]
+  schoolLogos?: any[],
+  heroSection?: any,
+  heroCards?: any[]
 }) {
   return (
     <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
@@ -32,13 +38,15 @@ export default function HomeContent({
         aria-hidden="true"
       />
       
-      <Hero heroImages={heroImages} />
+      <Hero heroImages={heroImages} heroSection={heroSection} heroCards={heroCards} />
       <SchoolLogos logos={schoolLogos} />
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />
       <Process />
-      <Contact />
+      <React.Suspense fallback={<div className="py-12 bg-slate-950 text-center text-white">Loading contact...</div>}>
+        <Contact />
+      </React.Suspense>
       <Footer />
     </div>
   );

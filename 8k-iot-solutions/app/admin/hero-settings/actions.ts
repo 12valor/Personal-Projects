@@ -18,17 +18,28 @@ export async function updateHeroSection(formData: FormData) {
     magic_rings_speed: parseFloat(formData.get('magic_rings_speed') as string) || 0.25,
     magic_rings_count: parseInt(formData.get('magic_rings_count') as string) || 12,
     magic_rings_opacity: parseFloat(formData.get('magic_rings_opacity') as string) || 0.18,
+    show_hero_orbs: formData.get('show_hero_orbs') === 'on',
+    hero_orbs_color: formData.get('hero_orbs_color') as string,
+    hero_orbs_opacity: parseFloat(formData.get('hero_orbs_opacity') as string) || 0.1,
+    trust_stat_value: formData.get('trust_stat_value') as string,
+    trust_stat_label: formData.get('trust_stat_label') as string,
   };
+
+  console.log("Saving dynamic data:", data);
 
   try {
     const existing = await (prisma as any).heroSection.findFirst();
+    console.log("Existing HeroSection found:", !!existing);
+    
     if (existing) {
-      await (prisma as any).heroSection.update({
+      const result = await (prisma as any).heroSection.update({
         where: { id: existing.id },
         data
       });
+      console.log("Prisma Update Result:", { id: result.id, val: result.trust_stat_value });
     } else {
-      await (prisma as any).heroSection.create({ data });
+      const result = await (prisma as any).heroSection.create({ data });
+      console.log("Prisma Create Result:", { id: result.id, val: result.trust_stat_value });
     }
 
     revalidatePath('/');

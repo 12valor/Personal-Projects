@@ -78,7 +78,12 @@ model HeroSection {
   magic_rings_color_2 String  @default("#1d4ed8")
   magic_rings_speed   Float   @default(0.25)
   magic_rings_count   Int     @default(12)
-  magic_rings_opacity Float   @default(0.18)
+  magic_rings_opacity Float    @default(0.18)
+  show_hero_orbs      Boolean  @default(true)
+  hero_orbs_color     String   @default("#4f46e5")
+  hero_orbs_opacity   Float    @default(0.1)
+  trust_stat_value    String   @default("20+ Innovators")
+  trust_stat_label    String   @default("Projects Delivered")
   updatedAt           DateTime @updatedAt
 }
 

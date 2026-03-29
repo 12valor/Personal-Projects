@@ -153,7 +153,15 @@ const Hero = memo(function Hero({
       className="relative min-h-[100svh] flex flex-col items-center justify-between pt-20 lg:pt-28 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
     >
       {/* Background Orbs */}
-      <div className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[800px] h-[300px] sm:h-[400px] bg-brand-600/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none" />
+      {heroSection?.show_hero_orbs !== false && (
+        <div 
+          className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[800px] h-[300px] sm:h-[400px] blur-[100px] sm:blur-[120px] rounded-full pointer-events-none"
+          style={{ 
+            backgroundColor: heroSection?.hero_orbs_color || "#4f46e5",
+            opacity: heroSection?.hero_orbs_opacity ?? 0.1
+          }} 
+        />
+      )}
 
       {/* Magic Rings Background Overlay (Desktop Only) */}
       {heroSection?.show_magic_rings !== false && (
@@ -283,10 +291,10 @@ const Hero = memo(function Hero({
           {/* Text */}
           <div className="text-left font-poppins">
             <p className="text-[11px] sm:text-[13px] font-bold text-slate-900 leading-tight">
-              20+ Innovators
+              {heroSection?.trust_stat_value || "20+ Innovators"}
             </p>
             <p className="text-[10px] sm:text-[12px] text-slate-500 font-medium">
-              Projects Delivered
+              {heroSection?.trust_stat_label || "Projects Delivered"}
             </p>
           </div>
         </motion.div>

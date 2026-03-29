@@ -91,49 +91,36 @@ const Contact = memo(() => {
               Whether you need precise hardware prototyping or a scalable data dashboard, we&apos;re ready to architect the solution. Based in Talisay City, serving visionaries everywhere.
             </p>
 
-            {/* ----- SIGNAL ROWS ----- */}
-            <div className="w-full flex flex-col">
+            {/* ----- CONTACT INFO CARDS (Premium Dark) ----- */}
+            <div className="w-full flex flex-col gap-5">
               
-              {/* Row 1: Location */}
-              <div className="group flex items-start py-8 border-t border-white/[0.05] w-full transition-colors duration-500 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-                
-                <div className="flex items-start gap-8 w-full">
-                  <div className="text-slate-600 group-hover:text-brand-400 transition-colors duration-300 mt-1 shrink-0">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              {/* Card 1: Location */}
+              <div className="group bg-white/[0.03] p-6 rounded-2xl border border-white/[0.06] shadow-xl transition-all duration-300 hover:bg-white/[0.05] hover:border-white/[0.12] hover:scale-[1.02] cursor-default">
+                <div className="flex items-center gap-6">
+                  <div className="w-12 h-12 rounded-xl bg-white/[0.02] flex items-center justify-center text-slate-500 group-hover:text-brand-400 group-hover:bg-brand-500/10 transition-all duration-300">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
-                      Location
-                    </h4>
-                    <p className="font-poppins text-xl font-light text-slate-200 tracking-wide leading-relaxed">
-                      Talisay City, <br />
-                      Negros Occidental
-                    </p>
+                  <div>
+                    <h4 className="font-poppins text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover:text-slate-400 transition-colors">Location</h4>
+                    <p className="font-poppins font-medium text-[16px] text-slate-200">Talisay City, Negros Occidental</p>
                   </div>
                 </div>
               </div>
 
-              {/* Row 2: Email */}
-              <a href="mailto:8kiotsolutions@gmail.com" className="group flex items-start py-8 border-t border-b border-white/[0.05] w-full transition-colors duration-500 relative overflow-hidden cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-                
-                <div className="flex items-start gap-8 w-full">
-                  <div className="text-slate-600 group-hover:text-brand-400 transition-colors duration-300 mt-1 shrink-0">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              {/* Card 2: Email */}
+              <a href="mailto:8kiotsolutions@gmail.com" className="group bg-white/[0.03] p-6 rounded-2xl border border-white/[0.06] shadow-xl transition-all duration-300 hover:bg-white/[0.05] hover:border-white/[0.12] hover:scale-[1.02] cursor-pointer">
+                <div className="flex items-center gap-6">
+                  <div className="w-12 h-12 rounded-xl bg-white/[0.02] flex items-center justify-center text-slate-500 group-hover:text-brand-400 group-hover:bg-brand-500/10 transition-all duration-300">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0l-10.5 7.5L3 6.75" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-poppins text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em] mb-2 group-hover:text-slate-400 transition-colors">
-                      Email
-                    </h4>
-                    <p className="font-poppins text-xl font-light text-slate-200 tracking-wide group-hover:text-brand-300 transition-colors duration-300">
-                      8kiotsolutions@gmail.com
-                    </p>
+                  <div>
+                    <h4 className="font-poppins text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover:text-slate-400 transition-colors">Email</h4>
+                    <p className="font-poppins font-medium text-[16px] text-slate-200 group-hover:text-brand-300 transition-colors">8kiotsolutions@gmail.com</p>
                   </div>
                 </div>
               </a>
@@ -181,7 +168,7 @@ const Contact = memo(() => {
                       name="fullName"
                       required
                       placeholder="e.g. AG Evangelista"
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300"
+                      className="w-full bg-slate-900/40 border border-white/5 rounded-xl px-4 py-4 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-slate-900/60 focus:border-brand-400/50 focus:ring-4 focus:ring-brand-400/5 transition-all duration-300 shadow-inner"
                     />
                   </div>
                   
@@ -195,7 +182,7 @@ const Contact = memo(() => {
                       name="email"
                       required
                       placeholder="name@domain.com"
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-brand-500/10 focus:border-brand-400 focus:ring-1 focus:ring-brand-400/50 transition-all duration-300"
+                      className="w-full bg-slate-900/40 border border-white/5 rounded-xl px-4 py-4 font-poppins text-[14px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-slate-900/60 focus:border-brand-400/50 focus:ring-4 focus:ring-brand-400/5 transition-all duration-300 shadow-inner"
                     />
                   </div>
                 </div>
@@ -242,26 +229,26 @@ const Contact = memo(() => {
                   />
                 </div>
 
-                {/* Submit Button — clean, no shimmer */}
-                <button 
-                  type="submit"
-                  disabled={isPending}
-                  className="w-full group flex justify-center items-center gap-2 bg-brand-500 text-white font-poppins font-medium text-[15px] py-3.5 rounded-lg transition-all duration-300 hover:bg-brand-400 active:scale-[0.98] shadow-[0_0_20px_rgba(37,99,235,0.15)] hover:shadow-[0_0_25px_rgba(37,99,235,0.25)] mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <span>
-                    {isPending ? 'Sending...' : 'Send Message'}
-                  </span>
-                  {isPending ? (
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  )}
-                </button>
+                  {/* Submit Button - font-medium refined */}
+                  <button 
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full group flex justify-center items-center gap-2 bg-brand-500 text-white font-poppins font-medium text-[15px] py-4 rounded-xl transition-all duration-300 hover:bg-brand-400 active:scale-[0.98] shadow-[0_10px_30px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.3)] mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <span>
+                      {isPending ? 'Sending...' : 'Send Message'}
+                    </span>
+                    {isPending ? (
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    )}
+                  </button>
                 
               </form>
             </div>

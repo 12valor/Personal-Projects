@@ -294,7 +294,7 @@ const Hero = memo(function Hero({
             disabled={isSubmitting}
             onMouseEnter={() => setIsBtnHovered(true)}
             onMouseLeave={() => setIsBtnHovered(false)}
-            className={`hidden sm:flex items-center justify-center font-bold font-poppins rounded-full px-8 py-3.5 transition-all duration-300 shadow-lg ml-2 group/btn ${
+            className={`hidden sm:flex items-center justify-center font-medium font-poppins rounded-full px-8 py-3.5 transition-all duration-300 shadow-lg ml-2 group/btn ${
               isSubmitting 
                 ? "bg-slate-200 text-slate-500 cursor-wait opacity-80"
                 : (searchInput.trim() || isBtnHovered)

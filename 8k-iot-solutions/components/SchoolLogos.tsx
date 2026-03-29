@@ -52,40 +52,42 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
       ref={containerRef} 
       className="relative py-12 md:py-20 bg-transparent z-0 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
         
-        {/* Centered Typography */}
         <motion.div 
           variants={headerVariants} 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center lg:text-left shrink-0 max-w-xs"
         >
-           <span className="text-brand-900/60 font-bold uppercase tracking-[0.4em] text-[10px] md:text-xs font-poppins">
+           <h3 className="text-brand-900 font-black uppercase tracking-[0.3em] text-sm md:text-lg lg:text-xl font-poppins leading-tight">
              trusted by clients from
-           </span>
+           </h3>
+           <p className="mt-4 text-slate-900 font-medium text-xs md:text-sm lg:text-base font-poppins leading-relaxed">
+             Clients from these institutions trusted our high-end services.
+           </p>
         </motion.div>
 
-        {/* Logo Section - Clean Centered Grid */}
+        {/* Logo Section - Right on Desktop, Center on Mobile */}
         <motion.div 
           style={{ y: logoRowY }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={sectionVariants}
-          className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-center items-center gap-8 md:gap-12 lg:gap-16 w-full"
+          className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end items-center gap-6 md:gap-8 lg:gap-12 w-full lg:flex-1"
         >
           {logos.map((logo, idx) => {
             const imgUrl = typeof logo.image === 'string' ? logo.image : logo.image?.src || '';
             const logoContent = (
-              <div className="relative w-32 h-20 sm:w-44 sm:h-28 md:w-48 md:h-32 lg:w-56 lg:h-36 transition-all duration-500 hover:scale-110 flex items-center justify-center group opacity-70 hover:opacity-100 grayscale hover:grayscale-0">
+              <div className="relative w-24 h-16 sm:w-32 sm:h-20 lg:w-40 lg:h-24 transition-all duration-500 hover:scale-110 flex items-center justify-center group opacity-70 hover:opacity-100 grayscale hover:grayscale-0">
                 <Image 
                   src={imgUrl} 
                   alt={logo.name ? `${logo.name} Logo` : 'Client Logo'} 
                   fill
                   className="object-contain drop-shadow-sm transition-all duration-700" 
-                  sizes="(max-width: 768px) 150px, (max-width: 1024px) 200px, 250px"
+                  sizes="(max-width: 768px) 100px, 150px"
                 />
               </div>
             );

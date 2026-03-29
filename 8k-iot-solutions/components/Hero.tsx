@@ -4,6 +4,7 @@ import { useEffect, useState, memo, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Zap, ArrowRight, Search } from 'lucide-react';
+import MagicRings from './MagicRings';
 
 const Hero = memo(function Hero({ 
   heroImages = [],
@@ -154,6 +155,33 @@ const Hero = memo(function Hero({
       {/* Background Orbs */}
       <div className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[800px] h-[300px] sm:h-[400px] bg-brand-600/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none" />
 
+      {/* Magic Rings Background Overlay (Desktop Only) */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden lg:block">
+        <MagicRings
+          color="#3b82f6"
+          colorTwo="#1d4ed8"
+          ringCount={12}
+          speed={0.25}
+          attenuation={20}
+          lineThickness={2.5}
+          baseRadius={0.4}
+          radiusStep={0.12}
+          scaleRate={0.08}
+          opacity={0.18}
+          blur={1.5}
+          noiseAmount={0.02}
+          rotation={0}
+          ringGap={1.3}
+          fadeIn={0.8}
+          fadeOut={0.6}
+          followMouse={false}
+          mouseInfluence={0.1}
+          hoverScale={1.1}
+          parallax={0.03}
+          clickBurst={false}
+        />
+      </div>
+
       {/* Top Section */}
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center flex-1">
         
@@ -167,7 +195,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 drop-shadow-sm mt-8 cursor-default py-2"
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-8 cursor-default py-2"
           >
             {/* Base Layer */}
             <div className="select-none">
@@ -234,7 +262,7 @@ const Hero = memo(function Hero({
             {avatarLogos.map((logo: any, i: number) => (
               <div 
                 key={i} 
-                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.25px] border-white overflow-hidden shadow-sm bg-white z-0 hover:z-10 transition-transform hover:scale-105"
+                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.25px] border-white overflow-hidden bg-white z-0 hover:z-10 transition-transform hover:scale-105"
               >
                 <Image 
                   src={logo.imageUrl || (typeof logo.image === 'string' ? logo.image : logo.image?.src) || getDistributedSource(i + 10)} 
@@ -270,7 +298,7 @@ const Hero = memo(function Hero({
           } : mounted ? { opacity: 1, y: 0 } : {}}
           transition={shake ? { duration: 0.4 } : { duration: 0.5, delay: 0.3, ease: "easeOut" }}
           onSubmit={handleSearch}
-          className={`w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.1)] border ring-4 ring-white/50 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text ${
+          className={`w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-sm border ring-4 ring-white/30 transition-all duration-500 hover:shadow-md hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text ${
             shake ? "border-red-400" : "border-slate-200/60"
           }`}
         >
@@ -298,10 +326,10 @@ const Hero = memo(function Hero({
               isSubmitting 
                 ? "bg-slate-200 text-slate-500 cursor-wait opacity-80"
                 : (searchInput.trim() || isBtnHovered)
-                ? "bg-brand-900 text-white hover:bg-brand-800 scale-[1.02] shadow-brand-900/20"
+                ? "bg-brand-900 text-white hover:bg-brand-800 scale-[1.02]"
                 : shake
                 ? "bg-red-500 text-white animate-pulse"
-                : "bg-blue-50 text-slate-400 opacity-60 scale-100 shadow-none"
+                : "bg-blue-50 text-slate-400 opacity-60 scale-100"
             }`}
           >
             <span>{isSubmitting ? "Syncing..." : shake ? "Describe Idea" : "Start Project"}</span>
@@ -311,7 +339,7 @@ const Hero = memo(function Hero({
           </button>
           <button 
             type="submit"
-            className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-3 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] shadow-md ml-1 cursor-pointer"
+            className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-3 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] ml-1 cursor-pointer"
             aria-label="Start Project"
           >
              <ArrowRight className="w-5 h-5" />
@@ -338,13 +366,13 @@ const Hero = memo(function Hero({
           {marqueeItems.map((item, index) => (
             <div 
               key={`${item.id}-${index}`} 
-              className="flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:shadow-brand-900/5 hover:-translate-y-1 transition-all duration-500 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white"
+              className="flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 hover:shadow-lg hover:shadow-brand-900/5 hover:-translate-y-1 transition-all duration-500 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white"
             >
               
               {/* Type 1: Stat / Metric Cards */}
               {(item.type === "stat" || item.type === "metric") && (
                 <div className="bg-blue-50/50 p-6 flex flex-col flex-1 items-center justify-center text-center">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-6 shadow-sm border border-white/50">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-6 border border-white/50">
                     <Zap className="w-5 h-5 text-brand-700 fill-brand-700/20" />
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-2">

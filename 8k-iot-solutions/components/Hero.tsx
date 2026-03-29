@@ -230,15 +230,15 @@ const Hero = memo(function Hero({
           className="flex items-center gap-4 mb-4 sm:mb-6"
         >
           {/* Avatar Stack */}
-          <div className="flex -space-x-3">
-            {avatarLogos.map((logo, i) => (
+          <div className="flex -space-x-4">
+            {avatarLogos.map((logo: any, i: number) => (
               <div 
                 key={i} 
-                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[3px] border-white overflow-hidden shadow-md bg-white z-0 hover:z-10 transition-transform"
+                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.25px] border-white overflow-hidden shadow-sm bg-white z-0 hover:z-10 transition-transform hover:scale-105"
               >
                 <Image 
-                  src={typeof logo.image === 'string' ? logo.image : logo.image?.src || getDistributedSource(i + 10)} 
-                  alt="Client Logo" 
+                  src={logo.imageUrl || (typeof logo.image === 'string' ? logo.image : logo.image?.src) || getDistributedSource(i + 10)} 
+                  alt={logo.name || "Client Logo"} 
                   fill 
                   className="object-contain p-1.5"
                   sizes="40px"

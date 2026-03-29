@@ -73,6 +73,12 @@ model HeroSection {
   reveal_text         String?  // The hidden text revealed by the spotlight
   subtext             String
   search_placeholder  String
+  show_magic_rings    Boolean  @default(true)
+  magic_rings_color   String  @default("#3b82f6")
+  magic_rings_color_2 String  @default("#1d4ed8")
+  magic_rings_speed   Float   @default(0.25)
+  magic_rings_count   Int     @default(12)
+  magic_rings_opacity Float   @default(0.18)
   updatedAt           DateTime @updatedAt
 }
 

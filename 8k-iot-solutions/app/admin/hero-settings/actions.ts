@@ -12,6 +12,12 @@ export async function updateHeroSection(formData: FormData) {
     reveal_text: formData.get('reveal_text') as string,
     subtext: formData.get('subtext') as string,
     search_placeholder: formData.get('search_placeholder') as string,
+    show_magic_rings: formData.get('show_magic_rings') === 'on',
+    magic_rings_color: formData.get('magic_rings_color') as string,
+    magic_rings_color_2: formData.get('magic_rings_color_2') as string,
+    magic_rings_speed: parseFloat(formData.get('magic_rings_speed') as string) || 0.25,
+    magic_rings_count: parseInt(formData.get('magic_rings_count') as string) || 12,
+    magic_rings_opacity: parseFloat(formData.get('magic_rings_opacity') as string) || 0.18,
   };
 
   try {

@@ -156,31 +156,33 @@ const Hero = memo(function Hero({
       <div className="absolute top-[0%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[800px] h-[300px] sm:h-[400px] bg-brand-600/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none" />
 
       {/* Magic Rings Background Overlay (Desktop Only) */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden lg:block">
-        <MagicRings
-          color="#3b82f6"
-          colorTwo="#1d4ed8"
-          ringCount={12}
-          speed={0.25}
-          attenuation={20}
-          lineThickness={2.5}
-          baseRadius={0.4}
-          radiusStep={0.12}
-          scaleRate={0.08}
-          opacity={0.18}
-          blur={1.5}
-          noiseAmount={0.02}
-          rotation={0}
-          ringGap={1.3}
-          fadeIn={0.8}
-          fadeOut={0.6}
-          followMouse={false}
-          mouseInfluence={0.1}
-          hoverScale={1.1}
-          parallax={0.03}
-          clickBurst={false}
-        />
-      </div>
+      {heroSection?.show_magic_rings !== false && (
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden lg:block">
+          <MagicRings
+            color={heroSection?.magic_rings_color || "#3b82f6"}
+            colorTwo={heroSection?.magic_rings_color_2 || "#1d4ed8"}
+            ringCount={heroSection?.magic_rings_count || 12}
+            speed={heroSection?.magic_rings_speed || 0.25}
+            attenuation={20}
+            lineThickness={2.5}
+            baseRadius={0.4}
+            radiusStep={0.12}
+            scaleRate={0.08}
+            opacity={heroSection?.magic_rings_opacity ?? 0.18}
+            blur={1.5}
+            noiseAmount={0.02}
+            rotation={0}
+            ringGap={1.3}
+            fadeIn={0.8}
+            fadeOut={0.6}
+            followMouse={false}
+            mouseInfluence={0.1}
+            hoverScale={1.1}
+            parallax={0.03}
+            clickBurst={false}
+          />
+        </div>
+      )}
 
       {/* Top Section */}
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center flex-1">

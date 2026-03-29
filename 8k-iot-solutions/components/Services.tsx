@@ -70,7 +70,7 @@ const ServicesSection = memo(function ServicesSection() {
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   return (
-    <section id="services" ref={containerRef} className="relative w-full pt-12 lg:pt-16 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
+    <section id="services" ref={containerRef} className="relative w-full pt-4 lg:pt-6 pb-8 md:pb-12 bg-transparent text-zinc-900 overflow-hidden z-0">
       <motion.div style={{ opacity: sectionOpacity }} className="w-full h-full relative">
 
       {/* Ambient Depth Orb */}
@@ -80,7 +80,7 @@ const ServicesSection = memo(function ServicesSection() {
       />
 
       <motion.div 
-        className="max-w-4xl mx-auto px-6 relative z-10"
+        className="max-w-7xl mx-auto px-6 relative z-10"
         initial="hidden"
         whileInView="visible"
         viewport={{ amount: 0.15 }}
@@ -90,23 +90,23 @@ const ServicesSection = memo(function ServicesSection() {
         <motion.div style={{ y: headerY }} className="w-full">
           <motion.div 
             variants={headerVariants}
-            className="text-center mb-12"
+            className="text-center mb-10 md:mb-14"
           >
-          <h2 className="text-3xl md:text-4xl font-poppins font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-6 leading-tight">
             Hardware & Software
           </h2>
-          <p className="mt-3 text-sm text-zinc-500 font-medium">
+          <p className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed">
             Specialized solutions for student projects and enterprise clients.
           </p>
           </motion.div>
         </motion.div>
 
         {/* Parallax Container Context */}
-        <div>
+        <div className="pb-16 md:pb-24">
           {/* Cards Container with Parallax transformation */}
           <motion.div style={{ y: yOffset }}>
                 <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch"
                   variants={containerVariants}
                 >
                   {/* ========================================= */}
@@ -114,116 +114,94 @@ const ServicesSection = memo(function ServicesSection() {
                   {/* ========================================= */}
                   <motion.div 
                       variants={cardVariants}
-                      className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+                      className="group flex flex-col bg-white/90 backdrop-blur-sm rounded-3xl border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_45px_100px_-20px_rgba(59,130,246,0.1)] transition-all duration-700 overflow-hidden cursor-default"
                   >
-                      {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-                      <div className="relative bg-zinc-50/50 border-b border-zinc-100 p-4 sm:p-5 md:p-8 overflow-hidden h-auto sm:h-[180px] md:h-[210px] flex flex-col">
-                      {/* Subtle Dot Pattern - Masked to fade out towards the bottom */}
-                      <div 
-                          className="absolute inset-0 opacity-60 pointer-events-none"
-                          style={{
-                          backgroundImage: 'radial-gradient(#d4d4d8 1px, transparent 1px)',
-                          backgroundSize: '16px 16px',
-                          WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
-                          maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
-                          }}
-                      />
-          
-                      <div className="relative z-10 flex-1 flex flex-col">
-                          <div className="flex justify-between items-start mb-1 sm:mb-2">
-                          <h3 className="text-sm sm:text-xl font-poppins font-semibold text-zinc-900 leading-tight">Hardware Services</h3>
-                          </div>
-                          
-                          {/* Descriptive Subtitle for better text hierarchy */}
-                          <p className="text-[11px] sm:text-sm text-zinc-500 font-medium mb-3 sm:mb-6 line-clamp-2 leading-tight">
-                          Custom hardware solutions and prototypes designed per client request.
-                          </p>
-                          
-                          {/* Pricing Block Highlight */}
-                          <div className="flex items-baseline gap-1 mt-auto flex-wrap">
-                          <span className="text-[10px] sm:text-sm font-semibold text-zinc-400">PHP</span>
-                          <span className="text-xl sm:text-5xl font-poppins font-bold tracking-tighter text-zinc-900 leading-none">2,000</span>
-                          <span className="text-[10px] sm:text-sm font-medium text-zinc-500 sm:ml-1">/project</span>
-                          </div>
-                      </div>
+                      {/* --- HEADER BLOCK --- */}
+                      <div className="relative border-b border-zinc-100/50 p-8 md:p-10 flex flex-col min-h-[220px]">
+                        <div className="relative z-10 flex-1 flex flex-col">
+                            <h3 className="text-xl md:text-2xl font-poppins font-bold text-zinc-900 tracking-tight mb-3">Hardware Services</h3>
+                            
+                            <p className="text-sm md:text-base text-zinc-500 font-poppins font-medium leading-relaxed mb-8 max-w-[280px]">
+                              Custom hardware prototypes and embedded systems designed to your exact specs.
+                            </p>
+                            
+                            {/* Modern Pricing Block */}
+                            <div className="mt-auto flex flex-col items-start">
+                              <span className="text-[10px] font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">Starts at</span>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-[12px] font-poppins font-bold text-zinc-400">PHP</span>
+                                <span className="text-5xl md:text-6xl font-poppins font-bold tracking-tight text-zinc-900 leading-none">999</span>
+                                <span className="text-sm font-poppins font-medium text-zinc-400 ml-2">/ project</span>
+                              </div>
+                            </div>
+                        </div>
                       </div>
           
-                      {/* --- BODY BLOCK (Features & CTA) --- */}
-                      <div className="p-3 sm:p-8 flex flex-col flex-1 bg-white relative z-10">
-                      <ul className="space-y-2.5 sm:space-y-4 flex-1 mb-4 sm:mb-8">
-                          {HARDWARE_FEATURES.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-1.5 sm:gap-3">
-                              <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-zinc-400 shrink-0 mt-0.5 sm:mt-0.5" strokeWidth={2.5} />
-                              <span className="text-[11px] sm:text-sm text-zinc-700 font-medium leading-tight">{feature}</span>
-                          </li>
-                          ))}
-                      </ul>
-          
-                      <Link 
-                          href="/projects/hardware"
-                          className="block text-center w-full bg-white border border-zinc-200 text-zinc-800 font-semibold text-[11px] sm:text-sm py-2 sm:py-3.5 rounded-lg sm:rounded-xl hover:bg-zinc-50 hover:border-brand-300 hover:text-brand-600 transition-colors duration-200 shadow-sm"
-                      >
-                          Explore Hardware
-                      </Link>
+                      {/* --- BODY BLOCK --- */}
+                      <div className="p-8 md:p-10 flex flex-col flex-1 bg-white relative z-10">
+                        <ul className="space-y-4 flex-1 mb-10">
+                            {HARDWARE_FEATURES.map((feature, i) => (
+                            <li key={i} className="flex items-start gap-4">
+                                <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                                <span className="text-sm md:text-base text-zinc-600 font-poppins font-medium leading-tight">{feature}</span>
+                            </li>
+                            ))}
+                        </ul>
+            
+                        <Link 
+                            href="/projects/hardware"
+                            className="relative inline-flex items-center justify-center w-full bg-zinc-900 text-white font-poppins font-bold text-sm py-4 rounded-xl hover:bg-zinc-800 transition-all duration-300 shadow-lg shadow-zinc-900/10 overflow-hidden active:scale-[0.98]"
+                        >
+                            Explore Hardware
+                        </Link>
                       </div>
                   </motion.div>
           
                   {/* ========================================= */}
-                  {/* CARD 2: Software Services (Highlighted)   */}
+                  {/* CARD 2: Software Services                 */}
                   {/* ========================================= */}
                   <motion.div 
                       variants={cardVariants}
-                      className="group flex flex-col bg-white rounded-2xl border border-zinc-200 shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden"
+                      className="group flex flex-col bg-white/90 backdrop-blur-sm rounded-3xl border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_45px_100px_-20px_rgba(59,130,246,0.1)] transition-all duration-700 overflow-hidden cursor-default"
                   >
-                      {/* --- HEADER BLOCK (Contains Pattern & Pricing) --- */}
-                      <div className="relative bg-gradient-to-b from-brand-50/60 to-white border-b border-brand-100/40 p-4 sm:p-5 md:p-8 overflow-hidden h-auto sm:h-[180px] md:h-[210px] flex flex-col">
-                      {/* Brand Dot Pattern - Masked to fade out towards the bottom */}
-                      <div 
-                          className="absolute inset-0 opacity-70 pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
-                          style={{
-                          backgroundImage: 'radial-gradient(#bfdbfe 1px, transparent 1px)',
-                          backgroundSize: '16px 16px',
-                          WebkitMaskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)',
-                          maskImage: 'linear-gradient(to bottom, white 0%, transparent 100%)'
-                          }}
-                      />
-          
-                      <div className="relative z-10 flex-1 flex flex-col">
-                          <div className="flex justify-between items-start mb-1 sm:mb-2">
-                          <h3 className="text-sm sm:text-xl font-poppins font-semibold text-zinc-900 leading-tight">Software Services</h3>
-                          </div>
-          
-                          {/* Descriptive Subtitle for better text hierarchy */}
-                          <p className="text-[11px] sm:text-sm text-zinc-500 font-medium mb-3 sm:mb-6 line-clamp-2 leading-tight">
-                          Scalable web applications, modern dashboards, and API integrations.
-                          </p>
-          
-                          {/* Pricing Block Highlight */}
-                          <div className="flex items-baseline gap-1 mt-auto flex-wrap">
-                          <span className="text-[10px] sm:text-sm font-semibold text-brand-400">PHP</span>
-                          <span className="text-xl sm:text-5xl font-poppins font-bold tracking-tighter text-zinc-900 leading-none">2,000</span>
-                          <span className="text-[10px] sm:text-sm font-medium text-zinc-500 sm:ml-1">/project</span>
-                          </div>
-                      </div>
+                      {/* --- HEADER BLOCK --- */}
+                      <div className="relative border-b border-zinc-100/50 p-8 md:p-10 flex flex-col min-h-[220px]">
+                        <div className="relative z-10 flex-1 flex flex-col">
+                            <h3 className="text-xl md:text-2xl font-poppins font-bold text-zinc-900 tracking-tight mb-3">Software Services</h3>
+                            
+                            <p className="text-sm md:text-base text-zinc-500 font-poppins font-medium leading-relaxed mb-8 max-w-[280px]">
+                              Modern web apps and IoT dashboards built with bleeding-edge technology.
+                            </p>
+                            
+                            {/* Modern Pricing Block */}
+                            <div className="mt-auto flex flex-col items-start">
+                              <span className="text-[10px] font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">Starts at</span>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-[12px] font-poppins font-bold text-zinc-400">PHP</span>
+                                <span className="text-5xl md:text-6xl font-poppins font-bold tracking-tight text-zinc-900 leading-none">999</span>
+                                <span className="text-sm font-poppins font-medium text-zinc-400 ml-2">/ project</span>
+                              </div>
+                            </div>
+                        </div>
                       </div>
           
-                      {/* --- BODY BLOCK (Features & CTA) --- */}
-                      <div className="p-3 sm:p-8 flex flex-col flex-1 bg-white relative z-10">
-                      <ul className="space-y-2.5 sm:space-y-4 flex-1 mb-4 sm:mb-8">
-                          {SOFTWARE_FEATURES.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-1.5 sm:gap-3">
-                              <Check className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-brand-500 shrink-0 mt-0.5 sm:mt-0.5" strokeWidth={2.5} />
-                              <span className="text-[11px] sm:text-sm text-zinc-700 font-medium leading-tight">{feature}</span>
-                          </li>
-                          ))}
-                      </ul>
-          
-                      <Link 
-                          href="/projects/software"
-                          className="block text-center w-full bg-brand-500 text-white font-semibold text-[11px] sm:text-sm py-2 sm:py-3.5 rounded-lg sm:rounded-xl hover:bg-brand-600 transition-colors duration-200 shadow-md shadow-brand-500/20"
-                      >
-                          Explore Software
-                      </Link>
+                      {/* --- BODY BLOCK --- */}
+                      <div className="p-8 md:p-10 flex flex-col flex-1 bg-white relative z-10">
+                        <ul className="space-y-4 flex-1 mb-10">
+                            {SOFTWARE_FEATURES.map((feature, i) => (
+                            <li key={i} className="flex items-start gap-4">
+                                <Check className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                                <span className="text-sm md:text-base text-zinc-600 font-poppins font-medium leading-tight">{feature}</span>
+                            </li>
+                            ))}
+                        </ul>
+            
+                        <Link 
+                            href="/projects/software"
+                            className="relative inline-flex items-center justify-center w-full bg-zinc-900 text-white font-poppins font-bold text-sm py-4 rounded-xl hover:bg-zinc-800 transition-all duration-300 shadow-lg shadow-zinc-900/10 overflow-hidden active:scale-[0.98]"
+                        >
+                            Explore Software
+                        </Link>
                       </div>
                   </motion.div>
                 </motion.div>

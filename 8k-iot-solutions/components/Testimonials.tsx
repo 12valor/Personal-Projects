@@ -80,7 +80,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
   return (
     <motion.section 
       ref={containerRef}
-      className="relative w-full pt-2 pb-12 md:pb-16 md:pt-6 bg-transparent overflow-hidden z-0"
+      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0"
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"

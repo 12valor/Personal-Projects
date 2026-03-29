@@ -6,7 +6,6 @@ import About from '@/components/About';
 import Testimonials from '@/components/Testimonials';
 import SchoolLogos from '@/components/SchoolLogos';
 import ServicesSection from '@/components/Services';
-import Process from '@/components/Process';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
@@ -53,7 +52,6 @@ export default function HomeContent({
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />
       <ServicesSection />
-      <Process />
       <Team members={teamMembers} />
       <FAQ faqs={faqs} />
       <React.Suspense fallback={<div className="py-12 bg-slate-950 text-center text-white">Loading contact...</div>}>

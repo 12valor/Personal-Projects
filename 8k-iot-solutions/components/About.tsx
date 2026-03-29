@@ -74,7 +74,7 @@ const About = memo(function About() {
     <section 
       ref={containerRef} 
       id="about" 
-      className="relative py-20 lg:py-32 bg-transparent z-0 isolate overflow-hidden"
+      className="relative pt-10 lg:pt-14 pb-10 lg:pb-16 bg-transparent z-0 isolate overflow-hidden"
     >
 
       {/* Main Grid Wrapper */}
@@ -94,25 +94,18 @@ const About = memo(function About() {
             className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
             variants={itemVariants}
           >
-            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-6 sm:p-10 lg:p-16 xl:p-24 relative overflow-hidden group/card lg:pr-[25%] xl:pr-[30%]">
+            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-6 sm:p-10 lg:p-14 xl:p-20 relative overflow-hidden group/card lg:pr-[30%] xl:pr-[35%]">
               
-              {/* Minimal Section Subhead */}
-              <div className="flex items-center gap-4 mb-6 md:mb-8 relative z-10">
-                <div className="h-px w-8 bg-brand-600" />
-                <h3 className="text-[11px] font-bold text-brand-900 uppercase tracking-[0.25em] font-sans">
-                  The Studio
-                </h3>
-              </div>
 
               {/* Pure Sans-Serif Typography Contrast */}
-              <h2 className="text-[2.25rem] leading-[1.1] sm:text-[3.5rem] lg:text-[4.5rem] xl:text-[5rem] font-sans font-extrabold text-zinc-900 mb-6 md:mb-8 sm:leading-[1.05] tracking-tighter relative z-10">
+              <h2 className="text-[2.25rem] leading-[1.1] sm:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] font-poppins font-bold text-zinc-900 mb-6 md:mb-8 sm:leading-[1.05] tracking-tight relative z-10">
                 Hardware <br className="hidden md:block" />precision meets <br className="hidden md:block"/>
-                <span className="font-normal text-zinc-400 block mt-1 tracking-tight">software intelligence.</span>
+                <span className="font-poppins font-medium text-zinc-400 block mt-1 tracking-tight italic">software intelligence.</span>
               </h2>
 
               {/* Wide-line-height Scannable Text Blocks */}
-              <div className="flex flex-col gap-6 max-w-[540px] text-zinc-600 text-[17px] lg:text-lg font-sans leading-relaxed mb-16 relative z-10 selection:bg-brand-100">
-                <p>
+              <div className="flex flex-col gap-6 max-w-[480px] text-zinc-600 text-[16px] lg:text-[17px] font-poppins leading-relaxed mb-12 relative z-10 selection:bg-brand-100">
+                <p className="font-medium">
                   As dedicated freelance IoT specialists based in Talisay City, Negros Occidental, we partner with visionaries and businesses to architect custom solutions from the ground up.
                 </p>
                 <p>

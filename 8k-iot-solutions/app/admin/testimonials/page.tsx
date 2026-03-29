@@ -3,6 +3,8 @@ import Link from 'next/link';
 import DeleteTestimonialButton from '../components/DeleteTestimonialButton';
 import AdminTabs from '../components/AdminTabs';
 
+export const dynamic = 'force-dynamic';
+
 export default async function TestimonialsAdmin() {
   // @ts-ignore
   const testimonials = (prisma as any).testimonial 

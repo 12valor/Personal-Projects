@@ -4,6 +4,8 @@ import { deleteHeroCard, toggleHeroCardStatus } from './actions';
 import Image from 'next/image';
 import CardForm from './CardForm';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Hero Cards Management",
 };

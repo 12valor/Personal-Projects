@@ -5,6 +5,8 @@ import { deleteSchoolLogo, reorderSchoolLogos } from './actions';
 import { revalidatePath } from 'next/cache';
 import AdminTabs from '../components/AdminTabs';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Admin - School Logos",
 };

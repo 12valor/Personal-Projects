@@ -8,17 +8,20 @@ import { Zap } from 'lucide-react';
 const Hero = memo(function Hero({ 
   heroImages = [],
   heroSection, 
-  heroCards = [] 
+  heroCards = [],
+  schoolLogos = []
 }: { 
   heroImages?: any[],
   heroSection?: any,
-  heroCards?: any[] 
+  heroCards?: any[],
+  schoolLogos?: any[]
 }) {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
   
   const safeHeroImages = Array.isArray(heroImages) ? heroImages : [];
+  const safeSchoolLogos = Array.isArray(schoolLogos) ? schoolLogos : [];
   
   const imagePool = safeHeroImages.length > 0 
     ? safeHeroImages.map(img => img.url)
@@ -33,6 +36,13 @@ const Hero = memo(function Hero({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Use school logos for avatars if available, otherwise fallback to generic images
+  const avatarLogos = safeSchoolLogos.length > 0 
+    ? safeSchoolLogos.slice(0, 4) 
+    : [1, 2, 3, 4].map(i => ({ image: getDistributedSource(i + 10) }));
+
+  const remainingLogosCount = safeSchoolLogos.length > 4 ? safeSchoolLogos.length - 4 : 12;
 
   const fallbackMarqueeItems = [
     {
@@ -131,32 +141,29 @@ const Hero = memo(function Hero({
         >
           {/* Avatar Stack */}
           <div className="flex -space-x-3">
-            {[0, 1, 2, 3].map((i) => (
+            {avatarLogos.map((logo, i) => (
               <div 
                 key={i} 
-                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-slate-100"
+                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[3px] border-white overflow-hidden shadow-md bg-white z-0 hover:z-10 transition-transform"
               >
                 <Image 
-                  src={getDistributedSource(i + 10)} 
-                  alt="Client" 
+                  src={typeof logo.image === 'string' ? logo.image : logo.image?.src || getDistributedSource(i + 10)} 
+                  alt="Client Logo" 
                   fill 
-                  className="object-cover"
+                  className="object-contain p-1.5"
                   sizes="40px"
                 />
               </div>
             ))}
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white bg-brand-50 flex items-center justify-center shadow-sm">
-                <span className="text-[10px] sm:text-[12px] font-bold text-brand-700">+12</span>
-            </div>
           </div>
 
           {/* Divider */}
           <div className="h-6 w-[1px] bg-slate-200" />
 
           {/* Text */}
-          <div className="text-left">
+          <div className="text-left font-poppins">
             <p className="text-[11px] sm:text-[13px] font-bold text-slate-900 leading-tight">
-              50+ Innovators
+              20+ Innovators
             </p>
             <p className="text-[10px] sm:text-[12px] text-slate-500 font-medium">
               Projects Delivered

@@ -38,7 +38,12 @@ export default function HomeContent({
         aria-hidden="true"
       />
       
-      <Hero heroImages={heroImages} heroSection={heroSection} heroCards={heroCards} />
+      <Hero 
+        heroImages={heroImages} 
+        heroSection={heroSection} 
+        heroCards={heroCards} 
+        schoolLogos={schoolLogos} 
+      />
       <SchoolLogos logos={schoolLogos} />
       <Testimonials initialTestimonials={initialTestimonials} />
       <About />

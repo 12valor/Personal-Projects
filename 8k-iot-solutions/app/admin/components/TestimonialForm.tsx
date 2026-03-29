@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { saveTestimonial } from '../actions';
+import { saveTestimonial, deleteTestimonial } from '../actions';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function TestimonialForm({ testimonial }: { testimonial?: any }) {
@@ -162,7 +162,20 @@ export default function TestimonialForm({ testimonial }: { testimonial?: any }) 
       </div>
 
       <div className="pt-5">
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-3 w-full">
+          {testimonial?.id && (
+            <button
+              type="button"
+              onClick={async () => {
+                if (confirm('Are you sure you want to delete this testimonial?')) {
+                  await deleteTestimonial(testimonial.id);
+                }
+              }}
+              className="bg-white py-2 px-4 border border-red-200 rounded-md shadow-sm text-sm font-medium text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mr-auto"
+            >
+              Delete Testimonial
+            </button>
+          )}
           <a
             href="/admin/testimonials"
             className="bg-white py-2 px-4 border border-zinc-300 rounded-md shadow-sm text-sm font-medium text-zinc-700 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-900"

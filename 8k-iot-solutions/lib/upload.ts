@@ -15,7 +15,7 @@ export async function saveImageFile(file: File, prefix: string = 'img'): Promise
     ? `${prefix}-${Date.now()}-${file.name.replace(/\s+/g, '-')}`
     : `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
 
-  // If Vercel Blob is configured (always true in Vercel production once linked)
+  // If Vercel Blob is configured
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const blob = await put(uniqueName, file, { 
@@ -23,9 +23,10 @@ export async function saveImageFile(file: File, prefix: string = 'img'): Promise
         addRandomSuffix: false // We already made it unique
       });
       return blob.url;
-    } catch (error) {
-      console.error("Vercel Blob Upload Error:", error);
-      throw new Error("Failed to upload to Vercel Blob");
+    } catch (error: any) {
+      console.error("Vercel Blob Upload Error:", error.message || error);
+      console.error("Falling back to local disk upload due to Blob error.");
+      // Do not throw here so we fall back to local disk for development
     }
   }
     

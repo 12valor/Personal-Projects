@@ -130,20 +130,18 @@ export default function Navbar() {
       <nav 
         className={`pointer-events-auto relative flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${isScrolled 
-            ? 'mt-4 md:mt-6 w-[98%] max-w-[1728px] rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/50 py-2' 
-            : 'mt-0 w-full rounded-none bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-3'
+            ? 'mt-4 w-[95%] rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100/50 py-2' 
+            : 'mt-0 w-full rounded-none bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-2'
           }
         `}
       >
-        <div className={`flex w-full items-center justify-between max-w-[1728px] transition-all duration-700 px-4 sm:px-10 lg:px-16 xl:px-20`}>
+        <div className={`flex w-full items-center justify-between transition-all duration-700 px-6 sm:px-8 lg:px-10 max-w-none`}>
           
           <div className="flex flex-1 items-center justify-start">
             <Link 
               href="/" 
               onClick={(e) => handleNavigation(e, '/')}
-              className={`relative flex items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left 
-                ${isScrolled ? 'h-[45px]' : 'h-[65px]'}`
-              }
+              className="relative flex items-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left h-[45px]"
             >
               <Image 
                 src="/8k.png" 
@@ -166,9 +164,7 @@ export default function Navbar() {
               >
                 <button
                   onClick={(e) => handleNavigation(e as any, link.href)}
-                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-semibold transition-all duration-300 rounded-full z-10
-                    ${(activeDropdown === link.name || hoveredNav === link.name || (pathname === '/' && link.href === '/') || (pathname === link.href)) ? 'text-zinc-950' : 'text-zinc-600'}
-                  `}
+                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-semibold transition-all duration-300 rounded-full z-10 text-zinc-950`}
                 >
                   {link.name}
                   {link.subItems && (
@@ -208,13 +204,13 @@ export default function Navbar() {
                                   {subItem.name}
                                 </span>
                                 <div className="grid grid-cols-1 gap-0">
-                                  {subItem.subItems.map((nestedItem, nestedIdx) => (
+                                  {link.subItems && subItem.subItems && subItem.subItems.map((nestedItem, nestedIdx) => (
                                     <React.Fragment key={nestedItem.name}>
                                       {nestedIdx > 0 && <div className="mx-4 h-[1px] bg-gray-100" />}
                                       <a
                                         href={nestedItem.href}
                                         onClick={(e) => handleNavigation(e, nestedItem.href)}
-                                        className="flex items-center gap-3 px-4 py-3 text-[14px] font-poppins font-medium rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all group/nested"
+                                        className="flex items-center gap-3 px-4 py-3 text-[14px] font-poppins font-medium rounded-xl hover:text-brand-900 transition-all group/nested"
                                       >
                                         {nestedItem.name}
                                       </a>
@@ -227,10 +223,10 @@ export default function Navbar() {
                                 aria-label={subItem.name}
                                 href={subItem.href}
                                 onClick={(e) => handleNavigation(e, subItem.href)}
-                                className="flex items-center justify-between px-4 py-3.5 text-[14px] font-poppins font-medium rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all"
+                                className="flex items-center justify-between px-4 py-3.5 text-[14px] font-poppins font-medium rounded-xl hover:text-brand-900 transition-all"
                               >
                                 {subItem.name}
-                                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-blue-600" />
+                                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-900" />
                               </a>
                             )}
                           </div>

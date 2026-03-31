@@ -124,13 +124,13 @@ export default function CardForm({ editingMember, onCancel }: { editingMember?: 
         <div className="space-y-2">
           <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
             <Globe className="w-3.5 h-3.5" />
-            Image Tagline
+            Credibility Line / Tagline
           </label>
           <input 
             type="text" 
             name="tagline" 
-            defaultValue={editingMember?.tagline || 'Guided by AI, Powered by you.'}
-            placeholder="Text overlay on image..."
+            defaultValue={editingMember?.tagline || ''}
+            placeholder="e.g. Co-Founder • 10+ Projects"
             className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm font-medium"
           />
         </div>

@@ -33,7 +33,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
     offset: ["start end", "end start"]
   });
 
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   const studioEase = [0.16, 1, 0.3, 1] as any;
 
@@ -42,30 +42,30 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
+        staggerChildren: 0,
       },
     },
   };
 
   const leftItemVariants = {
-    hidden: { opacity: 0, x: -60 },
+    hidden: { opacity: 0, x: -200 },
     visible: { 
       opacity: 1, 
       x: 0,
       transition: {
-        duration: 0.8,
+        duration: 1.2,
         ease: studioEase
       }
     }
   };
 
   const rightItemVariants = {
-    hidden: { opacity: 0, x: 60 },
+    hidden: { opacity: 0, x: 200 },
     visible: { 
       opacity: 1, 
       x: 0,
       transition: {
-        duration: 0.8,
+        duration: 1.2,
         ease: studioEase
       }
     }
@@ -76,7 +76,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
       ref={sectionRef}
       style={{ opacity: sectionOpacity }}
       id="team" 
-      className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-visible font-poppins"
+      className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-hidden font-poppins"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -86,7 +86,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
-            transition={{ duration: 0.8, ease: studioEase }}
+            transition={{ duration: 1.2, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
           >
             Meet The Team
@@ -95,7 +95,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
-            transition={{ duration: 0.8, ease: studioEase, delay: 0.05 }}
+            transition={{ duration: 1.2, ease: studioEase }}
             className="text-lg md:text-xl text-zinc-500 font-poppins font-medium"
           >
             The people behind the systems we build.
@@ -108,7 +108,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: false, amount: 0 }}
         >
           {members.map((member, index) => (
             <TeamCard 
@@ -175,9 +175,9 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
            <div>
              <div className="flex flex-col gap-2 mb-8">
                <p className="text-zinc-400 font-poppins font-bold uppercase tracking-[0.3em] text-[11px] mb-1">{member.role}</p>
-               <h3 className="text-4xl lg:text-5xl font-sans font-bold text-slate-900 tracking-tight leading-none">{member.name}</h3>
+               <h3 className="text-4xl lg:text-5xl font-poppins font-bold text-slate-900 tracking-tight leading-none">{member.name}</h3>
                {member.tagline && (
-                 <p className="text-blue-600/80 font-poppins font-semibold text-sm md:text-base mt-2 flex items-center gap-2">
+                 <p className="text-blue-900 font-poppins font-semibold text-sm md:text-base mt-2 flex items-center gap-2">
                    <span className="w-6 h-[2px] bg-blue-100" />
                    {member.tagline}
                  </p>

@@ -50,16 +50,10 @@ const Contact = memo(() => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 flex flex-col items-start"
           >
-            <div className="inline-flex items-center gap-3 mb-8">
-              <span className="h-[1px] w-8 bg-blue-500/50"></span>
-              <span className="font-sans font-bold text-blue-400 tracking-[0.2em] text-[11px] uppercase">
-                Collaboration
-              </span>
-            </div>
 
             <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-[0.95] mb-8">
               Start a <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-white/80">
+              <span className="text-blue-400">
                 Project.
               </span>
             </h2>

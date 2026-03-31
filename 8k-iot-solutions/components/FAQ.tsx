@@ -19,7 +19,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
     offset: ["start end", "end start"]
   });
 
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   const toggle = (id: string) => {
     setOpenIds((prev) => 
@@ -79,18 +79,30 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0,
       },
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+  const leftItemVariants = {
+    hidden: { opacity: 0, x: -200 },
     visible: { 
       opacity: 1, 
-      y: 0,
+      x: 0,
       transition: {
-        duration: 0.8,
+        duration: 1.2,
+        ease: studioEase
+      }
+    }
+  };
+
+  const rightItemVariants = {
+    hidden: { opacity: 0, x: 200 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 1.2,
         ease: studioEase
       }
     }
@@ -101,47 +113,47 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
       ref={sectionRef}
       style={{ opacity: sectionOpacity }}
       id="faq" 
-      className="relative py-20 lg:py-32 bg-white overflow-hidden font-poppins"
+      className="relative pt-4 pb-24 md:pb-32 bg-transparent overflow-hidden font-poppins"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
-        {/* Header Section */}
-        <div className="mb-16 md:mb-20">
+        {/* Section Header */}
+        <div className="text-center mb-16 md:mb-24">
           <motion.h2 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
-            transition={{ duration: 0.8, ease: studioEase }}
-            className="text-4xl sm:text-[2.75rem] font-extrabold text-zinc-900 tracking-tight mb-4"
+            transition={{ duration: 1.2, ease: studioEase }}
+            className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-6 leading-tight"
           >
-            Most asked FAQ&apos;s
+            Common Questions
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
-            transition={{ duration: 0.8, ease: studioEase, delay: 0.05 }}
-            className="text-zinc-500 text-lg sm:text-xl max-w-2xl leading-relaxed"
+            transition={{ duration: 1.2, ease: studioEase }}
+            className="text-lg md:text-xl text-zinc-500 font-poppins"
           >
-            We&apos;re here to help you and solve doubts. Find answers to the most common questions below.
+            Everything you need to know about our services and process.
           </motion.p>
         </div>
 
-        {/* 2-Column Grid Accordion */}
+        {/* FAQ Grid */}
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: false, amount: 0 }}
         >
-          {displayFaqs.map((faq) => (
+          {displayFaqs.map((faq, index) => (
             <FAQItemComponent 
               key={faq.id} 
               faq={faq} 
               isOpen={openIds.includes(faq.id)} 
               toggle={() => toggle(faq.id)}
-              variants={itemVariants}
+              variants={index % 2 === 0 ? leftItemVariants : rightItemVariants}
             />
           ))}
         </motion.div>
@@ -165,7 +177,7 @@ function FAQItemComponent({
   return (
     <motion.div 
       variants={variants}
-      className={`group rounded-2xl border transition-all duration-500 overflow-hidden ${
+      className={`group rounded-2xl border overflow-hidden transition-colors duration-300 ${
         isOpen 
           ? 'bg-zinc-50 border-zinc-200' 
           : 'bg-white border-zinc-100 hover:border-zinc-200'

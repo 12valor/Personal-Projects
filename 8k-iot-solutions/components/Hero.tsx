@@ -140,7 +140,7 @@ const Hero = memo(function Hero({
   return (
     <section 
       id="home" 
-      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-20 lg:pt-28 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
+      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-18 lg:pt-24 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
     >
       {/* Background Orbs */}
       {heroSection?.show_hero_orbs !== false && (
@@ -195,7 +195,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-8 cursor-default py-2"
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
             {/* Base Layer */}
             <div className="select-none">

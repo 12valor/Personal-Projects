@@ -27,8 +27,7 @@ const containerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
+      staggerChildren: 0,
     },
   },
 };
@@ -39,31 +38,31 @@ const headerVariants: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.8,
+      duration: 1.2,
       ease: studioEase,
     },
   },
 };
 
 const leftCardVariants: Variants = {
-  hidden: { opacity: 0, x: -60 },
+  hidden: { opacity: 0, x: -200 },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.8,
+      duration: 1.2,
       ease: studioEase,
     },
   },
 };
 
 const rightCardVariants: Variants = {
-  hidden: { opacity: 0, x: 60 },
+  hidden: { opacity: 0, x: 200 },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.8,
+      duration: 1.2,
       ease: studioEase,
     },
   },
@@ -76,7 +75,7 @@ const ServicesSection = memo(function ServicesSection() {
     offset: ["start end", "end start"]
   });
   
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   return (
     <section id="services" ref={sectionRef} className="relative w-full pt-4 lg:pt-6 pb-2 md:pb-4 bg-transparent text-zinc-900 overflow-hidden z-0">
@@ -85,26 +84,30 @@ const ServicesSection = memo(function ServicesSection() {
       {/* Ambient Depth Orb */}
       <div className="absolute top-[-5%] left-[15%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[100px] pointer-events-none" />
 
-      <motion.div 
-        className="max-w-7xl mx-auto px-6 relative z-10"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.1 }}
-      >
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* Section Header */}
         <div className="w-full">
-          <motion.div 
-            variants={headerVariants}
-            className="text-center mb-10 md:mb-12"
-          >
-          <h2 className="text-4xl md:text-[3rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight">
-            Hardware & Software
-          </h2>
-          <p className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed">
-            Specialized solutions for student projects and enterprise clients.
-          </p>
-          </motion.div>
+          <div className="text-center mb-10 md:mb-12">
+            <motion.h2 
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 1.2, ease: studioEase }}
+              className="text-4xl md:text-[3rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
+            >
+              Hardware & Software
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 1.2, ease: studioEase }}
+              className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed"
+            >
+              Specialized solutions for student projects and enterprise clients.
+            </motion.p>
+          </div>
         </div>
 
         {/* Cards Container Context */}
@@ -112,13 +115,16 @@ const ServicesSection = memo(function ServicesSection() {
           <motion.div 
             className="grid grid-cols-1 gap-12 lg:gap-16 items-stretch"
             variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0 }}
           >
             {/* ========================================= */}
             {/* CARD 1: Hardware Services (FROM LEFT)     */}
             {/* ========================================= */}
             <motion.div 
                 variants={leftCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] transition-all duration-700 overflow-hidden cursor-default"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
@@ -152,7 +158,7 @@ const ServicesSection = memo(function ServicesSection() {
                   <ul className="space-y-6 flex-1">
                       {HARDWARE_FEATURES.map((feature, i) => (
                       <li key={i} className="flex items-center gap-5 group/item">
-                          <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                          <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
                             <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
                           </div>
                           <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
@@ -167,7 +173,7 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={rightCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] transition-all duration-700 overflow-hidden cursor-default"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
@@ -201,7 +207,7 @@ const ServicesSection = memo(function ServicesSection() {
                   <ul className="space-y-6 flex-1">
                       {SOFTWARE_FEATURES.map((feature, i) => (
                       <li key={i} className="flex items-center gap-5 group/item">
-                          <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                          <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
                             <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
                           </div>
                           <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
@@ -212,7 +218,7 @@ const ServicesSection = memo(function ServicesSection() {
             </motion.div>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
       </motion.div>
     </section>
   );

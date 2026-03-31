@@ -30,7 +30,7 @@ export default function HomeContent({
   teamMembers?: any[]
 }) {
   return (
-    <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0">
+    <div className="relative font-sans antialiased text-gray-900 bg-white selection:bg-brand-200 z-0 overflow-x-hidden">
       <SectionUrlSync />
       
       <div 

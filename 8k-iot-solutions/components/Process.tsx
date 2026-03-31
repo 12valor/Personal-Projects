@@ -103,7 +103,7 @@ const Process = memo(function Process() {
     <motion.section 
       id="process" 
       ref={containerRef}
-      className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 z-0 border-t border-zinc-50 border-b"
+      className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 z-0 border-t border-zinc-50 border-b overflow-hidden"
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"

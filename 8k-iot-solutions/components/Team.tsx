@@ -33,7 +33,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Simplified Header Section */}
-        <div className="text-center mb-16 lg:mb-24">
+        <div className="text-center mb-12 lg:mb-16">
            <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -54,7 +54,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
         </div>
 
         {/* Team List */}
-        <div className="space-y-40 lg:space-y-64">
+        <div className="space-y-24 lg:space-y-40">
           {members.map((member, index) => (
             <TeamCard 
               key={member.id} 
@@ -78,7 +78,7 @@ function TeamCard({ member, index }: { member: TeamMember; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      className={`group flex flex-col lg:flex-row gap-16 lg:gap-0 items-stretch ${!isEven ? 'lg:flex-row-reverse' : ''}`}
+      className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch ${!isEven ? 'lg:flex-row-reverse' : ''}`}
     >
       {/* Left Part: Portrait Container (Overflow Visible for Pop-out) */}
       <div className="relative w-full lg:w-[480px] aspect-[4/5] lg:aspect-auto shrink-0 z-20 flex items-end justify-center">

@@ -204,7 +204,7 @@ export default function Navbar() {
                             
                             {subItem.subItems ? (
                               <div className="flex flex-col">
-                                <span className="flex items-center justify-between w-full px-4 py-2 text-[14px] font-semibold text-zinc-900 mt-2 mb-1">
+                                <span className="flex items-center justify-between w-full px-4 py-2 text-[14px] font-poppins font-medium text-zinc-900 mt-2 mb-1">
                                   {subItem.name}
                                 </span>
                                 <div className="grid grid-cols-1 gap-0">
@@ -214,7 +214,7 @@ export default function Navbar() {
                                       <a
                                         href={nestedItem.href}
                                         onClick={(e) => handleNavigation(e, nestedItem.href)}
-                                        className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-xl hover:bg-zinc-900 hover:text-white transition-all group/nested"
+                                        className="flex items-center gap-3 px-4 py-3 text-[14px] font-poppins font-medium rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all group/nested"
                                       >
                                         {nestedItem.name}
                                       </a>
@@ -224,12 +224,13 @@ export default function Navbar() {
                               </div>
                             ) : (
                               <a
+                                aria-label={subItem.name}
                                 href={subItem.href}
                                 onClick={(e) => handleNavigation(e, subItem.href)}
-                                className="flex items-center justify-between px-4 py-3.5 text-[14px] font-semibold rounded-xl hover:bg-zinc-900 hover:text-white transition-all"
+                                className="flex items-center justify-between px-4 py-3.5 text-[14px] font-poppins font-medium rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all"
                               >
                                 {subItem.name}
-                                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-white" />
+                                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-blue-600" />
                               </a>
                             )}
                           </div>
@@ -313,7 +314,7 @@ export default function Navbar() {
                               <div key={subItem.name}>
                                 {subItem.subItems ? (
                                   <div className="py-2">
-                                    <span className="block px-4 py-2 text-[14px] font-semibold text-zinc-900">{subItem.name}</span>
+                                    <span className="block px-4 py-2 text-[14px] font-poppins font-medium text-zinc-900">{subItem.name}</span>
                                     <div className="flex flex-col space-y-0.5 mt-1">
                                       {subItem.subItems.map((nested, nestedIdx) => (
                                         <React.Fragment key={nested.name}>
@@ -321,7 +322,7 @@ export default function Navbar() {
                                           <a 
                                             href={nested.href}
                                             onClick={(e) => handleNavigation(e, nested.href)}
-                                            className="block px-4 py-3 text-sm font-semibold text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors"
+                                            className="block px-4 py-3 text-[14px] font-poppins font-medium text-zinc-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                           >
                                             {nested.name}
                                           </a>
@@ -333,7 +334,7 @@ export default function Navbar() {
                                   <a 
                                     href={subItem.href} 
                                     onClick={(e) => handleNavigation(e, subItem.href)} 
-                                    className="block px-4 py-3.5 text-sm font-semibold text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors"
+                                    className="block px-4 py-3.5 text-[14px] font-poppins font-medium text-zinc-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                   >
                                     {subItem.name}
                                   </a>

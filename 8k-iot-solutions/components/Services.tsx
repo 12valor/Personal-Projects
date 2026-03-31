@@ -148,8 +148,8 @@ const ServicesSection = memo(function ServicesSection() {
                         <ul className="space-y-6 flex-1">
                             {HARDWARE_FEATURES.map((feature, i) => (
                             <li key={i} className="flex items-center gap-5 group/item">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors duration-300">
-                                  <Check className="w-5 h-5 text-blue-600 group-hover/item:text-white" strokeWidth={3} />
+                                <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                                  <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
                                 </div>
                                 <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
                             </li>
@@ -171,7 +171,7 @@ const ServicesSection = memo(function ServicesSection() {
                             <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-zinc-900 tracking-tight mb-4">Software Services</h3>
                             
                             <p className="text-base md:text-lg text-zinc-500 font-poppins font-medium leading-relaxed mb-10 max-w-[480px]">
-                              Modern web apps and IoT dashboards built with bleeding-edge technology. Scalable solutions that grow with your business.
+                               Modern web apps and IoT dashboards built with bleeding-edge technology. Scalable solutions that grow with your business.
                             </p>
                             
                             {/* Focal Point Pricing Block */}
@@ -197,8 +197,8 @@ const ServicesSection = memo(function ServicesSection() {
                         <ul className="space-y-6 flex-1">
                             {SOFTWARE_FEATURES.map((feature, i) => (
                             <li key={i} className="flex items-center gap-5 group/item">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors duration-300">
-                                  <Check className="w-5 h-5 text-blue-600 group-hover/item:text-white" strokeWidth={3} />
+                                <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                                  <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
                                 </div>
                                 <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
                             </li>

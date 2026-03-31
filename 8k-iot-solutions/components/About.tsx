@@ -116,16 +116,16 @@ const About = memo(function About() {
               {/* Clean Inline Counters inside the Text Card */}
               <div className="grid grid-cols-2 sm:flex items-center gap-4 sm:gap-10 mb-8 md:mb-12 relative z-10 w-full overflow-visible">
                 <div className="flex flex-col xl:flex-row xl:items-baseline gap-1 xl:gap-3">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">10+</span>
-                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Projects<br className="block sm:hidden xl:block"/>Completed</span>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-poppins tracking-tighter">10+</span>
+                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-poppins leading-tight">Projects<br className="block sm:hidden xl:block"/>Completed</span>
                 </div>
                 
                 {/* Thin dividing line visible only on larger screens where they run side-by-side */}
                 <div className="w-[1px] h-10 bg-zinc-200 hidden sm:block" />
                 
                 <div className="flex flex-col xl:flex-row xl:items-baseline gap-1 xl:gap-3">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-sans tracking-tighter">2+</span>
-                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-sans leading-tight">Years<br className="block sm:hidden xl:block"/>Experience</span>
+                  <span className="text-4xl sm:text-5xl font-extrabold text-zinc-900 font-poppins tracking-tighter">2+</span>
+                  <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-bold text-zinc-400 uppercase tracking-[0.2em] font-poppins leading-tight">Years<br className="block sm:hidden xl:block"/>Experience</span>
                 </div>
               </div>
 

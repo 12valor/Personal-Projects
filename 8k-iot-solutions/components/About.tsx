@@ -94,7 +94,7 @@ const About = memo(function About() {
             className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
             variants={itemVariants}
           >
-            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-zinc-100 p-6 sm:p-10 lg:p-14 xl:p-20 relative overflow-hidden group/card lg:pr-[30%] xl:pr-[35%]">
+            <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] border border-zinc-100 p-6 sm:p-10 lg:p-14 xl:p-20 relative overflow-hidden group/card lg:pr-[30%] xl:pr-[35%] transition-all duration-700">
               
 
               {/* Pure Sans-Serif Typography Contrast */}
@@ -151,7 +151,7 @@ const About = memo(function About() {
             className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0"
             style={{ y: imageY }}
           >
-            <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100">
+            <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100 transition-all duration-700">
               
               {images.map((src, idx) => (
                 <Image 

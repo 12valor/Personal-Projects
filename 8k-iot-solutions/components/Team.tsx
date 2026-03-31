@@ -88,7 +88,7 @@ function TeamCard({ member, index }: { member: TeamMember; index: number }) {
 
         {/* The Frame / Background Shape */}
         <motion.div 
-          className="absolute inset-x-4 lg:inset-x-0 bottom-0 top-16 bg-blue-50/60 backdrop-blur-md rounded-[40px] border border-blue-100/30 shadow-2xl transition-all duration-700 ease-out group-hover:bg-blue-100/40 group-hover:shadow-[0_45px_100px_-20px_rgba(59,130,246,0.1)] group-hover:scale-[0.97]"
+          className="absolute inset-x-4 lg:inset-x-0 bottom-0 top-16 bg-blue-50/60 backdrop-blur-md rounded-[40px] border border-blue-100/30 shadow-[0_15px_30px_-10px_rgba(30,58,138,0.15)] transition-all duration-700 ease-out"
         />
 
         {/* The Image (Pops out on hover) */}
@@ -101,7 +101,7 @@ function TeamCard({ member, index }: { member: TeamMember; index: number }) {
                 src={member.imageUrl} 
                 alt={member.name} 
                 fill 
-                className="object-contain object-bottom transition-all duration-700 drop-shadow-[0_20px_50px_rgba(30,58,138,0.15)] group-hover:drop-shadow-[0_30px_60px_rgba(30,58,138,0.25)]"
+                className="object-contain object-bottom transition-all duration-700 drop-shadow-[0_20px_50px_rgba(30,58,138,0.2)]"
                 sizes="(max-width: 1024px) 100vw, 480px"
                 priority={index < 2}
               />
@@ -116,7 +116,7 @@ function TeamCard({ member, index }: { member: TeamMember; index: number }) {
 
       {/* Right Part: Content Card */}
       <motion.div 
-        className="flex-1 bg-white/70 backdrop-blur-2xl rounded-[40px] p-8 lg:p-16 border border-zinc-200/50 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.04)] flex flex-col justify-center relative z-10 -mt-16 lg:mt-0 lg:ml-[-40px] lg:mr-[-40px] transition-all duration-700 ease-in-out group-hover:bg-white/95 group-hover:-translate-y-2 group-hover:shadow-[0_64px_120px_-30px_rgba(0,0,0,0.08)]"
+        className="flex-1 bg-white/70 backdrop-blur-2xl rounded-[40px] p-8 lg:p-16 border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] flex flex-col justify-center relative z-10 -mt-16 lg:mt-0 lg:ml-[-40px] lg:mr-[-40px] transition-all duration-700 ease-in-out"
       >
         <div className="space-y-10">
            <div>

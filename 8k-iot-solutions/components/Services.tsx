@@ -114,7 +114,7 @@ const ServicesSection = memo(function ServicesSection() {
                   {/* ========================================= */}
                   <motion.div 
                       variants={cardVariants}
-                      className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_45px_100px_-20px_rgba(59,130,246,0.12)] transition-all duration-700 overflow-hidden cursor-default"
+                      className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] transition-all duration-700 overflow-hidden cursor-default"
                   >
                       {/* --- LEFT COLUMN: CORE CONTENT --- */}
                       <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
@@ -132,7 +132,7 @@ const ServicesSection = memo(function ServicesSection() {
                               </div>
                               <p className="text-xs md:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mt-3 ml-1">Starting price</p>
                             </div>
-
+ 
                             <Link 
                                 href="/projects/hardware"
                                 className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-900 text-white font-poppins font-bold text-base py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.98]"
@@ -163,7 +163,7 @@ const ServicesSection = memo(function ServicesSection() {
                   {/* ========================================= */}
                   <motion.div 
                       variants={cardVariants}
-                      className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_45px_100px_-20px_rgba(59,130,246,0.12)] transition-all duration-700 overflow-hidden cursor-default"
+                      className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] transition-all duration-700 overflow-hidden cursor-default"
                   >
                       {/* --- LEFT COLUMN: CORE CONTENT --- */}
                       <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">

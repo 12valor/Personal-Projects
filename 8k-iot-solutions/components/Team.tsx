@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   Facebook, 
   Linkedin, 
@@ -27,26 +27,75 @@ interface TeamMember {
 }
 
 export default function Team({ members = [] }: { members?: TeamMember[] }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
+  const studioEase = [0.16, 1, 0.3, 1] as any;
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const leftItemVariants = {
+    hidden: { opacity: 0, x: -60 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: studioEase
+      }
+    }
+  };
+
+  const rightItemVariants = {
+    hidden: { opacity: 0, x: 60 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.8,
+        ease: studioEase
+      }
+    }
+  };
+
   return (
-    <section id="team" className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-visible font-poppins">
-      
+    <motion.section 
+      ref={sectionRef}
+      style={{ opacity: sectionOpacity }}
+      id="team" 
+      className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-visible font-poppins"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Simplified Header Section */}
+        {/* Header Section */}
         <div className="text-center mb-12 lg:mb-16">
-           <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <motion.h2 
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
           >
             Meet The Team
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: false }}
+            transition={{ duration: 0.8, ease: studioEase, delay: 0.05 }}
             className="text-lg md:text-xl text-zinc-500 font-poppins font-medium"
           >
             The people behind the systems we build.
@@ -54,33 +103,37 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
         </div>
 
         {/* Team List */}
-        <div className="space-y-24 lg:space-y-40">
+        <motion.div 
+          className="space-y-24 lg:space-y-40"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.1 }}
+        >
           {members.map((member, index) => (
             <TeamCard 
               key={member.id} 
               member={member} 
               index={index}
+              variants={index % 2 === 0 ? leftItemVariants : rightItemVariants}
             />
           ))}
-        </div>
+        </motion.div>
 
       </div>
-    </section>
+    </motion.section>
   );
 }
 
-function TeamCard({ member, index }: { member: TeamMember; index: number }) {
+function TeamCard({ member, index, variants }: { member: TeamMember; index: number; variants: any }) {
   const isEven = index % 2 === 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      variants={variants}
       className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch ${!isEven ? 'lg:flex-row-reverse' : ''}`}
     >
-      {/* Left Part: Portrait Container (Overflow Visible for Pop-out) */}
+      {/* Left Part: Portrait Container */}
       <div className="relative w-full lg:w-[480px] aspect-[4/5] lg:aspect-auto shrink-0 z-20 flex items-end justify-center">
         
         {/* Soft Radial Depth Glow */}

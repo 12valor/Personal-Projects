@@ -278,9 +278,9 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
         </div>
         
         <div className="min-w-0">
-          <h4 className="text-[13px] font-poppins font-bold text-zinc-900 group-hover:text-brand-900 transition-colors duration-300 tracking-tight truncate">
+          <h3 className="text-[13px] font-poppins font-bold text-zinc-900 group-hover:text-brand-900 transition-colors duration-300 tracking-tight truncate">
             {item.name}
-          </h4>
+          </h3>
           <p className="text-[10px] text-zinc-500 font-medium font-poppins uppercase tracking-wider truncate">
             {item.position}
           </p>

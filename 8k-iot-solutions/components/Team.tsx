@@ -219,16 +219,16 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
 
              <div className="flex items-center gap-3 pl-4 border-l border-zinc-200/60">
                 {member.linkedinUrl && (
-                   <SocialLink href={member.linkedinUrl} icon={<Linkedin className="w-5 h-5" />} />
+                   <SocialLink href={member.linkedinUrl} icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
                 )}
                 {member.facebookUrl && (
-                   <SocialLink href={member.facebookUrl} icon={<Facebook className="w-5 h-5" />} />
+                   <SocialLink href={member.facebookUrl} icon={<Facebook className="w-5 h-5" />} label="Facebook" />
                 )}
                 {member.twitterUrl && (
-                   <SocialLink href={member.twitterUrl} icon={<Twitter className="w-5 h-5" />} />
+                   <SocialLink href={member.twitterUrl} icon={<Twitter className="w-5 h-5" />} label="Twitter" />
                 )}
                 {member.instagramUrl && (
-                   <SocialLink href={member.instagramUrl} icon={<Instagram className="w-5 h-5" />} />
+                   <SocialLink href={member.instagramUrl} icon={<Instagram className="w-5 h-5" />} label="Instagram" />
                 )}
              </div>
            </div>
@@ -237,7 +237,7 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
              <motion.div 
                className="pt-12 border-t border-zinc-100/80"
              >
-               <h5 className="text-slate-400 font-sans font-bold text-xs uppercase tracking-[0.2em] mb-4">Core Philosophy</h5>
+               <h4 className="text-slate-400 font-sans font-bold text-xs uppercase tracking-[0.2em] mb-4">Core Philosophy</h4>
                <p className="text-slate-600 text-[1.1rem] leading-relaxed font-poppins font-medium italic">
                  "{member.motivation}"
                </p>
@@ -249,12 +249,13 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
   );
 }
 
-function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
+function SocialLink({ href, icon, label }: { href: string; icon: React.ReactNode; label?: string }) {
   return (
     <a 
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
+      aria-label={label}
       className="w-11 h-11 bg-white border border-zinc-200 text-zinc-900 rounded-xl flex items-center justify-center hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group/social shadow-sm"
     >
       {icon}

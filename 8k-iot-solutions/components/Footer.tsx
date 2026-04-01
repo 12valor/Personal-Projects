@@ -123,9 +123,9 @@ const Footer = memo(() => {
             
             {/* Studio Sections */}
             <div className="flex flex-col space-y-5">
-              <h4 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
+              <h3 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
                 Studio
-              </h4>
+              </h3>
               <nav className="flex flex-col space-y-3">
                 {[
                   { name: 'Home', id: 'home' },
@@ -141,9 +141,9 @@ const Footer = memo(() => {
 
             {/* Service & Context */}
             <div className="flex flex-col space-y-5">
-              <h4 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
+              <h3 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
                 Services
-              </h4>
+              </h3>
               <nav className="flex flex-col space-y-3">
                 {[
                   { name: 'Hardware Solutions', id: 'services' },
@@ -160,9 +160,9 @@ const Footer = memo(() => {
 
             {/* Support/Resource Sections */}
             <div className="flex flex-col space-y-5">
-              <h4 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
+              <h3 className="font-sans font-bold text-slate-900 text-[14px] tracking-tight uppercase opacity-90">
                 Connect
-              </h4>
+              </h3>
               <nav className="flex flex-col space-y-3">
                 {[
                   { name: 'Start a Project', id: 'contact' },

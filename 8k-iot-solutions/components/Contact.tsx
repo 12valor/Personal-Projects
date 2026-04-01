@@ -72,7 +72,7 @@ const Contact = memo(() => {
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Studio Location</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Studio Location</span>
                   <span className="text-slate-200 font-medium text-base">Talisay City, Negros Occidental</span>
                 </div>
               </div>
@@ -84,7 +84,7 @@ const Contact = memo(() => {
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Direct Inquiries</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Direct Inquiries</span>
                   <span className="text-slate-200 font-medium text-base">8kiotsolutions@gmail.com</span>
                 </div>
               </a>
@@ -135,10 +135,11 @@ const Contact = memo(() => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {/* Name Input */}
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="space-y-2.5 group">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
+                      <label htmlFor="contact-fullName" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
                         How should we address you?
                       </label>
                       <input 
+                        id="contact-fullName"
                         type="text"
                         name="fullName"
                         required
@@ -149,10 +150,11 @@ const Contact = memo(() => {
                     
                     {/* Email Input */}
                     <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="space-y-2.5 group">
-                      <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
+                      <label htmlFor="contact-email" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
                         Where can we reach you?
                       </label>
                       <input 
+                        id="contact-email"
                         type="email"
                         name="email"
                         required
@@ -164,11 +166,12 @@ const Contact = memo(() => {
 
                   {/* Inquiry Type */}
                   <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="space-y-2.5 group">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
+                    <label htmlFor="contact-inquiryType" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
                       What can we help you build?
                     </label>
                     <div className="relative">
                       <select 
+                        id="contact-inquiryType"
                         name="inquiryType"
                         required
                         defaultValue=""
@@ -190,10 +193,11 @@ const Contact = memo(() => {
 
                   {/* Message Textarea */}
                   <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="space-y-2.5 group">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
+                    <label htmlFor="contact-message" className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-focus-within:text-blue-400 transition-colors duration-300">
                       Tell us about your masterpiece...
                     </label>
                     <textarea 
+                      id="contact-message"
                       key={initialMessage}
                       name="message"
                       required

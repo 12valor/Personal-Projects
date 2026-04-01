@@ -159,7 +159,7 @@ export default function Navbar() {
               >
                 <button
                   onClick={(e) => handleNavigation(e as any, link.href)}
-                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-normal transition-all duration-300 rounded-full z-10 ${hoveredNav === link.name ? 'text-brand-900' : 'text-zinc-950'}`}
+                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-medium transition-all duration-300 rounded-full z-10 ${hoveredNav === link.name ? 'text-brand-900' : 'text-zinc-950'}`}
                 >
                   {link.name}
                   {link.subItems && (

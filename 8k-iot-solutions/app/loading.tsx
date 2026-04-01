@@ -1,20 +1,26 @@
-import { Skeleton } from '@/components/Skeleton';
+import Loader from '@/components/Loader';
 
 export default function LoadingRoot() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-sans flex flex-col items-center justify-center">
-      {/* 
-        A very subtle, minimal layout skeleton specifically designed for root/global page transitions.
-        This provides a smooth "fade in" feel without flashing heavy structural mockups if we aren't 
-        sure exactly which page the user is navigating to.
-      */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center opacity-50">
-          <Skeleton className="h-12 w-64 mb-8" />
-          <div className="space-y-4 w-full flex flex-col items-center">
-              <Skeleton className="h-6 w-full max-w-2xl" />
-              <Skeleton className="h-6 w-4/5 max-w-xl" />
-              <Skeleton className="h-6 w-3/4 max-w-lg" />
-          </div>
+    <div className="min-h-screen bg-[#FAFAFA] font-sans flex flex-col items-center justify-center p-4">
+      <div className="relative">
+        {/* Subtle background grid for blueprint feel */}
+        <div 
+          className="absolute inset--20 z-0 opacity-20 pointer-events-none"
+          style={{
+            backgroundImage: 'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+            width: '600px',
+            height: '600px',
+            transform: 'translate(-50%, -50%)',
+            left: '50%',
+            top: '50%',
+          }}
+        />
+        
+        <div className="relative z-10 flex flex-col items-center">
+          <Loader />
+        </div>
       </div>
     </div>
   );

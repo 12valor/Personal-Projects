@@ -27,8 +27,8 @@ const navLinks: NavItem[] = [
     href: '/services',
     subItems: [
       { name: 'Pricing', href: '/services' },
-      { name: 'Software', href: '/projects/software' },
       { name: 'Hardware', href: '/projects/hardware' },
+      { name: 'Software', href: '/projects/software' },
     ]
   },
   { name: 'FAQ', href: '/faq' },

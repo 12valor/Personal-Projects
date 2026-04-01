@@ -74,8 +74,8 @@ export default function ProjectModal({
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/60 via-zinc-900/10 to-transparent" />
-            <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 right-6 text-white">
-              <span className="inline-block px-3 py-1 mb-3 text-xs font-poppins font-semibold tracking-wider uppercase bg-brand-500/90 backdrop-blur-sm rounded-lg">
+            <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 right-6 text-white text-left">
+              <span className="inline-block px-3 py-1.5 mb-4 text-[10px] md:text-xs font-poppins font-bold tracking-[0.1em] uppercase bg-brand-900 text-white rounded-lg shadow-xl shadow-brand-900/20">
                 {project.category}
               </span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-200 leading-tight">
@@ -116,19 +116,19 @@ export default function ProjectModal({
             <div className="w-full lg:w-72 shrink-0 space-y-6">
               <div className="p-6 bg-white/60 backdrop-blur-sm border border-zinc-200/50 rounded-2xl shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-brand-100/50 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <h4 className="text-sm font-poppins font-semibold text-zinc-900 mb-4 uppercase tracking-wider relative z-10">Project Details</h4>
-                <div className="space-y-4 font-sans text-sm relative z-10">
+                <h4 className="text-sm font-poppins font-semibold text-zinc-900 mb-6 uppercase tracking-wider relative z-10">Project Details</h4>
+                <div className="space-y-5 font-sans text-sm relative z-10">
                   {project.client && (
                     <div>
-                      <span className="block text-zinc-500 mb-1">Client</span>
-                      <span className="font-medium text-zinc-900">{project.client}</span>
+                      <span className="block text-[10px] uppercase tracking-wider text-zinc-400 font-bold mb-1">Client</span>
+                      <span className="font-semibold text-zinc-900">{project.client}</span>
                     </div>
                   )}
                   <div>
-                    <span className="block text-zinc-500 mb-2">Technologies & Tags</span>
+                    <span className="block text-[10px] uppercase tracking-wider text-zinc-400 font-bold mb-3">Technologies & Tags</span>
                     <div className="flex flex-wrap gap-2">
                       {project.tags.map((tag, i) => (
-                        <span key={i} className="px-2.5 py-1 text-xs font-medium text-brand-700 bg-brand-50 border border-brand-100/50 rounded-md">
+                        <span key={i} className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider rounded bg-brand-900 text-white whitespace-nowrap shadow-md shadow-brand-900/10">
                           {tag}
                         </span>
                       ))}

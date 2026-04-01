@@ -66,8 +66,8 @@ export async function saveProject(formData: FormData) {
   }
 
   revalidatePath('/admin');
-  revalidatePath('/services/hardware');
-  revalidatePath('/services/software');
+  revalidatePath('/projects/hardware');
+  revalidatePath('/projects/software');
   revalidatePath(`/projects/${slug}`);
   
   redirect('/admin');

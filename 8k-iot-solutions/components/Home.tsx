@@ -1,16 +1,14 @@
-"use client";
-
 import React from 'react';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
-import Testimonials from '@/components/Testimonials';
 import SchoolLogos from '@/components/SchoolLogos';
 import ServicesSection from '@/components/Services';
-import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
 import FAQ from '@/components/FAQ';
 import Team from '@/components/Team';
+import Testimonials from '@/components/Testimonials';
+import Contact from '@/components/Contact';
 
 export default function HomeContent({ 
   initialTestimonials = [], 
@@ -54,9 +52,7 @@ export default function HomeContent({
       <ServicesSection />
       <Team members={teamMembers} />
       <FAQ faqs={faqs} />
-      <React.Suspense fallback={<div className="py-12 bg-slate-950 text-center text-white">Loading contact...</div>}>
-        <Contact />
-      </React.Suspense>
+      <Contact />
       <Footer />
     </div>
   );

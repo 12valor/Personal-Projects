@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface NavItem {
@@ -46,28 +46,23 @@ export default function Navbar() {
   const router = useRouter();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
+  const { scrollY } = useScroll();
 
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      const scrolled = currentScrollY > 50;
-      setIsScrolled(prev => prev !== scrolled ? scrolled : prev);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    
+    // 1. Handle background state (scrolled glass effect)
+    const scrolled = latest > 50;
+    if (scrolled !== isScrolled) setIsScrolled(scrolled);
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(prev => prev !== false ? false : prev);
-        setMobileMenuOpen(prev => prev !== false ? false : prev);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(prev => prev !== true ? true : prev);
-      }
-      
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    // 2. Handle visibility (hide on scroll down, show on scroll up)
+    if (latest > previous && latest > 150) {
+      if (isVisible) setIsVisible(false);
+      if (mobileMenuOpen) setMobileMenuOpen(false);
+    } else if (latest < previous) {
+      if (!isVisible) setIsVisible(true);
+    }
+  });
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, href: string) => {
     e.preventDefault();

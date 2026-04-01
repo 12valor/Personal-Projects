@@ -1,10 +1,14 @@
 "use client";
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useEffect, useState, memo, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Zap, ArrowRight, Search } from 'lucide-react';
-import MagicRings from './MagicRings';
+
+const MagicRings = dynamic(() => import('./MagicRings'), {
+  ssr: false
+});
 
 const Hero = memo(function Hero({ 
   heroImages = [],
@@ -270,6 +274,7 @@ const Hero = memo(function Hero({
                   fill 
                   className="object-contain p-1 transition-transform duration-500 group-hover/avatar:scale-110"
                   sizes="40px"
+                  priority={i < 2}
                 />
               </div>
             ))}
@@ -373,7 +378,14 @@ const Hero = memo(function Hero({
               {(item.type === "team" || item.type === "team_member" || item.type === "client_project") && (
                 <div className="relative w-full h-full flex-1">
                   {item.imageUrl && (
-                     <Image src={item.imageUrl} alt={item.content || "Client project"} fill className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" sizes="320px" />
+                     <Image 
+                        src={item.imageUrl} 
+                        alt={item.content || "Client project"} 
+                        fill 
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
+                        sizes="320px"
+                        priority={index < 4}
+                      />
                   )}
                   {/* Bottom-to-top gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />

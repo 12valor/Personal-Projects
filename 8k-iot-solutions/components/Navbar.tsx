@@ -164,7 +164,7 @@ export default function Navbar() {
               >
                 <button
                   onClick={(e) => handleNavigation(e as any, link.href)}
-                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-semibold transition-all duration-300 rounded-full z-10 text-zinc-950`}
+                  className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-medium transition-all duration-300 rounded-full z-10 ${hoveredNav === link.name ? 'text-brand-900' : 'text-zinc-950'}`}
                 >
                   {link.name}
                   {link.subItems && (
@@ -172,14 +172,19 @@ export default function Navbar() {
                   )}
                 </button>
 
-                {/* Modern Sliding Pill Background */}
-                {hoveredNav === link.name && (
-                  <motion.div
-                    layoutId="nav-pill"
-                    className="absolute inset-0 bg-zinc-100/80 rounded-full -z-0"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
+                {/* Modern Sliding Pill Background - Synced with Footer */}
+                <AnimatePresence>
+                  {hoveredNav === link.name && (
+                    <motion.div
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-slate-100/80 rounded-full -z-0"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </AnimatePresence>
 
                 <AnimatePresence mode="wait">
                   {link.subItems && activeDropdown === link.name && (
@@ -199,7 +204,7 @@ export default function Navbar() {
                             )}
                             
                             {subItem.subItems ? (
-                              <div className="flex flex-col">
+                              <div className="flex flex-col relative">
                                 <span className="flex items-center justify-between w-full px-4 py-2 text-[14px] font-poppins font-medium text-zinc-900 mt-2 mb-1">
                                   {subItem.name}
                                 </span>
@@ -207,27 +212,32 @@ export default function Navbar() {
                                   {link.subItems && subItem.subItems && subItem.subItems.map((nestedItem, nestedIdx) => (
                                     <React.Fragment key={nestedItem.name}>
                                       {nestedIdx > 0 && <div className="mx-4 h-[1px] bg-gray-100" />}
-                                      <a
-                                        href={nestedItem.href}
-                                        onClick={(e) => handleNavigation(e, nestedItem.href)}
-                                        className="flex items-center gap-3 px-4 py-3 text-[14px] font-poppins font-medium rounded-xl hover:text-brand-900 transition-all group/nested"
-                                      >
-                                        {nestedItem.name}
-                                      </a>
+                                      <div className="relative group/nested">
+                                        <a
+                                          href={nestedItem.href}
+                                          onClick={(e) => handleNavigation(e, nestedItem.href)}
+                                          className="relative z-10 flex items-center gap-3 px-4 py-3 text-[14px] font-poppins font-medium rounded-xl transition-all duration-300 hover:text-brand-900"
+                                        >
+                                          {nestedItem.name}
+                                        </a>
+                                        <div className="absolute inset-0 bg-slate-50 opacity-0 group-hover/nested:opacity-100 rounded-xl transition-opacity duration-300 -z-0" />
+                                      </div>
                                     </React.Fragment>
                                   ))}
                                 </div>
                               </div>
                             ) : (
-                              <a
-                                aria-label={subItem.name}
-                                href={subItem.href}
-                                onClick={(e) => handleNavigation(e, subItem.href)}
-                                className="flex items-center justify-between px-4 py-3.5 text-[14px] font-poppins font-medium rounded-xl hover:text-brand-900 transition-all"
-                              >
-                                {subItem.name}
-                                <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-900" />
-                              </a>
+                              <div className="relative group/sublink">
+                                <a
+                                  aria-label={subItem.name}
+                                  href={subItem.href}
+                                  onClick={(e) => handleNavigation(e, subItem.href)}
+                                  className="relative z-10 flex items-center px-4 py-3.5 text-[14px] font-poppins font-medium transition-all duration-300 hover:text-brand-900"
+                                >
+                                  {subItem.name}
+                                </a>
+                                <div className="absolute inset-0 bg-slate-50 opacity-0 group-hover/sublink:opacity-100 rounded-xl transition-all duration-300 -z-0" />
+                              </div>
                             )}
                           </div>
                         ))}

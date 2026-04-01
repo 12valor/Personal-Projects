@@ -298,11 +298,11 @@ const Hero = memo(function Hero({
           } : mounted ? { opacity: 1, y: 0 } : {}}
           transition={shake ? { duration: 0.4 } : { duration: 0.5, delay: 0.3, ease: "easeOut" }}
           onSubmit={handleSearch}
-          className={`w-full max-w-2xl relative flex items-center bg-white rounded-full p-2 shadow-sm border ring-4 ring-white/30 transition-all duration-500 hover:shadow-md hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text ${
+          className={`w-full max-w-2xl relative flex items-center bg-white rounded-full p-1.5 sm:p-2 shadow-sm border ring-2 sm:ring-4 ring-white/30 transition-all duration-500 hover:shadow-md hover:scale-[1.01] hover:border-slate-300 focus-within:ring-brand-900/5 focus-within:border-brand-500/50 mx-auto group cursor-text ${
             shake ? "border-red-400" : "border-slate-200/60"
           }`}
         >
-          <div className={`pl-6 pr-2 transition-colors group-hover:scale-110 duration-300 ${shake ? "text-red-500" : "text-slate-400 group-focus-within:text-brand-600"}`}>
+          <div className={`pl-4 pr-1 sm:pl-6 sm:pr-2 transition-colors group-hover:scale-110 duration-300 ${shake ? "text-red-500" : "text-slate-400 group-focus-within:text-brand-600"}`}>
             <Search className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <input 
@@ -313,7 +313,7 @@ const Hero = memo(function Hero({
               if (shake) setShake(false);
             }}
             placeholder={errorMessage || heroSection?.search_placeholder || "Describe your project idea... (e.g., Smart greenhouse)"} 
-            className={`flex-1 bg-transparent border-none outline-none py-3 sm:py-4 px-2 text-slate-900 font-poppins text-[15px] sm:text-[16px] lg:text-[18px] transition-colors ${
+            className={`flex-1 min-w-0 bg-transparent border-none outline-none py-3 sm:py-4 px-1.5 sm:px-2 text-slate-900 font-poppins text-[15px] sm:text-[16px] lg:text-[18px] transition-colors ${
               shake ? "placeholder:text-red-400" : "placeholder:text-slate-400"
             }`}
           />
@@ -339,7 +339,7 @@ const Hero = memo(function Hero({
           </button>
           <button 
             type="submit"
-            className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-3 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] ml-1 cursor-pointer"
+            className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-2.5 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] ml-1 cursor-pointer"
             aria-label="Start Project"
           >
              <ArrowRight className="w-5 h-5" />

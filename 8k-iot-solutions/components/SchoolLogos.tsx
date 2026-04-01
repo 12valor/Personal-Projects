@@ -48,6 +48,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
 
   return (
     <motion.section 
+      id="partners"
       style={{ opacity: sectionOpacity }} 
       ref={containerRef} 
       className="relative py-12 md:py-20 bg-transparent z-0 overflow-hidden"

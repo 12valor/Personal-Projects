@@ -22,8 +22,8 @@ export default async function AdminDashboardPage() {
     if (id) {
       await prisma.project.delete({ where: { id } });
       revalidatePath('/admin');
-      revalidatePath('/services/hardware');
-      revalidatePath('/services/software');
+      revalidatePath('/projects/hardware');
+      revalidatePath('/projects/software');
     }
   }
 

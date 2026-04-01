@@ -33,7 +33,7 @@ const FooterLink = ({ href, children, sectionId }: { href: string; children: Rea
       <a 
         href={href}
         onClick={handleClick}
-        className={`relative z-10 px-3 py-1.5 -ml-3 font-poppins text-[13.5px] transition-all duration-300 block ${isHovered ? 'text-brand-900 font-medium' : 'text-slate-500 font-medium'}`}
+        className={`relative z-10 px-3 py-1.5 -ml-3 font-poppins text-[13.5px] transition-all duration-300 block ${isHovered ? 'text-brand-900 font-normal' : 'text-slate-500 font-normal'}`}
       >
         {children}
       </a>

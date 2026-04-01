@@ -262,13 +262,13 @@ const Hero = memo(function Hero({
             {avatarLogos.map((logo: any, i: number) => (
               <div 
                 key={i} 
-                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.25px] border-white overflow-hidden bg-white z-0 hover:z-10 transition-transform hover:scale-105"
+                className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden z-0 hover:z-10 transition-all duration-500 hover:scale-110 lg:hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] group/avatar"
               >
                 <Image 
                   src={logo.imageUrl || (typeof logo.image === 'string' ? logo.image : logo.image?.src) || getDistributedSource(i + 10)} 
                   alt={logo.name || "Client Logo"} 
                   fill 
-                  className="object-contain p-1.5"
+                  className="object-contain p-1 transition-transform duration-500 group-hover/avatar:scale-110"
                   sizes="40px"
                 />
               </div>

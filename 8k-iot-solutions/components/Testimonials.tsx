@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, memo, useEffect } from 'react';
 import Image from 'next/image';
-import { Star } from 'lucide-react';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
 
 // --- Animation Variants (mirroring Process.tsx quality) ---
 
@@ -43,30 +43,46 @@ const cardVariants: Variants = {
 const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { initialTestimonials?: any[] }) {
 
   const testimonials = initialTestimonials;
-  const [isMobile, setIsMobile] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Safe mobile detection for pagination chunking
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const containerRef = useRef<HTMLElement>(null);
+  
+  // Responsive items calculation
   useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      // Reset to page 1 to prevent out-of-bounds if they resize drastically
-      setCurrentPage(1);
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2);
+      } else {
+        setItemsPerPage(3);
+      }
     };
-    checkMobile(); 
-    window.addEventListener('resize', checkMobile, { passive: true });
-    return () => window.removeEventListener('resize', checkMobile);
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   if (testimonials.length === 0) return null;
 
-  const itemsPerPage = isMobile ? 3 : 6;
-  const totalPages = Math.max(1, Math.ceil(testimonials.length / itemsPerPage));
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const displayTestimonials = testimonials.slice(startIndex, startIndex + itemsPerPage);
+  const totalSlides = Math.ceil(testimonials.length / itemsPerPage);
+  const maxIndex = testimonials.length - itemsPerPage;
 
-  const containerRef = useRef<HTMLElement>(null);
+  const nextSlide = () => {
+    if (currentIndex < maxIndex) {
+      setDirection(1);
+      setCurrentIndex(prev => Math.min(prev + 1, maxIndex));
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setDirection(-1);
+      setCurrentIndex(prev => Math.max(prev - 1, 0));
+    }
+  };
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -100,36 +116,88 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
           </motion.div>
         </motion.div>
 
-        {/* Testimonial Grid */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
-          variants={containerVariants}
-          key={`page-${currentPage}-${isMobile}`} // forces animation re-trigger on page change
-          initial="hidden"
-          animate="visible"
-        >
-          {displayTestimonials.map((item, idx) => (
-            <TestimonialCard key={`testimonial-${item.id || startIndex + idx}`} item={item} idx={startIndex + idx} />
-          ))}
-        </motion.div>
+        {/* Carousel Container */}
+        <div className="relative group/carousel">
+          
+          {/* Main Viewport */}
+          <div className="overflow-hidden px-4 -mx-4 py-8">
+            <motion.div 
+              className="flex gap-4 lg:gap-5"
+              animate={{ x: `calc(-${currentIndex * (100 / itemsPerPage)}% - ${currentIndex * ((itemsPerPage === 3 ? 20 : 16) / itemsPerPage)}px)` }}
+              transition={{ type: "spring", stiffness: 260, damping: 28 }}
+              drag="x"
+              dragConstraints={{ 
+                left: -(maxIndex * (100 / itemsPerPage)),
+                right: 0 
+              }}
+              onDragEnd={(e, { offset, velocity }) => {
+                const swipeThreshold = 50;
+                if (offset.x < -swipeThreshold && currentIndex < maxIndex) {
+                  nextSlide();
+                } else if (offset.x > swipeThreshold && currentIndex > 0) {
+                  prevSlide();
+                }
+              }}
+            >
+              {testimonials.map((item, idx) => (
+                <div 
+                  key={`testimonial-${item.id || idx}`} 
+                  className="flex-shrink-0"
+                  style={{ width: `calc(${100 / itemsPerPage}% - ${((itemsPerPage - 1) * (itemsPerPage === 3 ? 20 : 16)) / itemsPerPage}px)` }}
+                >
+                  <TestimonialCard item={item} idx={idx} />
+                </div>
+              ))}
+            </motion.div>
+          </div>
 
-        {/* Dynamic Pagination Dots */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2.5 mt-10 md:mt-14">
-            {Array.from({ length: totalPages }).map((_, i) => (
+          {/* Minimalist Navigation Arrows */}
+          <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-12 lg:-left-16 z-20">
+            <button
+              onClick={prevSlide}
+              disabled={currentIndex === 0}
+              className={`p-3 rounded-full bg-white border border-zinc-100 shadow-lg transition-all duration-300 ${
+                currentIndex === 0 
+                ? 'opacity-0 scale-90 pointer-events-none' 
+                : 'opacity-100 scale-100 hover:bg-brand-900 hover:border-brand-900 text-slate-600 hover:text-white hover:shadow-brand-900/20 group-hover/carousel:translate-x-2 md:group-hover/carousel:translate-x-0'
+              }`}
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft className="w-5 h-5 md:w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-12 lg:-right-16 z-20">
+            <button
+              onClick={nextSlide}
+              disabled={currentIndex === maxIndex}
+              className={`p-3 rounded-full bg-white border border-zinc-100 shadow-lg transition-all duration-300 ${
+                currentIndex === maxIndex 
+                ? 'opacity-0 scale-90 pointer-events-none' 
+                : 'opacity-100 scale-100 hover:bg-brand-900 hover:border-brand-900 text-slate-600 hover:text-white hover:shadow-brand-900/20 group-hover/carousel:-translate-x-2 md:group-hover/carousel:translate-x-0'
+              }`}
+              aria-label="Next testimonial"
+            >
+              <ChevronRight className="w-5 h-5 md:w-6 h-6" />
+            </button>
+          </div>
+          
+          {/* Progress Indicator Dots */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            {Array.from({ length: testimonials.length - itemsPerPage + 1 }).map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  currentPage === i + 1 
-                    ? 'w-10 bg-brand-600' 
-                    : 'w-2.5 bg-zinc-300 hover:bg-brand-400'
+                onClick={() => setCurrentIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  currentIndex === i 
+                    ? 'w-8 bg-brand-900' 
+                    : 'w-1.5 bg-zinc-200 hover:bg-zinc-300'
                 }`}
-                aria-label={`Go to testimonial page ${i + 1}`}
+                aria-label={`Go to slide ${i + 1}`}
               />
             ))}
           </div>
-        )}
+        </div>
 
       </div>
     </motion.section>

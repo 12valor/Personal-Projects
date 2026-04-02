@@ -206,6 +206,7 @@ const Hero = memo(function Hero({
                 tag="span"
                 textAlign="center"
                 delay={30}
+                animationDelay={2}
                 duration={0.8}
                 from={{ opacity: 0, y: 20 }}
                 to={{ opacity: 1, y: 0 }}

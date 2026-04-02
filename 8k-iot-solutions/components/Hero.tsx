@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate }
 import { useRouter } from 'next/navigation';
 import { Zap, ArrowRight, Search, Sparkles } from 'lucide-react';
 import ShinyText from './ShinyText';
+import SplitText from './SplitText';
 
 const MagicRings = dynamic(() => import('./MagicRings'), {
   ssr: false
@@ -194,17 +195,25 @@ const Hero = memo(function Hero({
         <div className="relative group w-fit mx-auto">
           <motion.h1 
             ref={containerRef}
-            initial={{ opacity: 0, y: 15 }}
-            animate={mounted ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
-            {/* Base Layer */}
+            {/* Base Layer with SplitText Entrance */}
             <div className="select-none">
-              {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+              <SplitText
+                tag="span"
+                textAlign="center"
+                delay={30}
+                duration={0.8}
+                from={{ opacity: 0, y: 20 }}
+                to={{ opacity: 1, y: 0 }}
+                ease="power4.out"
+                className="block"
+              >
+                {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900 font-bold">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900 font-bold">{heroSection?.heading_highlight_2 || "Reality"}</span>
+              </SplitText>
             </div>
 
             {/* Reveal Layer (Desktop Only) - Expanded bounds to prevent clipping */}

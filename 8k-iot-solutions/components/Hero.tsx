@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState, memo, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Zap, ArrowRight, Search } from 'lucide-react';
+import { Zap, ArrowRight, Search, Sparkles } from 'lucide-react';
+import ShinyText from './ShinyText';
 
 const MagicRings = dynamic(() => import('./MagicRings'), {
   ssr: false
@@ -337,10 +338,38 @@ const Hero = memo(function Hero({
                 : "bg-blue-50 text-slate-400 opacity-60 scale-100"
             }`}
           >
-            <span>{isSubmitting ? "Syncing..." : shake ? "Describe Idea" : "Start Project"}</span>
-            {!isSubmitting && (
-              <ArrowRight className={`ml-2 w-5 h-5 transition-transform duration-300 ${searchInput.trim() || isBtnHovered ? "translate-x-1" : "translate-x-0"}`} />
-            )}
+            <span>
+              {isSubmitting ? (
+                <ShinyText text="Syncing..." color="#64748b" shineColor="#ffffff" speed={2.5} />
+              ) : shake ? (
+                <ShinyText 
+                  text="Describe Idea" 
+                  color="#ffffff" 
+                  shineColor="#fee2e2" 
+                  speed={2} 
+                  icon={<Sparkles className="w-5 h-5" />}
+                  iconPosition="right"
+                />
+              ) : (searchInput.trim() || isBtnHovered) ? (
+                <ShinyText 
+                  text="Start Project" 
+                  color="#ffffff" 
+                  shineColor="#93c5fd" 
+                  speed={2} 
+                  icon={<Sparkles className="w-5 h-5" />}
+                  iconPosition="right"
+                />
+              ) : (
+                <ShinyText 
+                  text="Start Project" 
+                  color="#94a3b8" 
+                  shineColor="#ffffff" 
+                  speed={3} 
+                  icon={<Sparkles className="w-5 h-5" />}
+                  iconPosition="right"
+                />
+              )}
+            </span>
           </button>
           <button 
             type="submit"

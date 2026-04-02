@@ -144,6 +144,7 @@ export default function Navbar() {
                 width={400} 
                 height={133} 
                 className="h-full w-auto object-contain object-left" 
+                sizes="(max-width: 768px) 120px, 200px"
                 priority 
               />
             </Link>

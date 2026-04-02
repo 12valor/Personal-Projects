@@ -89,7 +89,7 @@ const Footer = memo(() => {
                   alt="8K IoT Solutions Logo"
                   fill
                   className="object-contain object-left"
-                  priority
+                  sizes="120px"
                 />
               </div>
             </div>

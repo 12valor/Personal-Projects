@@ -50,8 +50,8 @@ module.exports = {
           '100%': { transform: 'translateX(100%)' },
         },
         blueprintShift: {
-          '0%': { backgroundPosition: '0 0' },
-          '100%': { backgroundPosition: '50px 50px' }, 
+          '0%': { transform: 'translate(0, 0)' },
+          '100%': { transform: 'translate(-64px, -64px)' }, 
         },
         scrollDown: {
           '0%': { transform: 'translateY(-50%)' },

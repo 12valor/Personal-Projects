@@ -50,16 +50,18 @@ export default function Navbar() {
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
+    const scrollDelta = Math.abs(latest - previous);
     
     // 1. Handle background state (scrolled glass effect)
     const scrolled = latest > 50;
     if (scrolled !== isScrolled) setIsScrolled(scrolled);
 
     // 2. Handle visibility (hide on scroll down, show on scroll up)
-    if (latest > previous && latest > 150) {
+    // We add a 5px threshold to avoid "fluttering" at the very stop of a scroll
+    if (latest > previous && latest > 150 && scrollDelta > 5) {
       if (isVisible) setIsVisible(false);
       if (mobileMenuOpen) setMobileMenuOpen(false);
-    } else if (latest < previous) {
+    } else if (latest < previous && scrollDelta > 5) {
       if (!isVisible) setIsVisible(true);
     }
   });
@@ -120,7 +122,7 @@ export default function Navbar() {
   };
 
   return (
-    <header id="main-navbar" className={`fixed top-0 w-full z-[100] flex justify-center pointer-events-none font-sans transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
+    <header id="main-navbar" className={`fixed top-0 w-full z-[100] flex justify-center pointer-events-none font-sans transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
       
       <nav 
         className={`pointer-events-auto relative flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]

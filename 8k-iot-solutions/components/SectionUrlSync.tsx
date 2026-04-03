@@ -84,7 +84,7 @@ export default function SectionUrlSync() {
            clearTimeout(scrollTimeout);
            scrollTimeout = setTimeout(() => {
              window.history.replaceState(null, '', targetPath);
-           }, 150);
+           }, 300); // Increased debounce to prevent friction during deceleration stop
         }
       }
     };

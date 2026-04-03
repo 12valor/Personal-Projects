@@ -4,7 +4,6 @@ import React, { memo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Twitter, Instagram, Linkedin, Github } from 'lucide-react';
 
 const FooterLink = ({ href, children, sectionId }: { href: string; children: React.ReactNode; sectionId?: string }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -102,10 +101,24 @@ const Footer = memo(() => {
             {/* Social Icons - Syncing with NAV Bar Icons */}
             <div className="flex items-center gap-5 pt-2">
               {[
-                { icon: Twitter, href: "https://x.com/8kiotsolutions", label: "X" },
-                { icon: Instagram, href: "https://www.facebook.com/profile.php?id=61586397291701", label: "Instagram" },
-                { icon: Linkedin, href: "https://linkedin.com/company/8k-iot-solutions", label: "LinkedIn" },
-                { icon: Github, href: "https://www.tiktok.com/@8kiotsolutions", label: "GitHub" },
+                { 
+                  icon: (props: any) => (
+                    <svg viewBox="0 0 320 512" {...props} xmlns="http://www.w3.org/2000/svg">
+                      <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/>
+                    </svg>
+                  ), 
+                  href: "https://www.facebook.com/profile.php?id=61586397291701", 
+                  label: "Facebook" 
+                },
+                { 
+                  icon: (props: any) => (
+                    <svg viewBox="0 0 448 512" {...props} xmlns="http://www.w3.org/2000/svg">
+                      <path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31v89.89a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/>
+                    </svg>
+                  ), 
+                  href: "https://www.tiktok.com/@8kiotsolutions", 
+                  label: "TikTok" 
+                },
               ].map((social, index) => (
                 <a 
                   key={index}
@@ -113,7 +126,7 @@ const Footer = memo(() => {
                   aria-label={social.label}
                   className="text-slate-400 hover:text-brand-900 transition-colors duration-200"
                 >
-                  <social.icon size={19} strokeWidth={2.5} />
+                  <social.icon className="h-5 w-5 fill-current" />
                 </a>
               ))}
             </div>

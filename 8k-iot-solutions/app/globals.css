@@ -52,32 +52,52 @@ html.project-modal-open #main-navbar {
 }
 
 /* Modern Scrollbar Styling */
-@media (min-width: 1024px) {
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1; /* slate-300 */
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    transition: background-color 0.3s ease;
-  }
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* slate-300 */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.3s ease;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #1e3a8a; /* brand-900 */
-  }
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1e3a8a; /* brand-900 */
+}
 
-  /* Firefox Support */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
-  }
+/* Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Explicit scrollbar for project modals and containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  display: block;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #1e3a8a; /* brand-900 */
+  border-radius: 10px;
+  border: 2px solid #f8fafc;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1e3a8a #f8fafc;
 }
 
 /* Lenis Smooth Scroll Configuration */

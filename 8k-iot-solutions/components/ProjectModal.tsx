@@ -40,7 +40,7 @@ export default function ProjectModal({
       
       {/* Modal Content */}
       <div 
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl md:rounded-[2rem] shadow-2xl animate-heroPop flex flex-col [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl md:rounded-[2rem] shadow-2xl animate-heroPop flex flex-col custom-scrollbar"
         role="dialog"
         aria-modal="true"
       >

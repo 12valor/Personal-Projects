@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 interface SmoothScrollProps {
@@ -8,6 +9,9 @@ interface SmoothScrollProps {
 }
 
 export default function SmoothScroll({ children }: SmoothScrollProps) {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
     // 1. Detect mobile to disable/reduce smoothing
     const isMobile = window.innerWidth < 1024;
@@ -22,6 +26,8 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       touchMultiplier: 1.5,
       infinite: false,
     });
+
+    lenisRef.current = lenis;
 
     let rafId: number;
 
@@ -52,10 +58,18 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     // 4. Clean up on unmount
     return () => {
       lenis.destroy();
+      lenisRef.current = null;
       window.removeEventListener("click", handleAnchorClick);
       cancelAnimationFrame(rafId);
     };
   }, []);
+
+  // 5. Reset scroll to top on route change
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+  }, [pathname]);
 
   return <>{children}</>;
 }

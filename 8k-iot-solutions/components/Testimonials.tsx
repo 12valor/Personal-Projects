@@ -190,8 +190,8 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
                 onClick={() => setCurrentIndex(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   currentIndex === i 
-                    ? 'w-6 bg-slate-700' 
-                    : 'w-2 bg-slate-200 hover:bg-slate-300'
+                    ? 'w-6 bg-brand-900' 
+                    : 'w-2 bg-brand-100 hover:bg-brand-200'
                 }`}
                 aria-label={`Go to slide ${i + 1}`}
               />

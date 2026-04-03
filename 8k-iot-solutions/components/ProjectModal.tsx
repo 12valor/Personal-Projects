@@ -43,6 +43,7 @@ export default function ProjectModal({
         className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl md:rounded-[2rem] shadow-2xl animate-heroPop flex flex-col custom-scrollbar"
         role="dialog"
         aria-modal="true"
+        data-lenis-prevent
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl md:rounded-[2rem]">

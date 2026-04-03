@@ -152,7 +152,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
           </div>
 
           {/* Minimalist Navigation Arrows */}
-          <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-12 lg:-left-16 z-20">
+          <div className="hidden md:block absolute top-1/2 -translate-y-1/2 md:-left-12 lg:-left-16 z-20">
             <button
               onClick={prevSlide}
               disabled={currentIndex === 0}
@@ -167,7 +167,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
             </button>
           </div>
 
-          <div className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-12 lg:-right-16 z-20">
+          <div className="hidden md:block absolute top-1/2 -translate-y-1/2 md:-right-12 lg:-right-16 z-20">
             <button
               onClick={nextSlide}
               disabled={currentIndex === maxIndex}
@@ -183,15 +183,15 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
           </div>
           
           {/* Progress Indicator Dots */}
-          <div className="flex items-center justify-center gap-2 mt-8">
+          <div className="flex items-center justify-center space-x-2 mt-8">
             {Array.from({ length: testimonials.length - itemsPerPage + 1 }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full transition-all duration-300 ${
                   currentIndex === i 
-                    ? 'w-8 bg-brand-900' 
-                    : 'w-1.5 bg-zinc-200 hover:bg-zinc-300'
+                    ? 'w-6 bg-slate-700' 
+                    : 'w-2 bg-slate-200 hover:bg-slate-300'
                 }`}
                 aria-label={`Go to slide ${i + 1}`}
               />
@@ -256,7 +256,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
       </div>
 
       {/* Quote */}
-      <blockquote className="relative z-10 text-[13px] sm:text-[14px] md:text-[15px] text-zinc-600 font-poppins leading-[1.65] mb-4 sm:mb-5 flex-grow">
+      <blockquote className="relative z-10 text-[13px] sm:text-[14px] md:text-[15px] text-slate-700 font-poppins leading-[1.65] py-4 mb-4 sm:mb-5 flex-grow">
         &ldquo;{item.text}&rdquo;
       </blockquote>
 

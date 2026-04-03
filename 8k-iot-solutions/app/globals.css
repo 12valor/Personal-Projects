@@ -78,26 +78,30 @@ html.project-modal-open #main-navbar {
   scrollbar-color: #cbd5e1 transparent;
 }
 
-/* Explicit scrollbar for project modals and containers */
+/* Explicit scrollbar for project modals and containers (Seamless) */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
   display: block;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 10px;
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #1e3a8a; /* brand-900 */
+  background-color: #e2e8f0; /* slate-200 */
   border-radius: 10px;
-  border: 2px solid #f8fafc;
+  transition: background-color 0.3s ease;
 }
 
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #1e3a8a; /* brand-900 */
+}
+
+/* Firefox Support (Seamless) */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #1e3a8a #f8fafc;
+  scrollbar-color: #e2e8f0 transparent;
 }
 
 /* Lenis Smooth Scroll Configuration */

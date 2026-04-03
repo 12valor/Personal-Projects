@@ -59,7 +59,7 @@ const Contact = memo(() => {
             </h2>
             
             <p className="text-slate-400 text-base lg:text-lg leading-relaxed mb-12 max-w-md font-medium">
-              We help founders and innovators transform complex ideas into reliable hardware and elegant software. Whether you're at the drawing board or ready to scale, we're here to build alongside you.
+              Got a big idea? We&apos;re here to help you turn it into something real. Whether you&apos;re still at the drawing board or ready to launch, let&apos;s jump in and build it together!
             </p>
 
             {/* Simplified Contact Details */}

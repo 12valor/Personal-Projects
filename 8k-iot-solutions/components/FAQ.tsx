@@ -85,7 +85,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
   };
 
   const leftItemVariants = {
-    hidden: { opacity: 0, x: -200 },
+    hidden: { opacity: 0, x: -100 },
     visible: { 
       opacity: 1, 
       x: 0,
@@ -97,7 +97,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
   };
 
   const rightItemVariants = {
-    hidden: { opacity: 0, x: 200 },
+    hidden: { opacity: 0, x: 100 },
     visible: { 
       opacity: 1, 
       x: 0,
@@ -122,7 +122,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           <motion.h2 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-6 leading-tight"
           >
@@ -131,7 +131,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           <motion.p
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-lg md:text-xl text-zinc-500 font-poppins"
           >
@@ -145,7 +145,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {displayFaqs.map((faq, index) => (
             <FAQItemComponent 

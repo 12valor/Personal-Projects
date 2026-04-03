@@ -17,12 +17,12 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     const isMobile = window.innerWidth < 1024;
 
     const lenis = new Lenis({
-      duration: isMobile ? 0 : 0.8, // Disable on mobile for native feel/perf
+      duration: isMobile ? 0 : 1.2, 
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 1.1, // Increase sensitivity slightly for better response
       touchMultiplier: 1.5,
       infinite: false,
     });

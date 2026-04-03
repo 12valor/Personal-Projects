@@ -50,7 +50,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
   };
 
   const leftItemVariants = {
-    hidden: { opacity: 0, x: -200 },
+    hidden: { opacity: 0, x: -100 },
     visible: { 
       opacity: 1, 
       x: 0,
@@ -62,7 +62,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
   };
 
   const rightItemVariants = {
-    hidden: { opacity: 0, x: 200 },
+    hidden: { opacity: 0, x: 100 },
     visible: { 
       opacity: 1, 
       x: 0,
@@ -87,7 +87,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           <motion.h2 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
           >
@@ -96,7 +96,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           <motion.p
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-lg md:text-xl text-zinc-500 font-poppins font-medium"
           >
@@ -110,7 +110,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {members.map((member, index) => (
             <TeamCard 
@@ -133,7 +133,7 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
   return (
     <motion.div
       variants={variants}
-      className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch ${!isEven ? 'lg:flex-row-reverse' : ''}`}
+      className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch will-change-transform ${!isEven ? 'lg:flex-row-reverse' : ''}`}
     >
       {/* Left Part: Portrait Container */}
       <div className="relative w-full lg:w-[480px] aspect-[4/5] lg:aspect-auto shrink-0 z-20 flex items-end justify-center">

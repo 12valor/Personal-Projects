@@ -82,7 +82,7 @@ const About = memo(function About() {
         className="relative z-10 w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20"
         initial="hidden"
         whileInView="visible"
-        viewport={{ amount: 0.15, margin: "0px 0px -10% 0px" }}
+        viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
         variants={containerVariants}
       >
         {/* Native Staggered Grid Layout */}
@@ -91,7 +91,7 @@ const About = memo(function About() {
           {/* ----- LEFT COLUMN: Massive White Anchor Text Container (Cols 1-9) ----- */}
           {/* Assigned to cols 1-9. Z-index 0. Solid background */}
           <motion.div 
-            className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
+            className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center will-change-transform"
             variants={itemVariants}
           >
             <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] border border-zinc-100 p-6 sm:p-10 lg:p-14 xl:p-20 relative overflow-hidden group/card lg:pr-[30%] xl:pr-[35%] transition-all duration-700">
@@ -137,7 +137,7 @@ const About = memo(function About() {
                 >
                   <span className="tracking-wide">Let's Collaborate</span>
                   <span className="flex items-center justify-center min-w-[32px] w-[32px] h-[32px] sm:min-w-[38px] sm:w-[38px] sm:h-[38px] bg-white rounded-full transition-all duration-500 group-hover:scale-105 shadow-sm">
-                    <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-900 transition-transform duration-500 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]" strokeWidth={2} />
+                    <ArrowUpRight className="w-4 h-4 sm:w-5 h-5 text-zinc-900 transition-transform duration-500 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]" strokeWidth={2} />
                   </span>
                 </a>
               </div>
@@ -148,7 +148,7 @@ const About = memo(function About() {
           {/* ----- RIGHT COLUMN: Cinematic Parallax Image Frame (Cols 8-12) ----- */}
           {/* Hidden entirely on mobile, visible only on lg screens and up. Z-index 10. */}
           <motion.div 
-            className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0"
+            className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0 will-change-transform"
             style={{ y: imageY }}
           >
             <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100 transition-all duration-700">

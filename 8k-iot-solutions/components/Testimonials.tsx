@@ -97,11 +97,11 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
     <motion.section 
       id="testimonials"
       ref={containerRef} 
-      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0"
+      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0 will-change-transform"
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
-      viewport={{ amount: 0.15 }}
+      viewport={{ once: true, amount: 0.15 }}
     >
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

@@ -45,7 +45,7 @@ const headerVariants: Variants = {
 };
 
 const leftCardVariants: Variants = {
-  hidden: { opacity: 0, x: -200 },
+  hidden: { opacity: 0, x: -100 },
   visible: {
     opacity: 1,
     x: 0,
@@ -57,7 +57,7 @@ const leftCardVariants: Variants = {
 };
 
 const rightCardVariants: Variants = {
-  hidden: { opacity: 0, x: 200 },
+  hidden: { opacity: 0, x: 100 },
   visible: {
     opacity: 1,
     x: 0,
@@ -92,7 +92,7 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.h2 
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 1.2, ease: studioEase }}
               className="text-4xl md:text-[3rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
             >
@@ -101,7 +101,7 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.p
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 1.2, ease: studioEase }}
               className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed"
             >
@@ -117,14 +117,14 @@ const ServicesSection = memo(function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
           >
             {/* ========================================= */}
             {/* CARD 1: Hardware Services (FROM LEFT)     */}
             {/* ========================================= */}
             <motion.div 
                 variants={leftCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
@@ -173,7 +173,7 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={rightCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">

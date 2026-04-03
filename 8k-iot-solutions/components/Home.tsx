@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import SchoolLogos from '@/components/SchoolLogos';
-import Footer from '@/components/Footer';
 import SectionUrlSync from '@/components/SectionUrlSync';
 import Testimonials from '@/components/Testimonials';
 
@@ -148,7 +147,6 @@ export default function HomeContent({
       <Team members={teamMembers} />
       <FAQ faqs={faqs} />
       <Contact />
-      <Footer />
     </div>
   );
 }

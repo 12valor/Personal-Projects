@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Poppins, Boldonse } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
+import ConditionalFooter from "@/components/ConditionalFooter";
 
 // Load Poppins with specific variables
 const poppins = Poppins({ 
@@ -41,6 +43,9 @@ export default function RootLayout({
           <main className="flex-grow w-full">
             {children}
           </main>
+          <ConditionalFooter>
+            <Footer />
+          </ConditionalFooter>
         </SmoothScroll>
       </body>
     </html>

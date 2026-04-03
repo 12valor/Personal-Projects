@@ -2,6 +2,7 @@
 
 import React, { memo, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Twitter, Instagram, Linkedin, Github } from 'lucide-react';
 
@@ -187,9 +188,8 @@ const Footer = memo(() => {
             &copy; {currentYear} 8K IoT Solutions. All rights reserved. Negros Occidental, Talisay City.
           </p>
           <div className="font-poppins text-[12px] text-slate-400 flex gap-6 sm:gap-10">
-            <a href="#" className="hover:text-brand-900 transition-colors duration-200">Privacy Policy</a>
-            <a href="#" className="hover:text-brand-900 transition-colors duration-200 underline underline-offset-4 decoration-slate-200 hover:decoration-brand-300">Terms of Service</a>
-            <a href="#" className="hover:text-brand-900 transition-colors duration-200">System Logs</a>
+            <Link href="/privacy" className="hover:text-brand-900 transition-colors duration-200">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-brand-900 transition-colors duration-200 underline underline-offset-4 decoration-slate-200 hover:decoration-brand-300">Terms of Service</Link>
           </div>
         </div>
 

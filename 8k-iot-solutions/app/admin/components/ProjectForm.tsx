@@ -1,9 +1,35 @@
 'use client';
-
+import { useActionState, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { saveProject } from '../actions';
 // Using a basic form to avoid complex state management since Server Actions handle it well
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ProjectForm({ project }: { project?: any }) {
+  const router = useRouter();
+  const [state, action, isPending] = useActionState(saveProject, { error: null });
+  const [title, setTitle] = useState(project?.title || '');
+  const [slug, setSlug] = useState(project?.slug || '');
+  const [manualSlug, setManualSlug] = useState(!!project?.slug);
+
+  // Auto-generate slug from title for new projects
+  useEffect(() => {
+    if (!project && !manualSlug && title) {
+      const generatedSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      setSlug(generatedSlug);
+    }
+  }, [title, manualSlug, project]);
+
+  // Handle successful submission
+  useEffect(() => {
+    if (state?.success) {
+      router.push('/admin');
+      router.refresh();
+    }
+  }, [state, router]);
+
   // Parse existing JSON
   let tags = '';
   let features = '';
@@ -15,7 +41,7 @@ export default function ProjectForm({ project }: { project?: any }) {
   }
 
   return (
-    <form action={saveProject} className="space-y-8 divide-y divide-zinc-200">
+    <form action={action} className="space-y-8 divide-y divide-zinc-200">
       <div className="space-y-8 divide-y divide-zinc-200">
         <div>
           <div>
@@ -26,6 +52,21 @@ export default function ProjectForm({ project }: { project?: any }) {
               This information will be displayed publicly.
             </p>
           </div>
+
+          {state?.error && (
+            <div className="mt-6 bg-red-50 border-l-4 border-red-400 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{state.error}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             
@@ -42,7 +83,8 @@ export default function ProjectForm({ project }: { project?: any }) {
                   name="title"
                   id="title"
                   required
-                  defaultValue={project?.title}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border-zinc-300 rounded-md p-2 border"
                 />
               </div>
@@ -58,7 +100,11 @@ export default function ProjectForm({ project }: { project?: any }) {
                   name="slug"
                   id="slug"
                   required
-                  defaultValue={project?.slug}
+                  value={slug}
+                  onChange={(e) => {
+                    setSlug(e.target.value);
+                    setManualSlug(true);
+                  }}
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border-zinc-300 rounded-md p-2 border"
                 />
               </div>
@@ -193,9 +239,10 @@ export default function ProjectForm({ project }: { project?: any }) {
           </a>
           <button
             type="submit"
-            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-900"
+            disabled={isPending}
+            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save
+            {isPending ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>

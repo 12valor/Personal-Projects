@@ -1,6 +1,7 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
@@ -12,65 +13,89 @@ export async function logout() {
   redirect('/admin/login');
 }
 
-export async function saveProject(formData: FormData) {
-  const id = formData.get('id') as string | null;
-  const title = formData.get('title') as string;
-  const slug = formData.get('slug') as string;
-  const category = formData.get('category') as string;
-  const shortDescription = formData.get('shortDescription') as string;
-  const fullDescription = formData.get('fullDescription') as string;
-  const client = formData.get('client') as string | null;
-  const tagsString = formData.get('tags') as string;
-  const featuresString = formData.get('features') as string;
-  
-  // Handle image upload
-  let coverImage = formData.get('existingCoverImage') as string;
-  const imageFile = formData.get('coverImage') as File | null;
-  
-  if (imageFile && imageFile.size > 0 && imageFile.name) {
-    coverImage = await saveImageFile(imageFile, 'project');
-  }
+export async function saveProject(prevState: any, formData: FormData) {
+  try {
+    const id = formData.get('id') as string | null;
+    const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string;
+    const category = formData.get('category') as string;
+    const shortDescription = formData.get('shortDescription') as string;
+    const fullDescription = formData.get('fullDescription') as string;
+    const client = formData.get('client') as string | null;
+    const tagsString = formData.get('tags') as string;
+    const featuresString = formData.get('features') as string;
+    
+    // Handle image upload
+    let coverImage = formData.get('existingCoverImage') as string;
+    const imageFile = formData.get('coverImage') as File | null;
+    
+    if (imageFile && imageFile.size > 0 && imageFile.name) {
+      coverImage = await saveImageFile(imageFile, 'project');
+    }
 
-  // Parse arrays
-  let tags: string[] = [];
-  if (tagsString) {
-    tags = tagsString.split(',').map(s => s.trim()).filter(Boolean);
-  }
-  
-  let features: string[] = [];
-  if (featuresString) {
-    features = featuresString.split('\n').map(s => s.trim()).filter(Boolean);
-  }
+    // Parse arrays
+    let tags: string[] = [];
+    if (tagsString) {
+      tags = tagsString.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    
+    let features: string[] = [];
+    if (featuresString) {
+      features = featuresString.split('\n').map(s => s.trim()).filter(Boolean);
+    }
 
-  const projectData = {
-    title,
-    slug,
-    category,
-    shortDescription,
-    fullDescription,
-    coverImage: coverImage || '',
-    tags: JSON.stringify(tags),
-    features: JSON.stringify(features),
-    client: client || null
-  };
+    const projectData = {
+      title,
+      slug,
+      category,
+      shortDescription,
+      fullDescription,
+      coverImage: coverImage || '',
+      tags: JSON.stringify(tags),
+      features: JSON.stringify(features),
+      client: client || null
+    };
 
-  if (id) {
-    await prisma.project.update({
-      where: { id },
-      data: projectData,
-    });
-  } else {
-    await prisma.project.create({
-      data: projectData,
-    });
+    if (id) {
+      await prisma.project.update({
+        where: { id },
+        data: projectData,
+      });
+    } else {
+      // Proactive check (optional but good for UX)
+      const existing = await prisma.project.findUnique({
+        where: { slug }
+      });
+
+      if (existing) {
+        return { error: `The slug "${slug}" is already in use by another project.` };
+      }
+
+      await prisma.project.create({
+        data: projectData,
+      });
+    }
+
+    revalidatePath('/admin');
+    revalidatePath('/projects/hardware');
+    revalidatePath('/projects/software');
+    revalidatePath(`/projects/${slug}`);
+    
+    return { success: true };
+  } catch (error: any) {
+    console.error("Save Project Error:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        const target = (error.meta?.target as string[]) || [];
+        if (target.includes('slug')) {
+          return { error: "This slug is already in use. Please choose a different one." };
+        }
+      }
+    }
+
+    return { error: error.message || "An unexpected error occurred while saving the project." };
   }
-
-  revalidatePath('/admin');
-  revalidatePath('/projects/hardware');
-  revalidatePath('/projects/software');
-  revalidatePath(`/projects/${slug}`);
-  
-  redirect('/admin');
 }
 
 // --- TESTIMONIAL ACTIONS ---

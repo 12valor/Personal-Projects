@@ -207,29 +207,29 @@ const Hero = memo(function Hero({
               {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
             </div>
 
-            {/* Desktop Base Layer (Ghost-Locked for alignment) */}
+            {/* Desktop Base Layer (Grid-Locked for pixel-perfect word alignment) */}
             <div className="select-none hidden lg:flex flex-col items-center">
-              <div className="grid grid-cols-1 justify-items-center">
-                {/* Visible Base Content Stack */}
-                <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
-                  <div className="flex items-center gap-4">
-                    <span>{heroSection?.heading_part_1 || "Building"}</span>
-                    <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+              <div className="flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
+                {/* First Line */}
+                <div className="flex items-center gap-4">
+                  <div className="grid justify-items-end">
+                    <span className="col-start-1 row-start-1">{heroSection?.heading_part_1 || "Building"}</span>
+                    <span className="col-start-1 row-start-1 invisible pointer-events-none">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span>{heroSection?.heading_part_2 || "Into"}</span>
-                    <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+                  <div className="grid justify-items-start">
+                    <span className="col-start-1 row-start-1 text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                    <span className="col-start-1 row-start-1 invisible pointer-events-none">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
                   </div>
                 </div>
-                {/* Ghost Reveal Content Stack for Width Lock */}
-                <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
-                  <div className="flex items-center gap-4">
-                    <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
-                    <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                {/* Second Line */}
+                <div className="flex items-center gap-4">
+                  <div className="grid justify-items-end">
+                    <span className="col-start-1 row-start-1">{heroSection?.heading_part_2 || "Into"}</span>
+                    <span className="col-start-1 row-start-1 invisible pointer-events-none">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
-                    <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                  <div className="grid justify-items-start">
+                    <span className="col-start-1 row-start-1 text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+                    <span className="col-start-1 row-start-1 invisible pointer-events-none">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
                   </div>
                 </div>
               </div>
@@ -253,27 +253,28 @@ const Hero = memo(function Hero({
             >
               {/* Inner coordinate-locked container to ensure text perfectly overlays the base h1 */}
               <div className="absolute top-[150px] left-[150px] right-[150px] bottom-[150px] flex items-center justify-center">
-                <div className="grid grid-cols-1 justify-items-center">
-                  {/* Visible Reveal Stack */}
-                  <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-6">
-                    <div className="flex items-center gap-4">
-                      <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
-                      <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                {/* Reveal Content (Grid-Locked for pixel-perfect word alignment) */}
+                <div className="flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-6">
+                  {/* First Line */}
+                  <div className="flex items-center gap-4">
+                    <div className="grid justify-items-end">
+                      <span className="col-start-1 row-start-1 invisible pointer-events-none">{heroSection?.heading_part_1 || "Building"}</span>
+                      <span className="col-start-1 row-start-1 text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
-                      <span className="text-slate-950">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                    <div className="grid justify-items-start">
+                      <span className="col-start-1 row-start-1 invisible pointer-events-none">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                      <span className="col-start-1 row-start-1 text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
                     </div>
                   </div>
-                  {/* Ghost Base Stack for Width Lock */}
-                  <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-6">
-                    <div className="flex items-center gap-4">
-                      <span>{heroSection?.heading_part_1 || "Building"}</span>
-                      <span>{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                  {/* Second Line */}
+                  <div className="flex items-center gap-4">
+                    <div className="grid justify-items-end">
+                      <span className="col-start-1 row-start-1 invisible pointer-events-none">{heroSection?.heading_part_2 || "Into"}</span>
+                      <span className="col-start-1 row-start-1 text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span>{heroSection?.heading_part_2 || "Into"}</span>
-                      <span>{heroSection?.heading_highlight_2 || "Reality"}</span>
+                    <div className="grid justify-items-start">
+                      <span className="col-start-1 row-start-1 invisible pointer-events-none">{heroSection?.heading_highlight_2 || "Reality"}</span>
+                      <span className="col-start-1 row-start-1 text-slate-950">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
                     </div>
                   </div>
                 </div>

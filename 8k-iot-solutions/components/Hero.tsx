@@ -144,7 +144,7 @@ const Hero = memo(function Hero({
   return (
     <section 
       id="home" 
-      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-28 md:pt-36 lg:pt-24 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
+      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-28 md:pt-36 lg:pt-40 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
     >
       {/* Background Orbs */}
       {heroSection?.show_hero_orbs !== false && (
@@ -199,7 +199,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative mb-6 text-slate-900 mt-6 cursor-default py-2"
+            className="relative mb-6 text-slate-900 mt-6 cursor-default py-12"
           >
             {/* Mobile/Tablet Base Layer (Total Revert to Original for mobile flow) */}
             <div className="select-none lg:hidden font-boldonse text-[2.75rem] sm:text-[4rem] tracking-tight leading-[1.5]">
@@ -252,7 +252,7 @@ const Hero = memo(function Hero({
             >
               <div className="grid grid-cols-1 justify-items-center">
                 {/* Visible Reveal Stack */}
-                <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
+                <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none py-12">
                   <div className="flex items-center gap-4">
                     <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
                     <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
@@ -263,7 +263,7 @@ const Hero = memo(function Hero({
                   </div>
                 </div>
                 {/* Ghost Base Stack for Width Lock */}
-                <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
+                <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none py-12">
                   <div className="flex items-center gap-4">
                     <span>{heroSection?.heading_part_1 || "Building"}</span>
                     <span>{heroSection?.heading_highlight_1 || "Ideas"}</span>

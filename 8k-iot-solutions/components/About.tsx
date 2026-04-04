@@ -82,7 +82,7 @@ const About = memo(function About() {
         className="relative z-10 w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
+        viewport={{ once: false, amount: 0.15, margin: "0px 0px -10% 0px" }}
         variants={containerVariants}
       >
         {/* Native Staggered Grid Layout */}

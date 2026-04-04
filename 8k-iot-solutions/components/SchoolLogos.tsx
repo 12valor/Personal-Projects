@@ -59,7 +59,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
           variants={headerVariants} 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           className="text-center lg:text-left shrink-0 max-w-xs"
         >
            <h3 className="text-brand-900 font-black uppercase tracking-[0.3em] text-sm md:text-lg lg:text-xl font-poppins leading-tight">
@@ -75,7 +75,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
           style={{ y: logoRowY }}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.05 }}
+          viewport={{ once: false, amount: 0.05 }}
           variants={sectionVariants}
           className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end items-center gap-6 md:gap-8 lg:gap-12 w-full lg:flex-1"
         >

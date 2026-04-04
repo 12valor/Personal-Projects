@@ -101,7 +101,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       style={{ opacity: sectionOpacity }}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: false, amount: 0.15 }}
     >
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

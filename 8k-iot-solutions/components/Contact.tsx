@@ -39,7 +39,7 @@ const Contact = memo(() => {
         className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: false, amount: 0.2 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
           
@@ -47,7 +47,7 @@ const Contact = memo(() => {
           <motion.div 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 flex flex-col items-start"
           >
@@ -97,7 +97,7 @@ const Contact = memo(() => {
           <motion.div 
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="lg:col-span-6 lg:col-start-7"
           >

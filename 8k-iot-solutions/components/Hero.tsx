@@ -145,7 +145,7 @@ const Hero = memo(function Hero({
   return (
     <section 
       id="home" 
-      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-28 md:pt-36 lg:pt-32 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
+      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-28 md:pt-36 lg:pt-20 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
     >
       {/* Background Orbs */}
       {heroSection?.show_hero_orbs !== false && (

@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate }
 import { useRouter } from 'next/navigation';
 import { Zap, ArrowRight, Search, Sparkles } from 'lucide-react';
 import ShinyText from './ShinyText';
+import SplitText from './SplitText';
 
 const MagicRings = dynamic(() => import('./MagicRings'), {
   ssr: false
@@ -204,19 +205,19 @@ const Hero = memo(function Hero({
           >
             {/* Mobile/Tablet Base Layer (Total Revert to Original for mobile flow) */}
             <div className="select-none lg:hidden font-boldonse text-[2.75rem] sm:text-[4rem] tracking-tight leading-[1.5]">
-              {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+              <SplitText text={heroSection?.heading_part_1 || "Building"} tag="span" to={{ opacity: 1, y: 0, delay: 0.5 }} /> <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_1 || "Ideas"} tag="span" to={{ opacity: 1, y: 0, delay: 0.6 }} /></span><br className="hidden sm:block" /> <SplitText text={heroSection?.heading_part_2 || "Into"} tag="span" to={{ opacity: 1, y: 0, delay: 0.7 }} /> <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_2 || "Reality"} tag="span" to={{ opacity: 1, y: 0, delay: 0.8 }} /></span>
             </div>
 
             {/* Desktop Base Layer (Perfectly Centered) */}
             <div className="select-none hidden lg:flex flex-col items-center">
               <div className="flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none">
                 <div className="flex items-center gap-4">
-                  <span>{heroSection?.heading_part_1 || "Building"}</span>
-                  <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                  <SplitText text={heroSection?.heading_part_1 || "Building"} tag="span" to={{ opacity: 1, y: 0, delay: 0.5 }} />
+                  <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_1 || "Ideas"} tag="span" to={{ opacity: 1, y: 0, delay: 0.6 }} /></span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span>{heroSection?.heading_part_2 || "Into"}</span>
-                  <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+                  <SplitText text={heroSection?.heading_part_2 || "Into"} tag="span" to={{ opacity: 1, y: 0, delay: 0.7 }} />
+                  <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_2 || "Reality"} tag="span" to={{ opacity: 1, y: 0, delay: 0.8 }} /></span>
                 </div>
               </div>
             </div>
@@ -245,22 +246,22 @@ const Hero = memo(function Hero({
                   <div className="flex items-center gap-4">
                     <div className="relative flex justify-end">
                       <span className="invisible pointer-events-none">{heroSection?.heading_part_1 || "Building"}</span>
-                      <span className="absolute right-0 text-blue-900 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
+                      <span className="absolute right-0 text-blue-900 whitespace-nowrap"><SplitText text={(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')} tag="span" to={{ opacity: 1, y: 0, delay: 0.5 }} /></span>
                     </div>
                     <div className="relative flex justify-start">
                       <span className="invisible pointer-events-none">{heroSection?.heading_highlight_1 || "Ideas"}</span>
-                      <span className="absolute left-0 text-slate-950 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                      <span className="absolute left-0 text-slate-950 whitespace-nowrap"><SplitText text={(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')} tag="span" to={{ opacity: 1, y: 0, delay: 0.6 }} /></span>
                     </div>
                   </div>
                   {/* Second Line */}
                   <div className="flex items-center gap-4">
                     <div className="relative flex justify-end">
                       <span className="invisible pointer-events-none">{heroSection?.heading_part_2 || "Into"}</span>
-                      <span className="absolute right-0 text-blue-900 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
+                      <span className="absolute right-0 text-blue-900 whitespace-nowrap"><SplitText text={(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')} tag="span" to={{ opacity: 1, y: 0, delay: 0.7 }} /></span>
                     </div>
                     <div className="relative flex justify-start">
                       <span className="invisible pointer-events-none">{heroSection?.heading_highlight_2 || "Reality"}</span>
-                      <span className="absolute left-0 text-slate-950 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                      <span className="absolute left-0 text-slate-950 whitespace-nowrap"><SplitText text={(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')} tag="span" to={{ opacity: 1, y: 0, delay: 0.8 }} /></span>
                     </div>
                   </div>
                 </div>

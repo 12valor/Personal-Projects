@@ -249,7 +249,7 @@ const Hero = memo(function Hero({
                     </div>
                     <div className="relative flex justify-start">
                       <span className="invisible pointer-events-none">{heroSection?.heading_highlight_1 || "Ideas"}</span>
-                      <span className="absolute left-0 text-blue-900 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                      <span className="absolute left-0 text-slate-950 whitespace-nowrap">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
                     </div>
                   </div>
                   {/* Second Line */}

@@ -200,7 +200,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-6 cursor-default py-2"
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.6] mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
             {/* Base Layer */}
             <div className="select-none">
@@ -228,7 +228,7 @@ const Hero = memo(function Hero({
               }}
             >
               <div className="px-4 w-full">
-                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-bold tracking-tight leading-[1.3] block">
+                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] block">
                    {(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').reduce((acc: any[][], word: string, i: number) => {
                       if (i % 2 === 0) acc.push([word]);
                       else acc[acc.length - 1].push(word);

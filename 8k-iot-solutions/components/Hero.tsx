@@ -200,7 +200,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.6] mb-6 text-slate-900 mt-6 cursor-default py-2"
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
             {/* Base Layer */}
             <div className="select-none">
@@ -228,11 +228,17 @@ const Hero = memo(function Hero({
               }}
             >
               <div className="px-4 w-full">
-                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2">
-                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(0, 2).join(' ')}</span>
-                   <br className="hidden sm:block" />
-                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(2, 3).join(' ')} </span>
-                   <span className="text-slate-950">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(3).join(' ')}</span>
+                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-bold tracking-tight leading-[1.3] block">
+                   {(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').reduce((acc: any[][], word: string, i: number) => {
+                      if (i % 2 === 0) acc.push([word]);
+                      else acc[acc.length - 1].push(word);
+                      return acc;
+                   }, []).map((lineWords: string[], idx: number) => (
+                      <div key={idx} className="block whitespace-nowrap">
+                        <span className="text-blue-900">{lineWords[0]} </span>
+                        {lineWords[1] && <span className="text-slate-950">{lineWords[1]}</span>}
+                      </div>
+                   ))}
                 </div>
               </div>
             </motion.div>

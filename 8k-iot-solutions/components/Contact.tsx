@@ -160,7 +160,7 @@ const Contact = memo(() => {
                         type="email"
                         name="email"
                         required
-                        placeholder="name@domain.com"
+                        placeholder="name@email.com"
                         className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 text-[15px] text-white placeholder:text-slate-600 focus:outline-none focus:bg-white/[0.05] focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 transition-all duration-300 shadow-inner"
                       />
                     </motion.div>

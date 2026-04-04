@@ -200,11 +200,18 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.5] mb-6 text-slate-900 mt-6 cursor-default py-2"
+            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.6] mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
             {/* Base Layer */}
-            <div className="select-none">
-              {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+            <div className="select-none flex flex-col items-center">
+              <div className="flex w-full justify-center items-baseline">
+                <span className="text-right pr-2 sm:pr-3 min-w-[50%]">{heroSection?.heading_part_1 || "Building"}</span>
+                <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+              </div>
+              <div className="flex w-full justify-center items-baseline">
+                <span className="text-right pr-2 sm:pr-3 min-w-[50%]">{heroSection?.heading_part_2 || "Into"}</span>
+                <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+              </div>
             </div>
 
             {/* Reveal Layer (Desktop Only) - Expanded bounds to prevent clipping */}
@@ -227,18 +234,16 @@ const Hero = memo(function Hero({
                 WebkitClipPath: clipPath,
               }}
             >
-              <div className="px-4 w-full">
-                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-bold tracking-tight leading-[1.3] block">
-                   {(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').reduce((acc: any[][], word: string, i: number) => {
-                      if (i % 2 === 0) acc.push([word]);
-                      else acc[acc.length - 1].push(word);
-                      return acc;
-                   }, []).map((lineWords: string[], idx: number) => (
-                      <div key={idx} className="block whitespace-nowrap">
-                        <span className="text-blue-900">{lineWords[0]} </span>
-                        {lineWords[1] && <span className="text-slate-950">{lineWords[1]}</span>}
-                      </div>
-                   ))}
+              <div className="px-4 w-full flex flex-col items-center">
+                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2 w-full">
+                   <div className="flex w-full justify-center items-baseline">
+                     <span className="text-right pr-2 sm:pr-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
+                     <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                   </div>
+                   <div className="flex w-full justify-center items-baseline">
+                     <span className="text-right pr-2 sm:pr-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
+                     <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-slate-950">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                   </div>
                 </div>
               </div>
             </motion.div>

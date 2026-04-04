@@ -111,9 +111,9 @@ const ServicesSection = memo(function ServicesSection() {
         </div>
 
         {/* Cards Container Context */}
-        <div className="pb-12 md:pb-16">
+        <div className="pb-12 md:pb-16 px-2 sm:px-0">
           <motion.div 
-            className="grid grid-cols-1 gap-12 lg:gap-16 items-stretch"
+            className="grid grid-cols-1 gap-8 md:gap-12 lg:gap-16 items-stretch"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -124,28 +124,28 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={leftCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
-                <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
+                <div className="flex-1 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col">
                   <div className="relative z-10 flex-1 flex flex-col">
-                      <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-zinc-900 tracking-tight mb-4">Hardware Services</h3>
+                      <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-zinc-900 tracking-tight mb-3 lg:mb-4">Hardware Services</h3>
                       
-                      <p className="text-base md:text-lg text-zinc-500 font-poppins font-medium leading-relaxed mb-10 max-w-[480px]">
+                      <p className="text-[15px] sm:text-base md:text-lg text-zinc-500 font-poppins font-medium leading-relaxed mb-8 md:mb-10 max-w-[480px]">
                         Custom hardware prototypes and embedded systems designed to your exact specs. We bridge the gap between idea and physical prototype.
                       </p>
                       
                       {/* Focal Point Pricing Block */}
-                      <div className="mt-auto mb-10">
+                      <div className="mt-8 lg:mt-auto mb-8 md:mb-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-6xl md:text-7xl lg:text-8xl font-poppins font-extrabold tracking-tighter text-zinc-900 leading-none">₱999</span>
+                          <span className="text-[3.5rem] sm:text-6xl md:text-7xl lg:text-8xl font-poppins font-extrabold tracking-tighter text-zinc-900 leading-none">₱999</span>
                         </div>
-                        <p className="text-xs md:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mt-3 ml-1">Starting price</p>
+                        <p className="text-[11px] sm:text-xs md:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mt-2 lg:mt-3 ml-1">Starting price</p>
                       </div>
                       
                       <Link 
                           href="/projects/hardware"
-                          className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-900 text-white font-poppins font-bold text-base py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.98]"
+                          className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-900 text-white font-poppins font-bold text-sm lg:text-base py-4 lg:py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.98]"
                       >
                           Explore Hardware Solutions
                       </Link>
@@ -153,15 +153,15 @@ const ServicesSection = memo(function ServicesSection() {
                 </div>
     
                 {/* --- RIGHT COLUMN: FEATURES --- */}
-                <div className="lg:w-[400px] xl:w-[450px] p-8 md:p-12 lg:p-16 flex flex-col bg-zinc-50/50 border-t lg:border-t-0 lg:border-l border-zinc-100/80 relative z-10">
-                  <h4 className="text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-8">What's included</h4>
-                  <ul className="space-y-6 flex-1">
+                <div className="lg:w-[400px] xl:w-[450px] p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col bg-zinc-50/50 border-t lg:border-t-0 lg:border-l border-zinc-100/80 relative z-10">
+                  <h4 className="text-xs sm:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6 md:mb-8">What's included</h4>
+                  <ul className="space-y-4 md:space-y-6 flex-1">
                       {HARDWARE_FEATURES.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-5 group/item">
-                          <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
-                            <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
+                      <li key={i} className="flex items-center gap-4 md:gap-5 group/item">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-[6px] md:rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" strokeWidth={3.5} />
                           </div>
-                          <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
+                          <span className="text-[15px] md:text-base lg:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
                       </li>
                       ))}
                   </ul>
@@ -173,28 +173,28 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={rightCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-colors duration-300 will-change-transform"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
-                <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col">
+                <div className="flex-1 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col">
                   <div className="relative z-10 flex-1 flex flex-col">
-                      <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-zinc-900 tracking-tight mb-4">Software Services</h3>
+                      <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-bold text-zinc-900 tracking-tight mb-3 lg:mb-4">Software Services</h3>
                       
-                      <p className="text-base md:text-lg text-zinc-500 font-poppins font-medium leading-relaxed mb-10 max-w-[480px]">
+                      <p className="text-[15px] sm:text-base md:text-lg text-zinc-500 font-poppins font-medium leading-relaxed mb-8 md:mb-10 max-w-[480px]">
                          Modern web apps and IoT dashboards built with bleeding-edge technology. Scalable solutions that grow with your business.
                       </p>
                       
                       {/* Focal Point Pricing Block */}
-                      <div className="mt-auto mb-10">
+                      <div className="mt-8 lg:mt-auto mb-8 md:mb-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-6xl md:text-7xl lg:text-8xl font-poppins font-extrabold tracking-tighter text-zinc-900 leading-none">₱999</span>
+                          <span className="text-[3.5rem] sm:text-6xl md:text-7xl lg:text-8xl font-poppins font-extrabold tracking-tighter text-zinc-900 leading-none">₱999</span>
                         </div>
-                        <p className="text-xs md:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mt-3 ml-1">Starting price</p>
+                        <p className="text-[11px] sm:text-xs md:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mt-2 lg:mt-3 ml-1">Starting price</p>
                       </div>
     
                       <Link 
                           href="/projects/software"
-                          className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-900 text-white font-poppins font-bold text-base py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.98]"
+                          className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-900 text-white font-poppins font-bold text-sm lg:text-base py-4 lg:py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300 active:scale-[0.98]"
                       >
                           Explore Software Solutions
                       </Link>
@@ -202,15 +202,15 @@ const ServicesSection = memo(function ServicesSection() {
                 </div>
     
                 {/* --- RIGHT COLUMN: FEATURES --- */}
-                <div className="lg:w-[400px] xl:w-[450px] p-8 md:p-12 lg:p-16 flex flex-col bg-zinc-50/50 border-t lg:border-t-0 lg:border-l border-zinc-100/80 relative z-10">
-                  <h4 className="text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-8">What's included</h4>
-                  <ul className="space-y-6 flex-1">
+                <div className="lg:w-[400px] xl:w-[450px] p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col bg-zinc-50/50 border-t lg:border-t-0 lg:border-l border-zinc-100/80 relative z-10">
+                  <h4 className="text-xs sm:text-sm font-poppins font-bold text-zinc-400 uppercase tracking-[0.2em] mb-6 md:mb-8">What's included</h4>
+                  <ul className="space-y-4 md:space-y-6 flex-1">
                       {SOFTWARE_FEATURES.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-5 group/item">
-                          <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
-                            <Check className="w-4 h-4 text-white" strokeWidth={3.5} />
+                      <li key={i} className="flex items-center gap-4 md:gap-5 group/item">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-[6px] md:rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,58,138,0.3)] transition-all duration-300 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(30,58,138,0.5)]">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" strokeWidth={3.5} />
                           </div>
-                          <span className="text-base md:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
+                          <span className="text-[15px] md:text-base lg:text-lg text-zinc-700 font-poppins font-semibold leading-tight">{feature}</span>
                       </li>
                       ))}
                   </ul>

@@ -417,10 +417,8 @@ const Hero = memo(function Hero({
         <div className="absolute inset-y-0 left-0 w-16 sm:w-40 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-16 sm:w-40 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
         
-        <motion.div 
-          className="flex gap-4 sm:gap-6 w-max items-center px-4"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 45, repeat: Infinity }}
+        <div 
+          className="flex gap-4 sm:gap-6 w-max items-center px-4 animate-scroll-horizontal will-change-transform"
         >
           {marqueeItems.map((item, index) => (
             <div 
@@ -453,7 +451,7 @@ const Hero = memo(function Hero({
 
             </div>
           ))}
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   );

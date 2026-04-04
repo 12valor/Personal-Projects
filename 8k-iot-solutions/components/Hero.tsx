@@ -42,8 +42,7 @@ const Hero = memo(function Hero({
   }, [isHovered, spotlightSize]);
 
   // Create reactive clip-path template
-  // We add 150px because the reveal layer is inset by -150px
-  const clipPath = useMotionTemplate`circle(${spotlightSize}px at calc(${smoothX}px + 150px) calc(${smoothY}px + 150px))`;
+  const clipPath = useMotionTemplate`circle(${spotlightSize}px at ${smoothX}px ${smoothY}px)`;
   
   const containerRef = useRef<HTMLHeadingElement>(null);
   
@@ -200,23 +199,38 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative font-boldonse text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] tracking-tight leading-[1.6] mb-6 text-slate-900 mt-6 cursor-default py-2"
+            className="relative mb-6 text-slate-900 mt-6 cursor-default py-2"
           >
-            {/* Base Layer */}
-            <div className="select-none flex flex-col items-center">
-              <div className="flex w-full justify-center items-baseline">
-                <span className="text-right pr-2 sm:pr-3 min-w-[50%]">{heroSection?.heading_part_1 || "Building"}</span>
-                <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
-              </div>
-              <div className="flex w-full justify-center items-baseline">
-                <span className="text-right pr-2 sm:pr-3 min-w-[50%]">{heroSection?.heading_part_2 || "Into"}</span>
-                <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+            {/* Mobile/Tablet Base Layer (Total Revert to Original for mobile flow) */}
+            <div className="select-none lg:hidden font-boldonse text-[2.75rem] sm:text-[4rem] tracking-tight leading-[1.3]">
+              {heroSection?.heading_part_1 || "Building"} <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span><br className="hidden sm:block" /> {heroSection?.heading_part_2 || "Into"} <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+            </div>
+
+            {/* Desktop Base Layer (Ghost-Locked for alignment) */}
+            <div className="select-none hidden lg:flex flex-col items-center text-[5.5rem] font-boldonse tracking-tight leading-[1.6]">
+              <div className="grid grid-cols-1 justify-items-center">
+                {/* Visible Base Content */}
+                <div className="col-start-1 row-start-1 text-center">
+                  <span>{heroSection?.heading_part_1 || "Building"}</span>{' '}
+                  <span className="text-brand-900">{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                  <br className="hidden sm:block" />
+                  <span>{heroSection?.heading_part_2 || "Into"}</span>{' '}
+                  <span className="text-brand-900">{heroSection?.heading_highlight_2 || "Reality"}</span>
+                </div>
+                {/* Ghost Reveal Content for Width Lock */}
+                <div className="col-start-1 row-start-1 invisible pointer-events-none select-none text-center">
+                  <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>{' '}
+                  <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                  <br className="hidden sm:block" />
+                  <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>{' '}
+                  <span>{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                </div>
               </div>
             </div>
 
-            {/* Reveal Layer (Desktop Only) - Expanded bounds to prevent clipping */}
+            {/* Reveal Layer (Desktop Only) */}
             <motion.div 
-              className="absolute pointer-events-none select-none hidden lg:flex items-center justify-center text-center z-10"
+              className="absolute inset-0 pointer-events-none select-none hidden lg:flex items-center justify-center z-10"
               animate={{
                 backgroundColor: ["rgba(255,255,255,1)", "rgba(239,246,255,1)", "rgba(245,243,255,1)", "rgba(255,255,255,1)"],
               }}
@@ -226,24 +240,26 @@ const Hero = memo(function Hero({
                 ease: "linear",
               }}
               style={{
-                top: "-150px",
-                left: "-150px",
-                right: "-150px",
-                bottom: "-150px",
                 clipPath,
                 WebkitClipPath: clipPath,
               }}
             >
-              <div className="px-4 w-full flex flex-col items-center">
-                <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2 w-full">
-                   <div className="flex w-full justify-center items-baseline">
-                     <span className="text-right pr-2 sm:pr-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
-                     <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
-                   </div>
-                   <div className="flex w-full justify-center items-baseline">
-                     <span className="text-right pr-2 sm:pr-3 min-w-[50%] text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>
-                     <span className="text-left pl-2 sm:pl-3 min-w-[50%] text-slate-950">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
-                   </div>
+              <div className="grid grid-cols-1 justify-items-center">
+                {/* Visible Reveal Content */}
+                <div className="col-start-1 row-start-1 text-center text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2">
+                  <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>{' '}
+                  <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
+                  <br className="hidden sm:block" />
+                  <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(2, 3).join(' ')}</span>{' '}
+                  <span className="text-slate-950">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(3).join(' ')}</span>
+                </div>
+                {/* Ghost Base Content for Width Lock */}
+                <div className="col-start-1 row-start-1 invisible pointer-events-none select-none text-center text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2">
+                  <span>{heroSection?.heading_part_1 || "Building"}</span>{' '}
+                  <span>{heroSection?.heading_highlight_1 || "Ideas"}</span>
+                  <br className="hidden sm:block" />
+                  <span>{heroSection?.heading_part_2 || "Into"}</span>{' '}
+                  <span>{heroSection?.heading_highlight_2 || "Reality"}</span>
                 </div>
               </div>
             </motion.div>

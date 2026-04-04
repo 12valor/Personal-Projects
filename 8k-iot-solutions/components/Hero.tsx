@@ -200,7 +200,7 @@ const Hero = memo(function Hero({
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative mb-2 text-slate-900 mt-6 cursor-default pt-12 pb-2"
+            className="relative mb-4 text-slate-900 mt-6 cursor-default pt-12 pb-6"
           >
             {/* Mobile/Tablet Base Layer (Total Revert to Original for mobile flow) */}
             <div className="select-none lg:hidden font-boldonse text-[2.75rem] sm:text-[4rem] tracking-tight leading-[1.5]">
@@ -255,7 +255,7 @@ const Hero = memo(function Hero({
               <div className="absolute top-[150px] left-[150px] right-[150px] bottom-[150px] flex items-center justify-center">
                 <div className="grid grid-cols-1 justify-items-center">
                   {/* Visible Reveal Stack */}
-                  <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-2">
+                  <div className="col-start-1 row-start-1 flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-6">
                     <div className="flex items-center gap-4">
                       <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(0, 1).join(' ')}</span>
                       <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Goals Into Results").split(' ').slice(1, 2).join(' ')}</span>
@@ -266,7 +266,7 @@ const Hero = memo(function Hero({
                     </div>
                   </div>
                   {/* Ghost Base Stack for Width Lock */}
-                  <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-2">
+                  <div className="col-start-1 row-start-1 invisible pointer-events-none select-none flex flex-col items-center gap-12 text-[5.5rem] font-boldonse tracking-tight leading-none pt-12 pb-6">
                     <div className="flex items-center gap-4">
                       <span>{heroSection?.heading_part_1 || "Building"}</span>
                       <span>{heroSection?.heading_highlight_1 || "Ideas"}</span>

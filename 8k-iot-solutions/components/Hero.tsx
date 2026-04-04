@@ -229,10 +229,10 @@ const Hero = memo(function Hero({
             >
               <div className="px-4 w-full">
                 <div className="text-[2.75rem] sm:text-[4rem] lg:text-[5.5rem] font-boldonse tracking-tight leading-[1.6] py-2">
-                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').slice(0, 2).join(' ')}</span>
+                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(0, 2).join(' ')}</span>
                    <br className="hidden sm:block" />
-                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').slice(2, 3).join(' ')} </span>
-                   <span className="text-slate-950">{(heroSection?.reveal_text || "Crafting Vision Into Solutions").split(' ').slice(3).join(' ')}</span>
+                   <span className="text-blue-900">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(2, 3).join(' ')} </span>
+                   <span className="text-slate-950">{(heroSection?.reveal_text || "Crafting Vision Into Results").split(' ').slice(3).join(' ')}</span>
                 </div>
               </div>
             </motion.div>

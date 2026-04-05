@@ -234,6 +234,63 @@ const Contact = memo(() => {
 
         </div>
       </motion.div>
+
+      {/* Solid Loading Modal */}
+      <AnimatePresence>
+        {isPending && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-sm"
+          >
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center shadow-2xl max-w-sm w-full mx-4">
+              <div className="relative flex items-center justify-center w-24 h-24 mb-6">
+                <motion.svg
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                  className="absolute inset-0 w-full h-full text-blue-500/20"
+                  viewBox="0 0 100 100"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="50" cy="50" r="48" strokeDasharray="150 150" />
+                </motion.svg>
+                <motion.svg
+                  animate={{ rotate: -360 }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  className="w-10 h-10 text-blue-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </motion.svg>
+              </div>
+              <motion.h3 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-xl font-bold text-white tracking-wide mb-2 text-center"
+              >
+                Propelling Message
+              </motion.h3>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-slate-400 text-sm font-medium text-center"
+              >
+                Establishing secure connection...
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.section>
   );
 });

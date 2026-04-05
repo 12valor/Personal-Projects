@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useActionState, memo } from 'react';
+import React, { useRef, useActionState, useEffect, memo } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -24,6 +24,18 @@ const Contact = memo(() => {
     },
     null
   );
+
+  // Lock scroll safely using Lenis class
+  useEffect(() => {
+    if (isPending) {
+      document.documentElement.classList.add('lenis-stopped');
+    } else {
+      document.documentElement.classList.remove('lenis-stopped');
+    }
+    return () => {
+      document.documentElement.classList.remove('lenis-stopped');
+    };
+  }, [isPending]);
 
   return (
     <motion.section 
@@ -240,6 +252,7 @@ const Contact = memo(() => {
       <AnimatePresence>
         {isPending && (
           <motion.div
+            data-lenis-prevent="true"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

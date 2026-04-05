@@ -3,6 +3,7 @@
 import React, { useRef, useActionState, memo } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { submitContactForm } from '@/app/contact';
 
 const Contact = memo(() => {
@@ -235,57 +236,59 @@ const Contact = memo(() => {
         </div>
       </motion.div>
 
-      {/* Solid Loading Modal */}
+      {/* Solid Loading Modal - Premium Dynamic Logo Version */}
       <AnimatePresence>
         {isPending && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/90 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#070B14]" // Very sleek solid dark background
           >
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center shadow-2xl max-w-sm w-full mx-4">
-              <div className="relative flex items-center justify-center w-24 h-24 mb-6">
-                <motion.svg
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                  className="absolute inset-0 w-full h-full text-blue-500/20"
-                  viewBox="0 0 100 100"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="50" cy="50" r="48" strokeDasharray="150 150" />
-                </motion.svg>
-                <motion.svg
-                  animate={{ rotate: -360 }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                  className="w-10 h-10 text-blue-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                </motion.svg>
+            <div className="relative flex flex-col items-center justify-center w-full max-w-md p-10">
+              
+              {/* Logo with pulsing tech effect */}
+              <div className="relative mb-12 flex justify-center items-center">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                  className="absolute w-24 h-24 bg-blue-500/30 blur-[25px] rounded-full"
+                />
+                <Image 
+                  src="/8k.png" 
+                  alt="8K IoT Solutions" 
+                  width={85} 
+                  height={85} 
+                  className="relative z-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] object-contain"
+                />
               </div>
+
+              {/* Sleek Infinite Loading Bar */}
+              <div className="w-full max-w-[200px] h-[3px] bg-slate-800 rounded-full overflow-hidden mb-8 relative">
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "200%" }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "circInOut" }}
+                  className="absolute inset-y-0 w-1/2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]"
+                />
+              </div>
+
+              {/* Professional Text */}
               <motion.h3 
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl font-bold text-white tracking-wide mb-2 text-center"
+                className="text-[13px] font-bold text-white tracking-[0.2em] uppercase mb-2"
               >
-                Propelling Message
+                Sending Inquiry
               </motion.h3>
               <motion.p 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-slate-400 text-sm font-medium text-center"
+                className="text-slate-500 text-xs font-medium tracking-wide"
               >
-                Establishing secure connection...
+                Please wait while we process your submission
               </motion.p>
             </div>
           </motion.div>

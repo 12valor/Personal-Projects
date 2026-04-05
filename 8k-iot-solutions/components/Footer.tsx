@@ -28,10 +28,10 @@ const FooterLink = ({ href, children, sectionId, target, rel }: { href: string; 
         onClick={handleClick}
         target={target}
         rel={rel}
-        className="relative text-[14px] text-slate-500 font-sans transition-all duration-300 hover:text-brand-600 hover:-translate-y-0.5 flex items-center group py-1"
+        className="relative text-[14px] text-slate-500 font-sans transition-all duration-300 hover:text-brand-900 hover:-translate-y-0.5 flex items-center group py-1"
       >
         {children}
-        <span className="absolute -bottom-0 left-0 w-0 h-[1px] bg-brand-500 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
+        <span className="absolute -bottom-0 left-0 w-0 h-[1px] bg-brand-900 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
       </a>
     </div>
   );
@@ -41,7 +41,7 @@ const Footer = memo(() => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-[#f8fafc] pt-20 pb-10 overflow-hidden z-0 font-sans border-t border-slate-200">
+    <footer className="relative bg-[#f8fafc] pt-12 pb-6 overflow-hidden z-0 font-sans border-t border-slate-200">
       
       {/* ----- BACKGROUND EFFECTS ----- */}
       {/* Faint white/grey textured surface grid for light mode depth */}
@@ -57,10 +57,10 @@ const Footer = memo(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* ----- INTEGRATED FOOTER CONTENT ----- */}
-        <div className="flex flex-col lg:flex-row lg:justify-between items-start gap-16 pt-6 pb-16">
+        <div className="flex flex-col lg:flex-row lg:justify-between items-start gap-12 pt-4 pb-8">
           
           {/* ----- LEFT: Company Info ----- */}
-          <div className="flex flex-col space-y-6 max-w-sm">
+          <div className="flex flex-col space-y-4 max-w-sm">
             
             {/* Logo Wrapper */}
             <div 
@@ -85,10 +85,10 @@ const Footer = memo(() => {
           </div>
 
           {/* ----- RIGHT: Custom Navigation ----- */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-16 lg:ml-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 lg:ml-auto">
             
             {/* Menu */}
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
               <h3 className="font-sans font-bold text-slate-800 text-[13px] uppercase tracking-wide">
                 MENU
               </h3>
@@ -100,7 +100,7 @@ const Footer = memo(() => {
             </div>
 
             {/* Projects */}
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
               <h3 className="font-sans font-bold text-slate-800 text-[13px] uppercase tracking-wide">
                 PROJECTS
               </h3>
@@ -111,7 +111,7 @@ const Footer = memo(() => {
             </div>
 
             {/* Socials */}
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
               <h3 className="font-sans font-bold text-slate-800 text-[13px] uppercase tracking-wide">
                 SOCIALS
               </h3>
@@ -126,7 +126,7 @@ const Footer = memo(() => {
         </div>
 
         {/* ----- BOTTOM: COPYRIGHT & LEGAL ----- */}
-        <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-slate-200 pt-8 pb-2">
+        <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4 border-t border-slate-200 pt-6 pb-2">
           
           <div className="flex text-center text-[13px] text-slate-500 font-sans">
             <p>

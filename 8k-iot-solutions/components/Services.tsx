@@ -131,7 +131,7 @@ const ServicesSection = memo(function ServicesSection() {
                       <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-extrabold text-zinc-950 tracking-tight mb-2 lg:mb-3">Hardware Services</h3>
                       
                       <p className="text-[15px] sm:text-base md:text-lg text-zinc-600 font-poppins font-medium leading-snug mb-4 max-w-[480px]">
-                        Production-ready hardware prototypes and embedded systems. Transform bold ideas into functional, physical products.
+                        Custom hardware prototypes and embedded systems. We help turn your ideas into real, working devices.
                       </p>
                       
                       <div className="flex items-center gap-2 mb-8 md:mb-10 opacity-80">
@@ -186,7 +186,7 @@ const ServicesSection = memo(function ServicesSection() {
                       <h3 className="text-3xl md:text-4xl lg:text-5xl font-poppins font-extrabold text-zinc-950 tracking-tight mb-2 lg:mb-3">Software Services</h3>
                       
                       <p className="text-[15px] sm:text-base md:text-lg text-zinc-600 font-poppins font-medium leading-snug mb-4 max-w-[480px]">
-                         High-performance web apps and IoT dashboards built with bleeding-edge technology. Tailored, scalable solutions that drive value.
+                         Modern web apps and IoT dashboards tailored to your needs. We build clean, reliable software that just works.
                       </p>
                       
                       <div className="flex items-center gap-2 mb-8 md:mb-10 opacity-80">

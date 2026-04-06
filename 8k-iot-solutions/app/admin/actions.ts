@@ -33,6 +33,27 @@ export async function saveProject(prevState: any, formData: FormData) {
       coverImage = await saveImageFile(imageFile, 'project');
     }
 
+    // Handle gallery images upload
+    const retainedGalleryImagesString = formData.get('retainedGalleryImages') as string;
+    let galleryImages: string[] = [];
+    if (retainedGalleryImagesString) {
+      try {
+        galleryImages = JSON.parse(retainedGalleryImagesString);
+      } catch (e) {}
+    }
+    
+    const newGalleryImageFiles = formData.getAll('galleryImages');
+    const validFiles = newGalleryImageFiles.filter(
+      (file): file is File => file instanceof File && file.size > 0 && file.name !== 'undefined'
+    );
+    
+    if (validFiles.length > 0) {
+      const uploadedUrls = await Promise.all(
+        validFiles.map(file => saveImageFile(file, 'gallery'))
+      );
+      galleryImages.push(...uploadedUrls);
+    }
+
     // Parse arrays
     let tags: string[] = [];
     if (tagsString) {
@@ -51,6 +72,7 @@ export async function saveProject(prevState: any, formData: FormData) {
       shortDescription,
       fullDescription,
       coverImage: coverImage || '',
+      galleryImages: JSON.stringify(galleryImages),
       tags: JSON.stringify(tags),
       features: JSON.stringify(features),
       client: client || null

@@ -33,12 +33,27 @@ export default function ProjectForm({ project }: { project?: any }) {
   // Parse existing JSON
   let tags = '';
   let features = '';
+  let defaultGallery: string[] = [];
+  
   if (project?.tags) {
-    tags = JSON.parse(project.tags).join(', ');
+    tags = typeof project.tags === 'string' ? JSON.parse(project.tags).join(', ') : project.tags.join(', ');
   }
   if (project?.features) {
-    features = JSON.parse(project.features).join('\n');
+    features = typeof project.features === 'string' ? JSON.parse(project.features).join('\n') : project.features.join('\n');
   }
+  if (project?.galleryImages) {
+    if (typeof project.galleryImages === 'string') {
+       try { defaultGallery = JSON.parse(project.galleryImages); } catch(e){}
+    } else if (Array.isArray(project.galleryImages)) {
+       defaultGallery = project.galleryImages;
+    }
+  }
+  
+  const [retainedGalleryImages, setRetainedGalleryImages] = useState<string[]>(defaultGallery);
+
+  const removeGalleryImage = (img: string) => {
+    setRetainedGalleryImages(prev => prev.filter(i => i !== img));
+  };
 
   return (
     <form action={action} className="space-y-8 divide-y divide-zinc-200">
@@ -222,6 +237,46 @@ export default function ProjectForm({ project }: { project?: any }) {
                   accept="image/*"
                   className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border border-zinc-300 rounded-md p-1.5"
                 />
+              </div>
+            </div>
+
+            <div className="sm:col-span-6 border-t border-zinc-200 pt-6 mt-6">
+              <label className="block text-sm font-medium text-zinc-700">Gallery Images (Multiple)</label>
+              <p className="mt-1 flex text-xs text-zinc-500">
+                Current gallery images. Click the red X to remove an image.
+              </p>
+              
+              <input type="hidden" name="retainedGalleryImages" value={JSON.stringify(retainedGalleryImages)} />
+
+              {retainedGalleryImages.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-4">
+                  {retainedGalleryImages.map((img, idx) => (
+                    <div key={idx} className="relative h-24 w-24 overflow-hidden rounded-md border bg-zinc-100 group">
+                      <img src={img} className="w-full h-full object-cover" alt={`Gallery ${idx + 1}`} />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryImage(img)}
+                        className="absolute inset-0 bg-red-500/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 flex items-center justify-center transition focus:outline-none"
+                      >
+                        <svg className="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="mt-4">
+                <input
+                  type="file"
+                  name="galleryImages"
+                  id="galleryImages"
+                  accept="image/*"
+                  multiple
+                  className="shadow-sm focus:ring-zinc-900 focus:border-zinc-900 block w-full sm:text-sm border border-zinc-300 rounded-md p-1.5"
+                />
+                <p className="mt-1 text-xs text-zinc-500">Hold Ctrl or Cmd to select multiple images to upload.</p>
               </div>
             </div>
 

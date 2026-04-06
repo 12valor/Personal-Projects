@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { Project } from '@/lib/projects';
 
@@ -11,9 +11,34 @@ export default function ProjectModal({
   project: Project | null;
   onClose: () => void;
 }) {
+  const lightboxIndexRef = useRef<number | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const closeLightbox = () => {
+    setLightboxIndex(null);
+    lightboxIndexRef.current = null;
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        if (lightboxIndexRef.current !== null) closeLightbox();
+        else onClose();
+      } else if (e.key === 'ArrowLeft' && lightboxIndexRef.current !== null) {
+        setLightboxIndex(prev => {
+          if (prev === null) return null;
+          const newIdx = Math.max(0, prev - 1);
+          lightboxIndexRef.current = newIdx;
+          return newIdx;
+        });
+      } else if (e.key === 'ArrowRight' && lightboxIndexRef.current !== null && project?.galleryImages) {
+        setLightboxIndex(prev => {
+          if (prev === null) return null;
+          const newIdx = Math.min(project.galleryImages!.length - 1, prev + 1);
+          lightboxIndexRef.current = newIdx;
+          return newIdx;
+        });
+      }
     };
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -31,6 +56,65 @@ export default function ProjectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-12">
+      {/* Lightbox Overlay */}
+      {lightboxIndex !== null && project.galleryImages && (
+        <div 
+           className="fixed inset-0 z-[60] flex items-center justify-center bg-zinc-900/95 backdrop-blur-md transition-opacity duration-300"
+           aria-modal="true"
+           role="dialog"
+           onClick={closeLightbox}
+        >
+          <button onClick={closeLightbox} className="absolute top-6 right-6 text-white/70 hover:text-white p-2 z-50 bg-black/20 rounded-full backdrop-blur-sm transition">
+             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              const newIdx = Math.max(0, lightboxIndex - 1);
+              setLightboxIndex(newIdx);
+              lightboxIndexRef.current = newIdx;
+            }}
+            className={`absolute left-2 md:left-6 text-white/70 hover:text-white p-3 z-50 bg-black/20 rounded-full backdrop-blur-sm transition ${lightboxIndex === 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+            disabled={lightboxIndex === 0}
+            aria-label="Previous image"
+          >
+             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          </button>
+
+          <div className="relative w-full max-w-6xl h-4/5 px-16 md:px-24 flex items-center justify-center pointer-events-none">
+            <div className="relative w-full h-full pointer-events-auto">
+              <Image 
+                 src={project.galleryImages[lightboxIndex]} 
+                 alt={`Gallery view ${lightboxIndex + 1}`}
+                 fill
+                 className="object-contain drop-shadow-2xl"
+                 sizes="100vw"
+                 priority
+              />
+            </div>
+          </div>
+
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              const newIdx = Math.min(project.galleryImages!.length - 1, lightboxIndex + 1);
+              setLightboxIndex(newIdx);
+              lightboxIndexRef.current = newIdx;
+            }}
+            className={`absolute right-2 md:right-6 text-white/70 hover:text-white p-3 z-50 bg-black/20 rounded-full backdrop-blur-sm transition ${lightboxIndex === project.galleryImages.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+            disabled={lightboxIndex === project.galleryImages.length - 1}
+            aria-label="Next image"
+          >
+             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </button>
+          
+          <div className="absolute bottom-6 left-0 right-0 text-center text-white/60 text-sm font-sans tracking-widest uppercase font-semibold">
+            {lightboxIndex + 1} / {project.galleryImages.length}
+          </div>
+        </div>
+      )}
+
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity"
@@ -110,6 +194,43 @@ export default function ProjectModal({
                         </li>
                       ))}
                     </ul>
+                  </div>
+                )}
+
+                {/* Gallery Features */}
+                {project.galleryImages && project.galleryImages.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-poppins font-semibold text-zinc-900 mb-4">Gallery</h3>
+                    <div className="relative">
+                      {/* Carousel container */}
+                      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 custom-scrollbar">
+                        {project.galleryImages.map((img, idx) => (
+                          <div 
+                            key={idx} 
+                            className="relative w-64 h-44 shrink-0 snap-center sm:snap-start rounded-xl overflow-hidden cursor-pointer group shadow-sm border border-zinc-100"
+                            onClick={() => {
+                              setLightboxIndex(idx);
+                              lightboxIndexRef.current = idx;
+                            }}
+                            role="button"
+                            aria-label={`View gallery image ${idx + 1}`}
+                          >
+                            <Image 
+                              src={img} 
+                              alt={`Gallery thumbnail ${idx + 1}`} 
+                              fill 
+                              className="object-cover group-hover:scale-105 transition duration-500" 
+                              sizes="(max-width: 768px) 100vw, 300px" 
+                            />
+                            <div className="absolute inset-0 bg-zinc-900/0 group-hover:bg-zinc-900/10 transition duration-300 flex items-center justify-center">
+                               <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition duration-300 drop-shadow-lg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                               </svg>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

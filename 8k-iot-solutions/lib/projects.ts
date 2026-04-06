@@ -10,6 +10,7 @@ export interface Project {
   description: string;
   fullDescription: string;
   image: string;
+  galleryImages: string[];
   tags: string[];
   features: string[];
   client?: string;
@@ -25,6 +26,7 @@ function mapPrismaToProject(p: any): Project {
     description: p.shortDescription,
     fullDescription: p.fullDescription,
     image: p.coverImage,
+    galleryImages: JSON.parse(p.galleryImages || '[]'),
     tags: JSON.parse(p.tags || '[]'),
     features: JSON.parse(p.features || '[]'),
     client: p.client || undefined,

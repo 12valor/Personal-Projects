@@ -1,0 +1,5 @@
+﻿
+> 8k-iot-solutions@0.1.0 build
+> prisma generate && next build
+
+Prisma schema loaded from prisma\schema.prisma

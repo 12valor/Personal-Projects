@@ -91,7 +91,7 @@ const Contact = memo(() => {
                 </div>
               </div>
 
-              <a href="mailto:8kiotsolutions@gmail.com" className="group flex items-center gap-5 transition-colors">
+              <a href="mailto:iotsolutions0@gmail.com" className="group flex items-center gap-5 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-blue-400 group-hover:border-blue-500/20 transition-all duration-300">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0l-10.5 7.5L3 6.75" />
@@ -99,7 +99,7 @@ const Contact = memo(() => {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Direct Inquiries</span>
-                  <span className="text-slate-200 font-medium text-base">8kiotsolutions@gmail.com</span>
+                  <span className="text-slate-200 font-medium text-base">iotsolutions0@gmail.com</span>
                 </div>
               </a>
             </div>

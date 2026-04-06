@@ -2,8 +2,44 @@
 
 import { prisma } from '@/lib/prisma';
 import nodemailer from 'nodemailer';
+import { headers } from 'next/headers';
+
+type RateLimitData = {
+  count: number;
+  resetTime: number;
+};
+
+// In-memory store for rate limiting IP addresses.
+// limits to 2 requests per minute per IP.
+const rateLimitMap = new Map<string, RateLimitData>();
 
 export async function submitContactForm(formData: FormData) {
+  // Rate Limiting Logic (DDoS Protection)
+  const headerStore = await headers();
+  const ip = headerStore.get('x-forwarded-for') ?? 'unknown_ip';
+  
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minute
+  const maxRequests = 2; // 2 requests per minute
+
+  const rateLimitData = rateLimitMap.get(ip);
+  if (rateLimitData) {
+    if (now > rateLimitData.resetTime) {
+      // Time window expired, reset count
+      rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    } else {
+      if (rateLimitData.count >= maxRequests) {
+        return { success: false, error: 'Too many inquiries submitted. Please wait a minute before trying again.' };
+      }
+      // Increment count
+      rateLimitData.count += 1;
+      rateLimitMap.set(ip, rateLimitData);
+    }
+  } else {
+    // First request from this IP
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+  }
+
   const fullName = formData.get('fullName') as string;
   const email = formData.get('email') as string;
   const inquiryType = formData.get('inquiryType') as string;

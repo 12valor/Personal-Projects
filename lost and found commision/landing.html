@@ -4,318 +4,455 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retrieve - Lost & Found</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- VARIABLES & RESET --- */
         :root {
-            /* Corporate Palette */
-            --primary-blue: #1A237E;
-            --primary-blue-hover: #121858;
-            --accent-gold: #F2C029;
-            --bg-color: #F4F6F8; /* Light gray enterprise background */
-            --card-bg: #FFFFFF;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #E0E0E0;
+            --navy: #1A237E;
+            --navy-dark: #111860;
+            --gold: #F2C029;
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text: #1E2235;
+            --muted: #6B7280;
+            --border: #DDE1EA;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- HEADER --- */
+        /* ── HEADER ── */
         header {
-            background-color: var(--primary-blue);
-            color: white;
-            border-bottom: 4px solid var(--accent-gold);
-            padding: 0 20px;
+            background: var(--navy);
         }
 
-        .desktop-header-content {
-            height: 60px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .header-inner {
+            width: 100%;
+            max-width: none;
+            padding: 0 48px;
+            height: 72px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
 
-        .header-info {
-            font-size: 0.85rem;
-            color: #E8EAF6;
+        .header-brand {
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
-        
-        .separator { opacity: 0.4; }
+
+        .header-brand i {
+            color: var(--gold);
+            font-size: 22px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .header-sep {
+            display: none; 
+        }
+
+        nav { 
+            display: flex; 
+            align-items: center; 
+            gap: 32px;
+        }
 
         nav a {
-            color: white;
+            color: rgba(255,255,255,0.65);
             text-decoration: none;
-            margin-left: 25px;
-            font-size: 0.9rem;
+            font-size: 14px;
             font-weight: 500;
-            transition: opacity 0.2s;
+            transition: color 0.2s ease;
         }
-        nav a:hover { opacity: 0.8; }
 
-        /* --- MAIN LAYOUT --- */
-        .main-container {
+        nav a:hover, nav a.active { 
+            color: white; 
+        }
+
+        .nav-cta {
+            background: white;
+            color: var(--navy);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 28px;
+            border-radius: 99px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ── MAIN ── */
+        main {
             flex: 1;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            justify-content: center;
+            padding: 48px 20px;
         }
 
-        /* Professional Card Design */
-        .login-card {
-            background-color: var(--card-bg);
+        .card {
+            background: var(--card);
             width: 100%;
-            max-width: 420px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px; /* Slight radius, not round */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Very subtle shadow */
-            padding: 40px;
+            max-width: 400px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 12px 32px rgba(26,35,126,0.07);
+            overflow: hidden;
+        }
+
+        .card-top-bar {
+            height: 4px;
+            background: var(--gold);
+        }
+
+        .card-body {
+            padding: 36px 36px 40px;
             text-align: center;
         }
 
-        /* Logo Area */
-        .logo-wrapper {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px auto;
+        .logo-ring {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 8px;
         }
 
-        .logo-wrapper img {
+        .logo-ring img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
 
-        .card-header h1 {
-            font-size: 1.5rem;
-            color: var(--primary-blue);
-            margin-bottom: 10px;
+        .card-title {
+            font-size: 21px;
             font-weight: 700;
+            color: var(--navy);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
         }
 
-        .card-header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
+        .card-subtitle {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 28px;
         }
 
-        /* --- BUTTONS --- */
-        .action-area {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        /* ── BUTTONS ── */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
 
         .btn {
             display: flex;
-            justify-content: center;
             align-items: center;
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 6px; /* Professional squared edges */
+            justify-content: center;
+            gap: 9px;
+            padding: 13px 20px;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.2s ease-in-out;
-            border: 1px solid transparent;
+            font-size: 13.5px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: all 0.18s ease;
         }
 
-        .btn i { margin-right: 10px; }
+        .btn i { font-size: 12px; }
 
-        /* Primary Button (Log In) */
         .btn-primary {
-            background-color: var(--primary-blue);
+            background: var(--navy);
             color: white;
+            box-shadow: 0 1px 3px rgba(26,35,126,0.25);
         }
+
         .btn-primary:hover {
-            background-color: var(--primary-blue-hover);
+            background: var(--navy-dark);
+            box-shadow: 0 4px 12px rgba(26,35,126,0.3);
+            transform: translateY(-1px);
         }
 
-        /* Secondary Button (Sign Up) */
         .btn-secondary {
-            background-color: white;
-            color: var(--primary-blue);
-            border: 1px solid var(--primary-blue);
+            background: white;
+            color: var(--navy);
+            border: 1.5px solid var(--navy);
         }
+
         .btn-secondary:hover {
-            background-color: #f5f5f5;
+            background: #EEF0FF;
+            transform: translateY(-1px);
         }
 
-        /* Tertiary (Guest) */
-        .guest-link {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
+        .divider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 2px 0;
+            font-size: 11px;
+            color: #C4C9D9;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .divider-row::before, .divider-row::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .btn-ghost {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 7px;
             text-decoration: none;
-            border-bottom: 1px dotted var(--text-muted);
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.15s, color 0.15s;
         }
-        .guest-link:hover { color: var(--primary-blue); border-bottom-color: var(--primary-blue); }
 
-        /* --- FOOTER --- */
+        .btn-ghost i { font-size: 11px; }
+        .btn-ghost:hover { background: #F4F5FA; color: var(--navy); }
+
+        /* ── FOOTER ── */
         footer {
-            background-color: #ffffff;
-            border-top: 1px solid var(--border-color);
-            padding: 40px 0;
-            color: var(--text-main);
-            font-size: 0.9rem;
+            background: #fff;
+            border-top: 1px solid var(--border);
         }
 
-        .footer-grid {
+        .footer-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 40px 28px 24px;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr; /* 4 Columns */
+            grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 40px;
         }
 
+        .footer-brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+        }
+
+        .footer-brand-desc {
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.75;
+            max-width: 220px;
+        }
+
         .footer-col h4 {
-            color: var(--primary-blue);
-            font-size: 0.85rem;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 15px;
+            letter-spacing: 0.12em;
+            color: var(--navy);
+            margin-bottom: 14px;
         }
 
         .footer-col ul { list-style: none; }
-        .footer-col li { margin-bottom: 8px; }
+
+        .footer-col li {
+            margin-bottom: 9px;
+            font-size: 12.5px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .footer-col li i { font-size: 10.5px; opacity: 0.45; width: 13px; }
 
         .footer-col a {
-            color: var(--text-muted);
+            color: var(--muted);
             text-decoration: none;
-            transition: color 0.2s;
+            transition: color 0.15s;
         }
-        .footer-col a:hover { color: var(--primary-blue); }
 
-        .legal-row {
+        .footer-col a:hover { color: var(--navy); }
+
+        .footer-bottom {
             max-width: 1200px;
-            margin: 30px auto 0;
-            padding: 20px 20px 0;
-            border-top: 1px solid #eee;
+            margin: 0 auto;
+            padding: 14px 28px;
+            border-top: 1px solid #EEF0F5;
             text-align: center;
-            color: #888;
-            font-size: 0.8rem;
+            font-size: 11.5px;
+            color: #A8AEBF;
         }
 
-        /* --- MODALS --- */
+        /* ── MODALS ── */
         .modal-overlay {
             display: none;
             position: fixed;
+            inset: 0;
             z-index: 9999;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); /* Simple dim */
+            background: rgba(10,15,50,0.5);
+            backdrop-filter: blur(3px);
             justify-content: center;
             align-items: center;
         }
+
+        .modal-overlay.show { display: flex; }
 
         .modal-box {
             background: white;
             width: 90%;
-            max-width: 500px;
-            border-radius: 6px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            max-width: 460px;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.18);
             overflow: hidden;
+            animation: modal-in 0.22s ease;
         }
 
-        .modal-header {
-            background: var(--bg-color);
+        @keyframes modal-in {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-head {
+            background: var(--navy);
+            border-bottom: 2px solid var(--gold);
             padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-header h2 { font-size: 1.1rem; color: var(--primary-blue); margin: 0; }
-        
-        .close-modal { cursor: pointer; font-size: 1.2rem; color: #888; }
-        .close-modal:hover { color: #333; }
+        .modal-head h2 { font-size: 15px; font-weight: 600; color: white; }
 
-        .modal-body { padding: 20px; line-height: 1.6; color: var(--text-main); }
+        .modal-close {
+            width: 26px; height: 26px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-            .header-info { display: none; } /* Simplified header for mobile */
-            .desktop-header-content { justify-content: center; }
-            .login-card { border: none; box-shadow: none; background: transparent; }
+        .modal-close:hover { background: rgba(255,255,255,0.18); color: white; }
+
+        .modal-body {
+            padding: 22px 24px;
+            font-size: 13.5px;
+            line-height: 1.75;
+            color: var(--muted);
+        }
+
+        .modal-body strong { color: var(--text); }
+        .modal-body p + p { margin-top: 6px; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 760px) {
+            .header-inner { padding: 0 20px; }
+            nav { display: none; }
+            .header-sep { display: none; }
+        }
+
+        @media (max-width: 640px) {
+            .footer-inner { grid-template-columns: 1fr 1fr; gap: 28px; }
+        }
+
+        @media (max-width: 400px) {
+            .footer-inner { grid-template-columns: 1fr; }
+            .card-body { padding: 28px 24px 32px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="desktop-header-content">
-            <div class="header-info">
-                <span id="current-date">--/--/----</span>
-                <span class="separator">|</span>
-                <span id="current-time">--:--</span>
-                <span class="separator">|</span>
-                <span><i class="fas fa-chart-line"></i> Visitor #7843</span>
+        <div class="header-inner">
+            <a href="landing.html" class="header-brand">
+                <i class="fas fa-cogs"></i>
+                <span>Retrieve</span>
+            </a>
+            
+            <div class="header-right">
+                <nav>
+                    <a href="landing.html" class="active">Home</a>
+                    <a href="#" id="about-link">About</a>
+                    <a href="#" id="contact-link">Contact</a>
+                </nav>
+                <a href="#" class="nav-cta">Report Item</a>
             </div>
-            <nav>
-                <a href="landing.html">Home</a>
-                <a href="#" id="about-link">About</a>
-                <a href="#" id="contact-link">Contact</a>
-            </nav>
         </div>
     </header>
 
-    <main class="main-container">
-        <div class="login-card">
-            
-            <div class="logo-wrapper">
-                <img src="images/logo.png" alt="Retrieve Logo">
-            </div>
+    <main>
+        <div class="card">
+            <div class="card-top-bar"></div>
+            <div class="card-body">
 
-            <div class="card-header">
-                <h1>Retrieve System</h1>
-                <p>Welcome to the centralized Lost & Found portal.<br>Please select an option to proceed.</p>
-            </div>
+                <div class="logo-ring">
+                    <img src="images/logo.png" alt="Retrieve Logo">
+                </div>
 
-            <div class="action-area">
-                <a href="login.html" class="btn btn-primary">
-                    <i class="fas fa-lock"></i> Secure Login
-                </a>
-                <a href="register.html" class="btn btn-secondary">
-                    <i class="fas fa-user-plus"></i> Create Account
-                </a>
-                <a href="homepage.html" class="guest-link">
-                    Continue as Guest Visitor
-                </a>
-            </div>
+                <h1 class="card-title">Retrieve System</h1>
+                <p class="card-subtitle">Welcome to the centralized Lost &amp; Found portal.<br>Please select an option to proceed.</p>
 
+                <div class="btn-group">
+                    <a href="login.html" class="btn btn-primary">
+                        <i class="fas fa-lock"></i> Secure Login
+                    </a>
+                    <a href="register.html" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </a>
+                    <div class="divider-row">or</div>
+                    <a href="homepage.html" class="btn-ghost">
+                        <i class="fas fa-eye"></i> Continue as Guest Visitor
+                    </a>
+                </div>
+
+            </div>
         </div>
     </main>
 
     <footer>
-        <div class="footer-grid">
+        <div class="footer-inner">
             <div class="footer-col">
-                <h4 style="color: var(--text-main);">Retrieve</h4>
-                <p style="color: var(--text-muted); line-height: 1.6;">
-                    The official institutional partner for reclaiming lost assets. Secure, efficient, and community-driven.
-                </p>
+                <div class="footer-brand-name">Retrieve</div>
+                <p class="footer-brand-desc">The official institutional partner for reclaiming lost assets. Secure, efficient, and community-driven.</p>
             </div>
             <div class="footer-col">
                 <h4>Navigation</h4>
@@ -326,7 +463,7 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>Support Center</h4>
+                <h4>Support</h4>
                 <ul>
                     <li><a href="#">Report Issue</a></li>
                     <li><a href="#">Lost Item FAQ</a></li>
@@ -338,19 +475,20 @@
                 <ul>
                     <li><i class="fas fa-envelope"></i> help@retrieve.org</li>
                     <li><i class="fas fa-phone"></i> (555) 123-4567</li>
+                    <li><i class="fas fa-building"></i> Room 304, Admin Bldg</li>
                 </ul>
             </div>
         </div>
-        <div class="legal-row">
-            <p>&copy; 2025 Retrieve Organization. All Rights Reserved. Iloilo City, Philippines.</p>
+        <div class="footer-bottom">
+            &copy; 2026 Retrieve Organization &nbsp;·&nbsp; All Rights Reserved
         </div>
     </footer>
 
     <div id="about-modal" class="modal-overlay">
         <div class="modal-box">
-            <div class="modal-header">
+            <div class="modal-head">
                 <h2>About Retrieve</h2>
-                <span class="close-modal">&times;</span>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <p>Retrieve is the official lost and found management system. This platform is designed to facilitate the efficient return of lost items to their rightful owners through a secure and transparent verification process.</p>
@@ -360,49 +498,33 @@
 
     <div id="contact-modal" class="modal-overlay">
         <div class="modal-box">
-            <div class="modal-header">
+            <div class="modal-head">
                 <h2>Contact Administration</h2>
-                <span class="close-modal">&times;</span>
+                <button class="modal-close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <p><strong>Email:</strong> admin@retrieve.example.com</p>
                 <p><strong>Office:</strong> Room 304, Admin Building</p>
-                <p><strong>Hours:</strong> Mon-Fri, 8:00 AM - 5:00 PM</p>
+                <p><strong>Hours:</strong> Mon – Fri, 8:00 AM – 5:00 PM</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Date/Time Script ---
-        function updateDateTime() {
-            const dateEl = document.getElementById('current-date');
-            const timeEl = document.getElementById('current-time');
-            if(dateEl && timeEl) {
-                const now = new Date();
-                dateEl.textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                timeEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            }
-        }
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
-
-        // --- Modal Logic ---
-        const aboutModal = document.getElementById('about-modal');
-        const contactModal = document.getElementById('contact-modal');
-        const closeBtns = document.querySelectorAll('.close-modal');
-
-        document.getElementById('about-link').onclick = () => aboutModal.style.display = "flex";
-        document.getElementById('contact-link').onclick = () => contactModal.style.display = "flex";
-
-        closeBtns.forEach(btn => btn.onclick = () => {
-            aboutModal.style.display = "none";
-            contactModal.style.display = "none";
+        document.getElementById('about-link').addEventListener('click', e => {
+            e.preventDefault();
+            document.getElementById('about-modal').classList.add('show');
         });
-
-        window.onclick = (e) => {
-            if (e.target == aboutModal) aboutModal.style.display = "none";
-            if (e.target == contactModal) contactModal.style.display = "none";
-        }
+        document.getElementById('contact-link').addEventListener('click', e => {
+            e.preventDefault();
+            document.getElementById('contact-modal').classList.add('show');
+        });
+        document.querySelectorAll('.modal-close').forEach(btn =>
+            btn.addEventListener('click', () => btn.closest('.modal-overlay').classList.remove('show'))
+        );
+        document.querySelectorAll('.modal-overlay').forEach(o =>
+            o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); })
+        );
     </script>
 </body>
 </html>

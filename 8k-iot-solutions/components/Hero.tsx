@@ -146,7 +146,7 @@ const Hero = memo(function Hero({
   return (
     <section 
       id="home" 
-      className="relative min-h-[100svh] flex flex-col items-center justify-between pt-16 md:pt-36 lg:pt-20 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white"
+      className="relative min-h-[100svh] flex flex-col items-center justify-start lg:justify-between pt-16 md:pt-36 lg:pt-20 overflow-hidden z-0 bg-gradient-to-b from-slate-50 via-blue-50/40 to-white gap-8 md:gap-12 lg:gap-0"
     >
       {/* Background Orbs */}
       {heroSection?.show_hero_orbs !== false && (
@@ -189,7 +189,7 @@ const Hero = memo(function Hero({
       )}
 
       {/* Top Section */}
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center flex-1">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center">
         
         {/* H1 with Spotlight Reveal */}
         <div className="relative group w-fit mx-auto">
@@ -411,7 +411,7 @@ const Hero = memo(function Hero({
         initial={{ opacity: 0 }}
         animate={mounted ? { opacity: 1 } : {}}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="w-full mt-16 lg:mt-24 pb-4 sm:pb-6 overflow-hidden relative z-10"
+        className="w-full pb-4 sm:pb-6 overflow-hidden relative z-10"
       >
         {/* Soft Fade Edges for seamless loop perception */}
         <div className="absolute inset-y-0 left-0 w-16 sm:w-40 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />

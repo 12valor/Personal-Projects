@@ -9,15 +9,14 @@ import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 
 const HARDWARE_FEATURES = [
   "IoT Project Development",
-  "Arduino Programming",
-  "Sensor Integration",
   "Hardware Prototyping",
+  "Project Consultation",
 ];
 
 const SOFTWARE_FEATURES = [
-  "Website Design",
+  "UI/UX Design",
   "Web Application Development",
-  "Embedded System Development",
+  "Project Consultation",
 ];
 
 const studioEase = [0.16, 1, 0.3, 1] as any;

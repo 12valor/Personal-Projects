@@ -37,8 +37,8 @@ const headerVariants: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 1.2,
-      ease: studioEase,
+      duration: 0.25,
+      ease: "easeOut",
     },
   },
 };
@@ -49,8 +49,8 @@ const leftCardVariants: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 1.2,
-      ease: studioEase,
+      duration: 0.25,
+      ease: "easeOut",
     },
   },
 };
@@ -61,8 +61,8 @@ const rightCardVariants: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 1.2,
-      ease: studioEase,
+      duration: 0.25,
+      ease: "easeOut",
     },
   },
 };
@@ -91,8 +91,8 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.h2 
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 1.2, ease: studioEase }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
               className="text-4xl md:text-[3rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
             >
               Hardware & Software
@@ -100,8 +100,8 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.p
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 1.2, ease: studioEase }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
               className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed"
             >
               Specialized solutions for student projects and enterprise clients.
@@ -116,7 +116,7 @@ const ServicesSection = memo(function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.1 }}
+            viewport={{ once: false, amount: 0.2 }}
           >
             {/* ========================================= */}
             {/* CARD 1: Hardware Services (FROM LEFT)     */}
@@ -163,8 +163,8 @@ const ServicesSection = memo(function ServicesSection() {
                   <ul className="space-y-4 md:space-y-6 flex-1">
                       {HARDWARE_FEATURES.map((feature, i) => (
                       <li key={i} className="flex items-center gap-4 md:gap-5 group/item transition-transform duration-300 hover:translate-x-1">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover/item:bg-blue-100">
-                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" strokeWidth={3} />
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-900 shadow-sm border border-blue-800 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover/item:bg-blue-800">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" strokeWidth={3} />
                           </div>
                           <span className="text-[15px] md:text-base lg:text-lg text-zinc-600 font-poppins font-medium leading-tight group-hover/item:text-zinc-900 transition-colors duration-300">{feature}</span>
                       </li>
@@ -218,8 +218,8 @@ const ServicesSection = memo(function ServicesSection() {
                   <ul className="space-y-4 md:space-y-6 flex-1">
                       {SOFTWARE_FEATURES.map((feature, i) => (
                       <li key={i} className="flex items-center gap-4 md:gap-5 group/item transition-transform duration-300 hover:translate-x-1">
-                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover/item:bg-blue-100">
-                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" strokeWidth={3} />
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-900 shadow-sm border border-blue-800 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover/item:bg-blue-800">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" strokeWidth={3} />
                           </div>
                           <span className="text-[15px] md:text-base lg:text-lg text-zinc-600 font-poppins font-medium leading-tight group-hover/item:text-zinc-900 transition-colors duration-300">{feature}</span>
                       </li>

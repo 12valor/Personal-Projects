@@ -411,7 +411,7 @@ const Hero = memo(function Hero({
         initial={{ opacity: 0 }}
         animate={mounted ? { opacity: 1 } : {}}
         transition={{ duration: 0.8, delay: 0.5 }}
-        className="w-full pb-4 sm:pb-6 overflow-hidden relative z-10"
+        className="w-full pb-4 sm:pb-6 lg:mt-8 overflow-hidden relative z-10"
       >
         {/* Soft Fade Edges for seamless loop perception */}
         <div className="absolute inset-y-0 left-0 w-16 sm:w-40 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />

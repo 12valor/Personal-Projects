@@ -8,13 +8,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const ADMIN_EMAILS = ['evangelista.agdiaz@gmail.com', 'jerowamelo11@gmail.com'];
+
 export async function sendAdminLoginNotification(ip: string, userAgent: string) {
-  const adminEmail = 'evangelista.agdiaz@gmail.com';
   const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' });
 
   const mailOptions = {
     from: process.env.GMAIL_USER,
-    to: adminEmail,
+    to: ADMIN_EMAILS.join(', '),
     subject: `⚠️ Admin Access Detected - 8K IoT Solutions`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
@@ -40,11 +41,9 @@ export async function sendAdminLoginNotification(ip: string, userAgent: string) 
 }
 
 export async function sendTwoFactorCode(code: string) {
-  const adminEmail = 'evangelista.agdiaz@gmail.com';
-  
   const mailOptions = {
     from: process.env.GMAIL_USER,
-    to: adminEmail,
+    to: ADMIN_EMAILS.join(', '),
     subject: `🔐 Your 8K Admin 2FA Code: ${code}`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 30px; border-radius: 10px; background-color: #ffffff;">

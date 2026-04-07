@@ -72,3 +72,4 @@ export async function toggleFAQStatus(id: string, currentStatus: boolean) {
   revalidatePath("/admin/faq");
   revalidatePath("/");
 }
+

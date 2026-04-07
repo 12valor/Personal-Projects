@@ -109,3 +109,4 @@ export async function reorderSchoolLogos(items: { id: string, order: number }[])
   revalidatePath('/admin/school-logos');
   revalidatePath('/');
 }
+

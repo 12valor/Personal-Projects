@@ -52,3 +52,4 @@ export async function updateHeroSection(formData: FormData) {
     console.error("Hero Settings Error:", error.message);
   }
 }
+

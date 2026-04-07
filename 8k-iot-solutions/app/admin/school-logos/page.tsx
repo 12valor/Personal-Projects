@@ -158,3 +158,4 @@ export default async function SchoolLogosAdminPage() {
     </div>
   );
 }
+

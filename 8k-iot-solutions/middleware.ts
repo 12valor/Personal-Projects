@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { decrypt, SESSION_COOKIE_NAME } from '@/lib/auth';
+import { decrypt, SESSION_COOKIE_NAME } from '@/lib/auth-core';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

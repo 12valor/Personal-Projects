@@ -3,8 +3,12 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { saveImageFile } from "@/lib/upload";
+import { getSession } from "@/lib/auth";
 
 export async function createTeamMember(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const name = formData.get("name") as string;
   const role = formData.get("role") as string;
   const bio = formData.get("bio") as string;
@@ -47,6 +51,9 @@ export async function createTeamMember(formData: FormData) {
 }
 
 export async function updateTeamMember(id: string, formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const name = formData.get("name") as string;
   const role = formData.get("role") as string;
   const bio = formData.get("bio") as string;
@@ -95,6 +102,9 @@ export async function updateTeamMember(id: string, formData: FormData) {
 }
 
 export async function deleteTeamMember(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await (prisma as any).teamMember.delete({
     where: { id },
   });
@@ -104,6 +114,9 @@ export async function deleteTeamMember(id: string) {
 }
 
 export async function toggleTeamMemberStatus(id: string, currentStatus: boolean) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await (prisma as any).teamMember.update({
     where: { id },
     data: {

@@ -6,8 +6,12 @@ import { redirect } from 'next/navigation';
 import fs from 'fs/promises';
 import path from 'path';
 import { saveImageFile } from '@/lib/upload';
+import { getSession } from '@/lib/auth';
 
 export async function saveSchoolLogo(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const id = formData.get('id') as string | null;
   const name = formData.get('name') as string | null;
   const link = formData.get('link') as string | null;
@@ -58,6 +62,9 @@ export async function saveSchoolLogo(formData: FormData) {
 }
 
 export async function deleteSchoolLogo(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const prismaClient = prisma as any;
   if (!prismaClient.schoolLogo) return;
   
@@ -83,6 +90,9 @@ export async function deleteSchoolLogo(id: string) {
 }
 
 export async function reorderSchoolLogos(items: { id: string, order: number }[]) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const prismaClient = prisma as any;
   if (!prismaClient.schoolLogo) return;
 

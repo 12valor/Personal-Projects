@@ -2,8 +2,12 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { getSession } from '@/lib/auth';
 
 export async function updateHeroSection(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const data = {
     heading_part_1: formData.get('heading_part_1') as string,
     heading_highlight_1: formData.get('heading_highlight_1') as string,

@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { login } from '@/lib/auth';
 
 export const metadata = {
   title: "Admin Login",
@@ -11,20 +11,13 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
   async function handleLogin(formData: FormData) {
     'use server';
     const password = formData.get('password') as string;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    const isAuthorized = password === 'agbogie' || password === 'jerowbogie' || (adminPassword && password === adminPassword);
+    const isAuthorized = await login(password);
     
     if (isAuthorized) {
-      // Set an auth cookie
-      const cookieStore = await cookies();
-      cookieStore.set('admin_auth', 'true', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 1 week
-      });
       redirect('/admin');
     } else {
+      // Artificial delay to slow down brute force
+      await new Promise(resolve => setTimeout(resolve, 1000));
       redirect('/admin/login?error=invalid');
     }
   }

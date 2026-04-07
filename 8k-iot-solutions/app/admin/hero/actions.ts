@@ -4,20 +4,30 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { saveImageFile } from '@/lib/upload';
+import { getSession } from '@/lib/auth';
 
 export async function getHeroImages() {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   return await (prisma as any).heroImage.findMany({
     orderBy: { createdAt: 'desc' },
   });
 }
 
 export async function getActiveHeroImage() {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   return await (prisma as any).heroImage.findFirst({
     where: { isActive: true },
   });
 }
 
 export async function saveHeroImage(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const id = formData.get('id') as string | null;
   const urlInput = formData.get('url') as string | null;
   const alt = formData.get('alt') as string | null;
@@ -63,6 +73,9 @@ export async function saveHeroImage(formData: FormData) {
 }
 
 export async function deleteHeroImage(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   // Check if we're deleting the active image
   const image = await (prisma as any).heroImage.findUnique({ where: { id } });
   
@@ -86,6 +99,9 @@ export async function deleteHeroImage(id: string) {
 }
 
 export async function toggleActiveHeroImage(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const image = await (prisma as any).heroImage.findUnique({ where: { id } });
   if (!image) return;
 

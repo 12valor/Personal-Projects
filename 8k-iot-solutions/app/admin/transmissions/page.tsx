@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import AdminTabs from '../components/AdminTabs';
+import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,9 @@ export default async function TransmissionsPage() {
 
   async function handleToggleRead(formData: FormData) {
     'use server';
+    const session = await getSession();
+    if (!session) throw new Error("Unauthorized");
+
     const id = formData.get('id') as string;
     const currentStatus = formData.get('isRead') === 'true';
     if (id) {
@@ -29,6 +33,9 @@ export default async function TransmissionsPage() {
 
   async function handleDelete(formData: FormData) {
     'use server';
+    const session = await getSession();
+    if (!session) throw new Error("Unauthorized");
+
     const id = formData.get('id') as string;
     if (id) {
       await (prisma as any).inquiry.delete({ where: { id } });

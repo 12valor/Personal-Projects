@@ -3,8 +3,12 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { put, del } from '@vercel/blob';
+import { getSession } from '@/lib/auth';
 
 export async function createHeroCard(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  
   try {
     const type = formData.get('type') as string;
     const content = formData.get('content') as string;
@@ -45,6 +49,9 @@ export async function createHeroCard(formData: FormData) {
 }
 
 export async function updateHeroCard(id: string, formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     const type = formData.get('type') as string;
     const content = formData.get('content') as string;
@@ -93,6 +100,9 @@ export async function updateHeroCard(id: string, formData: FormData) {
 }
 
 export async function deleteHeroCard(id: string, imageUrl?: string | null) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     // Clean up Vercel Blob if exists
     if (imageUrl && imageUrl.includes('public.blob.vercel-storage.com')) {
@@ -108,6 +118,9 @@ export async function deleteHeroCard(id: string, imageUrl?: string | null) {
 }
 
 export async function toggleHeroCardStatus(id: string, isActive: boolean) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await (prisma as any).heroCard.update({
     where: { id },
     data: { isActive: !isActive }

@@ -4,16 +4,18 @@ import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { getSession, logout as authLogout } from '@/lib/auth';
 import { saveImageFile } from '@/lib/upload';
 
 export async function logout() {
-  const cookieStore = await cookies();
-  cookieStore.delete('admin_auth');
+  await authLogout();
   redirect('/admin/login');
 }
 
 export async function saveProject(prevState: any, formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  
   try {
     const id = formData.get('id') as string | null;
     const title = formData.get('title') as string;
@@ -123,6 +125,9 @@ export async function saveProject(prevState: any, formData: FormData) {
 // --- TESTIMONIAL ACTIONS ---
 
 export async function saveTestimonial(formData: FormData) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const id = formData.get('id') as string | null;
   const name = formData.get('name') as string;
   const position = formData.get('position') as string | null;
@@ -178,6 +183,9 @@ export async function saveTestimonial(formData: FormData) {
 }
 
 export async function deleteTestimonial(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   if (!(prisma as any).testimonial) return;
   
   // @ts-ignore

@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { sendAdminLoginNotification } from './email';
 
 const AUTH_SECRET = process.env.AUTH_SECRET || 'fallback-secret-for-development-change-me';
 const key = new TextEncoder().encode(AUTH_SECRET);
@@ -39,6 +40,16 @@ export async function login(password: string) {
       sameSite: 'lax',
       path: '/',
     });
+
+    // Send email notification (fire and forget on the server)
+    const headerStore = await headers();
+    const ip = headerStore.get('x-forwarded-for') ?? 'unknown_ip';
+    const userAgent = headerStore.get('user-agent') ?? 'unknown_agent';
+    
+    sendAdminLoginNotification(ip, userAgent).catch(err => {
+      console.error('Failed to send admin login notification:', err);
+    });
+
     return true;
   }
   return false;

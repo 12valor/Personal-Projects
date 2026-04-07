@@ -25,16 +25,15 @@ export async function decrypt(input: string): Promise<any> {
 export async function login(password: string) {
   const adminPassword = process.env.ADMIN_PASSWORD;
   
-  // Only compare with environment variable, no hardcoded passwords allowed
   if (adminPassword && password === adminPassword) {
-    // Create the session
-    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1 week
+    // Session token stays valid for 1 week on server
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); 
     const session = await encrypt({ role: 'admin', expires });
 
-    // Save the session in a cookie
+    // NO "expires" or "maxAge" here makes it a Session Cookie
+    // Browsers will delete it when the tab/browser is closed
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE_NAME, session, {
-      expires,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -65,7 +64,7 @@ export async function updateSession(request: NextRequest) {
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   if (!session) return;
 
-  // Refresh the session so it doesn't expire
+  // Refresh the session token data but keep the cookie as "session" (no expires)
   const parsed = await decrypt(session);
   parsed.expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const res = NextResponse.next();
@@ -73,7 +72,9 @@ export async function updateSession(request: NextRequest) {
     name: SESSION_COOKIE_NAME,
     value: await encrypt(parsed),
     httpOnly: true,
-    expires: parsed.expires,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
   });
   return res;
 }

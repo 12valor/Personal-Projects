@@ -113,8 +113,8 @@ export default async function TransmissionsPage() {
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-zinc-500">
                         {inquiryTypeLabels[inquiry.inquiryType] || inquiry.inquiryType}
                       </td>
-                      <td className="px-3 py-4 text-sm text-zinc-500 max-w-xs">
-                        <p className="truncate" title={inquiry.message}>
+                      <td className="px-3 py-4 text-sm text-zinc-500 max-w-sm lg:max-w-md">
+                        <p className="whitespace-normal break-words line-clamp-3" title={inquiry.message}>
                           {inquiry.message}
                         </p>
                       </td>

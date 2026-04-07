@@ -1,121 +1,106 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronLeft, ShieldCheck, Lock, Eye, FileText, Bell } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - 8K IoT Solutions',
-  description: 'How we handle your data and protect your privacy at 8K IoT Solutions.',
+  title: 'Privacy Policy | 8K IoT Solutions',
+  description: 'Formal privacy policy governing the data practices of 8K IoT Solutions.',
 };
 
 export default function PrivacyPolicy() {
   return (
-    <div className="relative min-h-screen bg-white font-poppins selection:bg-brand-100">
-      {/* Blueprint grid background */}
-      <div 
-        className="fixed inset-0 z-0 pointer-events-none opacity-[0.4]" 
-        style={{
-          backgroundImage: 'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-        aria-hidden="true"
-      />
+    <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-zinc-100 antialiased">
+      <div className="max-w-3xl mx-auto px-8 pt-24 pb-32">
+        {/* Simple Navigation */}
+        <nav className="mb-16">
+          <Link 
+            href="/" 
+            className="text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest"
+          >
+            ← Back to Home
+          </Link>
+        </nav>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
-        {/* Navigation */}
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-brand-900 transition-colors mb-12 group"
-        >
-          <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-medium">Back to Home</span>
-        </Link>
-
-        {/* Header */}
-        <header className="mb-16">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-brand-50 rounded-full text-brand-700 mb-6 border border-brand-100">
-            <ShieldCheck size={20} />
-            <span className="text-sm font-semibold tracking-tight uppercase px-1">Legal Oversight</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-zinc-900 tracking-tight mb-6">
+        {/* Document Header */}
+        <header className="mb-16 border-b border-zinc-100 pb-12">
+          <h1 className="text-3xl font-bold tracking-tight mb-4 text-zinc-900">
             Privacy Policy
           </h1>
-          <p className="text-lg text-slate-500 leading-relaxed max-w-2xl">
-            At 8K IoT Solutions, we are committed to protecting your personal information and your right to privacy. This policy outlines our data practices.
-          </p>
-          <div className="h-1 w-24 bg-brand-900 mt-8 rounded-full" />
+          <div className="flex flex-col gap-1 text-sm text-zinc-500 font-medium">
+            <span>Effective Date: April 7, 2026</span>
+            <span>Last Updated: April 7, 2026</span>
+          </div>
         </header>
 
-        {/* Content */}
-        <div className="space-y-16">
+        {/* Document Content */}
+        <div className="space-y-12 text-zinc-600 leading-relaxed text-[15px]">
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-slate-100 rounded-lg text-slate-900">
-                <Lock size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Data Collection</h2>
-            </div>
-            <div className="prose prose-slate max-w-none text-slate-500 leading-relaxed">
+            <p className="mb-6">
+              This Privacy Policy (the &quot;Policy&quot;) outlines the practices of 8K IoT Solutions (&quot;the Studio&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) regarding the collection, use, and disclosure of personal information provided by users (&quot;you&quot; or &quot;your&quot;) through our website and professional service engagements.
+            </p>
+            <p>
+              By accessing our services, you acknowledge and agree to the terms set forth in this document.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">1.0 Information Collection</h2>
+            <div className="space-y-4">
               <p>
-                We collect personal information that you voluntarily provide to us when you express an interest in obtaining information about us or our products and services, when you participate in activities on our website (such as filling out a contact form), or otherwise when you contact us.
+                We collect information necessary for the provision of hardware and software development services. This include:
               </p>
-              <ul className="list-disc pl-6 space-y-3 mt-6">
-                <li>Personal identifiers (name, email address, phone number).</li>
-                <li>Professional information related to your hardware or software project.</li>
-                <li>Technical data such as IP addresses, browser types, and device information.</li>
+              <ul className="list-none space-y-3 pl-0 border-l border-zinc-100 pl-6 ml-1">
+                <li><span className="font-bold text-zinc-800">1.1 Identity Data:</span> Full names and professional titles.</li>
+                <li><span className="font-bold text-zinc-800">1.2 Contact Data:</span> Email addresses and communication logs.</li>
+                <li><span className="font-bold text-zinc-800">1.3 Project Data:</span> Technical specifications, hardware constraints, and software requirements provided during consultations.</li>
+                <li><span className="font-bold text-zinc-800">1.4 Technical Data:</span> Internet Protocol (IP) addresses, browser types, and usage patterns for security and performance auditing.</li>
               </ul>
             </div>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-slate-100 rounded-lg text-slate-900">
-                <Eye size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">How We Use Your Information</h2>
-            </div>
-            <div className="prose prose-slate max-w-none text-slate-500 leading-relaxed">
-              <p>
-                We use personal information collected via our website for a variety of business purposes described below:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-6">
-                <li>To provide and deliver the services you request.</li>
-                <li>To respond to user inquiries and offer project support.</li>
-                <li>To send administrative information, such as project updates or policy changes.</li>
-                <li>To protect our services and prevent fraudulent activity.</li>
-              </ul>
-            </div>
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">2.0 Use of Information</h2>
+            <p className="mb-4">
+              Your data is processed solely for the following professional purposes:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>Facilitating hardware prototyping and software development cycles.</li>
+              <li>Responding to specific inquiries regarding IoT integrations.</li>
+              <li>Maintaining project security and preventing unauthorized access to development environments.</li>
+              <li>Ensuring compliance with statutory obligations.</li>
+            </ul>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-slate-100 rounded-lg text-slate-900">
-                <FileText size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Cookies and Tracking</h2>
-            </div>
-            <p className="text-slate-500 leading-relaxed">
-              We may use cookies and similar tracking technologies to access or store information. Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Policy. We use performance and analytical cookies to understand how visitors interact with our website to improve our IoT project showcases.
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">3.0 Data Protection & Security</h2>
+            <p>
+              We implement industry-standard encryption and physical security measures to protect your data from unauthorized disclosure. Access to project-related information is restricted to authorized personnel directly involved in the service delivery. However, no method of transmission over the internet or electronic storage is 100% secure; thus, we cannot guarantee absolute security.
             </p>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-slate-100 rounded-lg text-slate-900">
-                <Bell size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Updates to This Policy</h2>
-            </div>
-            <p className="text-slate-500 leading-relaxed">
-              We may update this privacy policy from time to time. The updated version will be indicated by an updated "Revised" date and the updated version will be effective as soon as it is accessible. We encourage you to review this privacy policy frequently to be informed of how we are protecting your information.
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">4.0 Disclosure to Third Parties</h2>
+            <p>
+              8K IoT Solutions does not sell or lease personal data to third-party marketing entities. Information may be shared with trusted service providers (e.g., cloud hosting or component vendors) strictly as required to fulfill project deliverables, provided such parties adhere to equivalent confidentiality standards.
             </p>
           </section>
 
-          <div className="pt-8 border-t border-slate-100">
-            <p className="text-sm text-slate-400 italic">
-              Last updated: April 3, 2026. For any questions regarding this policy, please contact us at 8kiotsolutions@gmail.com.
+          <section>
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">5.0 Governing Law & Jurisdiction</h2>
+            <p>
+              This Policy shall be governed by and construed in accordance with the laws of the Republic of the Philippines. Any disputes arising from or relating to the subject matter of this Policy shall be subject to the exclusive jurisdiction of the courts located in Talisay City, Negros Occidental.
             </p>
-          </div>
+          </section>
+
+          <section className="pt-12 border-t border-zinc-100">
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-4">Contact Information</h2>
+            <p className="text-sm">
+              For legal inquiries or data access requests, please contact:<br />
+              <span className="font-bold text-zinc-900">8K IoT Solutions Legal Desk</span><br />
+              Email: iotsolutions0@gmail.com<br />
+              Location: Talisay City, Negros Occidental, PH
+            </p>
+          </section>
         </div>
       </div>
     </div>

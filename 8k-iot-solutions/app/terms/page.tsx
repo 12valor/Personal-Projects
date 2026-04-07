@@ -1,122 +1,106 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronLeft, Gavel, Scale, AlertTriangle, Cloud, MessageSquare } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - 8K IoT Solutions',
-  description: 'The terms and conditions governing your use of 8K IoT Solutions services.',
+  title: 'Terms of Service | 8K IoT Solutions',
+  description: 'Terms and conditions governing the professional services and website use of 8K IoT Solutions.',
 };
 
 export default function TermsOfService() {
   return (
-    <div className="relative min-h-screen bg-white font-poppins selection:bg-brand-100">
-      {/* Blueprint grid background */}
-      <div 
-        className="fixed inset-0 z-0 pointer-events-none opacity-[0.4]" 
-        style={{
-          backgroundImage: 'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-        aria-hidden="true"
-      />
+    <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-zinc-100 antialiased">
+      <div className="max-w-3xl mx-auto px-8 pt-24 pb-32">
+        {/* Simple Navigation */}
+        <nav className="mb-16">
+          <Link 
+            href="/" 
+            className="text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors uppercase tracking-widest"
+          >
+            ← Back to Home
+          </Link>
+        </nav>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
-        {/* Navigation */}
-        <Link 
-          href="/" 
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-brand-900 transition-colors mb-12 group"
-        >
-          <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-medium">Back to Home</span>
-        </Link>
-
-        {/* Header */}
-        <header className="mb-16">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-slate-900 rounded-full text-white mb-6">
-            <Gavel size={20} />
-            <span className="text-sm font-semibold tracking-tight uppercase px-1">Service Protocols</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-zinc-900 tracking-tight mb-6">
+        {/* Document Header */}
+        <header className="mb-16 border-b border-zinc-100 pb-12">
+          <h1 className="text-3xl font-bold tracking-tight mb-4 text-zinc-900">
             Terms of Service
           </h1>
-          <p className="text-lg text-slate-500 leading-relaxed max-w-2xl">
-            By accessing or using the services provided by 8K IoT Solutions, you agree to comply with and be bound by the following terms and conditions.
-          </p>
-          <div className="h-1 w-24 bg-slate-900 mt-8 rounded-full" />
+          <div className="flex flex-col gap-1 text-sm text-zinc-500 font-medium">
+            <span>Effective Date: April 7, 2026</span>
+            <span>Last Updated: April 7, 2026</span>
+          </div>
         </header>
 
-        {/* Content */}
-        <div className="space-y-16">
+        {/* Document Content */}
+        <div className="space-y-12 text-zinc-600 leading-relaxed text-[15px]">
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-brand-50 rounded-lg text-brand-900">
-                <Scale size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Acceptance of Terms</h2>
-            </div>
-            <div className="prose prose-slate max-w-none text-slate-500 leading-relaxed">
+            <p className="mb-6">
+              These Terms of Service (&quot;Terms&quot;) constitute a legally binding agreement between you and 8K IoT Solutions (&quot;the Studio&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) regarding your use of our website and the procurement of our professional hardware and software services.
+            </p>
+            <p>
+              By utilizing our services, you agree to be bound by these Terms. If you do not agree, you must cease all use of our services immediately.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">1.0 Professional Services</h2>
+            <div className="space-y-4">
               <p>
-                8K IoT Solutions ("we," "us," or "our") provides hardware and software project services. Your access to and use of our website and services is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.
+                8K IoT Solutions provides specialized engineering and development services including, but not limited to:
+              </p>
+              <ul className="list-none space-y-3 pl-0 border-l border-zinc-100 pl-6 ml-1">
+                <li><span className="font-bold text-zinc-800">1.1 Hardware Prototyping:</span> Circuit design, PCB layout, and component sourcing.</li>
+                <li><span className="font-bold text-zinc-800">1.2 Software Development:</span> Firmware, web dashboards, and mobile application interfaces.</li>
+                <li><span className="font-bold text-zinc-800">1.3 IoT Integration:</span> End-to-end connectivity solutions and data management.</li>
+              </ul>
+              <p className="text-sm italic">
+                Specific project deliverables and timelines are governed by separate Service Level Agreements (SLAs) or project-specific contracts.
               </p>
             </div>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-brand-50 rounded-lg text-brand-900">
-                <Cloud size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Professional Services</h2>
-            </div>
-            <div className="prose prose-slate max-w-none text-slate-500 leading-relaxed">
-              <p>
-                Our services include the design, prototyping, and development of IoT solutions. Projects are handled based on individual agreements. While we strive for technical excellence, project timelines and deliverables are subject to the specific scope defined during the consultation phase.
-              </p>
-            </div>
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">2.0 Intellectual Property</h2>
+            <p className="mb-4">
+              Unless otherwise specified in a written contract:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>All preliminary designs, source code, and CAD files generated by the Studio remain the intellectual property of 8K IoT Solutions until full payment is rendered.</li>
+              <li>Trademarks, logos, and website content are protected by copyright and may not be reproduced without express written consent.</li>
+            </ul>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-brand-50 rounded-lg text-brand-900">
-                <AlertTriangle size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">User Conduct</h2>
-            </div>
-            <p className="text-slate-500 leading-relaxed">
-              You agree not to use our services for any purpose that is unlawful or prohibited by these terms. You may not use the Service in any manner that could damage, disable, overburden, or impair the Service or interfere with any other party's use and enjoyment of the Service.
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">3.0 Limitation of Liability</h2>
+            <p>
+              To the maximum extent permitted by law, 8K IoT Solutions shall not be held liable for any indirect, incidental, or consequential damages resulting from hardware failures, software bugs, or data loss encountered during or after the implementation of a project. Our total liability for any claim shall not exceed the amount paid for the specific service in question.
             </p>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-brand-50 rounded-lg text-brand-900">
-                <MessageSquare size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Intellectual Property</h2>
-            </div>
-            <p className="text-slate-500 leading-relaxed">
-              The Service and its original content, features, and functionality are and will remain the exclusive property of 8K IoT Solutions and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of 8K IoT Solutions.
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">4.0 Termination of Service</h2>
+            <p>
+              We reserve the right to suspend or terminate services at our discretion if these Terms are breached, or if project requirements evolve beyond the initial agreed scope without mutual adjustment of terms.
             </p>
           </section>
 
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-2 bg-brand-50 rounded-lg text-brand-900">
-                <Gavel size={22} />
-              </div>
-              <h2 className="text-2xl font-bold text-zinc-900">Termination</h2>
-            </div>
-            <p className="text-slate-500 leading-relaxed">
-              We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. All provisions of the Terms which by their nature should survive termination shall survive termination.
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-6 underline decoration-zinc-100 underline-offset-8">5.0 Governing Law & Submission to Jurisdiction</h2>
+            <p>
+              These Terms shall be interpreted and enforced under the laws of the Republic of the Philippines. By using our services, you irrevocably submit to the exclusive jurisdiction of the regional trial courts of Talisay City, Negros Occidental for the resolution of any legal proceedings.
             </p>
           </section>
 
-          <div className="pt-8 border-t border-slate-100">
-            <p className="text-sm text-slate-400 italic">
-              Last updated: April 3, 2026. Continued use of 8K IoT Solutions signifies your agreement to these terms.
+          <section className="pt-12 border-t border-zinc-100">
+            <h2 className="text-zinc-900 font-bold uppercase tracking-wider text-xs mb-4">Contractual Inquiries</h2>
+            <p className="text-sm">
+              For questions regarding these terms or to request a formal service agreement, please contact:<br />
+              <span className="font-bold text-zinc-900">8K IoT Solutions Administration</span><br />
+              Email: iotsolutions0@gmail.com<br />
+              Location: Talisay City, Negros Occidental, PH
             </p>
-          </div>
+          </section>
         </div>
       </div>
     </div>

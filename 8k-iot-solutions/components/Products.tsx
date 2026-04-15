@@ -79,83 +79,94 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
 
 
   return (
-    <section className="relative py-24">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {products.map((product, idx) => {
-          const features = JSON.parse(product.features || "[]");
-          return (
-            <div
-              key={product.id}
-              className="group relative bg-white flex flex-col transition-all duration-300 hover:bg-zinc-50 border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md h-full"
-            >
-              {/* Product Image Section */}
-              <div className="relative h-56 w-full overflow-hidden bg-zinc-100 p-6">
-                <AntigravityCore />
-                <div className="absolute inset-0 z-0 select-none pointer-events-none opacity-[0.03]" 
-                  style={{
-                    backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
-                  }}
-                />
-                
-                {product.imageUrl && (
-                  <div className="relative w-full h-full border border-zinc-200 bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
-                    />
-                  </div>
-                )}
-              </div>
+    <section className="relative pt-4 pb-24">
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {products.map((product, idx) => {
+            const features = JSON.parse(product.features || "[]");
+            return (
+              <div
+                key={product.id}
+                className="group relative bg-white flex flex-col transition-all duration-300 hover:bg-zinc-50 border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md h-full"
+              >
+                {/* Product Image Section */}
+                <div className="relative h-56 w-full overflow-hidden bg-zinc-100 p-6">
+                  <AntigravityCore />
+                  <div className="absolute inset-0 z-0 select-none pointer-events-none opacity-[0.03]" 
+                    style={{
+                      backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
+                      backgroundSize: '24px 24px',
+                    }}
+                  />
+                  
+                  {product.imageUrl && (
+                    <div className="relative w-full h-full border border-zinc-200 bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
+                      />
+                    </div>
+                  )}
+                </div>
 
-              {/* Content Container */}
-              <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
-                <div className="mb-10">
-                  <div className="flex items-baseline justify-between mb-8 gap-4">
-                    <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
-                      {product.name}
-                    </h3>
-                    {product.price && (
-                      <div className="flex-shrink-0">
-                        <span className="text-3xl font-bold text-zinc-950 font-poppins tabular-nums">
-                          {product.price.split('/')[0]}
-                        </span>
+                {/* Content Container */}
+                <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
+                  <div className="mb-10">
+                    <div className="flex items-baseline justify-between mb-8 gap-4">
+                      <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
+                        {product.name}
+                      </h3>
+                      {product.price && (
+                        <div className="flex-shrink-0">
+                          <span className="text-3xl font-bold text-zinc-950 font-poppins tabular-nums">
+                            {product.price.split('/')[0]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <p className="text-zinc-500 font-medium text-base leading-relaxed mb-8 max-w-md">
+                      {product.description}
+                    </p>
+
+                    <div className="space-y-3 mb-10">
+                      <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest block mb-4 border-b border-zinc-100 pb-2">Core Specifications</span>
+                      <div className="grid grid-cols-1 gap-y-3">
+                         {features.map((f: string, i: number) => (
+                           <div key={i} className="flex items-center gap-3 group/feat">
+                              <div className="w-1 h-1 rounded-full bg-zinc-300 group-hover/feat:bg-[#1e3a8a] transition-colors" />
+                              <span className="text-sm font-medium text-zinc-600 group-hover/feat:text-zinc-950 transition-colors">{f}</span>
+                           </div>
+                         ))}
                       </div>
-                    )}
-                  </div>
-
-                  <p className="text-zinc-500 font-medium text-base leading-relaxed mb-8 max-w-md">
-                    {product.description}
-                  </p>
-
-                  <div className="space-y-3 mb-10">
-                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest block mb-4 border-b border-zinc-100 pb-2">Core Specifications</span>
-                    <div className="grid grid-cols-1 gap-y-3">
-                       {features.map((f: string, i: number) => (
-                         <div key={i} className="flex items-center gap-3 group/feat">
-                            <div className="w-1 h-1 rounded-full bg-zinc-300 group-hover/feat:bg-[#1e3a8a] transition-colors" />
-                            <span className="text-sm font-medium text-zinc-600 group-hover/feat:text-zinc-950 transition-colors">{f}</span>
-                         </div>
-                       ))}
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center">
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-base transition-all duration-300 hover:bg-[#172554] active:scale-[0.98] shadow-lg shadow-[#1e3a8a]/10"
-                  >
-                    <span>Secure Integration</span>
-                    <ArrowRight size={18} strokeWidth={2} />
-                  </button>
+                  <div className="flex items-center">
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-base transition-all duration-300 hover:bg-[#172554] active:scale-[0.98] shadow-lg shadow-[#1e3a8a]/10"
+                    >
+                      <span>Secure Integration</span>
+                      <ArrowRight size={18} strokeWidth={2} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
+           <h2 className="text-5xl md:text-8xl font-black text-zinc-950 tracking-tighter leading-none mb-6">
+             PRODUCTS<br/>COMING SOON
+           </h2>
+           <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-lg">
+             Our engineers are currently stress-testing the next generation of hardware modules. Deployments resume shortly.
+           </p>
+        </div>
+      )}
 
       <ContactModal 
         isOpen={isModalOpen}

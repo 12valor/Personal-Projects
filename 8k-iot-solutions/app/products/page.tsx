@@ -32,7 +32,7 @@ export default async function ProductsPage() {
       {/* Spacer for fixed navbar */}
       <div className="relative z-10 h-[80px] md:h-[100px]" />
       
-      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-10 lg:px-16 py-12">
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-10 lg:px-16 py-8">
         
         {/* Header Section */}
         <PageHeaderParallax>
@@ -47,9 +47,9 @@ export default async function ProductsPage() {
             
             <ProjectBreadcrumbs currentPage="Software Products" />
             
-            <div className="mt-8 md:mt-16 border-b border-zinc-200 pb-12">
+            <div className="mt-4 md:mt-8 border-b border-zinc-200 pb-8">
               <div className="max-w-3xl text-left">
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-zinc-950 mb-8">
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-zinc-950 mb-6">
                   Ready-to-deploy <br />
                   <span className="text-zinc-300">Software Units.</span>
                 </h1>
@@ -62,12 +62,12 @@ export default async function ProductsPage() {
         </PageHeaderParallax>
 
         {/* Product Showcase */}
-        <div className="mt-12">
+        <div className="mt-4">
           <Products initialProducts={products} />
         </div>
 
         {/* Why choose section */}
-        <div className="mt-16 mb-20 md:grid md:grid-cols-3 gap-12 border-t border-zinc-200 pt-12">
+        <div className="mt-8 mb-20 md:grid md:grid-cols-3 gap-12 border-t border-zinc-200 pt-8">
            <div>
               <h2 className="text-3xl font-bold text-zinc-950 font-poppins mb-6">Why our pre-made software?</h2>
               <p className="text-zinc-500 leading-relaxed font-medium">

@@ -45,7 +45,6 @@ export default async function ProductsPage() {
               Back to Home
             </Link>
             
-            <ProjectBreadcrumbs currentPage="Software Products" />
             
             <div className="mt-4 md:mt-8 border-b border-zinc-200 pb-8">
               <div className="max-w-3xl text-left">

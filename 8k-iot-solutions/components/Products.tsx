@@ -112,12 +112,12 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
               {/* Content Container */}
               <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
                 <div className="mb-10">
-                  <div className="flex items-start justify-between mb-8">
+                  <div className="flex items-baseline justify-between mb-8 gap-4">
                     <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
                       {product.name}
                     </h3>
                     {product.price && (
-                      <div className="flex flex-col items-end pt-1.5">
+                      <div className="flex-shrink-0">
                         <span className="text-3xl font-bold text-zinc-950 font-poppins tabular-nums">
                           {product.price.split('/')[0]}
                         </span>

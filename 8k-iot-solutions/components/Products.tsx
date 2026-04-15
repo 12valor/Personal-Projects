@@ -82,7 +82,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
 
                   <div className="mt-6 flex flex-wrap gap-2">
                     {features.slice(0, 3).map((f: string, i: number) => (
-                      <span key={i} className="text-[11px] font-bold text-zinc-400 bg-zinc-100 px-3 py-1 rounded-lg uppercase tracking-wider">
+                      <span key={i} className="text-[11px] font-bold text-zinc-400 bg-zinc-100 px-3 py-1 rounded-lg tracking-tight">
                         {f}
                       </span>
                     ))}
@@ -94,7 +94,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
                     onClick={() => setIsModalOpen(true)}
                     className="w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl py-4 font-bold text-sm transition-all duration-300 shadow-xl shadow-zinc-200 group/btn"
                   >
-                    <span>Start Project</span>
+                    <span>Add to Cart</span>
                     <ArrowRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
                   </button>
                 </div>

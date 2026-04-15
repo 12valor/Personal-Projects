@@ -30,79 +30,94 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
 
 
   return (
-    <section className="relative py-20 px-4 md:px-0">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <section className="relative py-24">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {products.map((product, idx) => {
           const features = JSON.parse(product.features || "[]");
           return (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-[32px] border border-zinc-200 bg-white shadow-sm flex flex-col transition-all duration-500 hover:shadow-xl hover:shadow-zinc-100 hover:-translate-y-1 h-full"
+              className="group relative bg-white flex flex-col transition-all duration-300 hover:bg-zinc-50 border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md h-full"
             >
               {/* Product Image Section */}
-              <div className="relative h-56 w-full overflow-hidden bg-zinc-50 border-b border-zinc-100">
-                {product.imageUrl ? (
-                  <img 
-                    src={product.imageUrl} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-300">
-                    <Layers size={48} strokeWidth={1} />
+              <div className="relative h-56 w-full overflow-hidden bg-zinc-100 p-6">
+                <div className="absolute inset-0 z-0 select-none pointer-events-none opacity-[0.03]" 
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
+                    backgroundSize: '24px 24px',
+                  }}
+                />
+                
+                {product.imageUrl && (
+                  <div className="relative w-full h-full border border-zinc-200 bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
+                    />
                   </div>
                 )}
-                {/* Subtle Overlay for consistency */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
 
               {/* Content Container */}
-              <div className="relative z-10 p-8 flex flex-col flex-1 justify-between bg-white">
+              <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 bg-zinc-50 rounded-2xl flex items-center justify-center border border-zinc-100 group-hover:bg-zinc-900 transition-colors duration-500">
-                       <ShoppingCart size={20} className="text-zinc-400 group-hover:text-white transition-colors" />
+                  <div className="flex items-start justify-between mb-8">
+                    <div>
+                      <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-zinc-950 text-[10px] font-bold text-white uppercase tracking-widest mb-3 rounded-sm">
+                        Product v1.0
+                      </div>
+                      <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
+                        {product.name}
+                      </h3>
                     </div>
                     {product.price && (
-                      <span className="text-[13px] font-bold text-brand-900 bg-brand-50/50 backdrop-blur-sm px-4 py-1.5 rounded-full border border-brand-100 italic">
-                        {product.price}
-                      </span>
+                      <div className="flex flex-col items-end">
+                        <span className="text-2xl font-bold text-zinc-900 font-poppins">
+                          {product.price.split('/')[0]}
+                        </span>
+                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+                          Per Annum
+                        </span>
+                      </div>
                     )}
                   </div>
 
-                  <h3 className="text-2xl font-bold text-zinc-950 font-poppins tracking-tight mb-3">
-                    {product.name}
-                  </h3>
-                  <p className="text-zinc-500 font-medium text-sm leading-relaxed line-clamp-3">
+                  <p className="text-zinc-500 font-medium text-base leading-relaxed mb-8 max-w-md">
                     {product.description}
                   </p>
 
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {features.slice(0, 3).map((f: string, i: number) => (
-                      <span key={i} className="text-[11px] font-bold text-zinc-400 bg-zinc-100 px-3 py-1 rounded-lg tracking-tight">
-                        {f}
-                      </span>
-                    ))}
+                  <div className="space-y-3 mb-10">
+                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest block mb-4 border-b border-zinc-100 pb-2">Core Specifications</span>
+                    <div className="grid grid-cols-1 gap-y-3">
+                       {features.map((f: string, i: number) => (
+                         <div key={i} className="flex items-center gap-3 group/feat">
+                            <div className="w-1 h-1 rounded-full bg-zinc-300 group-hover/feat:bg-[#1e3a8a] transition-colors" />
+                            <span className="text-sm font-medium text-zinc-600 group-hover/feat:text-zinc-950 transition-colors">{f}</span>
+                         </div>
+                       ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl py-4 font-bold text-sm transition-all duration-300 shadow-xl shadow-zinc-200 group/btn"
+                    className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-sm transition-all duration-300 hover:bg-[#172554] active:scale-[0.98]"
                   >
                     <span>Add to Cart</span>
-                    <ArrowRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
+                    <ArrowRight size={16} strokeWidth={1.5} />
+                  </button>
+                  <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className="h-14 w-14 rounded-lg border border-zinc-200 flex items-center justify-center bg-white hover:bg-zinc-50 transition-colors text-zinc-400 hover:text-zinc-900 group/btn"
+                    title="Inquiry"
+                  >
+                     <ShoppingCart size={20} strokeWidth={1.5} className="transition-transform group-hover/btn:scale-110" />
                   </button>
                 </div>
               </div>
-
-              {/* Decorative Corner Glow */}
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-zinc-400/5 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -112,14 +127,10 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
         onClose={() => setIsModalOpen(false)}
       />
 
-      {/* Background Decorative Mesh Tip */}
-      <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] pointer-events-none opacity-[0.03] z-[-1]" 
-        style={{
-          backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      {/* Decorative Grid Marker */}
+      <div className="absolute top-0 right-0 p-4 select-none pointer-events-none">
+         <span className="text-[10px] font-mono text-zinc-200 rotate-90 block tracking-widest">TS-8K-SYS-v001</span>
+      </div>
     </section>
   );
 }

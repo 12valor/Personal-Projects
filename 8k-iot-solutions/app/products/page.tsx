@@ -32,7 +32,7 @@ export default async function ProductsPage() {
       {/* Spacer for fixed navbar */}
       <div className="relative z-10 h-[80px] md:h-[100px]" />
       
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-10 lg:px-16 py-12">
         
         {/* Header Section */}
         <PageHeaderParallax>
@@ -47,17 +47,20 @@ export default async function ProductsPage() {
             
             <ProjectBreadcrumbs currentPage="Software Products" />
             
-            <div className="mt-8 md:mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <div className="mt-8 md:mt-16 flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b border-zinc-200 pb-12">
               <div className="max-w-3xl">
-                <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-zinc-950 mb-6 leading-[0.9]">
-                  Off-the-shelf <br />
-                  <span className="text-zinc-400">Software.</span>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-2 h-2 rounded-full bg-[#1e3a8a] animate-pulse" />
+                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">Software Catalog v1.0</span>
+                </div>
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-zinc-950 mb-8">
+                  Ready-to-deploy <br />
+                  <span className="text-zinc-300">Software Units.</span>
                 </h1>
-                <p className="text-xl md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-2xl">
-                  Robust, ready-to-deploy software built on the 8K IoT framework. Integration-ready for your hardware and legacy systems.
+                <p className="text-xl text-zinc-500 font-medium leading-relaxed max-w-xl">
+                  Enterprise-grade software modules designed for rapid integration with 8K industrial hardware and legacy infrastructure.
                 </p>
               </div>
-
             </div>
           </div>
         </PageHeaderParallax>

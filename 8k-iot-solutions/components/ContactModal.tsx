@@ -68,84 +68,85 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           {/* Modal Container */}
           <div className="fixed inset-0 flex items-center justify-center z-[151] p-4 pointer-events-none">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-              className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-lg w-full pointer-events-auto relative border border-white"
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              transition={{ duration: 0.4 }}
+              className="bg-white rounded-lg shadow-2xl overflow-hidden max-w-lg w-full pointer-events-auto relative border border-zinc-200"
             >
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 p-8 opacity-[0.03] select-none pointer-events-none">
-                 <Mail size={120} />
-              </div>
-
               {/* Close Button */}
               <button 
                 onClick={onClose}
-                className="absolute top-5 right-5 p-2 rounded-full hover:bg-zinc-100 transition-colors z-10"
+                className="absolute top-6 right-6 p-2 rounded-md hover:bg-zinc-100 transition-colors z-10"
               >
-                <X className="w-5 h-5 text-zinc-400" />
+                <X className="w-5 h-5 text-zinc-400 group-hover:text-zinc-950" />
               </button>
 
-              <div className="p-8 md:p-10">
-                <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">Let's build together</h2>
-                  <p className="text-zinc-500 mt-2 font-medium">Connect with us on your preferred platform.</p>
+              <div className="p-10">
+                <div className="mb-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-[#1e3a8a]" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-400">Communication Node</span>
+                  </div>
+                  <h2 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">Direct Channels</h2>
+                  <p className="text-zinc-500 mt-2 font-medium">Select a protocol to initiate integration discussions.</p>
                 </div>
 
                 {/* Main Contact Action */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 gap-px bg-zinc-100 border border-zinc-100 rounded-md overflow-hidden mb-10">
                    <a 
                      href={`mailto:${email}`}
-                     className="group flex flex-col p-5 bg-zinc-900 rounded-2xl transition-all duration-300 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-200"
+                     className="group flex items-center gap-5 p-6 bg-white transition-all duration-300 hover:bg-zinc-50"
                    >
-                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                       <Mail className="w-5 h-5 text-white" />
+                     <div className="w-12 h-12 bg-zinc-950 text-white rounded-md flex items-center justify-center group-hover:bg-[#1e3a8a] transition-colors">
+                       <Mail className="w-5 h-5" strokeWidth={1.5} />
                      </div>
-                     <span className="text-white font-bold text-lg mb-1">Email Us</span>
-                     <span className="text-zinc-400 text-xs">Direct Inquiry</span>
+                     <div className="flex-1">
+                        <span className="block text-zinc-900 font-bold text-lg leading-none">Email Gateway</span>
+                        <span className="text-zinc-400 text-xs font-medium">evangelista.agdiaz@gmail.com</span>
+                     </div>
+                     <ExternalLink className="w-4 h-4 text-zinc-200 group-hover:text-zinc-400" />
                    </a>
 
                    <button 
                      onClick={copyEmail}
-                     className="group flex flex-col p-5 bg-white border border-zinc-200 rounded-2xl transition-all duration-300 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-100 text-left"
+                     className="group flex items-center gap-5 p-6 bg-white transition-all duration-300 hover:bg-zinc-50 text-left"
                    >
-                     <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                       {copied ? <CheckCircle2 className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5 text-zinc-900" />}
+                     <div className="w-12 h-12 bg-zinc-50 rounded-md flex items-center justify-center group-hover:bg-[#1e3a8a] group-hover:text-white transition-colors">
+                       {copied ? <CheckCircle2 className="w-5 h-5 text-green-600 group-hover:text-white" /> : <Copy className="w-5 h-5 text-zinc-500 group-hover:text-white" strokeWidth={1.5} />}
                      </div>
-                     <span className="text-zinc-900 font-bold text-lg mb-1">{copied ? 'Copied!' : 'Copy Email'}</span>
-                     <span className="text-zinc-400 text-xs">{email}</span>
+                     <div className="flex-1">
+                        <span className="block text-zinc-900 font-bold text-lg leading-none">{copied ? 'Reference Copied' : 'Copy Reference'}</span>
+                        <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-1">Copy to Clipboard</span>
+                     </div>
                    </button>
                 </div>
 
                 {/* Social Links */}
                 <div className="space-y-3">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-4">Social Presence</span>
-                  {socialLinks.map((social) => (
-                    <a
-                      key={social.name}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center justify-between p-4 rounded-2xl border border-zinc-100 transition-all duration-300 group ${social.bg}`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-zinc-50 transition-colors group-hover:bg-white ${social.color}`}>
-                          <social.icon className="w-6 h-6" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-zinc-900 font-bold tracking-tight">{social.name}</span>
-                          <span className="text-zinc-400 text-xs">{social.label}</span>
-                        </div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-zinc-200 group-hover:text-zinc-400 transition-colors" />
-                    </a>
-                  ))}
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-4 border-b border-zinc-100 pb-2">Social Integrations</span>
+                  <div className="grid grid-cols-2 gap-3">
+                    {socialLinks.map((social) => (
+                      <a
+                        key={social.name}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 rounded-md border border-zinc-100 transition-all duration-300 hover:bg-zinc-50 hover:border-zinc-200 group"
+                      >
+                        <social.icon className="w-5 h-5 text-zinc-400 group-hover:text-[#1e3a8a] transition-colors" strokeWidth={1.5} />
+                        <span className="text-zinc-900 font-bold text-sm tracking-tight">{social.name}</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-zinc-100 flex items-center justify-center gap-3">
-                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                   <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Usually responds within 24 hours</span>
+                <div className="mt-12 pt-8 border-t border-zinc-100 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">System Active</span>
+                   </div>
+                   <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">TS-8K-MOD-04</span>
                 </div>
               </div>
             </motion.div>

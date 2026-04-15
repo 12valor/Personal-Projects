@@ -9,7 +9,6 @@ import {
   Zap, 
   ShieldCheck, 
   Globe,
-  ShoppingCart,
   Camera,
   Lightbulb,
   Lock,
@@ -112,23 +111,15 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
 
               {/* Content Container */}
               <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
-                <div>
+                <div className="mb-10">
                   <div className="flex items-start justify-between mb-8">
-                    <div>
-                      <div className="inline-flex items-center gap-2 px-2 py-0.5 bg-zinc-950 text-[10px] font-bold text-white uppercase tracking-widest mb-3 rounded-sm">
-                        Product v1.0
-                      </div>
-                      <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
-                        {product.name}
-                      </h3>
-                    </div>
+                    <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
+                      {product.name}
+                    </h3>
                     {product.price && (
-                      <div className="flex flex-col items-end">
-                        <span className="text-2xl font-bold text-zinc-900 font-poppins">
+                      <div className="flex flex-col items-end pt-1.5">
+                        <span className="text-3xl font-bold text-zinc-950 font-poppins tabular-nums">
                           {product.price.split('/')[0]}
-                        </span>
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
-                          Per Annum
                         </span>
                       </div>
                     )}
@@ -151,20 +142,13 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center">
                   <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-sm transition-all duration-300 hover:bg-[#172554] active:scale-[0.98]"
+                    className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-base transition-all duration-300 hover:bg-[#172554] active:scale-[0.98] shadow-lg shadow-[#1e3a8a]/10"
                   >
-                    <span>Add to Cart</span>
-                    <ArrowRight size={16} strokeWidth={1.5} />
-                  </button>
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="h-14 w-14 rounded-lg border border-zinc-200 flex items-center justify-center bg-white hover:bg-zinc-50 transition-colors text-zinc-400 hover:text-zinc-900 group/btn"
-                    title="Inquiry"
-                  >
-                     <ShoppingCart size={20} strokeWidth={1.5} className="transition-transform group-hover/btn:scale-110" />
+                    <span>Secure Integration</span>
+                    <ArrowRight size={18} strokeWidth={2} />
                   </button>
                 </div>
               </div>

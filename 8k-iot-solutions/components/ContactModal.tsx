@@ -27,6 +27,12 @@ const EmailSolid = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const FormSolid = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20,2H4C2.9,2,2,2.9,2,4v18l4-4h14c1.1,0,2-0.9,2-2V4C22,2.9,21.1,2,20,2z M17,11h-4v4h-2v-4H7V9h4V5h2v4h4V11z"/>
+  </svg>
+);
+
 const socialLinks = [
   {
     name: 'Facebook',
@@ -50,7 +56,15 @@ const socialLinks = [
     href: 'mailto:iotsolutions0@gmail.com',
     color: 'text-[#1e3a8a]',
     hoverBg: 'hover:bg-[#1e3a8a]/10',
-    hoverBorder: 'hover:border-[#1e3a8a]/30',
+    hoverBorder: 'hover:border-[#1e3a8a]/60',
+  },
+  {
+    name: 'Form',
+    icon: FormSolid,
+    href: '/contact',
+    color: 'text-[#1e3a8a]',
+    hoverBg: 'hover:bg-[#1e3a8a]/10',
+    hoverBorder: 'hover:border-[#1e3a8a]/60',
   }
 ];
 
@@ -64,42 +78,42 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-zinc-950/50 backdrop-blur-[4px] z-[150] cursor-pointer"
+            className="fixed inset-0 bg-zinc-950/60 backdrop-blur-[6px] z-[150] cursor-pointer"
           />
 
           <div className="fixed inset-0 flex items-center justify-center z-[151] p-4 pointer-events-none font-sans">
             <motion.div
-              initial={{ opacity: 0, scale: 0.98, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98, y: 12 }}
-              className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-[420px] w-full pointer-events-auto relative border border-zinc-200 p-10"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              className="bg-white rounded-[28px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] overflow-hidden max-w-[440px] w-full pointer-events-auto relative border border-zinc-200 p-10"
             >
               <div className="flex flex-col gap-2 mb-10">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-3xl font-bold text-zinc-950 tracking-tight leading-none">Connect with us</h2>
+                  <h2 className="text-3xl font-extrabold text-zinc-950 tracking-tight leading-none">Connect with us</h2>
                   <button 
                     onClick={onClose}
-                    className="p-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
+                    className="p-2.5 rounded-xl hover:bg-zinc-100 transition-all duration-200 active:scale-95"
                   >
-                    <X size={20} className="text-zinc-400 hover:text-zinc-950" />
+                    <X size={20} className="text-zinc-400" />
                   </button>
                 </div>
                 <p className="text-zinc-500 text-base font-medium">Interested in this product? Get in touch below.</p>
               </div>
 
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 gap-5">
                 {socialLinks.map((social) => (
                   <a
                     key={social.name}
                     href={social.href}
-                    target="_blank"
+                    target={social.href.startsWith('http') ? "_blank" : "_self"}
                     rel="noopener noreferrer"
-                    className={`flex flex-col items-center gap-4 p-5 rounded-3xl border border-zinc-100 transition-all duration-400 group ${social.hoverBg} ${social.hoverBorder} hover:-translate-y-1 hover:shadow-lg`}
+                    className={`flex flex-col items-center gap-4 p-7 rounded-[24px] border border-zinc-100 transition-all duration-200 group ${social.hoverBg} ${social.hoverBorder} hover:-translate-y-[2px]`}
                   >
-                    <div className={`w-14 h-14 flex items-center justify-center transition-transform duration-500 group-hover:scale-110 ${social.color}`}>
+                    <div className={`w-14 h-14 flex items-center justify-center transition-all duration-300 ${social.color}`}>
                       <social.icon className="w-10 h-10" />
                     </div>
-                    <span className="text-xs font-bold text-zinc-500 group-hover:text-zinc-950 transition-colors uppercase tracking-[0.1em] leading-none">
+                    <span className="text-xs font-bold text-zinc-500 group-hover:text-zinc-950 transition-colors uppercase tracking-[0.14em] leading-none">
                       {social.name}
                     </span>
                   </a>

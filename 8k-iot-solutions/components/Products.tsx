@@ -160,7 +160,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
       ) : (
         <div className="flex flex-col items-center justify-center py-10 text-center animate-fade-in-up">
            <h2 className="flex flex-col items-center leading-none mb-6">
-             <span className="text-5xl md:text-8xl font-black text-zinc-950 tracking-tighter font-poppins mb-2">
+             <span className="text-6xl sm:text-7xl md:text-[10rem] font-black text-zinc-950 tracking-tighter font-poppins -mb-2 md:-mb-6">
                PRODUCTS
              </span>
              <span className="text-7xl md:text-9xl font-normal text-zinc-950 font-italianno">

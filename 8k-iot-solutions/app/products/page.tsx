@@ -46,7 +46,7 @@ export default async function ProductsPage() {
             </Link>
             
             
-            <div className="mt-4 md:mt-8 border-b border-zinc-200 pb-8">
+            <div className="mt-4 md:mt-8">
               <div className="max-w-3xl text-left">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-zinc-950 mb-6">
                   Ready-to-deploy <br />

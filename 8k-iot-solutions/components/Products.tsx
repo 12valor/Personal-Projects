@@ -178,10 +178,6 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
         onClose={() => setIsModalOpen(false)}
       />
 
-      {/* Decorative Grid Marker */}
-      <div className="absolute top-0 right-0 p-4 select-none pointer-events-none">
-         <span className="text-[10px] font-mono text-zinc-200 rotate-90 block tracking-widest">TS-8K-SYS-v001</span>
-      </div>
     </section>
   );
 }

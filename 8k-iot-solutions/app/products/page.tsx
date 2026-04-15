@@ -54,7 +54,7 @@ export default async function ProductsPage() {
                   <span className="text-zinc-300">Software Units.</span>
                 </h1>
                 <p className="text-xl text-zinc-500 font-medium leading-relaxed max-w-xl">
-                  Enterprise-grade software modules designed for rapid integration with 8K industrial hardware and legacy infrastructure.
+                  Smart, reliable software units built to help you connect your hardware and manage your projects with ease.
                 </p>
               </div>
             </div>
@@ -79,29 +79,29 @@ export default async function ProductsPage() {
               <div className="flex items-start gap-6 group">
                  <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">01</div>
                  <div className="pt-1.5">
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Instant Deployment</h4>
-                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Docker-ready and cloud-native architectures for immediate rollout on your preferred infrastructure.</p>
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Bespoke Onboarding</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Custom-configured systems with optional face-to-face installation and seamless cloud-based delivery.</p>
                  </div>
               </div>
               <div className="flex items-start gap-6 group">
                  <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">02</div>
                  <div className="pt-1.5">
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Scalable API</h4>
-                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Full REST and WebSocket support for seamless integration with your existing hardware and mobile apps.</p>
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Software-First Architecture</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">High-performance digital products engineered to solve complex data challenges and streamline operations.</p>
                  </div>
               </div>
               <div className="flex items-start gap-6 group">
                  <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">03</div>
                  <div className="pt-1.5">
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Custom Branding</h4>
-                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Whitelabel solutions that reflect your brand identity with customizable themes and domain configuration.</p>
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Tailored Flexibility</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Fully adaptable frameworks designed to be customized to your exact requirements, keeping you in full control.</p>
                  </div>
               </div>
               <div className="flex items-start gap-6 group">
                  <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">04</div>
                  <div className="pt-1.5">
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">24/7 Monitoring</h4>
-                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Built-in health checks and anomaly detection to ensure your IoT fleet stays online and secure.</p>
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Dedicated Support</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Direct access to our technical team for continuous support, updates, and proactive system optimizations.</p>
                  </div>
               </div>
            </div>

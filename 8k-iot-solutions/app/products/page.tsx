@@ -47,12 +47,8 @@ export default async function ProductsPage() {
             
             <ProjectBreadcrumbs currentPage="Software Products" />
             
-            <div className="mt-8 md:mt-16 flex flex-col md:flex-row md:items-end md:justify-between gap-8 border-b border-zinc-200 pb-12">
-              <div className="max-w-3xl">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="w-2 h-2 rounded-full bg-[#1e3a8a] animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">Software Catalog v1.0</span>
-                </div>
+            <div className="mt-8 md:mt-16 border-b border-zinc-200 pb-12">
+              <div className="max-w-3xl text-left">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-zinc-950 mb-8">
                   Ready-to-deploy <br />
                   <span className="text-zinc-300">Software Units.</span>
@@ -66,13 +62,12 @@ export default async function ProductsPage() {
         </PageHeaderParallax>
 
         {/* Product Showcase */}
-        <div className="mt-12 md:mt-24">
-          
+        <div className="mt-12">
           <Products initialProducts={products} />
         </div>
 
         {/* Why choose section */}
-        <div className="mt-32 mb-20 md:grid md:grid-cols-3 gap-12 border-t border-zinc-200 pt-20">
+        <div className="mt-16 mb-20 md:grid md:grid-cols-3 gap-12 border-t border-zinc-200 pt-12">
            <div>
               <h2 className="text-3xl font-bold text-zinc-950 font-poppins mb-6">Why our pre-made software?</h2>
               <p className="text-zinc-500 leading-relaxed font-medium">

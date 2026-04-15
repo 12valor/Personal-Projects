@@ -49,50 +49,21 @@ export default async function ProductsPage() {
             
             <div className="mt-8 md:mt-12 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
               <div className="max-w-3xl">
-                <h1 className="text-5xl md:text-8xl font-black tracking-tight text-zinc-950 mb-6 leading-[0.9]">
-                  Pre-made <br />
-                  <span className="text-zinc-400">Solutions.</span>
+                <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-zinc-950 mb-6 leading-[0.9]">
+                  Off-the-shelf <br />
+                  <span className="text-zinc-400">Software.</span>
                 </h1>
                 <p className="text-xl md:text-2xl text-zinc-500 font-medium leading-relaxed max-w-2xl">
-                  Scalable software products ready to integrate with your existing infrastructure, powered by 8K's industrial IoT engine.
+                  Robust, ready-to-deploy software built on the 8K IoT framework. Integration-ready for your hardware and legacy systems.
                 </p>
               </div>
 
-              {/* Stats/Badges */}
-              <div className="flex flex-col gap-4">
-                 <div className="flex items-center gap-3 bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm">
-                    <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-900">
-                       <Zap size={20} />
-                    </div>
-                    <div>
-                      <span className="block text-xs font-bold text-zinc-400 uppercase tracking-tighter">Performance</span>
-                      <span className="text-sm font-bold text-zinc-950">High Availability</span>
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-3 bg-white border border-zinc-200 p-4 rounded-2xl shadow-sm">
-                    <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
-                       <ShieldCheck size={20} />
-                    </div>
-                    <div>
-                      <span className="block text-xs font-bold text-zinc-400 uppercase tracking-tighter">Security</span>
-                      <span className="text-sm font-bold text-zinc-950">Enterprise Grade</span>
-                    </div>
-                 </div>
-              </div>
             </div>
           </div>
         </PageHeaderParallax>
 
         {/* Product Showcase */}
         <div className="mt-12 md:mt-24">
-          <div className="flex items-center gap-4 mb-12">
-             <div className="h-[1px] flex-1 bg-zinc-200" />
-             <div className="flex items-center gap-2 text-zinc-400">
-               <Sparkles size={16} />
-               <span className="text-xs font-bold uppercase tracking-[0.2em]">Available Software</span>
-             </div>
-             <div className="h-[1px] flex-1 bg-zinc-200" />
-          </div>
           
           <Products initialProducts={products} />
         </div>

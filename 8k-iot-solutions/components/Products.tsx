@@ -148,7 +148,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
                       onClick={() => setIsModalOpen(true)}
                       className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-base transition-all duration-300 hover:bg-[#172554] active:scale-[0.98] shadow-lg shadow-[#1e3a8a]/10"
                     >
-                      <span>Secure Integration</span>
+                      <span>Contact Us</span>
                       <ArrowRight size={18} strokeWidth={2} />
                     </button>
                   </div>
@@ -158,12 +158,17 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
-           <h2 className="text-5xl md:text-8xl font-black text-zinc-950 tracking-tighter leading-none mb-6">
-             PRODUCTS<br/>COMING SOON
+        <div className="flex flex-col items-center justify-center py-10 text-center animate-fade-in-up">
+           <h2 className="flex flex-col items-center leading-none mb-6">
+             <span className="text-5xl md:text-8xl font-black text-zinc-950 tracking-tighter font-poppins mb-2">
+               PRODUCTS
+             </span>
+             <span className="text-7xl md:text-9xl font-normal text-zinc-950 font-italianno">
+               Coming soon
+             </span>
            </h2>
-           <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-lg">
-             Our engineers are currently stress-testing the next generation of hardware modules. Deployments resume shortly.
+           <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-md">
+             We're currently preparing something special for you.
            </p>
         </div>
       )}

@@ -81,23 +81,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             className="fixed inset-0 bg-zinc-950/60 backdrop-blur-[6px] z-[150] cursor-pointer"
           />
 
-          <div className="fixed inset-0 flex items-center justify-center z-[151] p-4 pointer-events-none font-sans">
+          <div className="fixed inset-0 flex items-center justify-center z-[151] p-4 pointer-events-none font-poppins">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               className="bg-white rounded-[28px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] overflow-hidden max-w-[440px] w-full pointer-events-auto relative border border-zinc-200 p-10"
             >
+              <button 
+                onClick={onClose}
+                className="absolute top-6 right-6 p-2.5 rounded-xl hover:bg-zinc-100 transition-all duration-200 active:scale-95 z-10"
+                aria-label="Close modal"
+              >
+                <X size={20} className="text-zinc-400 hover:text-zinc-950 transition-colors" />
+              </button>
+
               <div className="flex flex-col gap-2 mb-10">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-3xl font-extrabold text-zinc-950 tracking-tight leading-none">Connect with us</h2>
-                  <button 
-                    onClick={onClose}
-                    className="p-2.5 rounded-xl hover:bg-zinc-100 transition-all duration-200 active:scale-95"
-                  >
-                    <X size={20} className="text-zinc-400" />
-                  </button>
-                </div>
+                <h2 className="text-3xl font-extrabold text-zinc-950 tracking-tight leading-none pr-10">Connect with us</h2>
                 <p className="text-zinc-500 text-base font-medium">Interested in this product? Get in touch below.</p>
               </div>
 

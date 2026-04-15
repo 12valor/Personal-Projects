@@ -24,6 +24,7 @@ module.exports = {
         sans: ['"General Sans"', 'sans-serif'], 
         poppins: ['var(--font-poppins)', 'sans-serif'], 
         boldonse: ['var(--font-boldonse)', 'sans-serif'], 
+        italianno: ['Italianno', 'cursive'],
       },
       animation: {
         // FIXED: Explicitly mapping the animation name to the keyframe

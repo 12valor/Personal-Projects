@@ -75,33 +75,33 @@ export default async function ProductsPage() {
               </p>
            </div>
            
-           <div className="mt-12 md:mt-0 space-y-10 md:col-span-2 grid md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">01</div>
-                 <div>
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Instant Deployment</h4>
-                    <p className="text-sm text-zinc-400 leading-relaxed">Docker-ready and cloud-native architectures for immediate rollout on your preferred infrastructure.</p>
+           <div className="mt-12 md:mt-0 md:col-span-2 grid md:grid-cols-2 gap-x-16 gap-y-12">
+              <div className="flex items-start gap-6 group">
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">01</div>
+                 <div className="pt-1.5">
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Instant Deployment</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Docker-ready and cloud-native architectures for immediate rollout on your preferred infrastructure.</p>
                  </div>
               </div>
-              <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">02</div>
-                 <div>
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Scalable API</h4>
-                    <p className="text-sm text-zinc-400 leading-relaxed">Full REST and WebSocket support for seamless integration with your existing hardware and mobile apps.</p>
+              <div className="flex items-start gap-6 group">
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">02</div>
+                 <div className="pt-1.5">
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Scalable API</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Full REST and WebSocket support for seamless integration with your existing hardware and mobile apps.</p>
                  </div>
               </div>
-              <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">03</div>
-                 <div>
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Custom Branding</h4>
-                    <p className="text-sm text-zinc-400 leading-relaxed">Whitelabel solutions that reflect your brand identity with customizable themes and domain configuration.</p>
+              <div className="flex items-start gap-6 group">
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">03</div>
+                 <div className="pt-1.5">
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">Custom Branding</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Whitelabel solutions that reflect your brand identity with customizable themes and domain configuration.</p>
                  </div>
               </div>
-              <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">04</div>
-                 <div>
-                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">24/7 Monitoring</h4>
-                    <p className="text-sm text-zinc-400 leading-relaxed">Built-in health checks and anomaly detection to ensure your IoT fleet stays online and secure.</p>
+              <div className="flex items-start gap-6 group">
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-zinc-950/10 transition-transform group-hover:scale-105 duration-300">04</div>
+                 <div className="pt-1.5">
+                    <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg leading-tight">24/7 Monitoring</h4>
+                    <p className="text-[13px] text-zinc-400 leading-relaxed font-medium">Built-in health checks and anomaly detection to ensure your IoT fleet stays online and secure.</p>
                  </div>
               </div>
            </div>

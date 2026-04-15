@@ -25,9 +25,9 @@ async function main() {
       isActive: true,
     },
     {
-      name: "IoT Security Shield",
+      name: "AeroShield Antigravity IoT Firewall",
       slug: "iot-security-shield",
-      description: "Advanced network security layer designed specifically for IoT vulnerabilities. Detects anomalies, prevents unauthorized access, and secures your data stream.",
+      description: "Advanced network security layer design specifically for IoT. Features adaptive threat detection and an antigravity core architecture for resilient device protection.",
       price: "₱2,999/yr",
       imageUrl: "/products/security-shield.png",
       features: JSON.stringify(["Anomaly Detection", "End-to-end Encryption", "Threat Intel"]),

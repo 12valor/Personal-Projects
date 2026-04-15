@@ -9,9 +9,59 @@ import {
   Zap, 
   ShieldCheck, 
   Globe,
-  ShoppingCart
+  ShoppingCart,
+  Camera,
+  Lightbulb,
+  Lock,
+  Home
 } from 'lucide-react';
 import ContactModal from './ContactModal';
+
+const FloatingIcon = ({ icon: Icon, delay = 0, x = 0, y = 0 }: { icon: any, delay?: number, x?: number, y?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.5 }}
+    animate={{ 
+      opacity: [0.1, 0.3, 0.1],
+      scale: [1, 1.1, 1],
+      y: [y, y - 20, y],
+      x: [x, x + 10, x]
+    }}
+    transition={{ 
+      duration: 5, 
+      repeat: Infinity, 
+      delay,
+      ease: "easeInOut" 
+    }}
+    className="absolute text-[#1e3a8a]/20"
+    style={{ left: `calc(50% + ${x}px)`, top: `calc(50% + ${y}px)` }}
+  >
+    <Icon size={32} strokeWidth={1} />
+  </motion.div>
+);
+
+const AntigravityCore = () => (
+  <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
+    {/* Wireframe Field */}
+    <div className="absolute inset-0 opacity-[0.05]" 
+      style={{
+        backgroundImage: `
+          linear-gradient(to right, #1e3a8a 1px, transparent 1px),
+          linear-gradient(to bottom, #1e3a8a 1px, transparent 1px)
+        `,
+        backgroundSize: '40px 40px',
+        transform: 'perspective(500px) rotateX(60deg) translateY(-50%)',
+      }}
+    />
+    
+    {/* Central Core Glow */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-[#1e3a8a]/5 blur-[60px] rounded-full" />
+    
+    <FloatingIcon icon={Camera} delay={0} x={-60} y={-40} />
+    <FloatingIcon icon={Lightbulb} delay={1} x={60} y={-30} />
+    <FloatingIcon icon={Lock} delay={2} x={-40} y={40} />
+    <FloatingIcon icon={Home} delay={3} x={50} y={50} />
+  </div>
+);
 
 interface Product {
   id: string;
@@ -41,6 +91,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
             >
               {/* Product Image Section */}
               <div className="relative h-56 w-full overflow-hidden bg-zinc-100 p-6">
+                <AntigravityCore />
                 <div className="absolute inset-0 z-0 select-none pointer-events-none opacity-[0.03]" 
                   style={{
                     backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',

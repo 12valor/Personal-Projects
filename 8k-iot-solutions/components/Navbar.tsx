@@ -32,6 +32,7 @@ const navLinks: NavItem[] = [
     ]
   },
   { name: 'FAQ', href: '/faq' },
+  { name: 'Products', href: '/products' },
   { name: 'Contact', href: '/contact' },
 ];
 

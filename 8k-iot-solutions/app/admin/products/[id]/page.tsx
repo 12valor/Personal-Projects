@@ -1,0 +1,34 @@
+import { prisma } from '@/lib/prisma';
+import ProductForm from '../../components/ProductForm';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+export default async function EditProductPage({ params }: { params: { id: string } }) {
+  const { id } = await params;
+  
+  const product = await (prisma as any).product.findUnique({
+    where: { id }
+  });
+
+  if (!product) {
+    notFound();
+  }
+
+  return (
+    <div>
+      <div className="mb-8 flex items-center">
+        <Link href="/admin/products" className="text-sm font-medium text-zinc-500 hover:text-zinc-800 flex items-center">
+          <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Products
+        </Link>
+      </div>
+      <div className="bg-white shadow-sm ring-1 ring-zinc-900/5 sm:rounded-xl md:col-span-2">
+        <div className="px-4 py-6 sm:p-8">
+          <ProductForm product={product} />
+        </div>
+      </div>
+    </div>
+  );
+}

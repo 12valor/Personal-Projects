@@ -12,7 +12,8 @@ import {
   LogOut,
   ChevronRight,
   HelpCircle,
-  User
+  User,
+  Package
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { logout } from '../actions';
@@ -32,6 +33,7 @@ export default function AdminNavigation() {
     { name: 'Hero Cards', href: '/admin/hero-cards', icon: Layers },
     { name: 'FAQ', href: '/admin/faq', icon: HelpCircle },
     { name: 'Team', href: '/admin/team', icon: User },
+    { name: 'Products', href: '/admin/products', icon: Package },
   ];
 
   return (

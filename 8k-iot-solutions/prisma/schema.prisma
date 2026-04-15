@@ -141,3 +141,17 @@ model LoginAttempt {
   count     Int      @default(1)
   lastAttempt DateTime @default(now())
 }
+
+model Product {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  description      String
+  price            String?  // Optional price display
+  imageUrl         String?
+  features         String   @default("[]") // JSON stringified array
+  isActive         Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

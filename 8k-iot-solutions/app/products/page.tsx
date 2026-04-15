@@ -79,28 +79,28 @@ export default async function ProductsPage() {
            
            <div className="mt-12 md:mt-0 space-y-10 md:col-span-2 grid md:grid-cols-2 gap-x-12 gap-y-10">
               <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white">01</div>
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">01</div>
                  <div>
                     <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Instant Deployment</h4>
                     <p className="text-sm text-zinc-400 leading-relaxed">Docker-ready and cloud-native architectures for immediate rollout on your preferred infrastructure.</p>
                  </div>
               </div>
               <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white">02</div>
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">02</div>
                  <div>
                     <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Scalable API</h4>
                     <p className="text-sm text-zinc-400 leading-relaxed">Full REST and WebSocket support for seamless integration with your existing hardware and mobile apps.</p>
                  </div>
               </div>
               <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center text-zinc-900 border border-zinc-200">03</div>
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">03</div>
                  <div>
                     <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">Custom Branding</h4>
                     <p className="text-sm text-zinc-400 leading-relaxed">Whitelabel solutions that reflect your brand identity with customizable themes and domain configuration.</p>
                  </div>
               </div>
               <div className="flex gap-5">
-                 <div className="shrink-0 w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center text-zinc-900 border border-zinc-200">04</div>
+                 <div className="shrink-0 w-12 h-12 bg-zinc-950 rounded-2xl flex items-center justify-center text-white font-bold">04</div>
                  <div>
                     <h4 className="font-bold text-zinc-950 mb-2 font-poppins text-lg">24/7 Monitoring</h4>
                     <p className="text-sm text-zinc-400 leading-relaxed">Built-in health checks and anomaly detection to ensure your IoT fleet stays online and secure.</p>

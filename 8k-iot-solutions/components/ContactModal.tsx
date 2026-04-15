@@ -10,7 +10,8 @@ import {
   MessageSquare,
   ExternalLink,
   Copy,
-  CheckCircle2
+  CheckCircle2,
+  Zap
 } from 'lucide-react';
 import { useState } from 'react';
 

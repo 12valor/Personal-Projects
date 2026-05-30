@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabase"; 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star, MessageSquare, Trash2, Mail, Lock, LogOut, Layers } from "lucide-react"; 
 import { verifyAdminPassword, checkAuth, logout } from "../actions"; 
@@ -32,8 +30,6 @@ interface Inquiry {
 }
 
 export default function AdminPanel() {
-  const router = useRouter();
-  
   // --- AUTH STATE ---
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -87,13 +83,17 @@ export default function AdminPanel() {
   };
 
   const fetchProjects = async () => {
-    const { data, error } = await supabase.from("projects").select("*").order("id", { ascending: false });
-    if (data) setProjects(data);
+    const response = await fetch("/api/projects");
+    if (!response.ok) throw new Error("Failed to fetch projects");
+    const data = await response.json();
+    setProjects(data);
   };
 
   const fetchInquiries = async () => {
-    const { data, error } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
-    if (data) setInquiries(data);
+    const response = await fetch("/api/inquiries");
+    if (!response.ok) throw new Error("Failed to fetch inquiries");
+    const data = await response.json();
+    setInquiries(data);
   };
 
   const handleEdit = (project: Project) => {
@@ -106,15 +106,13 @@ export default function AdminPanel() {
     window.scrollTo(0, 0);
   };
 
-  const handleDelete = async (id: number, imageUrl: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this project?")) return;
     try {
-      if (imageUrl && imageUrl.includes("/portfolio/")) {
-        const path = imageUrl.split("/portfolio/")[1];
-        if (path) await supabase.storage.from("portfolio").remove([path]);
-      }
-      const { error } = await supabase.from("projects").delete().eq("id", id);
-      if (error) throw error;
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete project");
       fetchProjects();
       alert("Project deleted.");
     } catch (err) { console.error(err); alert("Error deleting project."); }
@@ -123,8 +121,10 @@ export default function AdminPanel() {
   const handleDeleteInquiry = async (id: number) => {
     if (!confirm("Delete this message?")) return;
     try {
-      const { error } = await supabase.from("inquiries").delete().eq("id", id);
-      if (error) throw error;
+      const response = await fetch(`/api/inquiries/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete inquiry");
       fetchInquiries(); 
     } catch (err) { console.error(err); alert("Error deleting inquiry."); }
   };
@@ -188,7 +188,7 @@ export default function AdminPanel() {
           setUploadStatus("Upload complete!");
       }
 
-      // 2. SAVE TO SUPABASE
+      // 2. SAVE PROJECT
       const payload = {
           title: formData.title,
           category: formData.category,
@@ -201,12 +201,24 @@ export default function AdminPanel() {
       };
 
       if (editId) {
-          const { error } = await supabase.from("projects").update(payload).eq("id", editId);
-          if (error) throw error;
+          const response = await fetch(`/api/projects/${editId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) throw new Error("Failed to update project");
           alert("Project updated successfully!");
       } else {
-          const { error } = await supabase.from("projects").insert([payload]);
-          if (error) throw error;
+          const response = await fetch("/api/projects", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) throw new Error("Failed to create project");
           alert("Project created successfully!");
       }
 
@@ -367,7 +379,7 @@ export default function AdminPanel() {
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>{project.category}</span>
                             <div className="flex items-center gap-4">
                                 <button onClick={() => handleEdit(project)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
-                                <button onClick={() => handleDelete(project.id, project.image_url)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
+                                <button onClick={() => handleDelete(project.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
                             </div>
                         </div>
                       </td>

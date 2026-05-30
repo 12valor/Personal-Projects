@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { supabase } from "../lib/supabase"; 
 import { ArrowUpRight, Copy, Check, Loader2, Github, Facebook } from "lucide-react";
 
 export default function Contact() {
@@ -51,13 +50,19 @@ export default function Contact() {
     setErrorMsg("");
     
     try {
-      const { error } = await supabase.from('inquiries').insert([{ 
-        name: formState.name, 
-        email: formState.email, 
-        message: formState.message 
-      }]);
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error("Failed to send inquiry");
 
       setIsSubmitting(false);
       setIsSubmitted(true);

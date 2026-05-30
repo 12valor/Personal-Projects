@@ -1,22 +1,25 @@
-import { supabase } from "../../../lib/supabase";
+import { prisma } from "../../../../lib/prisma";
+import { serializeProject } from "../../../lib/project-mappers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 import { ArrowLeft, Calendar, User, ExternalLink } from "lucide-react";
 import ProjectImageViewer from "../../../components/ProjectImageViewer";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   
-  const { data: project } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("id", resolvedParams.id)
-    .single();
+  const projectRecord = await prisma.project.findUnique({
+    where: { id: Number(resolvedParams.id) },
+  });
 
-  if (!project) {
+  if (!projectRecord) {
     notFound();
   }
+
+  const project = serializeProject(projectRecord);
 
   return (
     <article className="min-h-screen bg-background text-foreground pb-24 font-sans selection:bg-accent/20">

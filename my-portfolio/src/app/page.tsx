@@ -3,25 +3,24 @@ import About from "../components/About";
 import WorkGrid from "../components/WorkGrid";
 import Services from "../components/Services";
 import Contact from "../components/Contact";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import TechStack from "../components/TechStack";
-import { supabase } from "../lib/supabase";
+import { prisma } from "../../lib/prisma";
+import { serializeProject } from "../lib/project-mappers";
 
-export const revalidate = 60; // optionally cache for 60s
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("*")
-    .order("id", { ascending: false });
+  const projects = await prisma.project.findMany({
+    orderBy: { id: "desc" },
+  });
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Hero />
       <TechStack />
         <About />
       <Services />
-      <WorkGrid initialProjects={projects || []} />
+      <WorkGrid initialProjects={projects.map(serializeProject)} />
       <Contact />
     </main>
   );

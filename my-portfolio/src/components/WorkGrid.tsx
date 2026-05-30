@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Layers, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";

@@ -7,8 +7,6 @@ import TechStack from "../components/TechStack";
 import { prisma } from "../../lib/prisma";
 import { serializeProject } from "../lib/project-mappers";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const projects = await prisma.project.findMany({
     orderBy: { id: "desc" },

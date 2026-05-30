@@ -3,6 +3,7 @@ import { prisma } from "../../../../../lib/prisma";
 import { checkAuth } from "../../../actions";
 import { serializeProject } from "../../../../lib/project-mappers";
 import { removeLegacySupabasePortfolioImage } from "../../../../lib/supabase-storage";
+import { revalidatePath } from "next/cache";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await checkAuth())) {
@@ -26,6 +27,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     },
   });
 
+  revalidatePath("/");
+  revalidatePath(`/work/${id}`);
+
   return NextResponse.json(serializeProject(project));
 }
 
@@ -47,6 +51,8 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   await prisma.project.delete({
     where: { id: project.id },
   });
+  revalidatePath("/");
+  revalidatePath(`/work/${id}`);
 
   return NextResponse.json({ success: true });
 }

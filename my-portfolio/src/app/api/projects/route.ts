@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { checkAuth } from "../../actions";
 import { serializeProject } from "../../../lib/project-mappers";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   const projects = await prisma.project.findMany({
@@ -30,6 +31,8 @@ export async function POST(request: Request) {
       isFeatured: Boolean(body.is_featured),
     },
   });
+
+  revalidatePath("/");
 
   return NextResponse.json(serializeProject(project), { status: 201 });
 }

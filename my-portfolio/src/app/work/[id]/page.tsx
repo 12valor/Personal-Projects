@@ -6,7 +6,14 @@ import React from "react";
 import { ArrowLeft, Calendar, User, ExternalLink } from "lucide-react";
 import ProjectImageViewer from "../../../components/ProjectImageViewer";
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  const projects = await prisma.project.findMany({
+    select: { id: true },
+  });
+  return projects.map((project) => ({
+    id: String(project.id),
+  }));
+}
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;

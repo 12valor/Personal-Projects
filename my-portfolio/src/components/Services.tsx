@@ -19,9 +19,9 @@ export default function Services() {
   const opacityText = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
 
   const cardsData = [
-    { id: 1, text: "Graphic Design", src: "/graphic.jpg" },
-    { id: 2, text: "Video Editing", src: "/vid.jpg" },
-    { id: 3, text: "Web Design", src: "/web.jpg" }
+    { id: 1, text: "Graphic Design", src: "/graphic.webp" },
+    { id: 2, text: "Video Editing", src: "/vid.webp" },
+    { id: 3, text: "Web Design", src: "/web.webp" }
   ];
 
   return (

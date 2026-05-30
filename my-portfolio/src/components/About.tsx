@@ -11,28 +11,28 @@ const timelineData = [
     title: "GFX Artist",
     category: "Visuals",
     desc: "Started my creative journey making GFX art. Focused on composition, lighting, and digital aesthetics for local communities.",
-    img: "/2021.png"
+    img: "/2021.webp"
   },
   {
     year: "2022",
     title: "Video Editing",
     category: "Motion",
     desc: "Transitioned into motion. Mastered pacing, sound design, and storytelling to create compelling video narratives.",
-    img: "/2022.png"
+    img: "/2022.webp"
   },
   {
     year: "2023",
     title: "Graphic Design",
     category: "Branding",
     desc: "Deepened my focus on static design. Refined my eye for typography, grid systems, and brand identity.",
-    img: "/2023.jpeg"
+    img: "/2023.webp"
   },
   {
     year: "2024",
     title: "Programming",
     category: "Development",
     desc: "Bridging the gap between design and function. Learned to build the interfaces I design using modern web tech.",
-    img: "/2024.png"
+    img: "/2024.webp"
   },
 ];
 
@@ -107,17 +107,25 @@ export default function About() {
       */}
       <motion.div
         style={{ x, y, opacity: activeImg ? 1 : 0 }}
-        className="fixed top-0 left-0 z-50 pointer-events-none overflow-hidden rounded-xl shadow-2xl w-[300px] aspect-[4/3] hidden md:block"
+        className="fixed top-0 left-0 z-50 pointer-events-none overflow-hidden rounded-xl shadow-2xl w-[300px] aspect-[4/3] hidden md:block transition-opacity duration-300"
       >
-        {/* We just swap the src, but keep the container alive for transitions */}
-        {activeImg && (
-           <Image
-             src={activeImg}
-             alt="Timeline Preview"
-             fill
-             className="object-cover"
-           />
-        )}
+        {timelineData.map((item) => (
+          <div
+            key={item.year}
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              activeImg === item.img ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={item.img}
+              alt="Timeline Preview"
+              fill
+              className="object-cover"
+              sizes="300px"
+              priority={false}
+            />
+          </div>
+        ))}
       </motion.div>
 
 

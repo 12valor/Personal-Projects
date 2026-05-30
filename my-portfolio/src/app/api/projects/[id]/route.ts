@@ -24,6 +24,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       imageUrl: body.image_url || null,
       galleryUrls: body.gallery_urls ?? [],
       isFeatured: Boolean(body.is_featured),
+      projectUrl: body.project_url || null,
     },
   });
 

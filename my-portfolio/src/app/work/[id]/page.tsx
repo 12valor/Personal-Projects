@@ -82,6 +82,25 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   <p className="font-medium text-base md:text-lg leading-tight">{project.year || "2024"}</p>
                 </div>
               </div>
+
+              {project.project_url && (
+                <div className="flex items-start gap-3 min-w-[140px]">
+                  <div className="p-2 bg-accent/5 rounded-lg">
+                      <ExternalLink className="w-4 h-4 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1 font-semibold">Live Site</p>
+                    <a 
+                      href={project.project_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="font-semibold text-accent hover:text-accent/80 transition-colors hover:underline text-sm md:text-base leading-tight"
+                    >
+                      Visit Site ↗
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
             
             {/* Description Column */}

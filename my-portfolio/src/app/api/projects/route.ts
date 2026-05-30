@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       imageUrl: body.image_url || null,
       galleryUrls: body.gallery_urls ?? [],
       isFeatured: Boolean(body.is_featured),
+      projectUrl: body.project_url || null,
     },
   });
 

@@ -8,6 +8,10 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+generator client_default {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -22,6 +26,7 @@ model Project {
   imageUrl    String?  @map("image_url")
   galleryUrls String[] @default([]) @map("gallery_urls")
   isFeatured  Boolean  @default(false) @map("is_featured")
+  projectUrl  String?  @map("project_url")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

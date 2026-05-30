@@ -19,6 +19,7 @@ interface Project {
   image_url: string;
   gallery_urls: string[] | null;
   is_featured: boolean;
+  project_url?: string;
 }
 
 interface Inquiry {
@@ -48,7 +49,7 @@ export default function AdminPanel() {
   
   // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
-    title: "", category: "Website", role: "", year: "", description: "", is_featured: false,
+    title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "",
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -100,6 +101,7 @@ export default function AdminPanel() {
     setEditId(project.id);
     setFormData({
       title: project.title, category: project.category, role: project.role || "", year: project.year || "", description: project.description || "", is_featured: project.is_featured || false,
+      project_url: project.project_url || "",
     });
     setSelectedFiles([]); 
     setActiveTab("add");
@@ -198,6 +200,7 @@ export default function AdminPanel() {
           image_url: mainImageUrl,     
           gallery_urls: galleryUrls,   
           is_featured: formData.is_featured,
+          project_url: formData.project_url,
       };
 
       if (editId) {
@@ -236,7 +239,7 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false });
+    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "" });
     setSelectedFiles([]);
   };
 
@@ -314,6 +317,10 @@ export default function AdminPanel() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Role</label><input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
                   <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label><input type="text" value={formData.year} onChange={(e) => setFormData({...formData, year: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Link / Domain (Optional)</label>
+                  <input type="text" value={formData.project_url} onChange={(e) => setFormData({...formData, project_url: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="https://example.com" />
                 </div>
                 <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label><textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
               </div>

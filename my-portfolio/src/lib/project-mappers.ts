@@ -11,6 +11,7 @@ export function serializeProject(project: Project) {
     image_url: project.imageUrl ?? "",
     gallery_urls: project.galleryUrls,
     is_featured: project.isFeatured,
+    project_url: project.projectUrl ?? "",
     created_at: project.createdAt.toISOString(),
     updated_at: project.updatedAt.toISOString(),
   };

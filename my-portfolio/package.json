@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.91.1",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.9.0",

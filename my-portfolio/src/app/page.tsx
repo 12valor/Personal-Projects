@@ -8,9 +8,14 @@ import { prisma } from "../../lib/prisma";
 import { serializeProject } from "../lib/project-mappers";
 
 export default async function Home() {
-  const projects = await prisma.project.findMany({
-    orderBy: { id: "desc" },
-  });
+  let projects = [];
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: { id: "desc" },
+    });
+  } catch (error) {
+    console.warn("Database connection failed during build on the home page. Pre-rendering with empty projects list.", error);
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">

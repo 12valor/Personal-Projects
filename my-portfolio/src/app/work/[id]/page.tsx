@@ -9,12 +9,17 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 
 export async function generateStaticParams() {
-  const projects = await prisma.project.findMany({
-    select: { id: true },
-  });
-  return projects.map((project) => ({
-    id: String(project.id),
-  }));
+  try {
+    const projects = await prisma.project.findMany({
+      select: { id: true },
+    });
+    return projects.map((project) => ({
+      id: String(project.id),
+    }));
+  } catch (error) {
+    console.warn("Database connection failed during build inside generateStaticParams. Skipping static page pre-generation.", error);
+    return [];
+  }
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {

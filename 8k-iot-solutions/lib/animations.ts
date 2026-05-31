@@ -58,3 +58,18 @@ export function getStaggerStyle(inView: boolean, index: number, extraDelayMs = 0
     transitionDelay: `${delay}ms`,
   };
 }
+
+// --- Mobile Detector Hook ---
+export function useIsMobile(breakpoint = 1024) {
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+

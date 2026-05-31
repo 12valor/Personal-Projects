@@ -38,11 +38,21 @@ const ShinyText: React.FC<ShinyTextProps> = ({
   const lastTimeRef = useRef<number | null>(null);
   const directionRef = useRef(direction === 'left' ? 1 : -1);
 
+  const [shouldDisable, setShouldDisable] = useState(disabled);
+
+  useEffect(() => {
+    if (disabled) return;
+    const checkMobile = () => setShouldDisable(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [disabled]);
+
   const animationDuration = speed * 1000;
   const delayDuration = delay * 1000;
 
   useAnimationFrame(time => {
-    if (disabled || isPaused) {
+    if (shouldDisable || isPaused) {
       lastTimeRef.current = null;
       return;
     }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Boldonse } from "next/font/google";
+import { Poppins, Italianno, Boldonse } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,6 +20,12 @@ const boldonse = Boldonse({
   variable: "--font-boldonse",
 });
 
+const italianno = Italianno({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-italianno",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "8K IoT Solutions",
@@ -35,7 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} ${boldonse.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+      </head>
+      <body className={`${poppins.variable} ${boldonse.variable} ${italianno.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <SmoothScroll>
           <ConditionalNavbar>
             <Navbar />

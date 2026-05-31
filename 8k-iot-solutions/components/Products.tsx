@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { 
   ArrowRight, 
   Layers, 
@@ -101,10 +102,12 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
                   
                   {product.imageUrl && (
                     <div className="relative w-full h-full border border-zinc-200 bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
-                      <img 
+                      <Image 
                         src={product.imageUrl} 
                         alt={product.name} 
-                        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
+                        fill
+                        className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   )}

@@ -2,6 +2,7 @@
 import React, { useRef, memo } from 'react';
 import { Search, LayoutTemplate, Cpu, Rocket } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 
 const steps = [
   {
@@ -85,6 +86,7 @@ const cardContentVariants: Variants = {
 };
 
 const Process = memo(function Process() {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLElement>(null);
   
   // Parallax Background Logic
@@ -104,7 +106,7 @@ const Process = memo(function Process() {
       id="process" 
       ref={containerRef}
       className="relative w-full pt-12 pb-16 lg:pt-20 lg:pb-24 bg-transparent text-zinc-900 z-0 border-t border-zinc-50 border-b overflow-hidden"
-      style={{ opacity: sectionOpacity }}
+      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: false, amount: 0.2 }}
@@ -113,11 +115,11 @@ const Process = memo(function Process() {
       {/* 1. Subtle Premium Background Layers (Parallax) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
         <motion.div 
-          style={{ y: bgY1 }}
+          style={{ y: isMobile ? 0 : bgY1 }}
           className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
         />
         <motion.div 
-          style={{ y: bgY2 }}
+          style={{ y: isMobile ? 0 : bgY2 }}
           className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none will-change-transform" 
         />
       </div>
@@ -125,7 +127,7 @@ const Process = memo(function Process() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <motion.div style={{ y: headerY }} className="w-full">
+        <motion.div style={{ y: isMobile ? 0 : headerY }} className="w-full">
           <motion.div 
             variants={headerVariants}
             className="text-center mb-16 md:mb-24"
@@ -147,7 +149,7 @@ const Process = memo(function Process() {
         <motion.div 
           className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6 relative z-10 pt-2 lg:pt-0"
           variants={containerVariants}
-          style={{ y: cardsY }}
+          style={{ y: isMobile ? 0 : cardsY }}
         >
           {steps.map((step) => {
             const Icon = step.icon;

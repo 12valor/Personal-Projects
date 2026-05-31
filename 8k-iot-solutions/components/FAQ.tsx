@@ -3,6 +3,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 import { Plus } from 'lucide-react';
 
 interface FAQItem {
@@ -12,6 +13,7 @@ interface FAQItem {
 }
 
 export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
+  const isMobile = useIsMobile();
   const [openIds, setOpenIds] = useState<string[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -111,7 +113,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: sectionOpacity }}
+      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       id="faq" 
       className="relative pt-4 pb-24 md:pb-32 bg-transparent overflow-hidden font-poppins"
     >

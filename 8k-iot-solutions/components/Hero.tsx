@@ -61,8 +61,14 @@ const Hero = memo(function Hero({
     return imagePool[index % total];
   };
 
+  const [isDesktop, setIsDesktop] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop, { passive: true });
+    return () => window.removeEventListener('resize', checkDesktop);
   }, []);
 
   // Use school logos for avatars if available, otherwise fallback to generic images
@@ -160,7 +166,7 @@ const Hero = memo(function Hero({
       )}
 
       {/* Magic Rings Background Overlay (Desktop Only) */}
-      {heroSection?.show_magic_rings !== false && (
+      {isDesktop && heroSection?.show_magic_rings !== false && (
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden lg:block">
           <MagicRings
             color={heroSection?.magic_rings_color || "#3b82f6"}

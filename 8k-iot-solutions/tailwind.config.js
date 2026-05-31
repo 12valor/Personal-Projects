@@ -24,7 +24,7 @@ module.exports = {
         sans: ['"General Sans"', 'sans-serif'], 
         poppins: ['var(--font-poppins)', 'sans-serif'], 
         boldonse: ['var(--font-boldonse)', 'sans-serif'], 
-        italianno: ['Italianno', 'cursive'],
+        italianno: ['var(--font-italianno)', 'cursive'],
       },
       animation: {
         // FIXED: Explicitly mapping the animation name to the keyframe
@@ -67,8 +67,8 @@ module.exports = {
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
         scrollHorizontal: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
+          '0%': { transform: 'translate3d(0, 0, 0)' },
+          '100%': { transform: 'translate3d(-50%, 0, 0)' },
         }
       }
     },

@@ -4,6 +4,7 @@ import React, { useState, useRef, memo, useEffect } from 'react';
 import Image from 'next/image';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 
 // --- Animation Variants (mirroring Process.tsx quality) ---
 
@@ -83,13 +84,12 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       setCurrentIndex(prev => Math.max(prev - 1, 0));
     }
   };
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  const bgY1 = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const bgY2 = useTransform(scrollYProgress, [0, 1], ["6%", "-6%"]);
   const headerY = useTransform(scrollYProgress, [0, 1], [15, -15]);
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
@@ -98,7 +98,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       id="testimonials"
       ref={containerRef} 
       className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0 will-change-transform"
-      style={{ opacity: sectionOpacity }}
+      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: false, amount: 0.15 }}
@@ -107,7 +107,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <motion.div style={{ y: headerY }} className="w-full">
+        <motion.div style={{ y: isMobile ? 0 : headerY }} className="w-full">
           <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
           <h2 className="text-4xl md:text-[3.25rem] font-poppins font-black tracking-tight text-slate-900 leading-tight">
             What Our Clients <br className="hidden md:block" />

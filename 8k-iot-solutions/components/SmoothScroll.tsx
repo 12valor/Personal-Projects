@@ -16,8 +16,36 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     // 1. Detect mobile to disable/reduce smoothing
     const isMobile = window.innerWidth < 1024;
 
+    if (isMobile) {
+      // Setup click listener for native smooth scrolling fallback
+      const handleAnchorClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        const anchor = target.closest("a");
+        
+        if (anchor && anchor.hash && anchor.origin === window.location.origin) {
+          const targetId = anchor.hash.replace("#", "");
+          const element = document.getElementById(targetId);
+          if (element) {
+            e.preventDefault();
+            const navbarOffset = 80;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - navbarOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }
+      };
+
+      window.addEventListener("click", handleAnchorClick);
+      return () => {
+        window.removeEventListener("click", handleAnchorClick);
+      };
+    }
+
     const lenis = new Lenis({
-      lerp: isMobile ? 1 : 0.1, // 1 is instant (no lerp), 0.1 is buttery smooth
+      lerp: 0.1, // buttery smooth
       wheelMultiplier: 1,      // Standard multiplier for native physical feel
       touchMultiplier: 1.2,    // Slightly reduced for more stable touch deceleration
       orientation: "vertical",

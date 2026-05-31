@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 import { 
   Facebook, 
   Linkedin, 
@@ -29,6 +30,7 @@ interface TeamMember {
 }
 
 export default function Team({ members = [] }: { members?: TeamMember[] }) {
+  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -76,7 +78,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: sectionOpacity }}
+      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       id="team" 
       className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-hidden font-poppins"
     >

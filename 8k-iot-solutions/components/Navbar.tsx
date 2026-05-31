@@ -128,8 +128,8 @@ export default function Navbar() {
       <nav 
         className={`pointer-events-auto relative flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${isScrolled 
-            ? 'mt-4 w-[95%] rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100/50 py-2' 
-            : 'mt-0 w-full rounded-none bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-2'
+            ? 'mt-4 w-[95%] rounded-2xl bg-white/98 lg:bg-white/95 lg:backdrop-blur-md shadow-sm lg:shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100/50 py-2' 
+            : 'mt-0 w-full rounded-none bg-white/98 lg:bg-white/95 lg:backdrop-blur-sm shadow-sm border-b border-gray-100 py-2'
           }
         `}
       >

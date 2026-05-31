@@ -2,6 +2,7 @@
 
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 
 interface PageHeaderParallaxProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export default function PageHeaderParallax({
   children, 
   fadeEndOffset = 0.8 
 }: PageHeaderParallaxProps) {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Since this is typically at the top of the page, we use "start start" 
@@ -26,7 +28,7 @@ export default function PageHeaderParallax({
 
   return (
     <div ref={containerRef} className="relative z-10 w-full">
-      <motion.div style={{ opacity, y }}>
+      <motion.div style={{ opacity: isMobile ? 1 : opacity, y: isMobile ? 0 : y }}>
         {children}
       </motion.div>
     </div>

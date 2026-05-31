@@ -2,11 +2,13 @@
 
 import React, { useRef, useActionState, useEffect, memo } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { submitContactForm } from '@/app/contact';
 
 const Contact = memo(() => {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -39,7 +41,7 @@ const Contact = memo(() => {
 
   return (
     <motion.section 
-      style={{ opacity: sectionOpacity }} 
+      style={{ opacity: isMobile ? 1 : sectionOpacity }} 
       ref={containerRef} 
       id="contact" 
       className="relative py-16 lg:py-24 bg-slate-950 overflow-hidden z-0 font-poppins"

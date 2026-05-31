@@ -3,6 +3,7 @@
 import React, { useRef, memo } from 'react';
 import Image from 'next/image';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
@@ -35,6 +36,7 @@ const logoVariants: Variants = {
 };
 
 const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] }) {
+  const isMobile = useIsMobile();
   if (!logos || logos.length === 0) return null;
 
   const containerRef = useRef<HTMLElement>(null);
@@ -49,7 +51,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
   return (
     <motion.section 
       id="partners"
-      style={{ opacity: sectionOpacity }} 
+      style={{ opacity: isMobile ? 1 : sectionOpacity }} 
       ref={containerRef} 
       className="relative py-12 md:py-20 bg-transparent z-0 overflow-hidden"
     >
@@ -72,7 +74,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
 
         {/* Logo Section - Right on Desktop, Center on Mobile */}
         <motion.div 
-          style={{ y: logoRowY }}
+          style={{ y: isMobile ? 0 : logoRowY }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.05 }}

@@ -3,6 +3,7 @@ import React, { useRef, memo } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
+import { useIsMobile } from '@/lib/animations';
 
 
 
@@ -68,6 +69,7 @@ const rightCardVariants: Variants = {
 };
 
 const ServicesSection = memo(function ServicesSection() {
+  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -78,7 +80,7 @@ const ServicesSection = memo(function ServicesSection() {
 
   return (
     <section id="services" ref={sectionRef} className="relative w-full pt-4 lg:pt-6 pb-2 md:pb-4 bg-transparent text-zinc-900 overflow-hidden z-0">
-      <motion.div style={{ opacity: sectionOpacity }} className="w-full h-full relative">
+      <motion.div style={{ opacity: isMobile ? 1 : sectionOpacity }} className="w-full h-full relative">
 
       {/* Ambient Depth Orb */}
       <div className="absolute top-[-5%] left-[15%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[100px] pointer-events-none" />

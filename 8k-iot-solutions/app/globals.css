@@ -1,5 +1,4 @@
 @import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Italianno&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,4 +124,22 @@ html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+/* Reduced Motion and Mobile Optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blueprintShift,
+  .animate-scroll-down,
+  .animate-scroll-up,
+  .animate-scroll-horizontal {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .animate-blueprintShift {
+    animation: none !important;
+    transform: none !important;
+  }
 }

@@ -1,4 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) portfolio site backed by Supabase for projects and contact inquiries.
+
+## Supabase setup
+
+Create the Supabase tables by applying the SQL in `supabase/migrations`.
+
+Add these environment variables:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=""
+SUPABASE_SERVICE_ROLE_KEY=""
+ADMIN_PASSWORD=""
+ADMIN_USER=""
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+CLOUDINARY_API_KEY=""
+CLOUDINARY_API_SECRET=""
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` is used only in server routes and server components. Do not expose it in client-side code.
 
 ## Getting Started
 

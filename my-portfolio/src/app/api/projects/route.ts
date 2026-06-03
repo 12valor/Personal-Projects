@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
 import { checkAuth } from "../../actions";
 import { serializeProject } from "../../../lib/project-mappers";
 import { revalidatePath } from "next/cache";
+import { getSupabaseServerClient, type PortfolioProjectRow } from "../../../lib/supabase";
 
 export async function GET() {
-  const projects = await prisma.project.findMany({
-    orderBy: { id: "desc" },
-  });
+  const supabase = getSupabaseServerClient();
+  const { data: projects, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("id", { ascending: false })
+    .returns<PortfolioProjectRow[]>();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json(projects.map(serializeProject));
 }
@@ -19,19 +26,26 @@ export async function POST(request: Request) {
 
   const body = await request.json();
 
-  const project = await prisma.project.create({
-    data: {
+  const supabase = getSupabaseServerClient();
+  const { data: project, error } = await supabase
+    .from("projects")
+    .insert({
       title: body.title,
       category: body.category,
       role: body.role || null,
       year: body.year || null,
       description: body.description || null,
-      imageUrl: body.image_url || null,
-      galleryUrls: body.gallery_urls ?? [],
-      isFeatured: Boolean(body.is_featured),
-      projectUrl: body.project_url || null,
-    },
-  });
+      image_url: body.image_url || null,
+      gallery_urls: body.gallery_urls ?? [],
+      is_featured: Boolean(body.is_featured),
+      project_url: body.project_url || null,
+    })
+    .select("*")
+    .single<PortfolioProjectRow>();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   revalidatePath("/");
 

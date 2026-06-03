@@ -1,6 +1,11 @@
-import type { Inquiry, Project } from "../generated/prisma/client";
+import type { PortfolioInquiryRow, PortfolioProjectRow } from "./supabase";
 
-export function serializeProject(project: Project) {
+function toIsoString(value: string | Date | null | undefined) {
+  if (!value) return "";
+  return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
+}
+
+export function serializeProject(project: PortfolioProjectRow) {
   return {
     id: project.id,
     title: project.title,
@@ -8,19 +13,19 @@ export function serializeProject(project: Project) {
     role: project.role ?? "",
     year: project.year ?? "",
     description: project.description ?? "",
-    image_url: project.imageUrl ?? "",
-    gallery_urls: project.galleryUrls,
-    is_featured: project.isFeatured,
-    project_url: project.projectUrl ?? "",
-    created_at: project.createdAt.toISOString(),
-    updated_at: project.updatedAt.toISOString(),
+    image_url: project.image_url ?? "",
+    gallery_urls: project.gallery_urls ?? [],
+    is_featured: project.is_featured,
+    project_url: project.project_url ?? "",
+    created_at: toIsoString(project.created_at),
+    updated_at: toIsoString(project.updated_at),
   };
 }
 
-export function serializeInquiry(inquiry: Inquiry) {
+export function serializeInquiry(inquiry: PortfolioInquiryRow) {
   return {
     id: inquiry.id,
-    created_at: inquiry.createdAt.toISOString(),
+    created_at: toIsoString(inquiry.created_at),
     name: inquiry.name,
     email: inquiry.email,
     message: inquiry.message,

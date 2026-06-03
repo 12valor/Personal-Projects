@@ -1,5 +1,5 @@
-import { prisma } from "../../../../lib/prisma";
 import { serializeProject } from "../../../lib/project-mappers";
+import { getSupabaseServerClient, type PortfolioProjectRow } from "../../../lib/supabase";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import React from "react";
@@ -10,24 +10,33 @@ import { Badge } from "../../../components/ui/badge";
 
 export async function generateStaticParams() {
   try {
-    const projects = await prisma.project.findMany({
-      select: { id: true },
-    });
+    const supabase = getSupabaseServerClient();
+    const { data: projects, error } = await supabase.from("projects").select("id");
+
+    if (error) throw error;
+
     return projects.map((project) => ({
       id: String(project.id),
     }));
   } catch (error) {
-    console.warn("Database connection failed during build inside generateStaticParams. Skipping static page pre-generation.", error);
+    console.warn("Supabase connection failed during build inside generateStaticParams. Skipping static page pre-generation.", error);
     return [];
   }
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  
-  const projectRecord = await prisma.project.findUnique({
-    where: { id: Number(resolvedParams.id) },
-  });
+
+  const supabase = getSupabaseServerClient();
+  const { data: projectRecord, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", Number(resolvedParams.id))
+    .maybeSingle<PortfolioProjectRow>();
+
+  if (error) {
+    throw error;
+  }
 
   if (!projectRecord) {
     notFound();

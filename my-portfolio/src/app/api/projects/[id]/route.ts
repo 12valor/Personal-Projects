@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/prisma";
 import { checkAuth } from "../../../actions";
 import { serializeProject } from "../../../../lib/project-mappers";
 import { removeLegacySupabasePortfolioImage } from "../../../../lib/supabase-storage";
 import { revalidatePath } from "next/cache";
+import { getSupabaseServerClient, type PortfolioProjectRow } from "../../../../lib/supabase";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await checkAuth())) {
@@ -13,20 +13,28 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const body = await request.json();
 
-  const project = await prisma.project.update({
-    where: { id: Number(id) },
-    data: {
+  const supabase = getSupabaseServerClient();
+  const { data: project, error } = await supabase
+    .from("projects")
+    .update({
       title: body.title,
       category: body.category,
       role: body.role || null,
       year: body.year || null,
       description: body.description || null,
-      imageUrl: body.image_url || null,
-      galleryUrls: body.gallery_urls ?? [],
-      isFeatured: Boolean(body.is_featured),
-      projectUrl: body.project_url || null,
-    },
-  });
+      image_url: body.image_url || null,
+      gallery_urls: body.gallery_urls ?? [],
+      is_featured: Boolean(body.is_featured),
+      project_url: body.project_url || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", Number(id))
+    .select("*")
+    .single<PortfolioProjectRow>();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
@@ -40,18 +48,29 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   }
 
   const { id } = await params;
-  const project = await prisma.project.findUnique({
-    where: { id: Number(id) },
-  });
+  const supabase = getSupabaseServerClient();
+  const { data: project, error: findError } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("id", Number(id))
+    .maybeSingle<PortfolioProjectRow>();
+
+  if (findError) {
+    return NextResponse.json({ error: findError.message }, { status: 500 });
+  }
 
   if (!project) {
     return NextResponse.json({ error: "Project not found" }, { status: 404 });
   }
 
-  await removeLegacySupabasePortfolioImage(project.imageUrl);
-  await prisma.project.delete({
-    where: { id: project.id },
-  });
+  await removeLegacySupabasePortfolioImage(project.image_url);
+
+  const { error: deleteError } = await supabase.from("projects").delete().eq("id", project.id);
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
 

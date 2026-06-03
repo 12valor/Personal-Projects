@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/prisma";
 import { checkAuth } from "../../../actions";
+import { getSupabaseServerClient } from "../../../../lib/supabase";
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await checkAuth())) {
@@ -8,10 +8,12 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   }
 
   const { id } = await params;
+  const supabase = getSupabaseServerClient();
+  const { error } = await supabase.from("inquiries").delete().eq("id", Number(id));
 
-  await prisma.inquiry.delete({
-    where: { id: Number(id) },
-  });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true });
 }

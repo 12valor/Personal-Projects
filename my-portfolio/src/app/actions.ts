@@ -77,10 +77,12 @@ export async function verifyAdminPassword(password: string) {
 export async function checkAuth() {
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
-  return session?.value === "true";
+  const legacySession = cookieStore.get("admin_token");
+  return session?.value === "true" || legacySession?.value === "authenticated";
 }
 
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete("admin_session");
+  cookieStore.delete("admin_token");
 }

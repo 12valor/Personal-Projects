@@ -13,6 +13,14 @@ export async function POST(request: Request) {
     const response = NextResponse.json({ success: true });
 
     // Set a secure cookie (The "Key")
+    response.cookies.set('admin_session', 'true', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24,
+      path: '/',
+    });
+
     response.cookies.set('admin_token', 'authenticated', {
       httpOnly: true, // JavaScript can't read this (Security)
       secure: process.env.NODE_ENV === 'production',

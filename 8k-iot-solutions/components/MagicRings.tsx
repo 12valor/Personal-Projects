@@ -112,19 +112,31 @@ export default function MagicRings({
   className = "",
 }: MagicRingsProps) {
   const mountRef = useRef<HTMLDivElement | null>(null);
-  const propsRef = useRef<Required<Omit<MagicRingsProps, 'className'>> | null>(null);
+  const propsRef = useRef<Required<Omit<MagicRingsProps, 'className'>>>({
+    color, colorTwo, speed, ringCount, attenuation, lineThickness,
+    baseRadius, radiusStep, scaleRate, opacity, blur, noiseAmount,
+    rotation, ringGap, fadeIn, fadeOut, followMouse, mouseInfluence,
+    hoverScale, parallax, clickBurst,
+  });
   const mouseRef = useRef([0, 0]);
   const smoothMouseRef = useRef([0, 0]);
   const hoverAmountRef = useRef(0);
   const isHoveredRef = useRef(false);
   const burstRef = useRef(0);
 
-  propsRef.current = {
+  useEffect(() => {
+    propsRef.current = {
+      color, colorTwo, speed, ringCount, attenuation, lineThickness,
+      baseRadius, radiusStep, scaleRate, opacity, blur, noiseAmount,
+      rotation, ringGap, fadeIn, fadeOut, followMouse, mouseInfluence,
+      hoverScale, parallax, clickBurst,
+    };
+  }, [
     color, colorTwo, speed, ringCount, attenuation, lineThickness,
     baseRadius, radiusStep, scaleRate, opacity, blur, noiseAmount,
     rotation, ringGap, fadeIn, fadeOut, followMouse, mouseInfluence,
     hoverScale, parallax, clickBurst,
-  };
+  ]);
 
   useEffect(() => {
     if (window.innerWidth < 1024) return;
@@ -133,7 +145,7 @@ export default function MagicRings({
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: 'low-power' });
     } catch { return; }
 
     if (!renderer.capabilities.isWebGL2) {
@@ -189,7 +201,7 @@ export default function MagicRings({
       const w = mount.clientWidth;
       const h = mount.clientHeight;
       if (w === 0 || h === 0) return;
-      const dpr = Math.min(window.devicePixelRatio, 2);
+      const dpr = Math.min(window.devicePixelRatio, 1.25);
       renderer.setSize(w, h);
       renderer.setPixelRatio(dpr);
       uniforms.uResolution.value.set(w * dpr, h * dpr);
@@ -217,9 +229,11 @@ export default function MagicRings({
     mount.addEventListener('mouseleave', onMouseLeave);
     mount.addEventListener('click', onClick);
 
-    let frameId: number;
+    let frameId = 0;
+    let isRunning = false;
+    let isInView = false;
     const animate = (t: number) => {
-      frameId = requestAnimationFrame(animate);
+      if (!isRunning) return;
       const p = propsRef.current;
       if (!p) return;
 
@@ -252,11 +266,42 @@ export default function MagicRings({
       uniforms.uBurst.value = p.clickBurst ? burstRef.current : 0;
 
       renderer.render(scene, camera);
+      frameId = requestAnimationFrame(animate);
     };
-    frameId = requestAnimationFrame(animate);
+
+    const start = () => {
+      if (isRunning || document.hidden) return;
+      isRunning = true;
+      frameId = requestAnimationFrame(animate);
+    };
+
+    const stop = () => {
+      isRunning = false;
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = 0;
+    };
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isInView = entry.isIntersecting;
+        if (isInView) start();
+        else stop();
+      },
+      { rootMargin: '200px 0px' }
+    );
+
+    const handleVisibilityChange = () => {
+      if (document.hidden || !isInView) stop();
+      else start();
+    };
+
+    visibilityObserver.observe(mount);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      cancelAnimationFrame(frameId);
+      stop();
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', resize);
       ro.disconnect();
       mount.removeEventListener('mousemove', onMouseMove);

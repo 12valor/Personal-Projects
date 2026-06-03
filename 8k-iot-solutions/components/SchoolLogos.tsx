@@ -2,8 +2,7 @@
 
 import React, { useRef, memo } from 'react';
 import Image from 'next/image';
-import { motion, Variants, useScroll, useTransform } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion, Variants } from 'framer-motion';
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
@@ -36,22 +35,12 @@ const logoVariants: Variants = {
 };
 
 const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] }) {
-  const isMobile = useIsMobile();
-  if (!logos || logos.length === 0) return null;
-
   const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const logoRowY = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  if (!logos || logos.length === 0) return null;
 
   return (
     <motion.section 
       id="partners"
-      style={{ opacity: isMobile ? 1 : sectionOpacity }} 
       ref={containerRef} 
       className="relative py-12 md:py-20 bg-transparent z-0 overflow-hidden"
     >
@@ -61,7 +50,7 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
           variants={headerVariants} 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           className="text-center lg:text-left shrink-0 w-full max-w-md lg:max-w-xs mx-auto lg:mx-0"
         >
            <h3 className="text-brand-900 font-black uppercase tracking-[0.3em] text-sm md:text-lg lg:text-xl font-poppins leading-tight">
@@ -74,10 +63,9 @@ const SchoolLogos = memo(function SchoolLogos({ logos = [] }: { logos?: any[] })
 
         {/* Logo Section - Right on Desktop, Center on Mobile */}
         <motion.div 
-          style={{ y: isMobile ? 0 : logoRowY }}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.05 }}
+          viewport={{ once: true, amount: 0.05 }}
           variants={sectionVariants}
           className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end items-center justify-items-center gap-6 md:gap-8 lg:gap-12 w-full lg:flex-1"
         >

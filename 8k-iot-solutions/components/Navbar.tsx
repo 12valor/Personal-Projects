@@ -4,8 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 interface NavItem {
   name: string;
@@ -46,26 +46,51 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const stateRef = useRef({ isScrolled: false, isVisible: true });
 
-  const { scrollY } = useScroll();
+  useEffect(() => {
+    stateRef.current = { isScrolled, isVisible };
+  }, [isScrolled, isVisible]);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious() ?? 0;
-    const scrollDelta = Math.abs(latest - previous);
-    
-    // 1. Handle background state (scrolled glass effect)
-    const scrolled = latest > 50;
-    if (scrolled !== isScrolled) setIsScrolled(scrolled);
+  useEffect(() => {
+    let previous = window.scrollY;
+    let frame = 0;
 
-    // 2. Handle visibility (hide on scroll down, show on scroll up)
-    // We add a 5px threshold to avoid "fluttering" at the very stop of a scroll
-    if (latest > previous && latest > 150 && scrollDelta > 5) {
-      if (isVisible) setIsVisible(false);
-      if (mobileMenuOpen) setMobileMenuOpen(false);
-    } else if (latest < previous && scrollDelta > 5) {
-      if (!isVisible) setIsVisible(true);
-    }
-  });
+    const updateNavbar = () => {
+      frame = 0;
+      const latest = window.scrollY;
+      const scrollDelta = Math.abs(latest - previous);
+      const scrolled = latest > 50;
+
+      if (scrolled !== stateRef.current.isScrolled) {
+        stateRef.current.isScrolled = scrolled;
+        setIsScrolled(scrolled);
+      }
+
+      if (scrollDelta > 8) {
+        const nextVisible = !(latest > previous && latest > 150);
+        if (nextVisible !== stateRef.current.isVisible) {
+          stateRef.current.isVisible = nextVisible;
+          setIsVisible(nextVisible);
+        }
+        if (!nextVisible) setMobileMenuOpen(false);
+      }
+
+      previous = latest;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(updateNavbar);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateNavbar();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, href: string) => {
     e.preventDefault();
@@ -162,7 +187,7 @@ export default function Navbar() {
                 onMouseEnter={() => handleMouseEnter(link.name)}
               >
                 <button
-                  onClick={(e) => handleNavigation(e as any, link.href)}
+                  onClick={(e) => handleNavigation(e, link.href)}
                   className={`relative flex items-center gap-1.5 px-5 py-2.5 text-[15px] font-poppins font-medium transition-all duration-300 rounded-full z-10 ${hoveredNav === link.name ? 'text-brand-900' : 'text-zinc-950'}`}
                 >
                   {link.name}

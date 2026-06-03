@@ -3,8 +3,7 @@
 import React, { useState, useRef, memo, useEffect } from 'react';
 import Image from 'next/image';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, useScroll, useTransform, Variants, AnimatePresence } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion, Variants } from 'framer-motion';
 
 // --- Animation Variants (mirroring Process.tsx quality) ---
 
@@ -84,30 +83,20 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       setCurrentIndex(prev => Math.max(prev - 1, 0));
     }
   };
-  const isMobile = useIsMobile();
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const headerY = useTransform(scrollYProgress, [0, 1], [15, -15]);
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
-
   return (
     <motion.section 
       id="testimonials"
       ref={containerRef} 
       className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0 will-change-transform"
-      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.15 }}
+      viewport={{ once: true, amount: 0.15 }}
     >
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <motion.div style={{ y: isMobile ? 0 : headerY }} className="w-full">
+        <motion.div className="w-full">
           <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
           <h2 className="text-4xl md:text-[3.25rem] font-poppins font-black tracking-tight text-slate-900 leading-tight">
             What Our Clients <br className="hidden md:block" />

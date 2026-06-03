@@ -2,8 +2,7 @@
 
 
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 
 interface FAQItem {
@@ -13,15 +12,8 @@ interface FAQItem {
 }
 
 export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
-  const isMobile = useIsMobile();
   const [openIds, setOpenIds] = useState<string[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   const toggle = (id: string) => {
     setOpenIds((prev) => 
@@ -113,7 +105,6 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       id="faq" 
       className="relative pt-4 pb-24 md:pb-32 bg-transparent overflow-hidden font-poppins"
     >
@@ -124,7 +115,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           <motion.h2 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-6 leading-tight"
           >
@@ -133,7 +124,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           <motion.p
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-lg md:text-xl text-zinc-500 font-poppins"
           >
@@ -147,7 +138,7 @@ export default function FAQ({ faqs = [] }: { faqs?: FAQItem[] }) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {displayFaqs.map((faq, index) => (
             <FAQItemComponent 

@@ -1,21 +1,13 @@
 "use client";
 
 import React, { useRef, useActionState, useEffect, memo } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { submitContactForm } from '@/app/contact';
 
 const Contact = memo(() => {
-  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
 
   const searchParams = useSearchParams();
   const initialMessage = searchParams?.get("project_idea") || "";
@@ -41,7 +33,6 @@ const Contact = memo(() => {
 
   return (
     <motion.section 
-      style={{ opacity: isMobile ? 1 : sectionOpacity }} 
       ref={containerRef} 
       id="contact" 
       className="relative py-16 lg:py-24 bg-slate-950 overflow-hidden z-0 font-poppins"
@@ -54,7 +45,7 @@ const Contact = memo(() => {
         className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
           
@@ -62,7 +53,7 @@ const Contact = memo(() => {
           <motion.div 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 flex flex-col items-start"
           >
@@ -112,7 +103,7 @@ const Contact = memo(() => {
           <motion.div 
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="lg:col-span-6 lg:col-start-7"
           >

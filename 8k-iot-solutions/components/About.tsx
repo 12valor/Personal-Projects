@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useRef, useEffect, memo } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
-import { motion, Variants, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } },
@@ -38,28 +38,7 @@ const itemVariants: Variants = {
 
 const About = memo(function About() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(true);
   const containerRef = useRef<HTMLElement>(null);
-  
-  // Safe mobile detection for parallax opt-out
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile(); // Check immediately on mount
-    window.addEventListener('resize', checkMobile, { passive: true });
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  // Refined Parallax Spring configuration for butter-smooth movement
-  const smoothY = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  const desktopImageY = useTransform(smoothY, [0, 1], ["-12%", "12%"]);
-
-  // Conditionally disable the parallax y-transform on mobile devices to prevent layout shift & ensure performance
-  const imageY = isMobile ? "0%" : desktopImageY;
 
   const images = [
     "/co-founders.jpg",
@@ -82,7 +61,7 @@ const About = memo(function About() {
         className="relative z-10 w-full max-w-[1728px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-20"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: false, amount: 0.15, margin: "0px 0px -10% 0px" }}
+        viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
         variants={containerVariants}
       >
         {/* Native Staggered Grid Layout */}
@@ -149,7 +128,6 @@ const About = memo(function About() {
           {/* Hidden entirely on mobile, visible only on lg screens and up. Z-index 10. */}
           <motion.div 
             className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0 will-change-transform"
-            style={{ y: imageY }}
           >
             <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100 transition-all duration-700">
               

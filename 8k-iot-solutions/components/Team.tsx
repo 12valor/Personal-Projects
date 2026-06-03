@@ -3,8 +3,7 @@
 import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion } from 'framer-motion';
 import { 
   Facebook, 
   Linkedin, 
@@ -30,14 +29,7 @@ interface TeamMember {
 }
 
 export default function Team({ members = [] }: { members?: TeamMember[] }) {
-  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   const studioEase = [0.16, 1, 0.3, 1] as any;
 
@@ -78,7 +70,6 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: isMobile ? 1 : sectionOpacity }}
       id="team" 
       className="relative pt-4 lg:pt-8 pb-24 lg:pb-32 bg-transparent overflow-hidden font-poppins"
     >
@@ -89,7 +80,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           <motion.h2 
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-4xl md:text-[3.5rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
           >
@@ -98,7 +89,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           <motion.p
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: studioEase }}
             className="text-lg md:text-xl text-zinc-500 font-poppins font-medium"
           >
@@ -112,7 +103,7 @@ export default function Team({ members = [] }: { members?: TeamMember[] }) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {members.map((member, index) => (
             <TeamCard 

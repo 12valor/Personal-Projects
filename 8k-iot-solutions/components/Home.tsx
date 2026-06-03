@@ -123,7 +123,7 @@ export default function HomeContent({
         aria-hidden="true"
       >
         <div 
-          className="absolute inset-0 w-[200%] h-[200%] opacity-[0.6] animate-blueprintShift will-change-transform" 
+          className="absolute inset-0 w-[200%] h-[200%] opacity-[0.35]" 
           style={{
             backgroundImage: 'linear-gradient(to right, #d4d4d8 1px, transparent 1px), linear-gradient(to bottom, #d4d4d8 1px, transparent 1px)',
             backgroundSize: '64px 64px',

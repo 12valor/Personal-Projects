@@ -2,8 +2,7 @@
 import React, { useRef, memo } from 'react';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
-import { motion, Variants, useScroll, useTransform } from 'framer-motion';
-import { useIsMobile } from '@/lib/animations';
+import { motion, Variants } from 'framer-motion';
 
 
 
@@ -20,26 +19,12 @@ const SOFTWARE_FEATURES = [
   "Project Consultation",
 ];
 
-const studioEase = [0.16, 1, 0.3, 1] as any;
-
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
       staggerChildren: 0,
-    },
-  },
-};
-
-const headerVariants: Variants = {
-  hidden: { opacity: 0, x: -40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.25,
-      ease: "easeOut",
     },
   },
 };
@@ -69,18 +54,11 @@ const rightCardVariants: Variants = {
 };
 
 const ServicesSection = memo(function ServicesSection() {
-  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
 
   return (
     <section id="services" ref={sectionRef} className="relative w-full pt-4 lg:pt-6 pb-2 md:pb-4 bg-transparent text-zinc-900 overflow-hidden z-0">
-      <motion.div style={{ opacity: isMobile ? 1 : sectionOpacity }} className="w-full h-full relative">
+      <div className="w-full h-full relative">
 
       {/* Ambient Depth Orb */}
       <div className="absolute top-[-5%] left-[15%] w-[400px] h-[400px] bg-brand-50/40 rounded-full blur-[100px] pointer-events-none" />
@@ -93,7 +71,7 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.h2 
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="text-4xl md:text-[3rem] font-sans font-bold tracking-tight text-zinc-900 mb-4 leading-tight"
             >
@@ -102,7 +80,7 @@ const ServicesSection = memo(function ServicesSection() {
             <motion.p
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="text-[16px] md:text-lg text-zinc-500 font-poppins max-w-2xl mx-auto leading-relaxed"
             >
@@ -118,7 +96,7 @@ const ServicesSection = memo(function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
           >
             {/* ========================================= */}
             {/* CARD 1: Hardware Services (FROM LEFT)     */}
@@ -232,7 +210,7 @@ const ServicesSection = memo(function ServicesSection() {
           </motion.div>
         </div>
       </div>
-      </motion.div>
+      </div>
     </section>
   );
 });

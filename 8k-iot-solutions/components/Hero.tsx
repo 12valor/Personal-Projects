@@ -2,9 +2,9 @@
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useEffect, useState, memo, useRef } from 'react';
-import { motion, AnimatePresence, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
+import { motion, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Zap, ArrowRight, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, Search, Sparkles } from 'lucide-react';
 import ShinyText from './ShinyText';
 import SplitText from './SplitText';
 
@@ -424,12 +424,12 @@ const Hero = memo(function Hero({
         <div className="absolute inset-y-0 right-0 w-16 sm:w-40 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
         
         <div 
-          className="flex gap-4 sm:gap-6 w-max items-center px-4 animate-scroll-horizontal will-change-transform"
+          className="hero-marquee-track pause-during-scroll flex gap-4 sm:gap-6 w-max items-center px-4 animate-scroll-horizontal will-change-transform transform-gpu"
         >
           {marqueeItems.map((item, index) => (
             <div 
               key={`${item.id}-${index}`} 
-              className="flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 hover:shadow-lg hover:shadow-brand-900/5 hover:-translate-y-1 transition-all duration-500 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white font-poppins"
+              className="hero-marquee-card flex-shrink-0 w-80 h-[210px] sm:h-[220px] rounded-2xl border border-slate-200/60 lg:hover:shadow-lg lg:hover:shadow-brand-900/5 lg:hover:-translate-y-1 transition-all duration-300 ease-[0.16,1,0.3,1] flex flex-col overflow-hidden group cursor-pointer bg-white font-poppins transform-gpu"
             >
               
               {/* Type: Client / Project Cards */}
@@ -441,8 +441,9 @@ const Hero = memo(function Hero({
                         alt={item.content || "Client project"} 
                         fill 
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
-                        sizes="320px"
-                        priority={index < 4}
+                        sizes="(max-width: 640px) 320px, 320px"
+                        priority={index < 2}
+                        quality={75}
                       />
                   )}
                   {/* Bottom-to-top gradient overlay */}

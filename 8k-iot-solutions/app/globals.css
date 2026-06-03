@@ -36,6 +36,20 @@ html.project-modal-open #main-navbar {
   }
 }
 
+.is-scrolling .pause-during-scroll {
+  animation-play-state: paused !important;
+}
+
+.hero-marquee-track {
+  contain: layout paint;
+  backface-visibility: hidden;
+}
+
+.hero-marquee-card {
+  contain: layout paint style;
+  backface-visibility: hidden;
+}
+
 /* Hero background crossfade — mobile only */
 @keyframes heroCrossfade {
   0%, 45% { opacity: 1; }

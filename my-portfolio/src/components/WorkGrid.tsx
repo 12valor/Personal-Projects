@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useRouter } from "next/navigation"; 
 import { useRef } from "react";
 import GalleryModal from "./GalleryModal"; 
+import { Button } from "@/src/components/ui/button";
 
 // --- TYPES ---
 export interface Project {
@@ -105,12 +106,11 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
           {/* Top Row: Title + Desktop Description */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              {/* UPDATED HEADER TEXT */}
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-                Featured Projects
+                Projects
               </h2>
               <p className="text-muted-foreground max-w-md text-sm md:text-base leading-relaxed mt-2 hidden md:block">
-                A curated collection of digital experiences, visual design, and motion graphics.
+                Browse the full collection of digital experiences, visual design, and motion graphics.
               </p>
             </div>
           </div>
@@ -121,28 +121,24 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             {/* LEVEL 1: PARENT FILTERS (Horizontal Scroll on Mobile) */}
             <div className="w-full overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                 <div className="flex md:flex-wrap md:justify-end gap-2 md:gap-3 min-w-max">
-                    <button
+                    <Button
+                        type="button"
+                        variant={activeParent === "All" ? "default" : "secondary"}
                         onClick={() => handleParentClick("All")}
-                        className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 border ${
-                        activeParent === "All"
-                            ? "bg-foreground text-background border-foreground shadow-md"
-                            : "bg-zinc-100/50 dark:bg-zinc-800/50 text-muted-foreground border-transparent hover:border-border hover:bg-zinc-200/50"
-                        }`}
+                        className="rounded-full px-5"
                     >
                         All Work
-                    </button>
+                    </Button>
                     {Object.keys(CATEGORY_MAP).map((cat) => (
-                    <button
+                    <Button
                         key={cat}
+                        type="button"
+                        variant={activeParent === cat ? "default" : "secondary"}
                         onClick={() => handleParentClick(cat)}
-                        className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 border ${
-                        activeParent === cat
-                            ? "bg-foreground text-background border-foreground shadow-md"
-                            : "bg-zinc-100/50 dark:bg-zinc-800/50 text-muted-foreground border-transparent hover:border-border hover:bg-zinc-200/50"
-                        }`}
+                        className="rounded-full px-5"
                     >
                         {cat}
-                    </button>
+                    </Button>
                     ))}
                 </div>
             </div>
@@ -160,28 +156,26 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground self-center mr-2 hidden md:block">
                                 Filter:
                             </span>
-                            <button
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={activeSub === "All" ? "default" : "outline"}
                                 onClick={() => setActiveSub("All")}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border ${
-                                    activeSub === "All"
-                                    ? "bg-zinc-800 text-white border-zinc-800 dark:bg-white dark:text-black"
-                                    : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-400"
-                                }`}
+                                className="rounded-full px-4 uppercase tracking-wide"
                             >
                                 All {activeParent}
-                            </button>
+                            </Button>
                             {CATEGORY_MAP[activeParent].map((sub) => (
-                                <button
+                                <Button
                                     key={sub}
+                                    type="button"
+                                    size="sm"
+                                    variant={activeSub === sub ? "default" : "outline"}
                                     onClick={() => setActiveSub(sub)}
-                                    className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-all duration-300 border ${
-                                        activeSub === sub
-                                        ? "bg-zinc-800 text-white border-zinc-800 dark:bg-white dark:text-black"
-                                        : "bg-transparent text-zinc-500 border-zinc-200 hover:border-zinc-400"
-                                    }`}
+                                    className="rounded-full px-4 uppercase tracking-wide"
                                 >
                                     {sub}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </motion.div>

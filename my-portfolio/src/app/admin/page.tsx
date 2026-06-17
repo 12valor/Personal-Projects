@@ -50,6 +50,7 @@ export default function AdminPanel() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [techStack, setTechStack] = useState<TechStackItem[]>([]);
+  const [techStackError, setTechStackError] = useState("");
   
   // --- FORM STATE ---
   const [editId, setEditId] = useState<number | null>(null);
@@ -109,10 +110,21 @@ export default function AdminPanel() {
   };
 
   const fetchTechStack = async () => {
-    const response = await fetch("/api/tech-stack");
-    if (!response.ok) throw new Error("Failed to fetch tech stack");
-    const data = await response.json();
-    setTechStack(data);
+    try {
+      const response = await fetch("/api/tech-stack");
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch tech stack");
+      }
+
+      setTechStack(data);
+      setTechStackError("");
+    } catch (error) {
+      console.error(error);
+      setTechStack([]);
+      setTechStackError(error instanceof Error ? error.message : "Failed to fetch tech stack");
+    }
   };
 
   const handleEdit = (project: Project) => {
@@ -239,10 +251,14 @@ export default function AdminPanel() {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Failed to save tech stack item");
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to save tech stack item");
+      }
 
       resetTechForm();
-      fetchTechStack();
+      await fetchTechStack();
       alert(techEditId ? "Tech stack item updated." : "Tech stack item added.");
     } catch (error) {
       console.error(error);
@@ -489,8 +505,14 @@ export default function AdminPanel() {
 
         {/* --- TECH STACK VIEW --- */}
         {activeTab === "tech-stack" && (
-          <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
+          <div className="space-y-6 animate-in fade-in duration-500 text-gray-900">
+            {techStackError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {techStackError}
+              </div>
+            )}
+
+            <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm text-gray-900">
               <form onSubmit={handleTechSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-6">
                   <div className="space-y-2">
@@ -500,7 +522,7 @@ export default function AdminPanel() {
                       required
                       value={techFormData.name}
                       onChange={(e) => setTechFormData({ ...techFormData, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-black"
                       placeholder="Next.js"
                     />
                   </div>
@@ -512,7 +534,7 @@ export default function AdminPanel() {
                         accept="image/*"
                         required={!techFormData.logo_url}
                         onChange={handleTechLogoChange}
-                        className="w-full text-sm text-gray-500"
+                        className="w-full text-sm text-gray-600"
                       />
                     </div>
                     {techFormData.logo_url && !selectedTechLogo && (
@@ -532,7 +554,7 @@ export default function AdminPanel() {
               </form>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm text-gray-900">
               {techStack.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No tech stack items yet.</p></div> : (
                 <table className="w-full text-sm text-left">
                   <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">

@@ -4,18 +4,23 @@ import { checkAuth } from "../../actions";
 import { getSupabaseServerClient, type PortfolioTechStackRow } from "../../../lib/supabase";
 
 export async function GET() {
-  const supabase = getSupabaseServerClient();
-  const { data: items, error } = await supabase
-    .from("tech_stack")
-    .select("*")
-    .order("id", { ascending: true })
-    .returns<PortfolioTechStackRow[]>();
+  try {
+    const supabase = getSupabaseServerClient();
+    const { data: items, error } = await supabase
+      .from("tech_stack")
+      .select("*")
+      .order("id", { ascending: true })
+      .returns<PortfolioTechStackRow[]>();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(items);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to fetch tech stack";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  return NextResponse.json(items);
 }
 
 export async function POST(request: Request) {
@@ -23,22 +28,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const supabase = getSupabaseServerClient();
-  const { data: item, error } = await supabase
-    .from("tech_stack")
-    .insert({
-      name: body.name,
-      logo_url: body.logo_url,
-    })
-    .select("*")
-    .single<PortfolioTechStackRow>();
+  try {
+    const body = await request.json();
+    const supabase = getSupabaseServerClient();
+    const { data: item, error } = await supabase
+      .from("tech_stack")
+      .insert({
+        name: body.name,
+        logo_url: body.logo_url,
+      })
+      .select("*")
+      .single<PortfolioTechStackRow>();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    revalidatePath("/");
+
+    return NextResponse.json(item, { status: 201 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to save tech stack item";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  revalidatePath("/");
-
-  return NextResponse.json(item, { status: 201 });
 }

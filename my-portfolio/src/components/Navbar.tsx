@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
   { name: "Timeline", href: "#timeline" },
@@ -61,13 +62,14 @@ export default function Navbar() {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const pathname = usePathname();
-  if (pathname?.startsWith("/admin")) return null;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   const openMenu = () => {
     setIsMenuOpen(true);
@@ -134,7 +136,9 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="w-8 h-8 md:hidden" />
+          <div className="flex w-16 justify-end md:w-auto">
+            <ThemeToggle />
+          </div>
         </div>
       </motion.nav>
     )}
@@ -168,6 +172,9 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+              <motion.div variants={linkVariants} className="flex justify-center pt-4">
+                <ThemeToggle />
+              </motion.div>
             </div>
           </motion.div>
         )}

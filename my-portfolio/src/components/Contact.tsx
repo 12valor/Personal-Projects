@@ -86,7 +86,7 @@ export default function Contact() {
       id="contact" 
       ref={containerRef}
       style={{ opacity: sectionOpacity }}
-      className="relative py-16 md:py-32 px-4 md:px-6 bg-white border-t border-gray-100"
+      className="relative py-16 md:py-32 px-4 md:px-6 bg-background border-t border-border"
     >
       <div className="max-w-7xl mx-auto w-full">
         
@@ -97,10 +97,10 @@ export default function Contact() {
             <motion.div 
               style={{ y: yText, scale: scaleText }}
             >
-              <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-black mb-2 leading-[0.9]">
+              <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-foreground mb-2 leading-[0.9]">
                 Have an idea?
               </h2>
-              <p className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-gray-300 leading-[0.9]">
+              <p className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-muted-foreground/50 leading-[0.9]">
                 Let's build it.
               </p>
             </motion.div>
@@ -113,12 +113,12 @@ export default function Contact() {
                 className="group cursor-pointer w-full md:w-fit" 
                 onClick={handleCopy}
               >
-                <p className="text-sm font-medium text-gray-500 mb-3 tracking-wide uppercase">Drop me an email</p>
+                <p className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">Drop me an email</p>
                 <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                  <h3 className="text-xl sm:text-2xl md:text-4xl font-bold text-black border-b-2 border-transparent group-hover:border-black transition-all duration-300 break-all md:break-normal">
+                  <h3 className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground border-b-2 border-transparent group-hover:border-foreground transition-all duration-300 break-all md:break-normal">
                     {email}
                   </h3>
-                  <div className="p-2 text-gray-400 group-hover:text-black transition-colors">
+                  <div className="p-2 text-muted-foreground group-hover:text-foreground transition-colors">
                       {copied ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Copy className="w-5 h-5 md:w-6 md:h-6" />}
                   </div>
                 </div>
@@ -128,7 +128,7 @@ export default function Contact() {
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="text-xs text-black mt-2 block font-medium"
+                      className="text-xs text-foreground mt-2 block font-medium"
                     >
                       Copied to clipboard.
                     </motion.span>
@@ -150,7 +150,7 @@ export default function Contact() {
                   href={social.url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-200 text-gray-600 hover:border-black hover:text-black hover:bg-gray-50 transition-all duration-300"
+                  className="flex items-center justify-center w-12 h-12 rounded-full border border-border text-muted-foreground hover:border-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
                   aria-label={social.name}
                 >
                   {social.icon}
@@ -162,13 +162,13 @@ export default function Contact() {
           {/* --- RIGHT COLUMN: Form --- */}
           <motion.div
             style={{ y: yForm }}
-            className="bg-white rounded-2xl p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
+            className="bg-card rounded-2xl p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border"
           >
             <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
               
               {/* Name Input */}
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-semibold text-gray-900">
+                <label htmlFor="name" className="text-sm font-semibold text-foreground">
                   Name
                 </label>
                 <input
@@ -179,13 +179,13 @@ export default function Contact() {
                   placeholder="Your name"
                   value={formState.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900"
+                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground"
                 />
               </div>
 
               {/* Email Input */}
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-semibold text-gray-900">
+                <label htmlFor="email" className="text-sm font-semibold text-foreground">
                   Email
                 </label>
                 <input
@@ -196,13 +196,13 @@ export default function Contact() {
                   placeholder="Your email"
                   value={formState.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900"
+                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground"
                 />
               </div>
 
               {/* Message Input */}
               <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-semibold text-gray-900">
+                <label htmlFor="message" className="text-sm font-semibold text-foreground">
                   Project Description
                 </label>
                 <textarea
@@ -213,7 +213,7 @@ export default function Contact() {
                   placeholder="Tell me about your project needs..."
                   value={formState.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-transparent focus:bg-white focus:border-black focus:ring-0 transition-all outline-none placeholder:text-gray-400 text-gray-900 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground resize-none"
                 />
               </div>
 
@@ -221,7 +221,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting || isSubmitted}
-                  className="w-full flex items-center justify-center gap-2 bg-black text-white font-medium text-lg py-4 rounded-lg hover:bg-gray-800 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-medium text-lg py-4 rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />

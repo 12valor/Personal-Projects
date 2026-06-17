@@ -75,7 +75,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             
             {/* Title & Category Badge */}
             <div className="space-y-4">
-              <Badge className="px-3 py-0.5 text-xs font-semibold uppercase tracking-wider bg-black text-white hover:bg-black/90">
+              <Badge className="px-3 py-0.5 text-xs font-semibold uppercase tracking-wider">
                 {project.category}
               </Badge>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
@@ -115,7 +115,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             {/* Live Site CTA Link (Fixed Contrast!) */}
             {project.project_url && (
               <div className="pt-4 border-t border-border/40">
-                <Button asChild size="lg" className="w-full justify-center bg-black text-white hover:bg-black/90 active:scale-[0.98] transition-transform rounded-lg shadow-sm font-semibold tracking-wide text-sm flex items-center gap-2">
+                <Button asChild size="lg" className="w-full justify-center active:scale-[0.98] transition-transform rounded-lg shadow-sm font-semibold tracking-wide text-sm flex items-center gap-2">
                   <a 
                     href={project.project_url} 
                     target="_blank" 

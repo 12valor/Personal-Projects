@@ -71,6 +71,11 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
 @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {

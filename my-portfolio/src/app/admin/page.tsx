@@ -37,7 +37,7 @@ interface TechStackItem {
   logo_url: string;
 }
 
-const TECH_STACK_KINDS = ["Web Development", "Editing", "Tools"];
+const TECH_STACK_KINDS = ["Web Development", "Editing", "Tools", "Background Tools"];
 
 export default function AdminPanel() {
   // --- AUTH STATE ---

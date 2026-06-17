@@ -49,9 +49,9 @@ export default function About() {
   const titleOpacity = useTransform(scrollYProgress, [0, 0.18], [0, 1]);
 
   return (
-    <section id="timeline" ref={targetRef} className="relative bg-background border-t border-border lg:h-[320vh]">
+    <section id="timeline" ref={targetRef} className="relative bg-background border-t border-border lg:h-[260vh]">
       <div className="lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden">
-        <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-12 px-4 py-20 md:px-10 lg:px-12 lg:py-24">
+        <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-9 px-4 py-14 md:px-10 md:py-16 lg:px-12 lg:py-16">
           <motion.div style={{ y: titleY, opacity: titleOpacity }} className="flex flex-col gap-4 md:max-w-2xl">
             <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
               Timeline

@@ -10,8 +10,8 @@ export default function TechStack({ items }: { items: TechStackItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="border-b border-border bg-background px-4 py-16 md:px-10 md:py-20">
-      <div className="mx-auto flex max-w-7xl flex-col gap-10">
+    <section className="border-b border-border bg-background px-4 py-12 md:px-10 md:py-14">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8">
         <div className="flex flex-col gap-3 md:max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
             Tech Stack

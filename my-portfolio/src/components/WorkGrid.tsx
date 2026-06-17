@@ -83,7 +83,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
       id="work" 
       ref={containerRef}
       style={{ opacity: sectionOpacity }}
-      className="relative px-4 md:px-16 py-16 md:py-24 bg-background border-t border-border font-poppins"
+      className="relative px-4 py-14 md:px-16 md:py-20 bg-background border-t border-border font-poppins"
     >
       
       {/* --- GALLERY MODAL --- */}
@@ -101,7 +101,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
       <div className="max-w-7xl mx-auto">
         
         {/* --- HEADER & FILTERS --- */}
-        <div className="flex flex-col gap-8 mb-8 md:mb-12">
+        <div className="flex flex-col gap-6 mb-8 md:mb-10">
           
           {/* Top Row: Title + Desktop Description */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">

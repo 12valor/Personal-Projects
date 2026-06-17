@@ -86,11 +86,11 @@ export default function Contact() {
       id="contact" 
       ref={containerRef}
       style={{ opacity: sectionOpacity }}
-      className="relative py-16 md:py-32 px-4 md:px-6 bg-background border-t border-border"
+      className="relative px-4 py-14 md:px-6 md:py-24 bg-background border-t border-border"
     >
       <div className="max-w-7xl mx-auto w-full">
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
           
           {/* --- LEFT COLUMN: Typography & Info --- */}
           <div className="flex flex-col h-full pt-4">

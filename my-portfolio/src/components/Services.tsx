@@ -48,7 +48,7 @@ export default function Services() {
     <section
       ref={containerRef}
       id="services"
-      className="relative overflow-hidden border-t border-border bg-muted/30 px-4 py-20 md:px-10 md:py-28"
+      className="relative overflow-hidden border-t border-border bg-muted/30 px-4 py-14 md:px-10 md:py-20"
     >
       <motion.div
         style={{ y: backgroundY }}
@@ -57,7 +57,7 @@ export default function Services() {
         SERVICES
       </motion.div>
 
-      <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-12">
+      <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-9">
         <motion.div
           style={{ y: headerY }}
           className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"

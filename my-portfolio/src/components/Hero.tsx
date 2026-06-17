@@ -136,7 +136,7 @@ export default function Hero() {
       >
         <div className="relative w-full h-[65%] md:h-[70%] lg:w-[45vw] lg:h-[90%]">
           <Image
-            src="/me.webp"
+            src="/me-complete.webp"
             alt="Portrait"
             fill
             className="object-contain object-bottom"

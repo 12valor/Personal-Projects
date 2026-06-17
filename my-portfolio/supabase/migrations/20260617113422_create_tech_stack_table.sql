@@ -11,6 +11,16 @@ alter table public.tech_stack add column if not exists logo_url text;
 alter table public.tech_stack add column if not exists created_at timestamptz not null default timezone('utc', now());
 alter table public.tech_stack add column if not exists updated_at timestamptz not null default timezone('utc', now());
 
+create or replace function public.set_current_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
+
 drop trigger if exists set_tech_stack_updated_at on public.tech_stack;
 create trigger set_tech_stack_updated_at
 before update on public.tech_stack
@@ -23,3 +33,5 @@ revoke all on public.tech_stack from anon, authenticated;
 
 grant select, insert, update, delete on public.tech_stack to service_role;
 grant usage, select on all sequences in schema public to service_role;
+
+notify pgrst, 'reload schema';

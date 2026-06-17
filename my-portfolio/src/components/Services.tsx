@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Code2, Film, Palette } from "lucide-react";
+import { Code2, Film, Palette } from "lucide-react";
 import { useRef } from "react";
 import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
 import TiltedCard from "./TiltedCard";
 
 const services = [
@@ -139,18 +137,6 @@ export default function Services() {
               </motion.article>
             );
           })}
-        </div>
-
-        <div className="flex flex-col gap-3 border-t border-border pt-8 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-muted-foreground">
-            Need a mix of design, edit, and web implementation?
-          </p>
-          <Button asChild className="w-fit rounded-full">
-            <Link href="#work">
-              View projects
-              <ArrowRight data-icon="inline-end" />
-            </Link>
-          </Button>
         </div>
       </div>
     </section>

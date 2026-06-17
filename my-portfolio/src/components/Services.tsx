@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Code2, Film, Palette } from "lucide-react";
 import { useRef } from "react";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
+import TiltedCard from "./TiltedCard";
 
 const services = [
   {
@@ -90,26 +90,36 @@ export default function Services() {
                 transition={{ duration: 0.45, delay: index * 0.08 }}
                 className="group overflow-hidden rounded-lg border border-border bg-background shadow-sm"
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={service.src}
-                    alt={service.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  <TiltedCard
+                    imageSrc={service.src}
+                    altText={service.title}
+                    captionText={service.title}
+                    containerHeight="100%"
+                    containerWidth="100%"
+                    imageHeight="100%"
+                    imageWidth="100%"
+                    rotateAmplitude={10}
+                    scaleOnHover={1.04}
+                    showMobileWarning={false}
+                    showTooltip={false}
+                    displayOverlayContent
+                    overlayContent={
+                      <div className="flex h-full w-full items-end bg-gradient-to-t from-black/75 via-black/20 to-transparent p-4 text-white">
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-10 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
+                            <Icon className="size-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
+                              {service.eyebrow}
+                            </p>
+                            <h3 className="text-2xl font-semibold">{service.title}</h3>
+                          </div>
+                        </div>
+                      </div>
+                    }
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
-                  <div className="absolute bottom-4 left-4 flex items-center gap-3 text-white">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
-                      <Icon className="size-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-                        {service.eyebrow}
-                      </p>
-                      <h3 className="text-2xl font-semibold">{service.title}</h3>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="flex min-h-[220px] flex-col justify-between gap-8 p-5">

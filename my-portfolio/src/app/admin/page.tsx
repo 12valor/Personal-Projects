@@ -30,6 +30,12 @@ interface Inquiry {
   message: string;
 }
 
+interface TechStackItem {
+  id: number;
+  name: string;
+  logo_url: string;
+}
+
 export default function AdminPanel() {
   // --- AUTH STATE ---
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -43,9 +49,11 @@ export default function AdminPanel() {
   const [uploadStatus, setUploadStatus] = useState(""); 
   const [projects, setProjects] = useState<Project[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [techStack, setTechStack] = useState<TechStackItem[]>([]);
   
   // --- FORM STATE ---
   const [editId, setEditId] = useState<number | null>(null);
+  const [techEditId, setTechEditId] = useState<number | null>(null);
   
   // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
@@ -53,6 +61,8 @@ export default function AdminPanel() {
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [techFormData, setTechFormData] = useState({ name: "", logo_url: "" });
+  const [selectedTechLogo, setSelectedTechLogo] = useState<File | null>(null);
 
   // --- 1. CHECK AUTH ON LOAD ---
   useEffect(() => {
@@ -67,6 +77,7 @@ export default function AdminPanel() {
     if (isAuthenticated) {
       if (activeTab === "list") fetchProjects();
       else if (activeTab === "inquiries") fetchInquiries();
+      else if (activeTab === "tech-stack") fetchTechStack();
     }
   }, [activeTab, isAuthenticated]);
 
@@ -95,6 +106,13 @@ export default function AdminPanel() {
     if (!response.ok) throw new Error("Failed to fetch inquiries");
     const data = await response.json();
     setInquiries(data);
+  };
+
+  const fetchTechStack = async () => {
+    const response = await fetch("/api/tech-stack");
+    if (!response.ok) throw new Error("Failed to fetch tech stack");
+    const data = await response.json();
+    setTechStack(data);
   };
 
   const handleEdit = (project: Project) => {
@@ -131,10 +149,32 @@ export default function AdminPanel() {
     } catch (err) { console.error(err); alert("Error deleting inquiry."); }
   };
 
+  const handleEditTech = (item: TechStackItem) => {
+    setTechEditId(item.id);
+    setTechFormData({ name: item.name, logo_url: item.logo_url });
+    setSelectedTechLogo(null);
+    window.scrollTo(0, 0);
+  };
+
+  const handleDeleteTech = async (id: number) => {
+    if (!confirm("Delete this tech stack item?")) return;
+    try {
+      const response = await fetch(`/api/tech-stack/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete tech stack item");
+      fetchTechStack();
+    } catch (err) { console.error(err); alert("Error deleting tech stack item."); }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFiles(Array.from(e.target.files));
     }
+  };
+
+  const handleTechLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedTechLogo(e.target.files?.[0] ?? null);
   };
 
   // --- NEW CLIENT-SIDE UPLOAD HELPER (No API Key needed) ---
@@ -163,6 +203,54 @@ export default function AdminPanel() {
 
     // Run all uploads simultaneously
     return Promise.all(uploadPromises);
+  };
+
+  const resetTechForm = () => {
+    setTechEditId(null);
+    setTechFormData({ name: "", logo_url: "" });
+    setSelectedTechLogo(null);
+  };
+
+  const handleTechSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setUploadStatus("");
+
+    try {
+      let logoUrl = techFormData.logo_url;
+
+      if (selectedTechLogo) {
+        setUploadStatus("Uploading logo...");
+        const [uploadedLogo] = await uploadFilesClientSide([selectedTechLogo]);
+        logoUrl = uploadedLogo;
+        setUploadStatus("Upload complete!");
+      }
+
+      const payload = {
+        name: techFormData.name,
+        logo_url: logoUrl,
+      };
+
+      const response = await fetch(techEditId ? `/api/tech-stack/${techEditId}` : "/api/tech-stack", {
+        method: techEditId ? "PATCH" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Failed to save tech stack item");
+
+      resetTechForm();
+      fetchTechStack();
+      alert(techEditId ? "Tech stack item updated." : "Tech stack item added.");
+    } catch (error) {
+      console.error(error);
+      alert(`Error: ${error}`);
+    } finally {
+      setLoading(false);
+      setUploadStatus("");
+    }
   };
 
   // --- SUBMIT LOGIC ---
@@ -287,6 +375,7 @@ export default function AdminPanel() {
         <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
           <button onClick={() => { setActiveTab("add"); resetForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "add" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>{editId ? "Editing..." : "Add New"}</button>
           <button onClick={() => setActiveTab("list")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "list" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Edit Projects</button>
+          <button onClick={() => { setActiveTab("tech-stack"); resetTechForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "tech-stack" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Tech Stack</button>
           <button onClick={() => setActiveTab("inquiries")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap flex items-center gap-2 ${activeTab === "inquiries" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}><MessageSquare className="w-4 h-4" /> Inquiries</button>
         </div>
 
@@ -395,6 +484,81 @@ export default function AdminPanel() {
                 </tbody>
               </table>
             )}
+          </div>
+        )}
+
+        {/* --- TECH STACK VIEW --- */}
+        {activeTab === "tech-stack" && (
+          <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
+              <form onSubmit={handleTechSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Tech Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={techFormData.name}
+                      onChange={(e) => setTechFormData({ ...techFormData, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                      placeholder="Next.js"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Logo</label>
+                    <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50 border-dashed">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        required={!techFormData.logo_url}
+                        onChange={handleTechLogoChange}
+                        className="w-full text-sm text-gray-500"
+                      />
+                    </div>
+                    {techFormData.logo_url && !selectedTechLogo && (
+                      <p className="text-xs text-gray-400">Current logo will stay unless you upload a new one.</p>
+                    )}
+                    {selectedTechLogo && <p className="text-xs font-bold text-green-600">{selectedTechLogo.name}</p>}
+                    {uploadStatus && <p className="text-sm text-blue-600 font-medium animate-pulse">{uploadStatus}</p>}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
+                  {techEditId && <button type="button" onClick={resetTechForm} className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black">Cancel</button>}
+                  <button type="submit" disabled={loading} className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm">
+                    {loading ? "Saving..." : techEditId ? "Update Tech" : "Add Tech"}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              {techStack.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No tech stack items yet.</p></div> : (
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+                    <tr><th className="px-6 py-4 font-medium text-gray-700">Logo</th><th className="px-6 py-4 font-medium text-gray-700">Name</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
+                  </thead>
+                  <tbody>
+                    {techStack.map((item) => (
+                      <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-3 w-24">
+                          <div className="w-12 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200">
+                            <Image src={item.logo_url} alt="" fill className="object-contain p-2" />
+                          </div>
+                        </td>
+                        <td className="px-6 py-3 font-medium text-gray-900 text-base">{item.name}</td>
+                        <td className="px-6 py-3 text-right">
+                          <div className="flex items-center justify-end gap-4">
+                            <button onClick={() => handleEditTech(item)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
+                            <button onClick={() => handleDeleteTech(item.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         )}
 

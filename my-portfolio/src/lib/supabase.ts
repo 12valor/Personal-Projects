@@ -23,6 +23,14 @@ export type PortfolioInquiryRow = {
   message: string;
 };
 
+export type PortfolioTechStackRow = {
+  id: number;
+  name: string;
+  logo_url: string;
+  created_at: string | Date | null;
+  updated_at: string | Date | null;
+};
+
 export function getSupabaseServerClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

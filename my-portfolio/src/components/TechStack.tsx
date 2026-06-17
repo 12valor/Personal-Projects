@@ -1,56 +1,45 @@
-"use client";
-import LogoLoop from "./LogoLoop";
+import Image from "next/image";
 
-// Define logos using 'src' instead of 'node'
-const techLogos = [
-  { 
-    src: "/logos/nextjs.png", 
-    alt: "Next.js", 
-    href: "https://nextjs.org" 
-  },
-  { 
-    src: "/logos/react-native.jpg", 
-    alt: "React", 
-    href: "https://react.dev"
-  },
-  { 
-    src: "/logos/tailwind.webp", 
-    alt: "Tailwind CSS", 
-    href: "https://tailwindcss.com" 
-  },
-  { 
-    src: "/logos/supabase.png", 
-    alt: "Supabase", 
-    href: "https://supabase.com" 
-  },
-  { 
-    src: "/logos/capcut.webp", 
-    alt: "CapCut", 
-    href: "https://www.capcut.com" 
-  },
-];
+export interface TechStackItem {
+  id: number;
+  name: string;
+  logo_url: string;
+}
 
-export default function TechStack() {
+export default function TechStack({ items }: { items: TechStackItem[] }) {
+  if (items.length === 0) return null;
+
   return (
-    <section className="py-12 border-b border-border bg-background overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 md:px-12 mb-8">
-        <p className="text-center text-xs font-mono uppercase tracking-widest text-gray-400">
-        </p>
-      </div>
+    <section className="border-b border-border bg-background px-4 py-16 md:px-10 md:py-20">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10">
+        <div className="flex flex-col gap-3 md:max-w-2xl">
+          <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
+            Tech Stack
+          </span>
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
+            Tools I use to build.
+          </h2>
+        </div>
 
-      <div className="w-full h-16 relative">
-          <LogoLoop
-            logos={techLogos}
-            speed={100} 
-            direction="left"
-            logoHeight={60} // This controls the height of your images
-            gap={80} 
-            pauseOnHover={true}
-            scaleOnHover={true}
-            fadeOut={true}
-            fadeOutColor="hsl(var(--background))" 
-            ariaLabel="Technology stack"
-          />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="group flex min-h-32 flex-col items-center justify-center gap-4 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25 hover:shadow-md"
+            >
+              <div className="relative size-12 overflow-hidden rounded-md bg-muted p-2">
+                <Image
+                  src={item.logo_url}
+                  alt={`${item.name} logo`}
+                  fill
+                  className="object-contain p-2 transition-transform duration-300 group-hover:scale-110"
+                  sizes="48px"
+                />
+              </div>
+              <p className="text-sm font-semibold text-foreground">{item.name}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

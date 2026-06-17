@@ -5,10 +5,11 @@ import Services from "../components/Services";
 import Contact from "../components/Contact";
 import TechStack from "../components/TechStack";
 import { serializeProject } from "../lib/project-mappers";
-import { getSupabaseServerClient, type PortfolioProjectRow } from "../lib/supabase";
+import { getSupabaseServerClient, type PortfolioProjectRow, type PortfolioTechStackRow } from "../lib/supabase";
 
 export default async function Home() {
   let projects: PortfolioProjectRow[] = [];
+  let techStack: PortfolioTechStackRow[] = [];
   try {
     const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
@@ -19,6 +20,15 @@ export default async function Home() {
 
     if (error) throw error;
     projects = data;
+
+    const { data: techStackData, error: techStackError } = await supabase
+      .from("tech_stack")
+      .select("*")
+      .order("id", { ascending: true })
+      .returns<PortfolioTechStackRow[]>();
+
+    if (techStackError) throw techStackError;
+    techStack = techStackData;
   } catch (error) {
     console.warn("Supabase connection failed during build on the home page. Pre-rendering with empty projects list.", error);
   }
@@ -26,7 +36,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Hero />
-      <TechStack />
+      <TechStack items={techStack} />
         <About />
       <Services />
       <WorkGrid initialProjects={projects.map(serializeProject)} />

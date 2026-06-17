@@ -9,6 +9,7 @@ export async function GET() {
     const { data: items, error } = await supabase
       .from("tech_stack")
       .select("*")
+      .order("kind", { ascending: true })
       .order("id", { ascending: true })
       .returns<PortfolioTechStackRow[]>();
 
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
       .from("tech_stack")
       .insert({
         name: body.name,
+        kind: body.kind || "Tools",
         logo_url: body.logo_url,
       })
       .select("*")

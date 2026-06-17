@@ -16,6 +16,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       .from("tech_stack")
       .update({
         name: body.name,
+        kind: body.kind || "Tools",
         logo_url: body.logo_url,
         updated_at: new Date().toISOString(),
       })

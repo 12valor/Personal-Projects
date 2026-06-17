@@ -33,8 +33,11 @@ interface Inquiry {
 interface TechStackItem {
   id: number;
   name: string;
+  kind: string;
   logo_url: string;
 }
+
+const TECH_STACK_KINDS = ["Web Development", "Editing", "Tools"];
 
 export default function AdminPanel() {
   // --- AUTH STATE ---
@@ -62,7 +65,7 @@ export default function AdminPanel() {
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [techFormData, setTechFormData] = useState({ name: "", logo_url: "" });
+  const [techFormData, setTechFormData] = useState({ name: "", kind: "Web Development", logo_url: "" });
   const [selectedTechLogo, setSelectedTechLogo] = useState<File | null>(null);
 
   // --- 1. CHECK AUTH ON LOAD ---
@@ -163,7 +166,7 @@ export default function AdminPanel() {
 
   const handleEditTech = (item: TechStackItem) => {
     setTechEditId(item.id);
-    setTechFormData({ name: item.name, logo_url: item.logo_url });
+    setTechFormData({ name: item.name, kind: item.kind || "Tools", logo_url: item.logo_url });
     setSelectedTechLogo(null);
     window.scrollTo(0, 0);
   };
@@ -219,7 +222,7 @@ export default function AdminPanel() {
 
   const resetTechForm = () => {
     setTechEditId(null);
-    setTechFormData({ name: "", logo_url: "" });
+    setTechFormData({ name: "", kind: "Web Development", logo_url: "" });
     setSelectedTechLogo(null);
   };
 
@@ -240,6 +243,7 @@ export default function AdminPanel() {
 
       const payload = {
         name: techFormData.name,
+        kind: techFormData.kind,
         logo_url: logoUrl,
       };
 
@@ -514,7 +518,7 @@ export default function AdminPanel() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm text-gray-900">
               <form onSubmit={handleTechSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1.5fr] gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Tech Name</label>
                     <input
@@ -525,6 +529,18 @@ export default function AdminPanel() {
                       className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-black"
                       placeholder="Next.js"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Kind</label>
+                    <select
+                      value={techFormData.kind}
+                      onChange={(e) => setTechFormData({ ...techFormData, kind: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:border-black"
+                    >
+                      {TECH_STACK_KINDS.map((kind) => (
+                        <option key={kind} value={kind}>{kind}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Logo</label>
@@ -558,7 +574,7 @@ export default function AdminPanel() {
               {techStack.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No tech stack items yet.</p></div> : (
                 <table className="w-full text-sm text-left">
                   <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
-                    <tr><th className="px-6 py-4 font-medium text-gray-700">Logo</th><th className="px-6 py-4 font-medium text-gray-700">Name</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
+                    <tr><th className="px-6 py-4 font-medium text-gray-700">Logo</th><th className="px-6 py-4 font-medium text-gray-700">Name</th><th className="px-6 py-4 font-medium text-gray-700">Kind</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
                   </thead>
                   <tbody>
                     {techStack.map((item) => (
@@ -569,6 +585,11 @@ export default function AdminPanel() {
                           </div>
                         </td>
                         <td className="px-6 py-3 font-medium text-gray-900 text-base">{item.name}</td>
+                        <td className="px-6 py-3">
+                          <span className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gray-600">
+                            {item.kind || "Tools"}
+                          </span>
+                        </td>
                         <td className="px-6 py-3 text-right">
                           <div className="flex items-center justify-end gap-4">
                             <button onClick={() => handleEditTech(item)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>

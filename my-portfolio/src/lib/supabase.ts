@@ -26,6 +26,7 @@ export type PortfolioInquiryRow = {
 export type PortfolioTechStackRow = {
   id: number;
   name: string;
+  kind: string;
   logo_url: string;
   created_at: string | Date | null;
   updated_at: string | Date | null;

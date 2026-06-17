@@ -1,182 +1,147 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+
+import Link from "next/link";
 import Image from "next/image";
-import Folder from "./Folder"; 
-import TiltedCard from "./TiltedCard";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight, Code2, Film, Palette } from "lucide-react";
+import { useRef } from "react";
+import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+
+const services = [
+  {
+    title: "Graphic Design",
+    eyebrow: "Visual Systems",
+    description: "Static visuals with stronger hierarchy, cleaner composition, and brand-aware direction.",
+    src: "/graphic.webp",
+    icon: Palette,
+    skills: ["Pubmats", "GFX", "Layouts"],
+  },
+  {
+    title: "Video Editing",
+    eyebrow: "Motion Stories",
+    description: "Short and long-form edits shaped through pacing, sound, rhythm, and narrative clarity.",
+    src: "/vid.webp",
+    icon: Film,
+    skills: ["Reels", "Cuts", "Sound"],
+  },
+  {
+    title: "Web Design",
+    eyebrow: "Interactive Builds",
+    description: "Modern web interfaces that connect visual taste with usable, responsive experiences.",
+    src: "/web.webp",
+    icon: Code2,
+    skills: ["UI", "Frontend", "Responsive"],
+  },
+];
 
 export default function Services() {
-  const containerRef = useRef(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
 
-  const yBackground = useTransform(scrollYProgress, [0, 1], [-50, 50]);    
-  const yTitle = useTransform(scrollYProgress, [0, 1], [30, -30]);        
-  const opacityText = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
-
-  const cardsData = [
-    { id: 1, text: "Graphic Design", src: "/graphic.webp" },
-    { id: 2, text: "Video Editing", src: "/vid.webp" },
-    { id: 3, text: "Web Design", src: "/web.webp" }
-  ];
+  const headerY = useTransform(scrollYProgress, [0, 0.4], [32, -10]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
 
   return (
-    <section 
+    <section
       ref={containerRef}
-      id="services" 
-      className="relative flex flex-col items-center bg-gray-50 border-t border-border overflow-hidden pt-20 pb-32 min-h-[90vh]"
+      id="services"
+      className="relative overflow-hidden border-t border-border bg-muted/30 px-4 py-20 md:px-10 md:py-28"
     >
-      {/* --- PRELOADER --- 
-          Safely preloads images to prevent lag when opening the folder.
-      */}
-      <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none">
-        {cardsData.map((card) => (
-          <Image 
-            key={card.id}
-            src={card.src}
-            alt="preload"
-            width={600} 
-            height={800}
-            priority
-            sizes="(max-width: 768px) 100vw, 33vw" 
-          />
-        ))}
-      </div>
-
-      {/* Background Text */}
-      <motion.div 
-        style={{ y: yBackground }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] z-0"
+      <motion.div
+        style={{ y: backgroundY }}
+        className="pointer-events-none absolute left-1/2 top-20 -translate-x-1/2 select-none text-[22vw] font-black tracking-tighter text-foreground/[0.025]"
       >
-        <span className="text-[25vw] font-black tracking-tighter text-foreground select-none">
-          SERVICES
-        </span>
+        SERVICES
       </motion.div>
 
-      {/* Title */}
-      <motion.div 
-        style={{ y: yTitle, opacity: opacityText }}
-        className="relative z-10 text-center mb-10 md:mb-16 px-6 mt-10"
-      >
-        <h2 className="text-4xl md:text-6xl font-semibold tracking-tight mb-6 text-foreground">
-          What I Do
-        </h2>
-        {!isOpen && (
-          <motion.p 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="text-gray-500 text-lg max-w-lg mx-auto leading-relaxed"
-          >
-            A blend of technical precision and artistic direction. <br/>
-            <span className="text-accent text-sm font-medium uppercase tracking-widest mt-2 block">
-              Click the folder to explore
+      <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-12">
+        <motion.div
+          style={{ y: headerY }}
+          className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
+        >
+          <div className="max-w-2xl">
+            <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
+              What I Do
             </span>
-          </motion.p>
-        )}
-      </motion.div>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
+              Design, motion, and web work in one flow.
+            </h2>
+          </div>
+          <p className="max-w-md text-base leading-relaxed text-muted-foreground">
+            I move from idea to polished output across graphics, videos, and front-end experiences.
+          </p>
+        </motion.div>
 
-      {/* MAIN INTERACTION AREA */}
-      <div className="relative z-20 w-full max-w-7xl px-0 md:px-4 flex justify-center items-center min-h-[400px]">
-        
-        <AnimatePresence mode="wait">
-          {!isOpen ? (
-            // STATE 1: THE FOLDER
-            <motion.div
-              key="folder"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0, filter: "blur(5px)" }}
-              transition={{ duration: 0.2 }}
-              className="cursor-pointer will-change-transform"
-            >
-              <Folder 
-                size={3.2} 
-                color="#222222"
-                onClick={() => setIsOpen(true)}
-              />
-            </motion.div>
-          ) : (
-            // STATE 2: THE CARDS
-            <motion.div
-              key="cards"
-              // The classes inside [] are native Tailwind arbitrary values to hide scrollbars safely
-              className="
-                flex flex-row overflow-x-auto snap-x snap-mandatory gap-4 px-6 pb-4 w-full 
-                md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0
-                [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]
-              "
-              initial="hidden"
-              animate="visible"
-            >
-              {cardsData.map((card, i) => (
-                <motion.div
-                  key={card.id}
-                  className="min-w-[85vw] md:min-w-0 h-[400px] snap-center will-change-transform"
-                  variants={{
-                    hidden: { y: 50, opacity: 0, scale: 0.9 },
-                    visible: { 
-                      y: 0, 
-                      opacity: 1, 
-                      scale: 1,
-                      transition: { 
-                        delay: i * 0.1,
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 25
-                      }
-                    }
-                  }}
-                >
-                  <TiltedCard
-                    imageSrc={card.src}
-                    altText={card.text}
-                    captionText={card.text}
-                    containerHeight="100%"
-                    containerWidth="100%"
-                    imageHeight="100%"
-                    imageWidth="100%"
-                    rotateAmplitude={12}
-                    scaleOnHover={1.05}
-                    showMobileWarning={false}
-                    showTooltip={false}
-                    displayOverlayContent={true}
-                    overlayContent={
-                      <div className="bg-black/30 backdrop-blur-[2px] w-full h-full flex flex-col items-center justify-center rounded-[15px] border border-white/10 group">
-                          <p className="text-white font-bold text-lg tracking-[0.2em] uppercase group-hover:scale-110 transition-transform duration-300">
-                            {card.text}
-                          </p>
-                      </div>
-                    }
-                  />
-                </motion.div>
-              ))}
-              
-              {/* Close Button */}
-              <motion.div 
-                 initial={{ opacity: 0 }} 
-                 animate={{ opacity: 1 }} 
-                 transition={{ delay: 0.5 }}
-                 className="
-                    fixed bottom-10 left-0 right-0 z-50 flex justify-center pointer-events-none 
-                    md:static md:col-span-2 lg:col-span-3 md:mt-8 md:pointer-events-auto
-                 "
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
+          {services.map((service, index) => {
+            const Icon = service.icon;
+
+            return (
+              <motion.article
+                key={service.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-12%" }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                className="group overflow-hidden rounded-lg border border-border bg-background shadow-sm"
               >
-                  <button 
-                    onClick={() => setIsOpen(false)}
-                    className="
-                        pointer-events-auto bg-white/90 backdrop-blur md:bg-transparent px-6 py-2 rounded-full shadow-lg md:shadow-none border border-gray-200 md:border-none
-                        text-xs md:text-sm text-gray-800 md:text-gray-400 hover:text-accent transition-all uppercase tracking-widest font-medium
-                    "
-                  >
-                    Close Stack
-                  </button>
-              </motion.div> 
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={service.src}
+                    alt={service.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                  <div className="absolute bottom-4 left-4 flex items-center gap-3 text-white">
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-white/15 backdrop-blur">
+                      <Icon className="size-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
+                        {service.eyebrow}
+                      </p>
+                      <h3 className="text-2xl font-semibold">{service.title}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex min-h-[220px] flex-col justify-between gap-8 p-5">
+                  <div className="flex flex-col gap-4">
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {service.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {service.skills.map((skill) => (
+                        <Badge key={skill} variant="secondary" className="rounded-full">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-3 border-t border-border pt-8 md:flex-row md:items-center md:justify-between">
+          <p className="text-sm text-muted-foreground">
+            Need a mix of design, edit, and web implementation?
+          </p>
+          <Button asChild className="w-fit rounded-full">
+            <Link href="#work">
+              View projects
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

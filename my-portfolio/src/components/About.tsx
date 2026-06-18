@@ -53,9 +53,6 @@ export default function About() {
       <div className="lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden">
         <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-9 px-4 py-14 md:px-10 md:py-16 lg:px-12 lg:py-16">
           <motion.div style={{ y: titleY, opacity: titleOpacity }} className="flex flex-col gap-4 md:max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
-              Timeline
-            </span>
             <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
               Creative evolution
             </h2>

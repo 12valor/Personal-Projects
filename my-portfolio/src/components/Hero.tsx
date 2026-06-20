@@ -67,6 +67,7 @@ export default function Hero() {
 
   useEffect(() => {
     if (!animReady) return;
+    if (!animReady) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
     }, 4500); 
@@ -76,6 +77,20 @@ export default function Hero() {
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
 
+  // Sync Refs for all layers
+  const topSolidRef = useRef<HTMLSpanElement>(null);
+  const bottomSolidRef = useRef<HTMLSpanElement>(null);
+  const bottomHollowRef = useRef<HTMLSpanElement>(null);
+
+  // Unified scramble animations
+  useSyncScramble(topText, [topSolidRef], animReady);
+  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef], animReady);
+
+  // --- PARALLAX & ANIMATION ---
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
 
   // 1. Deep Background (Furthest away) -> Scrolls very slowly
   const yDeep = useTransform(scrollYProgress, [0, 1], [0, 400]); 
@@ -148,7 +163,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate="visible"
+          animate={animReady ? "visible" : "hidden"}
           variants={fadeInUp}
           className="absolute top-[15vh] left-4 md:top-[18vh] md:left-8 lg:top-[12vh] lg:left-16"
         >
@@ -170,7 +185,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate={!isLoading ? "visible" : "hidden"}
+          animate={animReady ? "visible" : "hidden"}
           variants={fadeInUp}
           transition={{ delay: 0.1 }}
           className="absolute z-0 top-[24vh] left-4 md:top-[28vh] md:left-8 lg:top-auto lg:bottom-[15vh] lg:right-16 lg:left-auto lg:text-right"
@@ -184,7 +199,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate="visible"
+          animate={animReady ? "visible" : "hidden"}
           variants={fadeInUp}
           transition={{ delay: 0.1 }}
           className="hidden lg:block absolute z-30 lg:bottom-[15vh] lg:right-16 lg:text-right"

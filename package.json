@@ -1,0 +1,10 @@
+{
+  "name": "personal-projects-showcase",
+  "private": true,
+  "scripts": {
+    "screenshots": "node scripts/capture-screenshots.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
+  }
+}

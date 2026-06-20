@@ -9,24 +9,24 @@ import TiltedCard from "./TiltedCard";
 const services = [
   {
     title: "Graphic Design",
-    eyebrow: "Visual Systems",
-    description: "Static visuals with stronger hierarchy, cleaner composition, and brand-aware direction.",
+    eyebrow: "Print & Digital",
+    description: "Posters, pubmats, social media layouts — whatever needs to look good and grab attention. I handle the whole thing from concept to final file.",
     src: "/graphic.webp",
     icon: Palette,
     skills: ["Pubmats", "GFX", "Layouts"],
   },
   {
     title: "Video Editing",
-    eyebrow: "Motion Stories",
-    description: "Short and long-form edits shaped through pacing, sound, rhythm, and narrative clarity.",
+    eyebrow: "Short & Long Form",
+    description: "I cut and piece together footage into something that actually flows. Reels, promos, longer edits — I figure out the pacing and make it work.",
     src: "/vid.webp",
     icon: Film,
     skills: ["Reels", "Cuts", "Sound"],
   },
   {
     title: "Web Design",
-    eyebrow: "Interactive Builds",
-    description: "Modern web interfaces that connect visual taste with usable, responsive experiences.",
+    eyebrow: "Sites & Apps",
+    description: "I design and build websites that look clean and work well on any screen. Not just mockups — I write the code too.",
     src: "/web.webp",
     icon: Code2,
     skills: ["UI", "Frontend", "Responsive"],
@@ -67,11 +67,11 @@ export default function Services() {
               What I Do
             </span>
             <h2 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
-              Design, motion, and web work in one flow.
+              I design it, edit it, and build it.
             </h2>
           </div>
           <p className="max-w-md text-base leading-relaxed text-muted-foreground">
-            I move from idea to polished output across graphics, videos, and front-end experiences.
+            Graphics, video, and web — I work across all three so the whole thing stays consistent from start to finish.
           </p>
         </motion.div>
 

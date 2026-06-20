@@ -9,6 +9,7 @@ export async function GET() {
   const { data: projects, error } = await supabase
     .from("projects")
     .select("*")
+    .order("display_index", { ascending: true })
     .order("id", { ascending: false })
     .returns<PortfolioProjectRow[]>();
 
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
       gallery_urls: body.gallery_urls ?? [],
       is_featured: Boolean(body.is_featured),
       project_url: body.project_url || null,
+      display_index: body.display_index ?? 0,
     })
     .select("*")
     .single<PortfolioProjectRow>();

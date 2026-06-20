@@ -15,6 +15,7 @@ export default async function Home() {
     const { data, error } = await supabase
       .from("projects")
       .select("*")
+      .order("display_index", { ascending: true })
       .order("id", { ascending: false })
       .returns<PortfolioProjectRow[]>();
 

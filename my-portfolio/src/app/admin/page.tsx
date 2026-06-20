@@ -20,6 +20,7 @@ interface Project {
   gallery_urls: string[] | null;
   is_featured: boolean;
   project_url?: string;
+  display_index: number;
 }
 
 interface Inquiry {
@@ -61,7 +62,7 @@ export default function AdminPanel() {
   
   // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
-    title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "",
+    title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0,
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -134,7 +135,7 @@ export default function AdminPanel() {
     setEditId(project.id);
     setFormData({
       title: project.title, category: project.category, role: project.role || "", year: project.year || "", description: project.description || "", is_featured: project.is_featured || false,
-      project_url: project.project_url || "",
+      project_url: project.project_url || "", display_index: project.display_index ?? 0,
     });
     setSelectedFiles([]); 
     setActiveTab("add");
@@ -309,6 +310,7 @@ export default function AdminPanel() {
           gallery_urls: galleryUrls,   
           is_featured: formData.is_featured,
           project_url: formData.project_url,
+          display_index: formData.display_index,
       };
 
       if (editId) {
@@ -347,7 +349,7 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "" });
+    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0 });
     setSelectedFiles([]);
   };
 
@@ -427,9 +429,16 @@ export default function AdminPanel() {
                   <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Role</label><input type="text" value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
                   <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label><input type="text" value={formData.year} onChange={(e) => setFormData({...formData, year: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Link / Domain (Optional)</label>
-                  <input type="text" value={formData.project_url} onChange={(e) => setFormData({...formData, project_url: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="https://example.com" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Display Index</label>
+                    <input type="number" min={0} value={formData.display_index} onChange={(e) => setFormData({...formData, display_index: parseInt(e.target.value) || 0})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="0" />
+                    <p className="text-xs text-gray-400">Lower number = higher priority. Projects with the same index are sorted by newest first.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Project Link / Domain (Optional)</label>
+                    <input type="text" value={formData.project_url} onChange={(e) => setFormData({...formData, project_url: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" placeholder="https://example.com" />
+                  </div>
                 </div>
                 <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label><textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
               </div>
@@ -471,7 +480,7 @@ export default function AdminPanel() {
             {projects.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No projects found.</p></div> : (
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
-                  <tr><th className="px-6 py-4 font-medium text-gray-700">Preview</th><th className="px-6 py-4 font-medium text-gray-700">Title</th><th className="px-6 py-4 font-medium text-gray-700">Status</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
+                  <tr><th className="px-6 py-4 font-medium text-gray-700">Preview</th><th className="px-6 py-4 font-medium text-gray-700">Title</th><th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th><th className="px-6 py-4 font-medium text-gray-700">Status</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
                 </thead>
                 <tbody>
                   {projects.map((project) => (
@@ -487,6 +496,9 @@ export default function AdminPanel() {
                         </div>
                       </td>
                       <td className="px-6 py-3 font-medium text-gray-900 text-base">{project.title}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">{project.display_index}</span>
+                      </td>
                       <td className="px-6 py-3">
                          {project.is_featured && <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full w-fit"><Star className="w-3 h-3 fill-amber-500" /><span>Featured</span></div>}
                       </td>

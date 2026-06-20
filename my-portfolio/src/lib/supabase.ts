@@ -11,6 +11,7 @@ export type PortfolioProjectRow = {
   gallery_urls: string[] | null;
   is_featured: boolean;
   project_url: string | null;
+  display_index: number;
   created_at: string | Date | null;
   updated_at: string | Date | null;
 };

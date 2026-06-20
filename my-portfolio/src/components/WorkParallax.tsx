@@ -11,8 +11,10 @@ interface Project {
   title: string;
   category: string;
   image_url: string;
-  gallery_urls?: string[] | null; // Ensure this is in type
+  gallery_urls?: string[] | null;
   is_featured?: boolean;
+  project_url?: string;
+  display_index?: number;
 }
 
 const CATEGORY_MAP: Record<string, string[]> = {
@@ -73,9 +75,27 @@ const ParallaxCard = ({
           <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-accent/80 pl-[1px]">
             {project.category}
           </span>
-          <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight group-hover:text-accent transition-colors duration-300">
-            {project.title}
-          </h3>
+          <div className="flex items-center gap-4 w-full">
+            <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight group-hover:text-accent transition-colors duration-300">
+              {project.title}
+            </h3>
+            {project.project_url ? (
+              <a
+                href={project.project_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-sky-200 bg-sky-50 text-sky-600 text-xs font-semibold tracking-wide hover:bg-sky-100 hover:border-sky-300 transition-colors duration-200 dark:bg-sky-950/40 dark:border-sky-800 dark:text-sky-400 dark:hover:bg-sky-900/50"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                {(() => { try { return new URL(project.project_url).hostname.replace('www.', ''); } catch { return 'Live'; } })()}
+              </a>
+            ) : (
+              <span className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-200 bg-gray-50 text-gray-400 text-xs font-medium tracking-wide dark:bg-gray-900/40 dark:border-gray-700 dark:text-gray-500">
+                No Live Link
+              </span>
+            )}
+          </div>
         </div>
     </>
   );

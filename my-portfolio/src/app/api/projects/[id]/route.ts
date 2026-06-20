@@ -26,6 +26,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       gallery_urls: body.gallery_urls ?? [],
       is_featured: Boolean(body.is_featured),
       project_url: body.project_url || null,
+      display_index: body.display_index ?? 0,
       updated_at: new Date().toISOString(),
     })
     .eq("id", Number(id))

@@ -17,6 +17,7 @@ export function serializeProject(project: PortfolioProjectRow) {
     gallery_urls: project.gallery_urls ?? [],
     is_featured: project.is_featured,
     project_url: project.project_url ?? "",
+    display_index: project.display_index ?? 0,
     created_at: toIsoString(project.created_at),
     updated_at: toIsoString(project.updated_at),
   };

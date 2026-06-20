@@ -1,174 +1,267 @@
-# Personal Project Showcase
+<div align="center">
+
+# Personal Projects
+
+### Full-stack products, interface experiments, and practical systems
+
+A curated portfolio of web applications, dashboards, institutional platforms, and product concepts built around thoughtful UX and real-world problems.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Projects](https://img.shields.io/badge/Projects-9-2563EB)
+![Focus](https://img.shields.io/badge/Focus-Full--Stack%20Development-111827)
 
-> **Note on Maintenance:** As of 2026, some projects within this repository are no longer actively maintained. They serve as a portfolio of past work, technical experiments, and design explorations.
+**Last updated: June 20, 2026**
 
-This repository is a curated collection of personal projects showcasing experiments in web development, software engineering, and product design. Each project focuses on solving specific problems with an emphasis on clean UI, thoughtful UX, and practical functionality.
+[Explore Projects](#selected-work) · [Technology](#technology) · [Repository Notes](#repository-notes)
 
----
-
-## Technologies Overview
-
-The following technologies were utilized across the projects in this repository to ensure scalability, type safety, and modern user experiences:
-
-**Frontend & Logic**
-![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
-
-**Backend & Infrastructure**
-![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
-![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=cloudinary&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+</div>
 
 ---
 
-## Project Gallery
+## About This Collection
 
-> **Note on Screenshots:** Some captures below only show the initial viewport or an early section of the page — not the full layout. Several projects use scroll-driven animations and parallax effects that interfere with full-page screenshot tools like GoFullPage, causing the extension to cut off mid-scroll or fail to render sections that depend on scroll position. These screenshots reflect the MVP view of each project rather than the complete visual experience.
+This repository documents my growth as a developer through production-oriented systems, commissioned work, technical experiments, and design explorations. The projects span content management, emergency response, creator tools, institutional websites, e-commerce, and IoT services.
 
-|                         **Portfolio**                         |                         **CreatorLens**                         |                         **CRITIQUE**                         |                         **Flow**                         |                         **TUPV**                         |                          **Technowatch**                           |                     **RSSI System**                      |                         **8K IoT**                         |
-| :-----------------------------------------------------------: | :-------------------------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------------------------------: | :------------------------------------------------------: | :--------------------------------------------------------: |
-| <img src="README-assets/screenshots/portfolio-mvp.png" height="180"> | <img src="Showcase%20Screenshots/creatorlens.png" height="180"> | <img src="Showcase%20Screenshots/critique.png" height="180"> | <img src="Showcase%20Screenshots/flow.png" height="180"> | <img src="README-assets/screenshots/tupv-mvp.png" height="180"> | <img src="README-assets/screenshots/technowatch-mvp.png" height="180"> | <img src="Showcase%20Screenshots/rssi.png" height="180"> | <img src="README-assets/screenshots/8k-iot-mvp.png" height="180"> |
+Some projects remain actively developed, while others are preserved as snapshots of earlier ideas and lessons learned.
 
----
+## Selected Work
 
-## 🟢 Active Projects
-
-These are projects currently in active development. They receive regular updates, new features, and ongoing maintenance.
-
----
-
-### AG.Portfolio
-
-**Personal Brand & Content Management System**
-
-A dynamic portfolio website featuring a secure, custom-built admin panel. This project serves as a live demonstration of full-stack capabilities, allowing for real-time management of projects, media assets, and client inquiries without touching the codebase.
-
-- **Custom Admin Panel:** Secured via server-side authentication (Next.js Server Actions & Cookies) to manage content.
-- **Media Optimization:** Integrated **Cloudinary** API for handling high-resolution uploads and optimized video/image delivery.
-- **Dynamic CMS:** Built on Supabase to handle project data, enabling "Highlight" features and category sorting instantly.
-- **Interactive UI:** Utilizes Framer Motion for scroll-triggered animations and parallax effects.
+| Project | Focus | Status | Links |
+| --- | --- | :---: | --- |
+| **Portfolio** | Personal brand and content management | Active | [Source](my-portfolio/) · [Live Demo](https://12valor.vercel.app/) |
+| **8K IoT** | Hardware and software services platform | Active | [Source](8k-iot-solutions/) · [Live Demo](https://8k-iot-solutions.vercel.app/) |
+| **RSSI System** | Emergency response and field operations | Active | [Source](RSSI/) |
+| **CreatorLens** | YouTube creator analytics and AI tools | Prototype | [Source](creator-lens/) |
+| **CRITIQUE** | Structured creator feedback platform | Prototype | [Source](critique/) |
+| **TUPV** | University information portal | Completed | [Source](TUPV%20Website/) |
+| **Technowatch** | Student organization website | Prototype | [Source](Technowatch%20Website/) |
+| **Flow** | Natural products marketplace | Completed | [Source](flow/) |
+| **Retrieve** | Lost-and-found management system | Commission | [Source](lost%20and%20found%20commision/) |
 
 ---
 
-### RSSI Report System
+## Live & Evolving
 
-**Emergency Response & Field Operations Dashboard**
+### Portfolio
 
-A production-ready incident reporting system designed specifically for Philippine City Disaster Risk Reduction and Management Offices (CDRRMO). Built to manage critical operations with real-time data handling through Next.js and Supabase.
+<img src="README-assets/screenshots/portfolio-mvp.png" alt="Portfolio landing page" width="100%">
 
-- **Real-Time Alerts:** Features a distinct 30-second glowing red visual alert system to ensure immediate visibility of incoming emergency reports.
-- **Comprehensive Tracking:** Integrates live weather updates and dynamic tracking for evacuation centers.
-- **Mass Communication:** Built-in SMS blast functionality for rapid emergency broadcasting to affected areas.
-- **Robust Backend:** Utilizes Supabase for instantaneous database updates and mock-data generation for rigorous field testing.
+A full-stack personal portfolio that doubles as a custom content management system. It provides a polished public experience alongside a secure admin workflow for managing projects, media, technology entries, and inquiries.
 
----
+**Highlights**
 
-### 8K IoT Solutions
+- Secure server-side admin authentication and content management
+- Dynamic project, media, and inquiry workflows
+- Cloudinary-powered asset handling and optimized delivery
+- Motion-rich interface with responsive layouts and interactive sections
 
-**Hardware & Software Services Platform**
+**Stack:** Next.js · React · TypeScript · Tailwind CSS · PostgreSQL · Prisma · Cloudinary
 
-A comprehensive service platform offering a range of robust hardware and software solutions. It is tailored to help students and innovators bring their ideas to life through custom engineering and development.
-
-- **Device Prototyping:** Custom hardware prototyping for IoT applications and smart devices.
-- **Dynamic Projects Management:** Built-in secure full-stack Admin Panel showcasing real-time synchronization with a local SQLite database using **Prisma** ORM.
-- **Modern Architecture:** Built featuring a Next.js App Router frontend with Tailwind CSS, advanced Server-Side skeleton loaders, and a Supabase backend for reliable inquiry management.
+[View source](my-portfolio/) · [Open live demo](https://12valor.vercel.app/)
 
 ---
 
-## 🗂️ Past Projects
+### 8K IoT
 
-These projects are no longer actively maintained. They represent completed work, past commissions, and earlier-stage experiments — each one serving as a snapshot of problems explored and lessons learned at a given point in time.
+<img src="README-assets/screenshots/8k-iot-mvp.png" alt="8K IoT landing page" width="100%">
+
+A service platform for students, makers, and innovators seeking custom hardware, IoT, and software solutions. The platform combines a strong marketing experience with project, product, testimonial, and inquiry management.
+
+**Highlights**
+
+- Hardware prototyping and software service presentation
+- Secure administration for projects, products, teams, and homepage content
+- Dynamic inquiry handling and transactional email workflows
+- Smooth GSAP, Framer Motion, and Lenis-powered interactions
+
+**Stack:** Next.js · React · TypeScript · Tailwind CSS · Prisma · PostgreSQL · Supabase · Vercel
+
+[View source](8k-iot-solutions/) · [Open live demo](https://8k-iot-solutions.vercel.app/)
 
 ---
 
-## Tools & Platforms
+### RSSI System
+
+<img src="Showcase%20Screenshots/rssi.png" alt="RSSI System dashboard" width="100%">
+
+An emergency reporting and operations dashboard designed for Philippine disaster response teams. It brings incident visibility, mapping, alerts, evacuation information, and operational data into one focused interface.
+
+**Highlights**
+
+- Real-time emergency reports and high-visibility incident alerts
+- Interactive mapping and evacuation-center tracking
+- Weather-aware field operations dashboard
+- SMS broadcast workflows for rapid public communication
+
+**Stack:** Next.js · React · TypeScript · Tailwind CSS · Supabase · Leaflet · Nivo
+
+[View source](RSSI/)
+
+---
+
+## Product Experiments
 
 ### CreatorLens
 
-**YouTube Channel Management Dashboard**
+<img src="Showcase%20Screenshots/creatorlens.png" alt="CreatorLens dashboard" width="100%">
 
-CreatorLens is a comprehensive dashboard for YouTube creators to track growth and analyze content performance. It provides real-time insights and actionable tools to optimize engagement strategies.
+An analytics and productivity workspace for YouTube creators. CreatorLens explores how channel data and AI-assisted tools can turn performance signals into practical content decisions.
 
-- **Growth Tracking:** Real-time monitoring of subscriber and view trends.
-- **Optimization:** Analysis of viewership patterns to suggest optimal posting schedules.
-- **Predictive Analytics:** Performance estimation based on historical data.
-- **Content Tools:** Automatic generation of highlight clips from high-engagement segments.
+**Highlights**
+
+- Channel growth and content-performance analytics
+- AI-assisted content, transcript, and optimization tools
+- Visual reporting for views, engagement, and publishing patterns
+- Creator-focused workspace with secure account access
+
+**Stack:** Next.js · React · TypeScript · Tailwind CSS · NextAuth · YouTube API · OpenAI
+
+[View source](creator-lens/)
+
+---
 
 ### CRITIQUE
 
-**Creator Feedback Platform**
+<img src="Showcase%20Screenshots/critique.png" alt="CRITIQUE platform" width="100%">
 
-CRITIQUE is a creator-first platform designed for actionable peer review. It shifts the focus from vanity metrics to problem-driven feedback regarding branding, retention, and growth.
+A creator-first feedback platform built around useful critique rather than vanity metrics. Structured requests, threaded discussions, and first-impression reviews help creators ask better questions and receive more actionable responses.
 
-- **Structured Submissions:** Creators request feedback on specific areas like engagement or branding.
-- **Threaded Discussion:** Organized feedback loops rather than unstructured comments.
-- **Blind Review:** A "First Impression" mode to gather unbiased feedback before revealing channel identity.
-- **User Management:** Secure authentication via multiple providers.
+**Highlights**
+
+- Feedback requests organized by specific creative goals
+- Threaded discussions and review workflows
+- Blind first-impression mode for less biased feedback
+- Authentication and persistent user-generated content
+
+**Stack:** Next.js · React · TypeScript · Tailwind CSS · Supabase · Recharts
+
+[View source](critique/)
 
 ---
 
-## Institutions & Government
+## Institutional & Community
 
-### TUPV Website
+### TUPV
 
-**Institutional Portal**
+<img src="README-assets/screenshots/tupv-mvp.png" alt="TUPV website landing page" width="100%">
 
-A digital portal developed for the Technological University of the Philippines - Visayas. This project aimed to modernize the institution's online presence, providing students and faculty with streamlined access to information.
+An institutional portal concept for the Technological University of the Philippines – Visayas. It organizes campus information, admissions guidance, academic resources, and student content into a more accessible web experience.
 
-- **Information Hub:** Centralized access to announcements, news, and events.
-- **Academic Resources:** Sections dedicated to departmental information and academic calendars.
-- **Responsive Design:** Optimized for accessibility across mobile and desktop devices.
+**Highlights**
+
+- Centralized campus announcements, events, and information
+- Admissions, academics, and student-resource sections
+- Department and organization pages
+- Responsive layouts for desktop and mobile visitors
+
+**Stack:** HTML · CSS · JavaScript
+
+[View source](TUPV%20Website/)
+
+---
 
 ### Technowatch
 
-**Organization Website Prototype**
+<img src="README-assets/screenshots/technowatch-mvp.png" alt="Technowatch website landing page" width="100%">
 
-A prototype developed for the Technowatch school organization. This project focuses on responsive layout structures and institutional branding.
+A modern website prototype for a student technology organization. The concept focuses on strong visual hierarchy, institutional identity, project showcases, news, and community engagement.
 
-- **Status:** Early-stage concept.
-- **Focus:** Visual hierarchy and mobile responsiveness.
+**Highlights**
 
----
+- Editorial landing page with organization branding
+- News, event, member, project, and merchandise sections
+- Responsive layouts and animated visual elements
+- Clear pathways for students to discover and participate
 
-## Commissions
+**Stack:** HTML · Tailwind CSS · JavaScript
 
-### Retrieve
-
-**Lost & Found Management System**
-
-![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
-
-> **Note:** This project is a paid commission. The source code is displayed here for demonstration purposes only and is **not** open source under the repository's main MIT license. All rights reserved.
-
-A commissioned web application designed to facilitate the reporting and recovery of lost items. It serves as a centralized hub for connecting owners with their belongings through a searchable database, running on a local server environment.
-
-- **Item Tracking:** Status updates for reported lost and found items.
-- **Search & Filter:** Robust filtering by category, date, and location.
-- **User Claims:** Verification process for claiming matched items.
+[View source](Technowatch%20Website/)
 
 ---
 
-## Commerce
+## Commerce & Client Work
 
 ### Flow
 
-**Natural Products Marketplace**
+<img src="Showcase%20Screenshots/flow.png" alt="Flow marketplace" width="100%">
 
-Flow is an e-commerce platform for organic products. It demonstrates full-stack capabilities including product management, dynamic cart logic, and a streamlined checkout flow.
+A nature-inspired marketplace concept for organic and sustainable products. Flow explores clean commerce UX through product discovery, filtering, cart behavior, and a streamlined checkout journey.
 
-- **Brand Identity:** Nature-inspired, minimalist user interface.
-- **Inventory Management:** Dynamic filtering for sustainable product categories.
-- **Full-Stack Integration:** Seamless cart persistence and checkout processing.
+**Highlights**
+
+- Minimal, product-focused storefront design
+- Category browsing and inventory filtering
+- Persistent cart and checkout interactions
+- Responsive shopping experience
+
+[View source](flow/)
 
 ---
 
-This repository reflects a journey of growth in product building, with each entry exploring different facets of modern web architecture and user-centric design.
+### Retrieve
+
+**Commissioned lost-and-found management system**
+
+Retrieve is a practical web application for reporting, searching, matching, and claiming lost items. It was developed as commissioned work and is included here to demonstrate workflow design and applied problem solving.
+
+**Highlights**
+
+- Lost and found item reporting
+- Search and category filtering
+- Claim verification and status tracking
+- Local-server deployment workflow
+
+**Stack:** HTML · CSS · JavaScript
+
+[View source](lost%20and%20found%20commision/)
+
+> **License note:** Retrieve is proprietary commissioned work and is not covered by this repository's MIT license.
+
+---
+
+## Technology
+
+### Frontend
+
+![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=000)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
+
+### Data & Services
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat&logo=supabase&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat&logo=cloudinary&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
+
+### Workflow
+
+![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
+
+---
+
+## Repository Notes
+
+- Projects are organized as independent applications or static website folders.
+- Some projects require their own environment variables and local service configuration.
+- Screenshot assets represent each project's MVP or landing-page viewport.
+- Archived projects are retained for learning history, design reference, and technical exploration.
+
+## License
+
+Unless a project states otherwise, this repository is available under the [MIT License](LICENSE). Commissioned or proprietary projects retain their individual restrictions.
+
+---
+
+<div align="center">
+
+Built through iteration, curiosity, and a steady appetite for solving useful problems.
+
+</div>

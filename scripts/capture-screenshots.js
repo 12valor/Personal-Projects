@@ -5,23 +5,23 @@ const path = require("node:path");
 const projects = [
   {
     name: "Portfolio",
-    slug: "portfolio",
-    url: "PUT_PORTFOLIO_URL_HERE",
+    slug: "portfolio-mvp",
+    url: "http://localhost:3000",
   },
   {
     name: "TUPV",
-    slug: "tupv",
-    url: "PUT_TUPV_URL_HERE",
+    slug: "tupv-mvp",
+    url: "http://127.0.0.1:8080/TUPV%20Website/landing.html",
   },
   {
     name: "Technowatch",
-    slug: "technowatch",
-    url: "PUT_TECHNOWATCH_URL_HERE",
+    slug: "technowatch-mvp",
+    url: "http://127.0.0.1:8080/Technowatch%20Website/index.html",
   },
   {
     name: "8K IoT",
-    slug: "8k-iot",
-    url: "PUT_8K_IOT_URL_HERE",
+    slug: "8k-iot-mvp",
+    url: "http://localhost:3001",
   },
 ];
 
@@ -136,12 +136,19 @@ async function captureProject(browser, project) {
       );
     }, stabilizationStyles);
     await page.goto(project.url, {
-      waitUntil: "networkidle",
+      waitUntil: "domcontentloaded",
       timeout: 90_000,
     });
+    await page
+      .waitForLoadState("networkidle", { timeout: 30_000 })
+      .catch(() =>
+        console.warn(
+          `${project.name} kept network requests open; continuing after DOM load.`,
+        ),
+      );
     await page.addStyleTag({ content: stabilizationStyles });
     await scrollThroughPage(page);
-    await page.waitForLoadState("networkidle", { timeout: 30_000 });
+    await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => {});
     await page.addStyleTag({ content: stabilizationStyles });
     await waitForPageAssets(page);
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -161,8 +168,11 @@ async function captureProject(browser, project) {
 }
 
 async function main() {
+  const requestedSlugs = new Set(process.argv.slice(2));
   const configuredProjects = projects.filter(
-    (project) => !isPlaceholderUrl(project.url),
+    (project) =>
+      !isPlaceholderUrl(project.url) &&
+      (requestedSlugs.size === 0 || requestedSlugs.has(project.slug)),
   );
   const skippedProjects = projects.filter((project) =>
     isPlaceholderUrl(project.url),

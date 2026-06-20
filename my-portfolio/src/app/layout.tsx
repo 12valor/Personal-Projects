@@ -14,9 +14,6 @@ export const metadata: Metadata = {
   description: "Designs and edits",
 };
 
-import { LoadingProvider } from "../components/LoadingProvider";
-import Preloader from "../components/Preloader";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,11 +37,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${poppins.className} antialiased bg-background text-foreground`}>
-        <LoadingProvider>
-          <Preloader />
-          <Navbar />
-          {children}
-        </LoadingProvider>
+        <Navbar />
+        {children}
       </body>
     </html>
   );

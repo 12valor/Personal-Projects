@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, Variants, useAnimationFrame } from "framer-motion";
 import Image from "next/image";
-import { useLoading } from "./LoadingProvider";
 
 // --- KAIZEN OPTIMIZATION: SHARED MULTI-REF SCRAMBLE HOOK ---
 // This hook manages scramble state for multiple DOM elements simultaneously.
@@ -58,33 +57,25 @@ export default function Hero() {
     ["WEB", "DEVELOPER"],
   ];
 
-  const { isLoading } = useLoading();
+  const [animReady, setAnimReady] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    // Small delay to let the component mount before starting animations
+    const t = setTimeout(() => setAnimReady(true), 100);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!animReady) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
     }, 4500); 
     return () => clearInterval(interval);
-  }, [isLoading]);
+  }, [animReady]);
 
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
 
-  // Sync Refs for all layers
-  const topSolidRef = useRef<HTMLSpanElement>(null);
-  const bottomSolidRef = useRef<HTMLSpanElement>(null);
-  const bottomHollowRef = useRef<HTMLSpanElement>(null);
-
-  // Unified animations - only enable after preloader
-  useSyncScramble(topText, [topSolidRef], !isLoading);
-  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef], !isLoading);
-
-  // --- PARALLAX & ANIMATION ---
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
 
   // 1. Deep Background (Furthest away) -> Scrolls very slowly
   const yDeep = useTransform(scrollYProgress, [0, 1], [0, 400]); 
@@ -130,7 +121,7 @@ export default function Hero() {
       <motion.div 
         style={{ y: yImage }}
         initial={{ opacity: 0, scale: 1.05 }}
-        animate={!isLoading ? { opacity: 1, scale: 1 } : { opacity: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute inset-0 z-10 flex items-end justify-center pointer-events-none"
       >
@@ -157,7 +148,7 @@ export default function Hero() {
         <motion.div 
           style={{ y: yText, opacity: opacityFade }}
           initial="hidden"
-          animate={!isLoading ? "visible" : "hidden"}
+          animate="visible"
           variants={fadeInUp}
           className="absolute top-[15vh] left-4 md:top-[18vh] md:left-8 lg:top-[12vh] lg:left-16"
         >

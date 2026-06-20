@@ -217,7 +217,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                         src={project.image_url}
                         alt={project.title}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
                         sizes="(max-width: 768px) 50vw, 33vw"
                       />
                     ) : (

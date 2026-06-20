@@ -7,6 +7,9 @@ import TechStack from "../components/TechStack";
 import { serializeProject } from "../lib/project-mappers";
 import { getSupabaseServerClient, type PortfolioProjectRow, type PortfolioTechStackRow } from "../lib/supabase";
 
+// Revalidate every 60 seconds so admin changes reflect quickly
+export const revalidate = 60;
+
 export default async function Home() {
   let projects: PortfolioProjectRow[] = [];
   let techStack: PortfolioTechStackRow[] = [];

@@ -54,7 +54,7 @@ const ParallaxCard = ({
   // Common inner content
   const CardContent = (
     <>
-        <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm rounded-sm">
+        <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-100 border border-gray-100 mb-6 shadow-sm rounded-sm">
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 z-20 flex items-center justify-center">
             <div className="w-12 h-12 bg-white rounded-full items-center justify-center hidden group-hover:flex opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300 shadow-lg">
                {/* Show different icon based on interaction type */}

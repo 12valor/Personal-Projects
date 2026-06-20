@@ -53,10 +53,9 @@ const linkVariants: Variants = {
   },
 };
 
-import { useLoading } from "./LoadingProvider";
+
 
 export default function Navbar() {
-  const { isLoading } = useLoading();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -83,12 +82,9 @@ export default function Navbar() {
 
   return (
     <>
-      <AnimatePresence>
-        {!isLoading && (
-          <motion.nav
+      <motion.nav
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
             className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
               isScrolled
@@ -141,8 +137,6 @@ export default function Navbar() {
           </div>
         </div>
       </motion.nav>
-    )}
-  </AnimatePresence>
 
   {/* MOBILE FULLSCREEN MENU */}
   <AnimatePresence

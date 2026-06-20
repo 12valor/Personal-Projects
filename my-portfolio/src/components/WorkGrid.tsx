@@ -211,7 +211,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   className="group cursor-pointer flex flex-col gap-2 md:gap-3 h-full"
                 >
                   {/* IMAGE */}
-                  <div className="relative aspect-[4/3] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-white/[0.05] group-hover:-translate-y-1.5 border border-border/50">
+                  <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-white/[0.05] group-hover:-translate-y-1.5 border border-border/50">
                     {project.image_url ? (
                       <Image
                         src={project.image_url}

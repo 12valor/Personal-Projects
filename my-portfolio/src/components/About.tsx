@@ -45,14 +45,21 @@ export default function About() {
 
   const xScroll = useTransform(scrollYProgress, [0, 1], ["0%", "-58%"]);
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const titleY = useTransform(scrollYProgress, [0, 0.25], [36, 0]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.18], [0, 1]);
 
   return (
     <section id="timeline" ref={targetRef} className="relative bg-background border-t border-border lg:h-[260vh]">
       <div className="lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden">
         <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-9 px-4 py-14 md:px-10 md:py-16 lg:px-12 lg:py-16">
-          <motion.div style={{ y: titleY, opacity: titleOpacity }} className="flex flex-col gap-4 md:max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-5%" }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+            className="flex flex-col gap-3 md:max-w-2xl"
+          >
+            <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
+              Timeline
+            </span>
             <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
               Creative evolution
             </h2>

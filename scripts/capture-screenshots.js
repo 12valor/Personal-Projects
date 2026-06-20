@@ -12,6 +12,7 @@ const projects = [
     name: "TUPV",
     slug: "tupv-mvp",
     url: "http://127.0.0.1:8080/TUPV%20Website/landing.html",
+    dismissSelector: ".modal-button",
   },
   {
     name: "Technowatch",
@@ -131,6 +132,14 @@ async function captureProject(browser, project) {
       );
     await page.addStyleTag({ content: stabilizationStyles });
     await waitForPageAssets(page);
+
+    if (project.dismissSelector) {
+      const dismissButton = page.locator(project.dismissSelector);
+      await dismissButton.waitFor({ state: "visible", timeout: 10_000 });
+      await dismissButton.click();
+      await dismissButton.waitFor({ state: "hidden", timeout: 5_000 });
+    }
+
     await page.evaluate(() => window.scrollTo(0, 0));
     await delay(750);
 

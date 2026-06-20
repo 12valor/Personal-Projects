@@ -70,23 +70,6 @@ function isPlaceholderUrl(url) {
   return !/^https?:\/\//i.test(url) || url.includes("PUT_");
 }
 
-async function scrollThroughPage(page) {
-  await page.evaluate(async () => {
-    const pause = (milliseconds) =>
-      new Promise((resolve) => setTimeout(resolve, milliseconds));
-    const step = Math.max(Math.floor(window.innerHeight * 0.75), 500);
-
-    for (let position = 0; position < document.body.scrollHeight; position += step) {
-      window.scrollTo(0, position);
-      await pause(150);
-    }
-
-    window.scrollTo(0, document.body.scrollHeight);
-    await pause(300);
-    window.scrollTo(0, 0);
-  });
-}
-
 async function waitForPageAssets(page) {
   await page.evaluate(async () => {
     if (document.fonts?.ready) {
@@ -114,7 +97,7 @@ async function waitForPageAssets(page) {
 
 async function captureProject(browser, project) {
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 1200 },
+    viewport: { width: 1440, height: 900 },
     reducedMotion: "reduce",
     deviceScaleFactor: 1,
   });
@@ -147,9 +130,6 @@ async function captureProject(browser, project) {
         ),
       );
     await page.addStyleTag({ content: stabilizationStyles });
-    await scrollThroughPage(page);
-    await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => {});
-    await page.addStyleTag({ content: stabilizationStyles });
     await waitForPageAssets(page);
     await page.evaluate(() => window.scrollTo(0, 0));
     await delay(750);
@@ -157,7 +137,7 @@ async function captureProject(browser, project) {
     const outputPath = path.join(outputDirectory, `${project.slug}.png`);
     await page.screenshot({
       path: outputPath,
-      fullPage: true,
+      fullPage: false,
       animations: "disabled",
     });
 

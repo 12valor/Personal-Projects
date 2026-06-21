@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useRouter } from "next/navigation"; 
 import { useRef } from "react";
 import GalleryModal from "./GalleryModal"; 
-import { Button } from "@/src/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/src/components/ui/toggle-group";
 
 // --- TYPES ---
 export interface Project {
@@ -120,29 +120,24 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             
             {/* LEVEL 1: PARENT FILTERS (Horizontal Scroll on Mobile) */}
             <div className="w-full overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-                <div className="flex md:flex-wrap md:justify-end gap-2 md:gap-3 min-w-max">
-                    <Button
-                        type="button"
-                        variant={activeParent === "All" ? "default" : "secondary"}
-                        onClick={() => handleParentClick("All")}
-                        className="rounded-full px-5"
-                    >
-                        All Work
-                    </Button>
-                    {Object.keys(CATEGORY_MAP).map((cat) => (
-                    <Button
-                        key={cat}
-                        type="button"
-                        variant={activeParent === cat ? "default" : "secondary"}
-                        onClick={() => handleParentClick(cat)}
-                        className="rounded-full px-5"
-                    >
-                        {cat}
-                    </Button>
-                    ))}
-                </div>
+                <ToggleGroup
+                  type="single"
+                  value={activeParent}
+                  onValueChange={(value) => value && handleParentClick(value)}
+                  variant="outline"
+                  className="min-w-max justify-start gap-2 md:flex-wrap md:justify-end"
+                  aria-label="Project category"
+                >
+                  <ToggleGroupItem value="All" className="rounded-full px-5">
+                    All Work
+                  </ToggleGroupItem>
+                  {Object.keys(CATEGORY_MAP).map((cat) => (
+                    <ToggleGroupItem key={cat} value={cat} className="rounded-full px-5">
+                      {cat}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
             </div>
-
             {/* LEVEL 2: SUB FILTERS (Animated, Smaller) */}
             <AnimatePresence mode="wait">
                 {activeParent !== "All" && CATEGORY_MAP[activeParent] && (
@@ -156,27 +151,24 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground self-center mr-2 hidden md:block">
                                 Filter:
                             </span>
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant={activeSub === "All" ? "default" : "outline"}
-                                onClick={() => setActiveSub("All")}
-                                className="rounded-full px-4 uppercase tracking-wide"
+                            <ToggleGroup
+                              type="single"
+                              value={activeSub}
+                              onValueChange={(value) => value && setActiveSub(value)}
+                              variant="outline"
+                              size="sm"
+                              className="gap-2"
+                              aria-label={`${activeParent} project filter`}
                             >
+                              <ToggleGroupItem value="All" className="rounded-full px-4 uppercase tracking-wide">
                                 All {activeParent}
-                            </Button>
-                            {CATEGORY_MAP[activeParent].map((sub) => (
-                                <Button
-                                    key={sub}
-                                    type="button"
-                                    size="sm"
-                                    variant={activeSub === sub ? "default" : "outline"}
-                                    onClick={() => setActiveSub(sub)}
-                                    className="rounded-full px-4 uppercase tracking-wide"
-                                >
-                                    {sub}
-                                </Button>
-                            ))}
+                              </ToggleGroupItem>
+                              {CATEGORY_MAP[activeParent].map((sub) => (
+                                <ToggleGroupItem key={sub} value={sub} className="rounded-full px-4 uppercase tracking-wide">
+                                  {sub}
+                                </ToggleGroupItem>
+                              ))}
+                            </ToggleGroup>
                         </div>
                     </motion.div>
                 )}

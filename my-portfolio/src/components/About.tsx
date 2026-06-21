@@ -9,7 +9,7 @@ const timelineData = [
     year: "2021",
     title: "GFX Artist",
     category: "Visuals",
-    desc: "This is where it all started — making GFX edits and thumbnails for small communities. Mostly just experimenting and figuring out what looked cool.",
+    desc: "This is where it all started â€” making GFX edits and thumbnails for small communities. Mostly just experimenting and figuring out what looked cool.",
     img: "/2021.webp",
   },
   {
@@ -23,14 +23,14 @@ const timelineData = [
     year: "2023",
     title: "Graphic Design",
     category: "Branding",
-    desc: "Started taking design more seriously — logos, layouts, brand stuff. Learned a lot about typography and making things look intentional instead of random.",
+    desc: "Started taking design more seriously â€” logos, layouts, brand stuff. Learned a lot about typography and making things look intentional instead of random.",
     img: "/2023.webp",
   },
   {
     year: "2024",
     title: "Programming",
     category: "Development",
-    desc: "Picked up coding so I could actually build the things I design. Now I do both — I make it look good and I make it work.",
+    desc: "Picked up coding so I could actually build the things I design. Now I do both â€” I make it look good and I make it work.",
     img: "/2024.webp",
   },
 ];
@@ -57,7 +57,7 @@ export default function About() {
             transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
             className="flex flex-col gap-3 md:max-w-2xl"
           >
-            <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
+            <span className="text-xs font-bold uppercase tracking-[0.28em] text-foreground">
               Timeline
             </span>
             <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
@@ -85,7 +85,7 @@ export default function About() {
                   <div className="flex flex-col gap-3 p-5">
                     <div className="flex items-center justify-between gap-4">
                       <span className="text-4xl font-bold text-foreground">{item.year}</span>
-                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-accent">{item.category}</span>
+                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground">{item.category}</span>
                     </div>
                     <h3 className="text-2xl font-semibold text-foreground">{item.title}</h3>
                     <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
@@ -120,7 +120,7 @@ export default function About() {
                     </span>
                   </div>
                   <div className="flex flex-col gap-4 p-6">
-                    <span className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
+                    <span className="text-xs font-bold uppercase tracking-[0.24em] text-foreground">
                       {item.category}
                     </span>
                     <h3 className="text-3xl font-semibold text-foreground">{item.title}</h3>

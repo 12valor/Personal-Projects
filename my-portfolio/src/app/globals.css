@@ -68,6 +68,7 @@
   (Only for anchor links, we are not scroll-jacking)
 */
 html {
+  position: relative;
   scroll-behavior: smooth;
 }
 

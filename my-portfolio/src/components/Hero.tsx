@@ -18,7 +18,7 @@ const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | n
   }, [text]);
 
   // Framer Motion's high-perf loop
-  (useAnimationFrame as any)((t: number, delta: number) => {
+  useAnimationFrame((_time: number, delta: number) => {
     if (!enabled) return;
     if (progressRef.current >= currentTextRef.current.length) {
       refs.forEach(ref => {
@@ -67,12 +67,11 @@ export default function Hero() {
 
   useEffect(() => {
     if (!animReady) return;
-    if (!animReady) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
     }, 4500); 
     return () => clearInterval(interval);
-  }, [animReady]);
+  }, [animReady, phrases.length]);
 
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
@@ -120,8 +119,6 @@ export default function Hero() {
       ref={containerRef} 
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >
-      {/* --- NOISE GRAIN OVERLAY (Bespoke Touch) --- */}
-      <div className="absolute inset-0 z-[5] pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
       {/* --- LAYER 0: DEEP BACKGROUND (New) --- */}
       <motion.div 
@@ -147,6 +144,7 @@ export default function Hero() {
             fill
             className="object-contain object-bottom"
             priority
+            sizes="(max-width: 1024px) 100vw, 45vw"
             draggable={false}
           />
         </div>

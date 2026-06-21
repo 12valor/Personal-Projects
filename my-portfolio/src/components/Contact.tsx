@@ -1,254 +1,237 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, Copy, Check, Loader2, Github, Facebook } from "lucide-react";
+
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import {
+  ArrowUpRight,
+  Check,
+  Copy,
+  Facebook,
+  Github,
+  Loader2,
+} from "lucide-react";
+import { useRef, useState } from "react";
+import { Alert, AlertDescription } from "@/src/components/ui/alert";
+import { Button } from "@/src/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
+import { Input } from "@/src/components/ui/input";
+import { Textarea } from "@/src/components/ui/textarea";
+
+const email = "evangelista.agdiaz@gmail.com";
+
+const socialLinks = [
+  {
+    name: "Facebook",
+    url: "https://www.facebook.com/ag.evangelistaii",
+    icon: Facebook,
+  },
+  { name: "GitHub", url: "https://github.com/12valor", icon: Github },
+];
 
 export default function Contact() {
-  // --- STATE ---
   const [copied, setCopied] = useState(false);
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detect screen size for parallax disabling
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const sectionOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.9, 1],
+    [0, 1, 1, 0],
+  );
 
-  const email = "evangelista.agdiaz@gmail.com";
-
-  const yText = useTransform(scrollYProgress, [0, 0.6], [isMobile ? 0 : 150, 0]);
-  const scaleText = useTransform(scrollYProgress, [0, 0.6], [isMobile ? 1 : 0.85, 1]);
-  const yForm = useTransform(scrollYProgress, [0, 0.8], [isMobile ? 0 : 50, 0]);
-
-  // --- HANDLERS ---
-  const handleCopy = () => {
-    navigator.clipboard.writeText(email);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(email);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    window.setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormState((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsSubmitting(true);
     setErrorMsg("");
-    
+
     try {
       const response = await fetch("/api/inquiries", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formState.name,
-          email: formState.email,
-          message: formState.message,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formState),
       });
 
       if (!response.ok) throw new Error("Failed to send inquiry");
 
-      setIsSubmitting(false);
       setIsSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
-      setTimeout(() => setIsSubmitted(false), 5000);
-
+      window.setTimeout(() => setIsSubmitted(false), 5000);
     } catch (error) {
       console.error("Error sending message:", error);
       setErrorMsg("Something went wrong. Please try again.");
+    } finally {
       setIsSubmitting(false);
     }
   };
 
-  const socialLinks = [
-    { name: "LinkedIn", url: "https://www.facebook.com/ag.evangelistaii", icon: <Facebook className="w-5 h-5" /> },
-    { name: "GitHub", url: "https://github.com/12valor", icon: <Github className="w-5 h-5" /> },
-  ];
-
   return (
-    <motion.section 
-      id="contact" 
+    <motion.section
+      id="contact"
       ref={containerRef}
       style={{ opacity: sectionOpacity }}
-      className="relative px-4 py-14 md:px-6 md:py-24 bg-background border-t border-border"
+      className="relative border-t border-border bg-background px-4 py-16 md:px-10 md:py-24"
     >
-      <div className="max-w-7xl mx-auto w-full">
-        
-        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
-          
-          {/* --- LEFT COLUMN: Typography & Info --- */}
-          <div className="flex flex-col h-full pt-4">
-            <motion.div 
-              style={{ y: yText, scale: scaleText }}
-            >
-              <h2 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-foreground mb-2 leading-[0.9]">
-                Have an idea?
-              </h2>
-              <p className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-muted-foreground/50 leading-[0.9]">
-                Let's build it.
-              </p>
-            </motion.div>
-
-            <div className="mt-12 md:mt-24">
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="group cursor-pointer w-full md:w-fit" 
-                onClick={handleCopy}
-              >
-                <p className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">Drop me an email</p>
-                <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                  <h3 className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground border-b-2 border-transparent group-hover:border-foreground transition-all duration-300 break-all md:break-normal">
-                    {email}
-                  </h3>
-                  <div className="p-2 text-muted-foreground group-hover:text-foreground transition-colors">
-                      {copied ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Copy className="w-5 h-5 md:w-6 md:h-6" />}
-                  </div>
-                </div>
-                <AnimatePresence>
-                  {copied && (
-                    <motion.span 
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="text-xs text-foreground mt-2 block font-medium"
-                    >
-                      Copied to clipboard.
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            </div>
-
-            {/* Socials */}
-            <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.4 }}
-               className="flex flex-wrap gap-4 mt-8 md:mt-12"
-            >
-              {socialLinks.map((social, idx) => (
-                <a 
-                  key={idx} 
-                  href={social.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-12 h-12 rounded-full border border-border text-muted-foreground hover:border-foreground hover:text-foreground hover:bg-muted transition-all duration-300"
-                  aria-label={social.name}
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </motion.div>
+      <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+        <div className="flex flex-col justify-between gap-14 py-2">
+          <div className="flex flex-col gap-6">
+            <h2 className="max-w-3xl text-5xl font-semibold leading-[0.92] tracking-[-0.055em] text-foreground sm:text-6xl md:text-8xl">
+              Have an idea?
+              <span className="block text-muted-foreground">Let&apos;s build it.</span>
+            </h2>
+            <p className="max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
+              Tell me what you are making, where it needs to go, and what a good
+              result looks like. I will help shape the rest.
+            </p>
           </div>
 
-          {/* --- RIGHT COLUMN: Form --- */}
-          <motion.div
-            style={{ y: yForm }}
-            className="bg-card rounded-2xl p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border"
-          >
-            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
-              
-              {/* Name Input */}
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-semibold text-foreground">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  required
-                  placeholder="Your name"
-                  value={formState.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground"
-                />
-              </div>
-
-              {/* Email Input */}
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-semibold text-foreground">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  required
-                  placeholder="Your email"
-                  value={formState.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground"
-                />
-              </div>
-
-              {/* Message Input */}
-              <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-semibold text-foreground">
-                  Project Description
-                </label>
-                <textarea
-                  name="message"
-                  id="message"
-                  required
-                  rows={5}
-                  placeholder="Tell me about your project needs..."
-                  value={formState.message}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg bg-muted border border-transparent focus:bg-background focus:border-foreground focus:ring-0 transition-all outline-none placeholder:text-muted-foreground text-foreground resize-none"
-                />
-              </div>
-
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting || isSubmitted}
-                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground font-medium text-lg py-4 rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : isSubmitted ? (
-                    <>Message Sent <Check className="w-5 h-5" /></>
-                  ) : (
-                    <>Send Message <ArrowUpRight className="w-5 h-5" /></>
-                  )}
-                </button>
-              </div>
-
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Email
+              </span>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="group flex w-fit max-w-full items-center gap-3 text-left"
+              >
+                <span className="break-all text-xl font-semibold tracking-tight text-foreground underline-offset-4 group-hover:underline sm:text-2xl md:text-3xl">
+                  {email}
+                </span>
+                {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+              </button>
               <AnimatePresence>
-                {(isSubmitted || errorMsg) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className={`text-sm text-center font-medium mt-4 ${isSubmitted ? "text-green-600" : "text-red-600"}`}
+                {copied && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-muted-foreground"
                   >
-                    {isSubmitted ? "Thanks! I'll be in touch soon." : errorMsg}
-                  </motion.div>
+                    Copied to clipboard.
+                  </motion.span>
                 )}
               </AnimatePresence>
-            </form>
-          </motion.div>
+            </div>
 
+            <div className="flex gap-3">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <Button key={social.name} asChild variant="outline" size="icon">
+                    <a href={social.url} target="_blank" rel="noopener noreferrer" aria-label={social.name}>
+                      <Icon aria-hidden="true" />
+                    </a>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
         </div>
+
+        <Card className="rounded-2xl border-border/80 bg-card shadow-sm">
+          <CardHeader className="gap-2 p-6 md:p-8">
+            <CardTitle className="text-2xl tracking-tight md:text-3xl">Start a conversation</CardTitle>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              A few details are enough. I usually reply as soon as I can.
+            </p>
+          </CardHeader>
+          <CardContent className="p-6 pt-0 md:p-8 md:pt-0">
+            <form onSubmit={handleSubmit}>
+              <FieldGroup className="gap-5">
+                <Field>
+                  <FieldLabel htmlFor="name">Name</FieldLabel>
+                  <Input
+                    id="name"
+                    name="name"
+                    required
+                    autoComplete="name"
+                    placeholder="Your name"
+                    value={formState.name}
+                    onChange={handleChange}
+                    className="h-11"
+                  />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={formState.email}
+                    onChange={handleChange}
+                    className="h-11"
+                  />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="message">Project description</FieldLabel>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={6}
+                    placeholder="What are you hoping to create?"
+                    value={formState.message}
+                    onChange={handleChange}
+                    className="min-h-36 resize-none"
+                  />
+                </Field>
+
+                <Button type="submit" size="lg" disabled={isSubmitting || isSubmitted} className="w-full">
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 data-icon="inline-start" className="animate-spin" />
+                      Sending
+                    </>
+                  ) : isSubmitted ? (
+                    <>
+                      <Check data-icon="inline-start" />
+                      Message sent
+                    </>
+                  ) : (
+                    <>
+                      Send message
+                      <ArrowUpRight data-icon="inline-end" />
+                    </>
+                  )}
+                </Button>
+
+                {(isSubmitted || errorMsg) && (
+                  <Alert variant={errorMsg ? "destructive" : "default"}>
+                    <AlertDescription>
+                      {errorMsg || "Thanks! I will be in touch soon."}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </FieldGroup>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </motion.section>
   );

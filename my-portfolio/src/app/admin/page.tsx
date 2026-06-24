@@ -68,6 +68,8 @@ export default function AdminPanel() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [techFormData, setTechFormData] = useState({ name: "", kind: "Web Development", logo_url: "" });
   const [selectedTechLogo, setSelectedTechLogo] = useState<File | null>(null);
+  const [existingMainImage, setExistingMainImage] = useState<string | null>(null);
+  const [existingGalleryImages, setExistingGalleryImages] = useState<string[]>([]);
 
   // --- 1. CHECK AUTH ON LOAD ---
   useEffect(() => {
@@ -137,6 +139,8 @@ export default function AdminPanel() {
       title: project.title, category: project.category, role: project.role || "", year: project.year || "", description: project.description || "", is_featured: project.is_featured || false,
       project_url: project.project_url || "", display_index: project.display_index ?? 0,
     });
+    setExistingMainImage(project.image_url || null);
+    setExistingGalleryImages(project.gallery_urls || []);
     setSelectedFiles([]); 
     setActiveTab("add");
     window.scrollTo(0, 0);
@@ -281,8 +285,8 @@ export default function AdminPanel() {
     setUploadStatus("");
 
     try {
-      let mainImageUrl = editId ? projects.find((p) => p.id === editId)?.image_url : "";
-      let galleryUrls: string[] = editId ? projects.find((p) => p.id === editId)?.gallery_urls || [] : [];
+      let finalMainImage = existingMainImage;
+      let finalGallery = [...existingGalleryImages];
       
       // 1. UPLOAD FILES (Client-Side)
       if (selectedFiles.length > 0) {
@@ -291,10 +295,12 @@ export default function AdminPanel() {
           const newUrls = await uploadFilesClientSide(selectedFiles);
           
           if (newUrls.length > 0) {
-             if (!mainImageUrl || selectedFiles.length > 0) {
-                 mainImageUrl = newUrls[0]; 
+             if (!finalMainImage) {
+                 finalMainImage = newUrls[0]; 
+                 finalGallery = [...finalGallery, ...newUrls.slice(1)];
+             } else {
+                 finalGallery = [...finalGallery, ...newUrls];
              }
-             galleryUrls = [...galleryUrls, ...newUrls];
           }
           setUploadStatus("Upload complete!");
       }
@@ -306,8 +312,8 @@ export default function AdminPanel() {
           role: formData.role,
           year: formData.year,
           description: formData.description,
-          image_url: mainImageUrl,     
-          gallery_urls: galleryUrls,   
+          image_url: finalMainImage || "",     
+          gallery_urls: finalGallery,   
           is_featured: formData.is_featured,
           project_url: formData.project_url,
           display_index: formData.display_index,
@@ -351,6 +357,8 @@ export default function AdminPanel() {
     setEditId(null);
     setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0 });
     setSelectedFiles([]);
+    setExistingMainImage(null);
+    setExistingGalleryImages([]);
   };
 
   const getCategoryColor = (cat: string) => {
@@ -443,10 +451,32 @@ export default function AdminPanel() {
                 <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label><textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
               </div>
 
+              {/* EXISTING IMAGES */}
+              {editId && (existingMainImage || existingGalleryImages.length > 0) && (
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Existing Images</label>
+                  <div className="flex flex-wrap gap-4 mb-4">
+                    {existingMainImage && (
+                      <div className="relative w-24 h-24 border border-gray-200 rounded overflow-hidden group bg-gray-50">
+                        <Image src={existingMainImage} alt="Main" fill className="object-cover" />
+                        <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded uppercase font-bold z-10">Main</div>
+                        <button type="button" onClick={() => setExistingMainImage(null)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Remove main image"><Trash2 className="w-3 h-3" /></button>
+                      </div>
+                    )}
+                    {existingGalleryImages.map((img, idx) => (
+                      <div key={idx} className="relative w-24 h-24 border border-gray-200 rounded overflow-hidden group bg-gray-50">
+                        <Image src={img} alt={`Gallery ${idx}`} fill className="object-cover" />
+                        <button type="button" onClick={() => setExistingGalleryImages(prev => prev.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title={`Remove gallery image ${idx + 1}`}><Trash2 className="w-3 h-3" /></button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* MULTI-FILE UPLOAD */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
-                  {editId ? "Add/Replace Images" : "Project Images"}
+                  {editId ? "Add More Images" : "Project Images"}
                 </label>
                 <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50 border-dashed">
                   <input 

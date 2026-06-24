@@ -3,10 +3,9 @@ import { getSupabaseServerClient, type PortfolioProjectRow } from "../../../lib/
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import React from "react";
-import { ArrowLeft, Calendar, User, ExternalLink } from "lucide-react";
-import ProjectImageViewer from "../../../components/ProjectImageViewer";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
+import Image from "next/image";
 
 export async function generateStaticParams() {
   try {
@@ -45,128 +44,133 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const project = serializeProject(projectRecord);
 
   return (
-    <article className="min-h-screen bg-background text-foreground pb-24 font-sans selection:bg-accent-light/35">
+    <article className="min-h-screen bg-background text-foreground pb-0 font-sans selection:bg-accent-light/35">
       
       {/* --- RESPONSIVE STICKY NAVIGATION --- */}
-      <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 h-16 flex justify-between items-center">
+      <nav className="fixed top-0 z-50 w-full bg-gradient-to-b from-black/60 via-black/20 to-transparent text-white pointer-events-none">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 h-24 flex justify-between items-start pt-6">
           <Link 
             href="/" 
-            className="group flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors py-2"
+            className="group flex items-center gap-3 text-sm font-semibold hover:opacity-80 transition-opacity py-2 pointer-events-auto"
           >
-            <div className="p-1 rounded-full bg-transparent group-hover:bg-accent transition-colors">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+            <div className="p-1.5 rounded-full bg-white/10 backdrop-blur-md group-hover:-translate-x-1 transition-transform duration-300">
+              <ArrowLeft className="w-4 h-4" />
             </div>
-            <span>Back to Works</span>
+            <span className="tracking-wide">Back to Works</span>
           </Link>
-
-          <Badge variant="outline" className="px-3.5 py-1 text-xs uppercase tracking-widest bg-accent-light/10 text-accent-hover border-accent-hover/20">
-            {project.category}
-          </Badge>
         </div>
       </nav>
 
-      {/* --- CONTENT LAYOUT --- */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] xl:grid-cols-[450px_1fr] gap-12 lg:gap-20 items-start">
-          
-          {/* LEFT COLUMN: Sticky Project Information */}
-          <div className="lg:sticky lg:top-28 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            
-            {/* Title & Category Badge */}
-            <div className="space-y-4">
-              <Badge className="px-3 py-0.5 text-xs font-semibold uppercase tracking-wider">
-                {project.category}
-              </Badge>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]">
-                {project.title}
-              </h1>
-            </div>
+      {/* --- IMMERSIVE HERO SECTION --- */}
+      <section className="relative w-full h-[75vh] md:h-screen">
+        {project.image_url ? (
+          <Image 
+            src={project.image_url}
+            alt={project.title}
+            fill
+            className="object-cover object-top"
+            priority
+          />
+        ) : (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+             <span className="text-muted-foreground uppercase tracking-widest text-xs">No Cover Image</span>
+          </div>
+        )}
+      </section>
 
-            {/* Project Metadata Cards */}
-            <div className="grid grid-cols-2 gap-4 border-t border-b border-border/80 py-6">
-              <div className="space-y-1.5">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-accent-hover" /> Role
-                </span>
-                <p className="font-semibold text-foreground text-sm sm:text-base leading-tight">
-                  {project.role || "Designer"}
-                </p>
-              </div>
-              
-              <div className="space-y-1.5">
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-accent-hover" /> Year
-                </span>
-                <p className="font-semibold text-foreground text-sm sm:text-base leading-tight">
-                  {project.year || "2024"}
-                </p>
-              </div>
-            </div>
+      {/* --- STARK TYPOGRAPHY & METADATA --- */}
+      <section className="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="space-y-12">
+          {/* Title */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[1.05]">
+            {project.title}
+          </h1>
 
-            {/* Project Description */}
-            <div className="space-y-3">
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-bold">About the Project</h3>
-              <p className="text-sm sm:text-base leading-relaxed text-muted-foreground whitespace-pre-wrap">
-                {project.description || "No description provided."}
-              </p>
+          {/* Metadata Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-border/60 pt-8">
+            <div className="space-y-2">
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Category</h4>
+              <p className="text-sm font-medium">{project.category}</p>
             </div>
-
-            {/* Live Site CTA Link (Fixed Contrast!) */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Role</h4>
+              <p className="text-sm font-medium">{project.role || "Designer"}</p>
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Year</h4>
+              <p className="text-sm font-medium">{project.year || "2024"}</p>
+            </div>
             {project.project_url && (
-              <div className="pt-4 border-t border-border/40">
-                <Button asChild size="lg" className="w-full justify-center active:scale-[0.98] transition-transform rounded-lg shadow-sm font-semibold tracking-wide text-sm flex items-center gap-2">
-                  <a 
-                    href={project.project_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    Visit Live Project <ExternalLink className="w-4 h-4 ml-1" />
-                  </a>
-                </Button>
+              <div className="space-y-2">
+                <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Link</h4>
+                <a 
+                  href={project.project_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium hover:text-accent-hover transition-colors inline-flex items-center gap-1.5 group"
+                >
+                  Live Site <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
               </div>
             )}
           </div>
+        </div>
+      </section>
 
-          {/* RIGHT COLUMN: Scrollable Project Media */}
-          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200 fill-mode-backwards">
-            <ProjectImageViewer 
-              imageUrl={project.image_url} 
-              galleryUrls={project.gallery_urls}
-              title={project.title} 
-            />
-            
-            {/* Action Bar (underneath the viewer) */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-4 border-t border-border/50 gap-4 text-xs text-muted-foreground">
-              <p className="italic flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-accent-hover animate-pulse"></span>
-                Click any mockup image to open in immersive view
+      {/* --- INTERLEAVED NARRATIVE --- */}
+      <section className="max-w-5xl mx-auto px-6 md:px-12 pb-20">
+        <div className="space-y-20 md:space-y-32">
+          
+          {/* Description Block */}
+          {project.description && (
+            <div className="max-w-3xl">
+              <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap">
+                {project.description}
               </p>
-              {project.image_url && (
+            </div>
+          )}
+
+          {/* Gallery Unrolled */}
+          {project.gallery_urls && project.gallery_urls.length > 0 && (
+            <div className="space-y-12 md:space-y-24">
+              {project.gallery_urls.map((url, index) => (
+                <div key={index} className="relative w-full aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-muted">
+                   <Image 
+                     src={url}
+                     alt={`${project.title} gallery image ${index + 1}`}
+                     fill
+                     className="object-cover object-top"
+                   />
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Bottom CTA */}
+          {project.project_url && (
+            <div className="pt-16 border-t border-border/40 flex justify-center">
+              <Button asChild size="lg" className="rounded-full px-8 py-6 text-base font-semibold tracking-wide flex items-center gap-2 group">
                 <a 
-                  href={project.image_url} 
+                  href={project.project_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 font-medium hover:text-accent-hover transition-colors py-1"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  Open Original Asset
+                  Visit Live Project <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </a>
-              )}
+              </Button>
             </div>
-          </div>
-
+          )}
         </div>
       </section>
 
       {/* --- FOOTER --- */}
-      <footer className="max-w-7xl mx-auto px-6 md:px-12 mt-20 md:mt-32 border-t border-border/40 py-16 md:py-24">
-        <div className="flex flex-col items-center justify-center">
-          <Link href="/" className="group flex flex-col items-center gap-3 text-center">
+      <footer className="w-full border-t border-border/40 py-24 md:py-32 bg-accent-light/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col items-center justify-center">
+          <Link href="/" className="group flex flex-col items-center gap-4 text-center">
             <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-muted-foreground group-hover:text-accent-hover transition-colors font-bold">
               Next Steps
             </span>
-            <span className="text-3xl md:text-5xl font-bold text-foreground group-hover:text-muted-foreground transition-colors tracking-tight">
+            <span className="text-4xl md:text-6xl font-bold text-foreground group-hover:text-muted-foreground transition-colors tracking-tighter">
               View All Projects
             </span>
           </Link>

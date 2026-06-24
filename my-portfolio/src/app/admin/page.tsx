@@ -423,12 +423,6 @@ export default function AdminPanel() {
                       <optgroup label="Video Editing"><option value="Reels">Reels</option><option value="Long Form">Long Form</option></optgroup>
                     </select>
                   </div>
-                  <div className="flex items-end pb-3">
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" checked={formData.is_featured} onChange={(e) => setFormData({...formData, is_featured: e.target.checked})} className="w-5 h-5 text-black rounded border-gray-300 focus:ring-black cursor-pointer" />
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-black transition-colors">Feature in Highlights?</span>
-                    </label>
-                  </div>
               </div>
 
               <div className="space-y-6">
@@ -510,7 +504,7 @@ export default function AdminPanel() {
             {projects.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No projects found.</p></div> : (
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
-                  <tr><th className="px-6 py-4 font-medium text-gray-700">Preview</th><th className="px-6 py-4 font-medium text-gray-700">Title</th><th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th><th className="px-6 py-4 font-medium text-gray-700">Status</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
+                  <tr><th className="px-6 py-4 font-medium text-gray-700">Preview</th><th className="px-6 py-4 font-medium text-gray-700">Title</th><th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
                 </thead>
                 <tbody>
                   {projects.map((project) => (
@@ -529,9 +523,7 @@ export default function AdminPanel() {
                       <td className="px-4 py-3 text-center">
                         <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">{project.display_index}</span>
                       </td>
-                      <td className="px-6 py-3">
-                         {project.is_featured && <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full w-fit"><Star className="w-3 h-3 fill-amber-500" /><span>Featured</span></div>}
-                      </td>
+
                       <td className="px-6 py-3 text-right">
                         <div className="flex items-center justify-end gap-6">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>{project.category}</span>

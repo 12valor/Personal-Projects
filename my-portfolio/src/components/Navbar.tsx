@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "./ThemeToggle";
+import { useSmoothScroll } from "./SmoothScrollProvider";
 import { Button } from "@/src/components/ui/button";
 import {
   Sheet,
@@ -26,6 +27,7 @@ const navLinks = [
 export default function Navbar() {
   const [isNavVisible, setIsNavVisible] = useState(true);
   const pathname = usePathname();
+  const lenis = useSmoothScroll();
   const lastScrollY = useRef(0);
   const isVisibleRef = useRef(true);
   const ticking = useRef(false);
@@ -114,6 +116,12 @@ export default function Navbar() {
                   <SheetClose key={link.name} asChild>
                     <Link
                       href={link.href}
+                      onClick={(e) => {
+                        if (link.href.startsWith("#") && lenis) {
+                          e.preventDefault();
+                          lenis.scrollTo(link.href, { offset: 0 });
+                        }
+                      }}
                       className="group flex items-baseline justify-between border-b border-border py-4 text-3xl font-semibold tracking-tight"
                     >
                       {link.name}
@@ -134,7 +142,17 @@ export default function Navbar() {
           <div className="flex items-center gap-1">
             {navLinks.map((link) => (
               <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4 text-sm">
-                <Link href={link.href}>{link.name}</Link>
+                <Link 
+                  href={link.href}
+                  onClick={(e) => {
+                    if (link.href.startsWith("#") && lenis) {
+                      e.preventDefault();
+                      lenis.scrollTo(link.href, { offset: 0 });
+                    }
+                  }}
+                >
+                  {link.name}
+                </Link>
               </Button>
             ))}
           </div>

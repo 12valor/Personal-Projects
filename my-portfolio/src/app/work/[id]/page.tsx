@@ -84,13 +84,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* --- STARK TYPOGRAPHY & METADATA --- */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <div className="inline-block space-y-8 bg-background/85 dark:bg-background/80 backdrop-blur-2xl p-8 md:p-16 rounded-[2.5rem] border border-border/50 shadow-2xl -mt-32 relative z-20">
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter text-foreground">
+        <div className="space-y-8">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter text-foreground leading-[1.05]">
             {project.title}
           </h1>
           
           {project.description && (
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-3xl">
               <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-foreground/90 font-medium whitespace-pre-wrap">
                 {project.description}
               </p>

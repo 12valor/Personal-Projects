@@ -115,9 +115,9 @@ export default function Navbar() {
                 {navLinks.map((link, index) => (
                   <SheetClose key={link.name} asChild>
                     <Link
-                      href={link.href}
+                      href={pathname === "/" ? link.href : `/${link.href}`}
                       onClick={(e) => {
-                        if (link.href.startsWith("#") && lenis) {
+                        if (pathname === "/" && link.href.startsWith("#") && lenis) {
                           e.preventDefault();
                           lenis.scrollTo(link.href, { offset: 0 });
                         }
@@ -143,9 +143,9 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4 text-sm">
                 <Link 
-                  href={link.href}
+                  href={pathname === "/" ? link.href : `/${link.href}`}
                   onClick={(e) => {
-                    if (link.href.startsWith("#") && lenis) {
+                    if (pathname === "/" && link.href.startsWith("#") && lenis) {
                       e.preventDefault();
                       lenis.scrollTo(link.href, { offset: 0 });
                     }

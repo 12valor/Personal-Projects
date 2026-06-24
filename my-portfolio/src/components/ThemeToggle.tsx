@@ -16,7 +16,7 @@ function getInitialTheme() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ className }: { className?: string }) {
   const [isDark, setIsDark] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -42,7 +42,8 @@ export default function ThemeToggle() {
       aria-pressed={isDark}
       className={cn(
         "relative flex h-8 w-16 items-center rounded-full border border-border bg-background/80 p-1 text-foreground shadow-sm backdrop-blur transition-colors duration-300",
-        !isMounted && "opacity-0"
+        !isMounted && "opacity-0",
+        className
       )}
     >
       <span className="flex size-6 items-center justify-center text-muted-foreground">

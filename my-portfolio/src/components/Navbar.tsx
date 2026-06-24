@@ -95,6 +95,7 @@ export default function Navbar() {
       )}
     >
       <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 md:px-10">
+        {/* Mobile Menu Toggle */}
         <div className="md:hidden pointer-events-auto">
           <Sheet>
             <SheetTrigger asChild>
@@ -128,15 +129,22 @@ export default function Navbar() {
           </Sheet>
         </div>
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-sm backdrop-blur pointer-events-auto md:flex">
-          {navLinks.map((link) => (
-            <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4">
-              <Link href={link.href}>{link.name}</Link>
-            </Button>
-          ))}
+        {/* Desktop Navbar Pill */}
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center rounded-full border border-border/80 bg-background/80 p-1.5 shadow-sm backdrop-blur pointer-events-auto md:flex">
+          <div className="flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4 text-sm">
+                <Link href={link.href}>{link.name}</Link>
+              </Button>
+            ))}
+          </div>
+          <div className="ml-2 flex items-center border-l border-border/60 pl-2 pr-0.5">
+            <ThemeToggle className="border-none bg-transparent shadow-none" />
+          </div>
         </div>
 
-        <div className="ml-auto pointer-events-auto">
+        {/* Mobile Theme Toggle (visible only on mobile) */}
+        <div className="md:hidden ml-auto pointer-events-auto">
           <ThemeToggle />
         </div>
       </div>

@@ -40,7 +40,7 @@ export default function Navbar() {
       // Hide navbar when scrolling down, show when scrolling up
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
-      } else {
+      } else if (currentScrollY < lastScrollY) {
         setIsVisible(true);
       }
       

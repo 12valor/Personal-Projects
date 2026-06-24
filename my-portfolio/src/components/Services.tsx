@@ -110,12 +110,9 @@ export default function Services() {
                       }`}
                     >
                       <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
                           <span className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                             {service.category}
-                          </span>
-                          <span className="font-mono text-xs text-muted-foreground">
-                            {service.number} / 03
                           </span>
                         </div>
                         

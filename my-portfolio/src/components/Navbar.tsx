@@ -1,10 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -25,56 +24,85 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isNavVisible, setIsNavVisible] = useState(true);
   const pathname = usePathname();
+  const lastScrollY = useRef(0);
+  const isVisibleRef = useRef(true);
+  const ticking = useRef(false);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
+    const threshold = 10;
+    const topOffset = 24;
 
-    const handleScroll = () => {
+    const updateNav = () => {
       const currentScrollY = window.scrollY;
-      
-      setIsScrolled(currentScrollY > 50);
+      const diff = currentScrollY - lastScrollY.current;
 
-      // Hide navbar when scrolling down, show when scrolling up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
+      if (currentScrollY <= topOffset) {
+        if (!isVisibleRef.current) {
+          isVisibleRef.current = true;
+          setIsNavVisible(true);
+        }
+
+        lastScrollY.current = currentScrollY;
+        ticking.current = false;
+        return;
       }
-      
-      lastScrollY = currentScrollY;
+
+      if (Math.abs(diff) < threshold) {
+        ticking.current = false;
+        return;
+      }
+
+      if (diff > 0 && isVisibleRef.current) {
+        // scrolling down
+        isVisibleRef.current = false;
+        setIsNavVisible(false);
+      } else if (diff < 0 && !isVisibleRef.current) {
+        // scrolling up
+        isVisibleRef.current = true;
+        setIsNavVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+      ticking.current = false;
     };
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => {
+      if (!ticking.current) {
+        window.requestAnimationFrame(updateNav);
+        ticking.current = true;
+      }
+    };
+
+    lastScrollY.current = window.scrollY;
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: isVisible ? 0 : -100, opacity: isVisible ? 1 : 0 }}
-      transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+    <nav
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        isScrolled
-          ? "border-b border-border bg-background/85 py-3 backdrop-blur-xl"
-          : "bg-transparent py-5",
+        "fixed inset-x-0 top-6 z-50 pointer-events-none transition-[transform,opacity] duration-300 ease-out will-change-transform",
+        isNavVisible
+          ? "translate-y-0 opacity-100"
+          : "-translate-y-[140%] opacity-0"
       )}
     >
       <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 md:px-10">
-        <div className="md:hidden">
+        <div className="md:hidden pointer-events-auto">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Open navigation">
+              <Button variant="outline" size="icon" className="rounded-full shadow-sm backdrop-blur bg-background/80" aria-label="Open navigation">
                 <Menu aria-hidden="true" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-full max-w-sm flex-col border-r border-border p-6">
+            <SheetContent side="left" className="flex w-full max-w-sm flex-col border-r border-border p-6 pointer-events-auto">
               <SheetHeader className="text-left">
                 <SheetTitle className="text-sm font-semibold uppercase tracking-[0.2em]">
                   Navigate
@@ -100,7 +128,7 @@ export default function Navbar() {
           </Sheet>
         </div>
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-sm backdrop-blur md:flex">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-border/80 bg-background/80 p-1 shadow-sm backdrop-blur pointer-events-auto md:flex">
           {navLinks.map((link) => (
             <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4">
               <Link href={link.href}>{link.name}</Link>
@@ -108,10 +136,10 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="ml-auto">
+        <div className="ml-auto pointer-events-auto">
           <ThemeToggle />
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

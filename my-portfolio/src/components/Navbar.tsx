@@ -88,7 +88,7 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed inset-x-0 top-6 z-50 pointer-events-none transition-[transform,opacity] duration-300 ease-out will-change-transform",
+        "fixed inset-x-0 top-10 z-50 pointer-events-none transition-[transform,opacity] duration-300 ease-out will-change-transform",
         isNavVisible
           ? "translate-y-0 opacity-100"
           : "-translate-y-[140%] opacity-0"

@@ -84,40 +84,47 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* --- STARK TYPOGRAPHY & METADATA --- */}
       <section className="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <div className="space-y-12">
-          {/* Title */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[1.05]">
+        <div className="inline-block space-y-8 bg-background/85 dark:bg-background/80 backdrop-blur-2xl p-8 md:p-16 rounded-[2.5rem] border border-border/50 shadow-2xl -mt-32 relative z-20">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter text-foreground">
             {project.title}
           </h1>
+          
+          {project.description && (
+            <div className="max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-foreground/90 font-medium whitespace-pre-wrap">
+                {project.description}
+              </p>
+            </div>
+          )}
+        </div>
 
-          {/* Metadata Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-border/60 pt-8">
-            <div className="space-y-2">
-              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Category</h4>
-              <p className="text-sm font-medium">{project.category}</p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Role</h4>
-              <p className="text-sm font-medium">{project.role || "Designer"}</p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Year</h4>
-              <p className="text-sm font-medium">{project.year || "2024"}</p>
-            </div>
-            {project.project_url && (
-              <div className="space-y-2">
-                <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Link</h4>
-                <a 
-                  href={project.project_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium hover:text-accent-hover transition-colors inline-flex items-center gap-1.5 group"
-                >
-                  Live Site <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
-              </div>
-            )}
+        {/* Metadata Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-border/60 pt-16 mt-8">
+          <div className="space-y-2">
+            <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Category</h4>
+            <p className="text-sm font-medium">{project.category}</p>
           </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Role</h4>
+            <p className="text-sm font-medium">{project.role || "Designer"}</p>
+          </div>
+          <div className="space-y-2">
+            <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Year</h4>
+            <p className="text-sm font-medium">{project.year || "2024"}</p>
+          </div>
+          {project.project_url && (
+            <div className="space-y-2">
+              <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Link</h4>
+              <a 
+                href={project.project_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm font-medium hover:text-accent-hover transition-colors inline-flex items-center gap-1.5 group"
+              >
+                Live Site <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -125,15 +132,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <section className="max-w-5xl mx-auto px-6 md:px-12 pb-20">
         <div className="space-y-20 md:space-y-32">
           
-          {/* Description Block */}
-          {project.description && (
-            <div className="max-w-3xl">
-              <p className="text-lg md:text-xl lg:text-2xl leading-relaxed text-muted-foreground font-medium whitespace-pre-wrap">
-                {project.description}
-              </p>
-            </div>
-          )}
-
           {/* Gallery Unrolled */}
           {project.gallery_urls && project.gallery_urls.length > 0 && (
             <div className="space-y-12 md:space-y-24">

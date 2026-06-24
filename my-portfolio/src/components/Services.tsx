@@ -5,7 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { Badge } from "@/src/components/ui/badge";
 
 const services = [
   {
@@ -13,7 +12,7 @@ const services = [
     category: "Graphic Design",
     title: "Graphic Design",
     description:
-      "Posters, pubmats, and social layouts shaped from first idea to final export. I focus on clean composition, readable hierarchy, and visuals that fit the message.",
+      "Posters, pubmats, and social layouts shaped from first idea to final export, with focus on composition, hierarchy, and message clarity.",
     src: "/graphic.webp",
     skills: ["Branding", "Layout", "Social Media"],
   },
@@ -22,7 +21,7 @@ const services = [
     category: "Video Editing",
     title: "Video Editing",
     description:
-      "Short-form and long-form edits built around rhythm, pacing, and clarity — from cuts and sound timing to final export.",
+      "Short-form and long-form edits built around rhythm, pacing, sound timing, and clear visual storytelling.",
     src: "/vid.webp",
     skills: ["Reels", "Cuts", "Sound"],
   },
@@ -49,112 +48,89 @@ export default function Services() {
     <section
       ref={containerRef}
       id="services"
-      className="relative overflow-hidden border-t border-border bg-background px-4 py-16 md:px-10 md:py-24"
+      className="relative overflow-hidden bg-background px-4 py-16 md:px-10 md:py-32"
     >
-      <div className="mx-auto flex max-w-7xl flex-col gap-12 md:gap-16">
+      <div className="mx-auto flex max-w-7xl flex-col gap-16 md:gap-24">
+        {/* Header */}
         <motion.div
           style={{ y: headerY }}
-          className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:items-end"
+          className="flex flex-col gap-6 max-w-3xl"
         >
-          <h2 className="max-w-4xl text-5xl font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:text-6xl md:text-7xl">
-            Design, motion, and code — built as one.
+          <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-foreground sm:text-5xl md:text-6xl">
+            Services built across design, motion, and code.
           </h2>
           <p className="max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
-            I work across visual design, editing, and development so every detail feels connected from first idea to final build.
+            I work across visuals, editing, and development so every output feels connected from idea to final build.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {services.map((service, index) => {
-            const isFirst = index === 0;
-
-            return (
+        {/* Services List */}
+        <div className="flex flex-col">
+          <div className="border-t border-border/40">
+            {services.map((service, index) => (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 32 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
-                transition={{ duration: 0.55, delay: index * 0.1 }}
-                className={isFirst ? "md:col-span-2" : "col-span-1"}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link
                   href="#work"
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-card transition-colors hover:border-foreground/20"
+                  className="group flex flex-col md:flex-row gap-6 md:gap-8 border-b border-border/40 py-8 md:py-10 transition-colors hover:border-foreground/30"
                 >
-                  <div
-                    className={`flex flex-col h-full ${
-                      isFirst ? "md:flex-row" : "flex-col"
-                    }`}
-                  >
-                    {/* Image Area */}
-                    <div
-                      className={`relative overflow-hidden bg-muted ${
-                        isFirst
-                          ? "min-h-[300px] md:min-h-full md:w-1/2 lg:w-[55%]"
-                          : "min-h-[260px] w-full"
-                      }`}
-                    >
+                  {/* Left: Number / Category */}
+                  <div className="md:w-32 shrink-0 pt-1 md:pt-2">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {service.number}
+                    </span>
+                  </div>
+
+                  {/* Middle: Title, Description, Tags */}
+                  <div className="flex flex-col gap-4 flex-1">
+                    <h3 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground">
+                      {service.title}
+                    </h3>
+                    <p className="text-base leading-relaxed text-muted-foreground max-w-md">
+                      {service.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2 md:mt-4">
+                      {service.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="rounded-full border border-border/40 px-3 py-1 text-xs font-medium text-muted-foreground transition-colors group-hover:border-foreground/30 group-hover:text-foreground"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Right: Image Preview & CTA */}
+                  <div className="flex flex-col gap-6 md:w-56 shrink-0 md:items-end justify-between mt-4 md:mt-0">
+                    <div className="relative w-full aspect-video md:aspect-[4/3] md:w-56 md:h-36 overflow-hidden rounded-lg bg-muted border border-border/10">
                       <Image
                         src={service.src}
                         alt={`${service.title} preview`}
                         fill
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                        sizes={isFirst ? "(max-width: 768px) 100vw, 55vw" : "(max-width: 768px) 100vw, 50vw"}
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 250px"
                       />
                     </div>
-
-                    {/* Content Area */}
-                    <div
-                      className={`flex flex-1 flex-col justify-between p-6 md:p-8 ${
-                        isFirst ? "md:w-1/2 lg:w-[45%]" : "w-full"
-                      }`}
-                    >
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center gap-4">
-                          <span className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                            {service.category}
-                          </span>
-                        </div>
-                        
-                        <div className="flex flex-col gap-3">
-                          <h3 className="text-3xl font-semibold tracking-[-0.03em] md:text-4xl">
-                            {service.title}
-                          </h3>
-                          <p className="text-base leading-relaxed text-muted-foreground">
-                            {service.description}
-                          </p>
-                        </div>
-
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {service.skills.map((skill) => (
-                            <Badge
-                              key={skill}
-                              variant="secondary"
-                              className="rounded-full bg-secondary/50 px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/70"
-                            >
-                              {skill}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="mt-8 flex items-center justify-between border-t border-border/50 pt-5">
-                        <span className="text-sm font-semibold text-foreground transition-colors">
-                          View projects
-                        </span>
-                        <ArrowUpRight
-                          aria-hidden="true"
-                          className="size-5 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-                        />
-                      </div>
+                    <div className="flex items-center gap-2 text-sm font-medium text-foreground w-full md:justify-end">
+                      <span className="transition-colors group-hover:text-muted-foreground">
+                        View projects
+                      </span>
+                      <ArrowUpRight className="size-4 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
                     </div>
                   </div>
                 </Link>
               </motion.div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
+

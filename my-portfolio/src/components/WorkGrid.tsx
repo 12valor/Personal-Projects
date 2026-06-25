@@ -27,12 +27,91 @@ const CATEGORY_MAP: Record<string, string[]> = {
   "Video Editing": ["Reels", "Long Form"],
 };
 
+export interface VideoProject {
+  id: string;
+  title: string;
+  caption: string;
+  videoUrl: string;
+  posterUrl: string;
+  duration?: string;
+}
+
+// Phase 4: Static config for Cloudinary videos
+const STATIC_VIDEO_PROJECTS: VideoProject[] = [
+  {
+    id: "v1",
+    title: "Cinematic Reel 2026",
+    caption: "Motion Graphics & Color Grading",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/sea-turtle.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/sea-turtle.jpg",
+    duration: "0:45",
+  },
+  {
+    id: "v2",
+    title: "Brand Anthem",
+    caption: "Dynamic Editing & Sound Design",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/elephants.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/elephants.jpg",
+    duration: "1:02",
+  },
+  {
+    id: "v3",
+    title: "Social Campaign",
+    caption: "Short Form & Text Animation",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/cows.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/cows.jpg",
+    duration: "0:30",
+  },
+  {
+    id: "v4",
+    title: "Product Launch",
+    caption: "3D Compositing & Transitions",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/sea-turtle.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/sea-turtle.jpg",
+    duration: "1:15",
+  },
+  {
+    id: "v5",
+    title: "Event Highlights",
+    caption: "Fast Paced & Beat Synced",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/elephants.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/elephants.jpg",
+    duration: "0:55",
+  },
+  {
+    id: "v6",
+    title: "Documentary Short",
+    caption: "Narrative & A-Roll Editing",
+    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/cows.mp4",
+    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/cows.jpg",
+    duration: "2:10",
+  },
+];
+
 export default function WorkGrid({ initialProjects }: WorkGridProps) {
   const [projects] = useState<Project[]>(initialProjects);
   
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+
+  // Keyboard accessibility for Video Modal
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveVideoUrl(null);
+    };
+    if (activeVideoUrl) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [activeVideoUrl]);
   
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -200,6 +279,57 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     );
   };
 
+  const VideoProjectList = () => {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {STATIC_VIDEO_PROJECTS.map((video, i) => (
+              <motion.div
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.4, delay: (i % 6) * 0.05 }}
+                  key={video.id}
+                  onClick={() => setActiveVideoUrl(video.videoUrl)}
+                  className="group cursor-pointer flex flex-col gap-3"
+              >
+                  <div className="relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
+                      <Image
+                          src={video.posterUrl}
+                          alt={video.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500 z-10" />
+                      
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center z-20">
+                          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 5v14l11-7z" />
+                             </svg>
+                          </div>
+                      </div>
+
+                      {video.duration && (
+                          <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md z-20">
+                              {video.duration}
+                          </div>
+                      )}
+                  </div>
+                  
+                  <div className="px-1">
+                      <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {video.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-0.5 font-medium line-clamp-1">{video.caption}</p>
+                  </div>
+              </motion.div>
+          ))}
+      </div>
+    );
+  };
+
   const ProjectList = ({ items }: { items: Project[] }) => {
     if (items.length === 0) {
       return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No projects found in this category.</div>;
@@ -290,6 +420,42 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         title={selectedProject?.title || "Project"}
       />
 
+      {/* --- VIDEO MODAL --- */}
+      <AnimatePresence>
+        {activeVideoUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/95 backdrop-blur-md"
+            onClick={() => setActiveVideoUrl(null)}
+          >
+            <div 
+              className="relative w-full max-w-[400px] aspect-[9/16] bg-black rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video 
+                  src={activeVideoUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setActiveVideoUrl(null)}
+                className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-black/70 transition-colors z-50"
+                aria-label="Close video"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-7xl mx-auto">
         
         {/* --- HEADER --- */}
@@ -326,13 +492,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     VIDEO EDITS
                 </h3>
-                {videoEditingProjects.length > 0 ? (
-                    <ProjectList items={videoEditingProjects} />
-                ) : (
-                    <div className="h-32 border border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground text-sm">
-                        More projects coming soon.
-                    </div>
-                )}
+                <VideoProjectList />
             </div>
 
         </div>

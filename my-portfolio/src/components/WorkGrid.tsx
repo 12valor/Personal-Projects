@@ -141,6 +141,65 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     );
   };
 
+  const GraphicDesignMarquee = ({ items }: { items: Project[] }) => {
+    if (items.length === 0) {
+      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No graphic work found.</div>;
+    }
+
+    return (
+      <div className="relative w-full overflow-hidden mask-edges py-4 marquee-wrapper">
+        <div className="marquee-container flex w-max group/marquee">
+            {[0, 1].map((blockIdx) => (
+              <div 
+                key={blockIdx} 
+                className="marquee-content flex gap-4 md:gap-6 pr-4 md:pr-6"
+                aria-hidden={blockIdx === 1}
+              >
+                {items.map((project, i) => (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true, margin: "100px" }}
+                        transition={{ duration: 0.5, delay: (i % 4) * 0.1 }}
+                        key={`${blockIdx}-${project.id}`}
+                        onClick={() => handleProjectClick(project)}
+                        className="group cursor-pointer flex flex-col w-[260px] md:w-[320px] shrink-0"
+                    >
+                        <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-colors duration-500 hover:border-zinc-300 dark:hover:border-zinc-700">
+                          {project.image_url ? (
+                              <Image
+                                  src={project.image_url}
+                                  alt={project.title}
+                                  fill
+                                  className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                  sizes="(max-width: 768px) 260px, 320px"
+                              />
+                          ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
+                          )}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500 z-10" />
+                          
+                          {/* Action Icon */}
+                          <div className="absolute top-3 right-3 md:top-4 md:right-4 transition-all duration-500 translate-y-1 translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 z-30">
+                              <div className="bg-white text-black p-2 rounded-full shadow-md">
+                                  {isBatchView(project.category) ? <Layers size={14} /> : <ArrowUpRight size={14} />}
+                              </div>
+                          </div>
+                        </div>
+                        {/* Title caption below */}
+                        <div className="mt-3 px-1">
+                            <h3 className="font-semibold text-sm text-foreground line-clamp-1">{project.title}</h3>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-0.5">{project.category}</p>
+                        </div>
+                    </motion.div>
+                ))}
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
   const ProjectList = ({ items }: { items: Project[] }) => {
     if (items.length === 0) {
       return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No projects found in this category.</div>;
@@ -259,7 +318,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     GRAPHIC WORK
                 </h3>
-                <ProjectList items={graphicDesignProjects} />
+                <GraphicDesignMarquee items={graphicDesignProjects} />
             </div>
 
             {/* VIDEO EDITING */}
@@ -278,6 +337,54 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
         </div>
       </div>
+      {/* Hide Scrollbar Style Helper & Marquee CSS */}
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .mask-edges {
+          -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+          mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        }
+        
+        .marquee-container {
+          animation: slide-marquee 40s linear infinite;
+        }
+
+        .marquee-container:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes slide-marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-container {
+            animation: none !important;
+          }
+          .marquee-wrapper {
+            overflow-x: auto;
+            -webkit-mask-image: none;
+            mask-image: none;
+          }
+          .marquee-wrapper::-webkit-scrollbar {
+            display: none;
+          }
+          .marquee-wrapper {
+            scrollbar-width: none;
+          }
+          .marquee-content:nth-child(2) {
+            display: none;
+          }
+        }
+      `}</style>
     </motion.section>
   );
 }

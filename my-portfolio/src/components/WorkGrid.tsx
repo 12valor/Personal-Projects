@@ -70,6 +70,77 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   const graphicDesignProjects = getProjectsByCategory("Graphic Design");
   const videoEditingProjects = getProjectsByCategory("Video Editing");
 
+  const WebsiteProjectList = ({ items }: { items: Project[] }) => {
+    if (items.length === 0) {
+      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No website projects found.</div>;
+    }
+
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+        {items.map((project, i) => (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ 
+              duration: 0.4, 
+              delay: (i % 6) * 0.05, 
+              type: "spring", 
+              stiffness: 250, 
+              damping: 25 
+            }}
+            key={project.id}
+            onClick={() => handleProjectClick(project)}
+            className="group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md"
+          >
+            {/* IMAGE AREA */}
+            <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
+              {project.image_url ? (
+                <Image
+                  src={project.image_url}
+                  alt={project.title}
+                  fill
+                  className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
+              )}
+            </div>
+
+            {/* CONTENT AREA */}
+            <div className="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+              <div className="flex flex-col gap-2 md:gap-3">
+                <div className="flex items-center justify-between">
+                    <p className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    {project.category}
+                    </p>
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  {project.title}
+                </h3>
+                {project.description && (
+                  <p className="text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed">
+                    {project.description}
+                  </p>
+                )}
+              </div>
+              
+              {/* CTA */}
+              <div className="flex items-center text-sm font-semibold text-foreground">
+                View Project 
+                <ArrowUpRight 
+                  size={16} 
+                  className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" 
+                />
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    );
+  };
+
   const ProjectList = ({ items }: { items: Project[] }) => {
     if (items.length === 0) {
       return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No projects found in this category.</div>;
@@ -180,7 +251,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     SELECTED WEBSITES
                 </h3>
-                <ProjectList items={websiteProjects} />
+                <WebsiteProjectList items={websiteProjects} />
             </div>
 
             {/* GRAPHIC DESIGN */}

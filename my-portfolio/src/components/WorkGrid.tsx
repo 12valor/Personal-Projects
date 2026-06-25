@@ -40,11 +40,11 @@ export interface VideoProject {
 const STATIC_VIDEO_PROJECTS: VideoProject[] = [
   {
     id: "v1",
-    title: "Cinematic Reel 2026",
-    caption: "Motion Graphics & Color Grading",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/sea-turtle.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/sea-turtle.jpg",
-    duration: "0:45",
+    title: "Video Edit 1",
+    caption: "Short Form & Text Animation",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.jpg",
+    duration: "",
   },
   {
     id: "v2",

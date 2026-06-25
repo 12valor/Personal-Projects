@@ -48,43 +48,43 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
   },
   {
     id: "v2",
-    title: "Brand Anthem",
+    title: "Video Edit 2",
     caption: "Dynamic Editing & Sound Design",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/elephants.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/elephants.jpg",
-    duration: "1:02",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.jpg",
+    duration: "",
   },
   {
     id: "v3",
-    title: "Social Campaign",
-    caption: "Short Form & Text Animation",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/cows.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/cows.jpg",
-    duration: "0:30",
+    title: "Video Edit 3",
+    caption: "Short Form Content",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.jpg",
+    duration: "",
   },
   {
     id: "v4",
-    title: "Product Launch",
-    caption: "3D Compositing & Transitions",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/sea-turtle.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/sea-turtle.jpg",
-    duration: "1:15",
+    title: "Video Edit 4",
+    caption: "Social Media Reel",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.jpg",
+    duration: "",
   },
   {
     id: "v5",
-    title: "Event Highlights",
-    caption: "Fast Paced & Beat Synced",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/elephants.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/elephants.jpg",
-    duration: "0:55",
+    title: "Video Edit 5",
+    caption: "Fast Paced Cuts",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.jpg",
+    duration: "",
   },
   {
     id: "v6",
-    title: "Documentary Short",
-    caption: "Narrative & A-Roll Editing",
-    videoUrl: "https://res.cloudinary.com/demo/video/upload/v1692278453/samples/cows.mp4",
-    posterUrl: "https://res.cloudinary.com/demo/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1692278453/samples/cows.jpg",
-    duration: "2:10",
+    title: "Video Edit 6",
+    caption: "Event Highlights",
+    videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.mp4",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.jpg",
+    duration: "",
   },
 ];
 
@@ -472,39 +472,48 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
       <div className="max-w-7xl mx-auto">
         
         {/* --- HEADER --- */}
-        <div className="flex flex-col gap-4 mb-12 md:mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            Projects
+        <div className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
+          <h2 className="text-5xl md:text-7xl lg:text-[80px] font-medium tracking-tighter text-foreground leading-none">
+            Selected Works
           </h2>
-          <p className="text-muted-foreground max-w-lg text-sm md:text-base leading-relaxed hidden md:block">
+          <p className="text-muted-foreground max-w-xl text-base md:text-lg leading-relaxed">
             Browse selected websites, visual layouts, and video edits built across design, motion, and code.
           </p>
         </div>
 
         {/* --- SECTIONS --- */}
-        <div className="flex flex-col gap-16 md:gap-24">
+        <div className="flex flex-col gap-24 md:gap-32">
             
             {/* WEBSITES */}
-            <div className="flex flex-col gap-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    SELECTED WEBSITES
-                </h3>
+            <div className="flex flex-col gap-8 md:gap-12">
+                <div className="flex flex-col items-center text-center">
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+                      Websites
+                  </h3>
+                  <div className="w-12 h-px bg-border mt-6" />
+                </div>
                 <WebsiteProjectList items={websiteProjects} />
             </div>
 
             {/* GRAPHIC DESIGN */}
-            <div className="flex flex-col gap-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    GRAPHIC WORK
-                </h3>
+            <div className="flex flex-col gap-8 md:gap-12">
+                <div className="flex flex-col items-center text-center">
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+                      Graphic Design
+                  </h3>
+                  <div className="w-12 h-px bg-border mt-6" />
+                </div>
                 <GraphicDesignMarquee items={graphicDesignProjects} />
             </div>
 
             {/* VIDEO EDITING */}
-            <div className="flex flex-col gap-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    VIDEO EDITS
-                </h3>
+            <div className="flex flex-col gap-8 md:gap-12">
+                <div className="flex flex-col items-center text-center">
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+                      Video Edits
+                  </h3>
+                  <div className="w-12 h-px bg-border mt-6" />
+                </div>
                 <VideoProjectList />
             </div>
 

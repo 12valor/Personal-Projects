@@ -185,7 +185,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority={i < 4}
-                  quality={85}
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
@@ -261,7 +261,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                                   className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                   sizes="(max-width: 768px) 260px, 320px"
                                   priority={blockIdx === 0 && i < 6}
-                                  quality={80}
+                                  unoptimized
                               />
                           ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>

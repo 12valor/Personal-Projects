@@ -155,7 +155,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {items.map((project, i) => (
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -184,6 +184,8 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   fill
                   className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority={i < 4}
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
@@ -258,6 +260,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                                   fill
                                   className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                   sizes="(max-width: 768px) 260px, 320px"
+                                  unoptimized
                               />
                           ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
@@ -308,6 +311,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          unoptimized
                       />
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500 z-10" />
                       

@@ -19,13 +19,7 @@ const timelineData = [
     desc: "Got into editing videos and immediately got hooked. Learned how to pace cuts, layer audio, and actually tell a story through footage.",
     img: "/2022.webp",
   },
-  {
-    year: "2023",
-    title: "Graphic Design",
-    category: "Branding",
-    desc: "Started taking design more seriously — logos, layouts, brand stuff. Learned a lot about typography and making things look intentional instead of random.",
-    img: "/2023.webp",
-  },
+
   {
     year: "2024",
     title: "Programming",

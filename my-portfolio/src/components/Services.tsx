@@ -10,15 +10,6 @@ const services = [
   {
     id: "01",
     number: "01",
-    title: "Graphic Design",
-    description:
-      "Posters, pubmats, and social layouts shaped from first idea to final export, with focus on composition, hierarchy, and message clarity.",
-    src: "/graphic.webp",
-    skills: ["Branding", "Layout", "Social Media"],
-  },
-  {
-    id: "02",
-    number: "02",
     title: "Video Editing",
     description:
       "Short-form and long-form edits built around rhythm, pacing, sound timing, and clear visual storytelling.",
@@ -26,8 +17,8 @@ const services = [
     skills: ["Reels", "Cuts", "Sound"],
   },
   {
-    id: "03",
-    number: "03",
+    id: "02",
+    number: "02",
     title: "Web Design",
     description:
       "Responsive websites designed and developed as real systems, with clean interfaces, thoughtful interactions, and production-ready structure.",
@@ -35,13 +26,11 @@ const services = [
     skills: ["Frontend", "Responsive", "UI/UX"],
   },
 ];
-
 export default function Services() {
-  const [activeServiceId, setActiveServiceId] = useState<string>(services[0].id);
+  const [activeServiceId, setActiveServiceId] = useState<string>("");
 
   return (
     <section
-      id="services"
       className="relative overflow-hidden bg-background px-4 py-20 md:px-10 md:py-32"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">

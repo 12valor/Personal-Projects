@@ -52,7 +52,6 @@ export default function Hero() {
   // --- TEXT CYCLING LOGIC ---
   const [index, setIndex] = useState(0);
   const phrases = [
-    ["GRAPHIC", "DESIGNER"],
     ["VIDEO", "EDITOR"],
     ["WEB", "DEVELOPER"],
   ];

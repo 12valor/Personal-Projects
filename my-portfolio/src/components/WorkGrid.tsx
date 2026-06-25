@@ -146,7 +146,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   };
 
   const websiteProjects = getProjectsByCategory("Web Design");
-  const graphicDesignProjects = getProjectsByCategory("Graphic Design");
   const videoEditingProjects = getProjectsByCategory("Video Editing");
 
   const WebsiteProjectList = ({ items }: { items: Project[] }) => {
@@ -225,69 +224,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     );
   };
 
-  const GraphicDesignMarquee = ({ items }: { items: Project[] }) => {
-    if (items.length === 0) {
-      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No graphic work found.</div>;
-    }
-
-    return (
-      <div className="relative w-full overflow-hidden mask-edges py-4 marquee-wrapper">
-        <div className="marquee-container flex w-max group/marquee">
-            {[0, 1].map((blockIdx) => (
-              <div 
-                key={blockIdx} 
-                className="marquee-content flex gap-4 md:gap-6 pr-4 md:pr-6"
-                aria-hidden={blockIdx === 1}
-              >
-                {items.map((project, i) => (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true, margin: "100px" }}
-                        transition={{ duration: 0.5, delay: (i % 4) * 0.1 }}
-                        key={`${blockIdx}-${project.id}`}
-                        onClick={() => handleProjectClick(project)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProjectClick(project); } }}
-                        role="button"
-                        tabIndex={blockIdx === 0 ? 0 : -1}
-                        className="group cursor-pointer flex flex-col w-[260px] md:w-[320px] shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
-                    >
-                        <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-colors duration-500 hover:border-zinc-300 dark:hover:border-zinc-700">
-                          {project.image_url ? (
-                              <Image
-                                  src={project.image_url}
-                                  alt={project.title}
-                                  fill
-                                  className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                                  sizes="(max-width: 768px) 260px, 320px"
-                                  priority={blockIdx === 0 && i < 6}
-                                  unoptimized
-                              />
-                          ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
-                          )}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500 z-10" />
-                          
-                          {/* Action Icon */}
-                          <div className="absolute top-3 right-3 md:top-4 md:right-4 transition-all duration-500 translate-y-1 translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 z-30">
-                              <div className="bg-white text-black p-2 rounded-full shadow-md">
-                                  {isBatchView(project.category) ? <Layers size={14} /> : <ArrowUpRight size={14} />}
-                              </div>
-                          </div>
-                        </div>
-                        {/* Title caption below */}
-                        <div className="mt-3 px-1">
-                            <h3 className="font-semibold text-sm text-foreground line-clamp-1">{project.title}</h3>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-0.5">{project.category}</p>
-                        </div>
-                    </motion.div>
-                ))}
-              </div>
-            ))}
-        </div>
-      </div>
-    );
-  };
 
   const VideoProjectList = () => {
     return (
@@ -496,16 +432,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                 <WebsiteProjectList items={websiteProjects} />
             </div>
 
-            {/* GRAPHIC DESIGN */}
-            <div className="flex flex-col gap-8 md:gap-12">
-                <div className="flex flex-col items-center text-center">
-                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-                      Graphic Design
-                  </h3>
-                  <div className="w-12 h-px bg-border mt-6" />
-                </div>
-                <GraphicDesignMarquee items={graphicDesignProjects} />
-            </div>
 
             {/* VIDEO EDITING */}
             <div className="flex flex-col gap-8 md:gap-12">

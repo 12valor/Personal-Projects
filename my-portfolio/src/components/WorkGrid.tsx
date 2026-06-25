@@ -170,7 +170,10 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             }}
             key={project.id}
             onClick={() => handleProjectClick(project)}
-            className="group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md"
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProjectClick(project); } }}
+            role="button"
+            tabIndex={0}
+            className="group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {/* IMAGE AREA */}
             <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
@@ -242,7 +245,10 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                         transition={{ duration: 0.5, delay: (i % 4) * 0.1 }}
                         key={`${blockIdx}-${project.id}`}
                         onClick={() => handleProjectClick(project)}
-                        className="group cursor-pointer flex flex-col w-[260px] md:w-[320px] shrink-0"
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProjectClick(project); } }}
+                        role="button"
+                        tabIndex={blockIdx === 0 ? 0 : -1}
+                        className="group cursor-pointer flex flex-col w-[260px] md:w-[320px] shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
                     >
                         <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-colors duration-500 hover:border-zinc-300 dark:hover:border-zinc-700">
                           {project.image_url ? (
@@ -290,7 +296,10 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   transition={{ duration: 0.4, delay: (i % 6) * 0.05 }}
                   key={video.id}
                   onClick={() => setActiveVideoUrl(video.videoUrl)}
-                  className="group cursor-pointer flex flex-col gap-3"
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveVideoUrl(video.videoUrl); } }}
+                  role="button"
+                  tabIndex={0}
+                  className="group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
               >
                   <div className="relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
                       <Image

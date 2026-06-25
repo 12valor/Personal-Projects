@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    // Cache optimized images for 1 hour to prevent re-fetching on refresh
+    minimumCacheTTL: 3600,
   },
   experimental: {
     serverActions: {

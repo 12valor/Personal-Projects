@@ -71,6 +71,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               fill
               className="object-cover object-top"
               priority
+              unoptimized
             />
             {/* Vignette Overlay */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)] pointer-events-none" />
@@ -142,6 +143,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                      alt={`${project.title} gallery image ${index + 1}`}
                      fill
                      className="object-cover object-top"
+                     unoptimized
                    />
                 </div>
               ))}

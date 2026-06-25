@@ -43,7 +43,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 1",
     caption: "Short Form & Text Animation",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.jpg",
     duration: "",
   },
   {
@@ -51,7 +51,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 2",
     caption: "Dynamic Editing & Sound Design",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.jpg",
     duration: "",
   },
   {
@@ -59,7 +59,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 3",
     caption: "Short Form Content",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.jpg",
     duration: "",
   },
   {
@@ -67,7 +67,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 4",
     caption: "Social Media Reel",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.jpg",
     duration: "",
   },
   {
@@ -75,7 +75,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 5",
     caption: "Fast Paced Cuts",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.jpg",
     duration: "",
   },
   {
@@ -83,7 +83,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     title: "Video Edit 6",
     caption: "Event Highlights",
     videoUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.mp4",
-    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.jpg",
+    posterUrl: "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.jpg",
     duration: "",
   },
 ];
@@ -312,6 +312,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   fill
                   className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 50vw, 33vw"
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>

@@ -113,6 +113,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
                 fill
                 className="object-contain shadow-2xl drop-shadow-2xl"
                 priority
+                unoptimized
               />
             </motion.div>
 
@@ -141,7 +142,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
                         : "opacity-40 hover:opacity-80 hover:scale-105"
                     }`}
                 >
-                    <Image src={img} alt="thumbnail" fill className="object-cover" />
+                    <Image src={img} alt="thumbnail" fill className="object-cover" unoptimized />
                 </button>
                 ))}
             </div>

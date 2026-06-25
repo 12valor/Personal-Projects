@@ -41,11 +41,11 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Hero />
+      <GithubActivity />
       <TechStack items={techStack} />
         <About />
       <Services />
       <WorkGrid initialProjects={projects.map(serializeProject)} />
-      <GithubActivity />
       <Contact />
     </main>
   );

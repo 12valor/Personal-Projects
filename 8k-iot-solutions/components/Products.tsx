@@ -83,7 +83,7 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
   return (
     <section className="relative pt-4 pb-24">
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12">
           {products.map((product, idx) => {
             const features = (() => {
               try {
@@ -95,68 +95,72 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
             return (
               <div
                 key={product.id}
-                className="group relative bg-white flex flex-col transition-all duration-300 hover:bg-zinc-50 border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md h-full"
+                className="group relative bg-white/90 backdrop-blur-sm flex flex-col transition-all duration-500 ease-out border border-zinc-200/60 rounded-[2rem] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full"
               >
                 {/* Product Image Section */}
-                <div className="relative h-56 w-full overflow-hidden bg-zinc-100 p-6">
-                  <AntigravityCore />
-                  <div className="absolute inset-0 z-0 select-none pointer-events-none opacity-[0.03]" 
-                    style={{
-                      backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
-                      backgroundSize: '24px 24px',
-                    }}
-                  />
-                  
-                  {product.imageUrl && (
-                    <div className="relative w-full h-full border border-zinc-200 bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
-                      <Image 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        fill
-                        className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
+                <div className="relative h-60 w-full overflow-hidden bg-zinc-50 border-b border-zinc-200/50">
+                  {product.imageUrl ? (
+                    <Image 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      fill
+                      className="object-cover grayscale-[10%] transition-transform duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <AntigravityCore />
+                      <Layers className="text-zinc-300 w-12 h-12 animate-pulse" strokeWidth={1} />
                     </div>
                   )}
+                  {/* Subtle overlay for depth */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/[0.02] to-transparent pointer-events-none" />
                 </div>
 
                 {/* Content Container */}
-                <div className="relative z-10 p-8 flex flex-col flex-1 justify-between">
-                  <div className="mb-10">
-                    <div className="flex items-baseline justify-between mb-8 gap-4">
-                      <h3 className="text-3xl font-bold text-zinc-950 font-poppins tracking-tight">
+                <div className="relative z-10 p-8 sm:p-10 flex flex-col flex-1 justify-between">
+                  <div className="mb-8">
+                    <div className="flex items-start justify-between mb-6 gap-4">
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 font-poppins tracking-tight leading-tight">
                         {product.name}
                       </h3>
                       {product.price && (
-                        <div className="flex-shrink-0">
-                          <span className="text-3xl font-bold text-zinc-950 font-poppins tabular-nums">
-                            {product.price.split('/')[0]}
+                        <div className="flex flex-col items-end shrink-0 text-right">
+                          <span className="text-2xl sm:text-3xl font-black text-zinc-950 font-poppins tracking-tight tabular-nums">
+                            {product.price.includes('/') ? product.price.split('/')[0] : product.price}
                           </span>
+                          {product.price.includes('/') && (
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">
+                              per {product.price.split('/')[1]}
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
 
-                    <p className="text-zinc-500 font-medium text-base leading-relaxed mb-8 max-w-md">
+                    <p className="text-zinc-500 font-medium text-sm sm:text-base leading-relaxed mb-8 max-w-md">
                       {product.description}
                     </p>
 
-                    <div className="space-y-3 mb-10">
-                      <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest block mb-4 border-b border-zinc-100 pb-2">Core Specifications</span>
-                      <div className="grid grid-cols-1 gap-y-3">
+                    <div className="space-y-4">
+                      <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest block border-b border-zinc-100/80 pb-2">Core Specifications</span>
+                      <div className="flex flex-wrap gap-2 pt-1">
                          {features.map((f: string, i: number) => (
-                           <div key={i} className="flex items-center gap-3 group/feat">
-                              <div className="w-1 h-1 rounded-full bg-zinc-300 group-hover/feat:bg-[#1e3a8a] transition-colors" />
-                              <span className="text-sm font-medium text-zinc-600 group-hover/feat:text-zinc-950 transition-colors">{f}</span>
-                           </div>
+                           <span 
+                             key={i} 
+                             className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-zinc-50 border border-zinc-200/60 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 hover:border-zinc-300 transition-all duration-300 cursor-default"
+                           >
+                              {f}
+                           </span>
                          ))}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center">
+                  <div className="flex items-center mt-6">
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="flex-1 flex items-center justify-center gap-3 bg-[#1e3a8a] text-white rounded-lg py-4 px-6 font-bold text-base transition-all duration-300 hover:bg-[#172554] active:scale-[0.98] shadow-lg shadow-[#1e3a8a]/10"
+                      className="w-full inline-flex items-center justify-center gap-2.5 bg-zinc-950 text-white font-poppins font-semibold text-sm sm:text-base py-4 rounded-2xl hover:bg-zinc-800 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 active:scale-[0.98]"
                     >
                       <span>Contact Us</span>
                       <ArrowRight size={18} strokeWidth={2} />

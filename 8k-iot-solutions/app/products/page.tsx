@@ -39,7 +39,7 @@ export default async function ProductsPage() {
           <div className="mb-10">
             <Link 
               href="/" 
-              className="group inline-flex items-center text-sm font-bold text-zinc-400 hover:text-brand-900 transition-colors mb-6 uppercase tracking-widest"
+              className="group inline-flex items-center text-sm font-bold text-zinc-400 hover:text-zinc-950 transition-colors mb-6 uppercase tracking-widest"
             >
               <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
               Back to Home

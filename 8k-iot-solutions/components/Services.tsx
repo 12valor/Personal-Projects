@@ -120,7 +120,7 @@ const ServicesSection = memo(function ServicesSection() {
                       </div>
                       
                       {/* Focal Point Pricing Block */}
-                      <div className="mt-8 lg:mt-auto mb-8 md:mb-10">
+                      <div className="mt-8 lg:mt-auto mb-6">
                         <div className="flex items-baseline gap-2">
                           <span className="text-[3.5rem] sm:text-6xl md:text-7xl lg:text-8xl font-poppins font-extrabold tracking-tighter text-zinc-900 leading-none">₱999</span>
                           <span className="text-lg md:text-xl font-poppins font-medium text-zinc-400 tracking-tight">base price</span>
@@ -128,12 +128,21 @@ const ServicesSection = memo(function ServicesSection() {
                         <p className="text-[13px] sm:text-sm font-poppins font-medium text-zinc-500 mt-3 ml-1">Perfect for small projects, student capstones, and MVPs.</p>
                       </div>
                       
-                      <Link 
-                          href="/projects/hardware"
-                          className="relative inline-flex items-center justify-center w-full lg:max-w-sm bg-zinc-950 text-white font-poppins font-semibold text-sm lg:text-base py-4 lg:py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] hover:shadow-blue-500/10 transition-all duration-300 active:scale-[0.98]"
-                      >
-                          Start Your Hardware Project
-                      </Link>
+                      {/* CTA Buttons */}
+                      <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 w-full lg:max-w-sm xl:max-w-none">
+                        <Link 
+                            href="/#contact"
+                            className="relative inline-flex items-center justify-center flex-1 bg-zinc-950 text-white font-poppins font-semibold text-sm lg:text-base py-4 lg:py-5 rounded-2xl hover:bg-zinc-800 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] hover:shadow-blue-500/10 transition-all duration-300 active:scale-[0.98] text-center"
+                        >
+                            Start Your Hardware Project
+                        </Link>
+                        <Link 
+                            href="/projects/hardware"
+                            className="relative inline-flex items-center justify-center flex-1 bg-transparent border border-zinc-950 text-zinc-950 font-poppins font-semibold text-sm lg:text-base py-4 lg:py-5 rounded-2xl hover:bg-zinc-950 hover:text-white hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-300 active:scale-[0.98] text-center"
+                        >
+                            View Projects
+                        </Link>
+                      </div>
                   </div>
                 </div>
     

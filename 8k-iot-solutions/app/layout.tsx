@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Italianno, Boldonse, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Italianno, Boldonse, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -23,11 +23,12 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
-// Load Poppins with specific variables
-const poppins = Poppins({ 
-  subsets: ["latin"], 
-  weight: ['100', '300', '400', '500', '600', '700'],
+// Load Plus Jakarta Sans under the poppins variable name to redirect all font-poppins classes globally
+const poppins = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-poppins',
+  display: 'swap',
 });
 
 const boldonse = Boldonse({

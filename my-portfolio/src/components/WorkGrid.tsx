@@ -225,57 +225,87 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   };
 
 
+  const VideoCard = ({ video, index }: { video: VideoProject; index: number }) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+      setIsHovered(true);
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play().catch(() => {});
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    };
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.4, delay: (index % 6) * 0.05 }}
+        onClick={() => setActiveVideoUrl(video.videoUrl)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveVideoUrl(video.videoUrl); } }}
+        role="button"
+        tabIndex={0}
+        className="group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
+          {/* Video element — plays inline on hover */}
+          <video
+            ref={videoRef}
+            src={video.videoUrl}
+            poster={video.posterUrl}
+            muted
+            playsInline
+            loop
+            preload="none"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+
+          <div className={`absolute inset-0 bg-black/10 transition-colors duration-500 z-10 ${isHovered ? 'bg-black/0' : ''}`} />
+          
+          {/* Play Button Overlay — fades out on hover */}
+          <div className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+
+          {video.duration && (
+            <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md z-20">
+              {video.duration}
+            </div>
+          )}
+        </div>
+        
+        <div className="px-1">
+          <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+            {video.title}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5 font-medium line-clamp-1">{video.caption}</p>
+        </div>
+      </motion.div>
+    );
+  };
+
   const VideoProjectList = () => {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {STATIC_VIDEO_PROJECTS.map((video, i) => (
-              <motion.div
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.4, delay: (i % 6) * 0.05 }}
-                  key={video.id}
-                  onClick={() => setActiveVideoUrl(video.videoUrl)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveVideoUrl(video.videoUrl); } }}
-                  role="button"
-                  tabIndex={0}
-                  className="group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
-              >
-                  <div className="relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
-                      <Image
-                          src={video.posterUrl}
-                          alt={video.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          unoptimized
-                      />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500 z-10" />
-                      
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center z-20">
-                          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shadow-lg">
-                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 5v14l11-7z" />
-                             </svg>
-                          </div>
-                      </div>
-
-                      {video.duration && (
-                          <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md z-20">
-                              {video.duration}
-                          </div>
-                      )}
-                  </div>
-                  
-                  <div className="px-1">
-                      <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                          {video.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-0.5 font-medium line-clamp-1">{video.caption}</p>
-                  </div>
-              </motion.div>
-          ))}
+        {STATIC_VIDEO_PROJECTS.map((video, i) => (
+          <VideoCard key={video.id} video={video} index={i} />
+        ))}
       </div>
     );
   };

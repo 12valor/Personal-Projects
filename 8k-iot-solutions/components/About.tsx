@@ -85,9 +85,16 @@ const About = memo(function About() {
               
 
               {/* Pure Sans-Serif Typography Contrast */}
-              <h2 className="text-[2.25rem] leading-[1.1] sm:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] font-poppins font-bold text-zinc-900 mb-6 md:mb-8 sm:leading-[1.05] tracking-tight relative z-10">
-                Hardware <br className="hidden md:block" />precision meets <br className="hidden md:block"/>
-                <span className="font-poppins font-medium text-zinc-400 block mt-1 tracking-tight italic">software intelligence.</span>
+              <h2 className="text-[2.25rem] leading-[1.1] sm:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] font-plus-jakarta font-bold text-zinc-900 mb-6 md:mb-8 sm:leading-[1.05] tracking-tight relative z-10 cursor-default">
+                Hardware <br className="hidden md:block" />
+                <span className="relative inline-block group/highlight">
+                  precision
+                  <span className="absolute bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-indigo-500 to-blue-600 scale-x-0 group-hover/highlight:scale-x-100 origin-left transition-transform duration-500" />
+                </span>{" "}
+                meets <br className="hidden md:block"/>
+                <span className="relative inline-block mt-1 font-medium tracking-tight italic bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent hover:brightness-125 transition-all duration-300 origin-left">
+                  software intelligence.
+                </span>
               </h2>
 
               {/* Wide-line-height Scannable Text Blocks */}

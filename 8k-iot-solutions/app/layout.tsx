@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Italianno, Boldonse, Inter } from "next/font/google";
+import { Poppins, Italianno, Boldonse, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,6 +12,14 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ['200', '300', '400', '500', '600', '700'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+// Load Plus Jakarta Sans
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta-sans',
   display: 'swap',
 });
 
@@ -55,7 +63,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${poppins.variable} ${boldonse.variable} ${italianno.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
+      <body className={`${inter.variable} ${plusJakartaSans.variable} ${poppins.variable} ${boldonse.variable} ${italianno.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <SmoothScroll>
           <ConditionalNavbar>
             <Navbar />

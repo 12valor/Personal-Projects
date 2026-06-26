@@ -24,7 +24,7 @@ const SchoolLogos = dynamic(() => import('@/components/SchoolLogos'), {
 
 const Testimonials = dynamic(() => import('@/components/Testimonials'), {
   loading: () => (
-    <section id="testimonials" className="relative py-24 md:py-32 bg-transparent overflow-hidden font-poppins">
+    <section id="testimonials" className="relative py-24 md:py-32 bg-transparent overflow-hidden font-plus-jakarta">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="h-5 w-48 bg-zinc-100 rounded-lg mx-auto mb-4 animate-pulse" />

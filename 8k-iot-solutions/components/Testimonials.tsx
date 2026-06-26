@@ -92,7 +92,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
     <motion.section 
       id="testimonials"
       ref={containerRef} 
-      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0"
+      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0 font-plus-jakarta"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
@@ -103,7 +103,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
         {/* Section Header */}
         <motion.div className="w-full">
           <motion.div variants={headerVariants} className="text-center mb-10 md:mb-14">
-          <h2 className="text-4xl md:text-[3.25rem] font-poppins font-black tracking-tight text-slate-900 leading-tight">
+          <h2 className="text-4xl md:text-[3.25rem] font-plus-jakarta font-black tracking-tight text-slate-900 leading-tight">
             What Our Clients <br className="hidden md:block" />
             <span className="text-brand-900 font-bold">Have to Say.</span>
           </h2>
@@ -234,7 +234,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
     >
 
       {/* Oversized Background Number */}
-      <div className="absolute -top-3 -right-2 text-[6rem] font-poppins font-bold text-zinc-50 -z-10 select-none group-hover:text-brand-50/40 transition-colors duration-500 pointer-events-none tracking-tighter leading-none">
+      <div className="absolute -top-3 -right-2 text-[6rem] font-plus-jakarta font-bold text-zinc-50 -z-10 select-none group-hover:text-brand-50/40 transition-colors duration-500 pointer-events-none tracking-tighter leading-none">
         {decorativeNumber}
       </div>
 
@@ -249,7 +249,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
       </div>
 
       {/* Quote */}
-      <blockquote className="relative z-10 text-[13px] sm:text-[14px] md:text-[15px] text-slate-700 font-poppins leading-[1.65] py-4 mb-4 sm:mb-5 flex-grow">
+      <blockquote className="relative z-10 text-[13px] sm:text-[14px] md:text-[15px] text-slate-700 font-plus-jakarta leading-[1.65] py-4 mb-4 sm:mb-5 flex-grow">
         &ldquo;{item.text}&rdquo;
       </blockquote>
 
@@ -266,15 +266,15 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
               onError={() => setImgError(true)}
             />
           ) : (
-            <span className="font-poppins font-bold text-zinc-400 group-hover:text-brand-600 text-[10px] transition-colors duration-300">{initials}</span>
+            <span className="font-plus-jakarta font-bold text-zinc-400 group-hover:text-brand-600 text-[10px] transition-colors duration-300">{initials}</span>
           )}
         </div>
         
         <div className="min-w-0">
-          <h3 className="text-[13px] font-poppins font-bold text-zinc-900 group-hover:text-brand-900 transition-colors duration-300 tracking-tight truncate">
+          <h3 className="text-[13px] font-plus-jakarta font-bold text-zinc-900 group-hover:text-brand-900 transition-colors duration-300 tracking-tight truncate">
             {item.name}
           </h3>
-          <p className="text-[10px] text-zinc-500 font-medium font-poppins uppercase tracking-wider truncate">
+          <p className="text-[10px] text-zinc-500 font-medium font-plus-jakarta uppercase tracking-wider truncate">
             {item.position}
           </p>
         </div>

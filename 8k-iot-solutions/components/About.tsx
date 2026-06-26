@@ -92,7 +92,7 @@ const About = memo(function About() {
                   <span className="absolute bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-indigo-500 to-blue-600 scale-x-0 group-hover/highlight:scale-x-100 origin-left transition-transform duration-500" />
                 </span>{" "}
                 meets <br className="hidden md:block"/>
-                <span className="relative inline-block mt-1 font-medium tracking-tight italic bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent hover:brightness-125 transition-all duration-300 origin-left">
+                <span className="relative inline-block mt-1 pb-2 font-medium tracking-tight italic bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent hover:brightness-125 transition-all duration-300 origin-left">
                   software intelligence.
                 </span>
               </h2>

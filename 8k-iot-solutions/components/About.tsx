@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, memo } from 'react';
+import React, { useState, useRef, memo, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
@@ -47,7 +47,15 @@ const About = memo(function About() {
   ];
 
   const prevImage = () => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
-  const nextImage = () => setCurrentImageIndex((p) => (p + 1) % images.length);
+  const nextImage = useCallback(() => setCurrentImageIndex((p) => (p + 1) % images.length), [images.length]);
+
+  // Auto-advance carousel every 5 seconds
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
+  useEffect(() => {
+    if (isCarouselHovered) return;
+    const timer = setInterval(nextImage, 5000);
+    return () => clearInterval(timer);
+  }, [nextImage, isCarouselHovered]);
 
   return (
     <section 
@@ -70,7 +78,7 @@ const About = memo(function About() {
           {/* ----- LEFT COLUMN: Massive White Anchor Text Container (Cols 1-9) ----- */}
           {/* Assigned to cols 1-9. Z-index 0. Solid background */}
           <motion.div 
-            className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center will-change-transform"
+            className="lg:col-start-1 lg:col-span-9 lg:row-start-1 order-2 lg:order-1 z-0 relative flex flex-col justify-center"
             variants={itemVariants}
           >
             <div className="bg-white rounded-3xl lg:rounded-[3rem] shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] border border-zinc-100 p-6 sm:p-10 lg:p-14 xl:p-20 relative overflow-hidden group/card lg:pr-[30%] xl:pr-[35%] transition-all duration-700">
@@ -127,9 +135,13 @@ const About = memo(function About() {
           {/* ----- RIGHT COLUMN: Cinematic Parallax Image Frame (Cols 8-12) ----- */}
           {/* Hidden entirely on mobile, visible only on lg screens and up. Z-index 10. */}
           <motion.div 
-            className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0 will-change-transform"
+            className="hidden lg:block lg:col-start-8 lg:col-span-5 lg:row-start-1 xl:col-start-9 xl:col-span-4 relative z-10 lg:-ml-8 xl:-ml-12 self-center mt-12 lg:mt-0"
           >
-            <div className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100 transition-all duration-700">
+            <div 
+              className="relative aspect-[4/3] sm:aspect-[3/2] lg:aspect-[4/5] xl:aspect-[3/4] w-full rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border border-white/50 group/carousel bg-zinc-100 transition-all duration-700"
+              onMouseEnter={() => setIsCarouselHovered(true)}
+              onMouseLeave={() => setIsCarouselHovered(false)}
+            >
               
               {images.map((src, idx) => (
                 <Image 
@@ -160,6 +172,22 @@ const About = memo(function About() {
                 >
                   <ChevronRight className="w-5 h-5 -mr-0.5" strokeWidth={1.5} />
                 </button>
+              </div>
+
+              {/* Dot indicators (always visible) */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30">
+                {images.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`rounded-full transition-all duration-300 ${
+                      idx === currentImageIndex 
+                        ? 'w-5 h-2 bg-white shadow-sm' 
+                        : 'w-2 h-2 bg-white/50 hover:bg-white/70'
+                    }`}
+                    aria-label={`View image ${idx + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </motion.div>

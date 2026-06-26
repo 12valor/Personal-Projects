@@ -126,7 +126,7 @@ function TeamCard({ member, index, variants }: { member: TeamMember; index: numb
   return (
     <motion.div
       variants={variants}
-      className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch will-change-transform ${!isEven ? 'lg:flex-row-reverse' : ''}`}
+      className={`group flex flex-col lg:flex-row gap-10 lg:gap-0 items-stretch ${!isEven ? 'lg:flex-row-reverse' : ''}`}
     >
       {/* Left Part: Portrait Container */}
       <div className="relative w-full lg:w-[480px] aspect-[4/5] lg:aspect-auto shrink-0 z-20 flex items-end justify-center">

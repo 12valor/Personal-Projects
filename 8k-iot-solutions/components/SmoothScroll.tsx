@@ -30,7 +30,12 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       const target = e.target as HTMLElement;
       const anchor = target.closest("a");
       
-      if (anchor && anchor.hash && anchor.origin === window.location.origin) {
+      if (
+        anchor && 
+        anchor.hash && 
+        anchor.origin === window.location.origin &&
+        (anchor.pathname === window.location.pathname || anchor.pathname === '/')
+      ) {
         e.preventDefault();
         const targetId = anchor.hash.replace("#", "");
         const element = document.getElementById(targetId);

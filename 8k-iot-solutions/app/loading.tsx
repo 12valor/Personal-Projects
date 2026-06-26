@@ -6,7 +6,7 @@ export default function LoadingRoot() {
       <div className="relative">
         {/* Subtle background grid for blueprint feel */}
         <div 
-          className="absolute inset--20 z-0 opacity-20 pointer-events-none"
+          className="absolute -inset-20 z-0 opacity-20 pointer-events-none"
           style={{
             backgroundImage: 'linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
             backgroundSize: '32px 32px',

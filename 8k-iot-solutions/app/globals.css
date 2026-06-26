@@ -1,4 +1,4 @@
-@import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
+/* General Sans is loaded via next/font/local in layout.tsx */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

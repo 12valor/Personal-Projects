@@ -316,5 +316,17 @@ export default function MagicRings({
     };
   }, []);
 
-  return <div ref={mountRef} className={`w-full h-full ${className}`} style={blur > 0 ? { filter: `blur(${blur}px)` } : undefined} />;
+  return (
+    <div ref={mountRef} className={`w-full h-full relative ${className}`} style={blur > 0 ? { filter: `blur(${blur}px)` } : undefined}>
+      {/* CSS gradient fallback shown until WebGL canvas is appended */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse at center, ${color}15 0%, ${colorTwo}08 40%, transparent 70%)`,
+          opacity: opacity * 2,
+        }}
+        aria-hidden="true"
+      />
+    </div>
+  );
 }

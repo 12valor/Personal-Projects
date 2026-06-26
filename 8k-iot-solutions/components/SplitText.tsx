@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText as GSAPSplitText } from 'gsap/SplitText';
@@ -64,6 +64,10 @@ const SplitText: React.FC<SplitTextProps> = ({
     window.addEventListener('resize', checkMobile, { passive: true });
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Memoize animation config objects to prevent unnecessary GSAP re-initializations
+  const stableFrom = useMemo(() => from, [JSON.stringify(from)]);
+  const stableTo = useMemo(() => to, [JSON.stringify(to)]);
 
   useGSAP(
     () => {
@@ -154,11 +158,12 @@ const SplitText: React.FC<SplitTextProps> = ({
         duration,
         ease,
         splitType,
-        JSON.stringify(from),
-        JSON.stringify(to),
+        stableFrom,
+        stableTo,
         threshold,
         rootMargin,
-        fontsLoaded
+        fontsLoaded,
+        isMobile
       ],
       scope: ref
     }

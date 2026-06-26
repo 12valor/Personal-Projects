@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, memo, useEffect } from 'react';
+import React, { useState, useRef, memo, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
@@ -61,7 +61,7 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
     };
     
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -83,11 +83,16 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
       setCurrentIndex(prev => Math.max(prev - 1, 0));
     }
   };
+
+  // Ref for the drag container to compute pixel-based constraints
+  const trackRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
   return (
     <motion.section 
       id="testimonials"
       ref={containerRef} 
-      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0 will-change-transform"
+      className="relative w-full pt-2 pb-6 md:pb-8 md:pt-6 bg-transparent overflow-hidden z-0"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
@@ -109,17 +114,16 @@ const Testimonials = memo(function Testimonials({ initialTestimonials = [] }: { 
         <div className="relative group/carousel">
           
           {/* Main Viewport */}
-          <div className="overflow-hidden px-4 -mx-4 py-8">
+          <div ref={viewportRef} className="overflow-hidden px-4 -mx-4 py-8">
             <motion.div 
+              ref={trackRef}
               className="flex gap-4 lg:gap-5"
               animate={{ x: `calc(-${currentIndex * (100 / itemsPerPage)}% - ${currentIndex * ((itemsPerPage === 3 ? 20 : 16) / itemsPerPage)}px)` }}
               transition={{ type: "spring", stiffness: 260, damping: 28 }}
               drag="x"
-              dragConstraints={{ 
-                left: -(maxIndex * (100 / itemsPerPage)),
-                right: 0 
-              }}
-              onDragEnd={(e, { offset, velocity }) => {
+              dragConstraints={viewportRef}
+              dragElastic={0.1}
+              onDragEnd={(e, { offset }) => {
                 const swipeThreshold = 50;
                 if (offset.x < -swipeThreshold && currentIndex < maxIndex) {
                   nextSlide();
@@ -226,7 +230,7 @@ const TestimonialCard = memo(function TestimonialCard({ item, idx }: Testimonial
         stiffness: 400, 
         damping: 25 
       }}
-      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-5 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default will-change-transform"
+      className="group relative bg-white/80 backdrop-blur-md border border-zinc-100 hover:border-zinc-200 p-5 sm:p-6 md:p-7 rounded-xl sm:rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all duration-500 flex flex-col h-full overflow-hidden cursor-default"
     >
 
       {/* Oversized Background Number */}

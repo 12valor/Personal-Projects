@@ -2,9 +2,44 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
-import SchoolLogos from '@/components/SchoolLogos';
 import SectionUrlSync from '@/components/SectionUrlSync';
-import Testimonials from '@/components/Testimonials';
+
+const SchoolLogos = dynamic(() => import('@/components/SchoolLogos'), {
+  loading: () => (
+    <section id="partners" className="relative py-12 md:py-20 bg-transparent overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
+        <div className="shrink-0 w-full max-w-md lg:max-w-xs mx-auto lg:mx-0 text-center lg:text-left">
+          <div className="h-6 w-48 bg-zinc-100 rounded-lg mx-auto lg:mx-0 animate-pulse mb-3" />
+          <div className="h-4 w-64 bg-zinc-100 rounded-lg mx-auto lg:mx-0 animate-pulse" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-end items-center justify-items-center gap-6 md:gap-8 lg:gap-12 w-full lg:flex-1">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="w-24 h-16 sm:w-32 sm:h-20 lg:w-40 lg:h-24 bg-zinc-50/60 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </section>
+  ),
+});
+
+const Testimonials = dynamic(() => import('@/components/Testimonials'), {
+  loading: () => (
+    <section id="testimonials" className="relative py-24 md:py-32 bg-transparent overflow-hidden font-poppins">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <div className="h-5 w-48 bg-zinc-100 rounded-lg mx-auto mb-4 animate-pulse" />
+          <div className="h-10 w-72 bg-zinc-100 rounded-xl mx-auto mb-6 animate-pulse" />
+          <div className="h-5 w-[400px] max-w-full bg-zinc-100 rounded-lg mx-auto animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-[280px] bg-zinc-50/60 rounded-2xl border border-zinc-100 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </section>
+  ),
+});
 
 /* ─────────────────────────────────────────────────────────────
  * Below-the-fold sections: dynamically imported to reduce the

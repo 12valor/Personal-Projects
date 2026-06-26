@@ -3,20 +3,29 @@
 import React, { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 const FooterLink = ({ href, children, sectionId, target, rel }: { href: string; children: React.ReactNode; sectionId?: string; target?: string; rel?: string }) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (sectionId) {
       e.preventDefault();
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const navbarOffset = 100;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - navbarOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+      if (pathname === '/') {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const navbarOffset = 100;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - navbarOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      } else {
+        sessionStorage.setItem('pendingSectionScroll', sectionId);
+        router.push('/');
       }
     }
   };

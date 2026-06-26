@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -69,6 +70,30 @@ const socialLinks = [
 ];
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleFormClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onClose();
+
+    if (pathname === '/') {
+      const element = document.getElementById('contact');
+      if (element) {
+        const navbarOffset = 100;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - navbarOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    } else {
+      sessionStorage.setItem('pendingSectionScroll', 'contact');
+      router.push('/');
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -102,22 +127,26 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-5">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target={social.href.startsWith('http') ? "_blank" : "_self"}
-                    rel="noopener noreferrer"
-                    className={`flex flex-col items-center gap-4 p-7 rounded-[24px] border border-zinc-100 transition-all duration-200 group ${social.hoverBg} ${social.hoverBorder} hover:-translate-y-[2px]`}
-                  >
-                    <div className={`w-14 h-14 flex items-center justify-center transition-all duration-300 ${social.color}`}>
-                      <social.icon className="w-10 h-10" />
-                    </div>
-                    <span className="text-xs font-bold text-zinc-500 group-hover:text-zinc-950 transition-colors uppercase tracking-[0.14em] leading-none">
-                      {social.name}
-                    </span>
-                  </a>
-                ))}
+                {socialLinks.map((social) => {
+                  const isForm = social.name === 'Form';
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      onClick={isForm ? handleFormClick : undefined}
+                      target={social.href.startsWith('http') ? "_blank" : "_self"}
+                      rel="noopener noreferrer"
+                      className={`flex flex-col items-center gap-4 p-7 rounded-[24px] border border-zinc-100 transition-all duration-200 group ${social.hoverBg} ${social.hoverBorder} hover:-translate-y-[2px]`}
+                    >
+                      <div className={`w-14 h-14 flex items-center justify-center transition-all duration-300 ${social.color}`}>
+                        <social.icon className="w-10 h-10" />
+                      </div>
+                      <span className="text-xs font-bold text-zinc-500 group-hover:text-zinc-950 transition-colors uppercase tracking-[0.14em] leading-none">
+                        {social.name}
+                      </span>
+                    </a>
+                  );
+                })}
               </div>
             </motion.div>
           </div>

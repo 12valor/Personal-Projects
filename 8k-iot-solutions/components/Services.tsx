@@ -103,7 +103,7 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={leftCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1 will-change-transform"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col">
@@ -158,7 +158,7 @@ const ServicesSection = memo(function ServicesSection() {
             {/* ========================================= */}
             <motion.div 
                 variants={rightCardVariants}
-                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1 will-change-transform"
+                className="group flex flex-col lg:flex-row bg-white/90 backdrop-blur-sm rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/50 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)] overflow-hidden cursor-default hover:border-zinc-300 transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] hover:-translate-y-1"
             >
                 {/* --- LEFT COLUMN: CORE CONTENT --- */}
                 <div className="flex-1 p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col">

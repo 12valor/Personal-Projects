@@ -8,16 +8,28 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Safely executes a Prisma query, returning a fallback value on failure.
+ * Prevents crashes when a table hasn't been migrated yet.
+ */
+async function safeQuery<T>(queryFn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await queryFn();
+  } catch {
+    return fallback;
+  }
+}
+
 export default async function Home() {
-  // Execute database queries concurrently to reduce server-side blocking time
+  // Execute database queries concurrently with safe fallbacks
   const [testimonials, heroImages, schoolLogos, heroSectionData, heroCards, faqs, teamMembers] = await Promise.all([
-    (prisma as any).testimonial ? (prisma as any).testimonial.findMany({ orderBy: { createdAt: 'desc' } }) : Promise.resolve([]),
-    (prisma as any).heroImage ? (prisma as any).heroImage.findMany({ where: { isActive: true } }) : Promise.resolve([]),
-    (prisma as any).schoolLogo ? (prisma as any).schoolLogo.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }) : Promise.resolve([]),
-    (prisma as any).heroSection ? (prisma as any).heroSection.findFirst() : Promise.resolve(null),
-    (prisma as any).heroCard ? (prisma as any).heroCard.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }) : Promise.resolve([]),
-    (prisma as any).faqItem ? (prisma as any).faqItem.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }) : Promise.resolve([]),
-    (prisma as any).teamMember ? (prisma as any).teamMember.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }) : Promise.resolve([])
+    safeQuery(() => prisma.testimonial.findMany({ orderBy: { createdAt: 'desc' } }), []),
+    safeQuery(() => prisma.heroImage.findMany({ where: { isActive: true } }), []),
+    safeQuery(() => prisma.schoolLogo.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }), []),
+    safeQuery(() => prisma.heroSection.findFirst(), null),
+    safeQuery(() => prisma.heroCard.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }), []),
+    safeQuery(() => prisma.faqItem.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }), []),
+    safeQuery(() => prisma.teamMember.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }), []),
   ]);
 
   const defaultHeroSection = {

@@ -210,7 +210,7 @@ const Hero = memo(function Hero({
             className="relative mb-4 text-slate-900 mt-6 cursor-default pt-12 pb-6"
           >
             {/* Mobile/Tablet Base Layer (Total Revert to Original for mobile flow) */}
-            <div className="select-none lg:hidden font-boldonse text-[2.75rem] sm:text-[4rem] tracking-tight leading-[1.5]">
+            <div className="select-none lg:hidden font-boldonse text-[2.25rem] sm:text-[4rem] tracking-tight leading-[1.2] sm:leading-[1.3]" style={{ textWrap: 'balance' } as React.CSSProperties}>
               <SplitText text={heroSection?.heading_part_1 || "Building"} tag="span" to={{ opacity: 1, y: 0, delay: 0.5 }} /> <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_1 || "Ideas"} tag="span" to={{ opacity: 1, y: 0, delay: 0.6 }} /></span><br className="hidden sm:block" /> <SplitText text={heroSection?.heading_part_2 || "Into"} tag="span" to={{ opacity: 1, y: 0, delay: 0.7 }} /> <span className="text-brand-900"><SplitText text={heroSection?.heading_highlight_2 || "Reality"} tag="span" to={{ opacity: 1, y: 0, delay: 0.8 }} /></span>
             </div>
 
@@ -349,6 +349,7 @@ const Hero = memo(function Hero({
               setSearchInput(e.target.value);
               if (shake) setShake(false);
             }}
+            aria-label="Describe your project idea"
             placeholder={errorMessage || heroSection?.search_placeholder || "Describe your project idea... (e.g., Smart greenhouse)"} 
             className={`flex-1 min-w-0 bg-transparent border-none outline-none py-3 sm:py-4 px-1.5 sm:px-2 text-slate-900 font-poppins text-[15px] sm:text-[16px] lg:text-[18px] transition-colors ${
               shake ? "placeholder:text-red-400" : "placeholder:text-slate-400"
@@ -404,10 +405,19 @@ const Hero = memo(function Hero({
           </button>
           <button 
             type="submit"
-            className="sm:hidden flex items-center justify-center bg-brand-900 text-white rounded-full p-2.5 hover:bg-brand-800 transition-all duration-200 hover:scale-[1.05] active:scale-[0.95] ml-1 cursor-pointer"
+            disabled={isSubmitting}
+            className={`sm:hidden flex items-center justify-center rounded-full p-2.5 transition-all duration-200 ml-1 ${
+              isSubmitting 
+                ? "bg-slate-200 text-slate-500 cursor-wait" 
+                : "bg-brand-900 text-white hover:bg-brand-800 hover:scale-[1.05] active:scale-[0.95] cursor-pointer"
+            }`}
             aria-label="Start Project"
           >
-             <ArrowRight className="w-5 h-5" />
+             {isSubmitting ? (
+               <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+             ) : (
+               <ArrowRight className="w-5 h-5" />
+             )}
           </button>
         </motion.form>
       </div>

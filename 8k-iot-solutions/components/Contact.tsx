@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { submitContactForm } from '@/app/contact';
 
-const Contact = memo(() => {
+const Contact = memo(function Contact() {
   const containerRef = useRef<HTMLElement>(null);
 
   const searchParams = useSearchParams();
@@ -107,7 +107,7 @@ const Contact = memo(() => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="lg:col-span-6 lg:col-start-7"
           >
-            <div className="bg-white/[0.02] backdrop-blur-3xl p-8 lg:p-12 rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative will-change-transform">
+            <div className="bg-white/[0.02] backdrop-blur-3xl p-8 lg:p-12 rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative">
               
               {/* Status Messages */}
               <AnimatePresence>

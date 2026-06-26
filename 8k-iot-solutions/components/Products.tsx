@@ -20,12 +20,13 @@ import ContactModal from './ContactModal';
 const FloatingIcon = ({ icon: Icon, delay = 0, x = 0, y = 0 }: { icon: any, delay?: number, x?: number, y?: number }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.5 }}
-    animate={{ 
+    whileInView={{ 
       opacity: [0.1, 0.3, 0.1],
       scale: [1, 1.1, 1],
       y: [y, y - 20, y],
       x: [x, x + 10, x]
     }}
+    viewport={{ once: false }}
     transition={{ 
       duration: 5, 
       repeat: Infinity, 
@@ -84,7 +85,13 @@ export default function Products({ initialProducts }: { initialProducts: any[] }
       {products.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {products.map((product, idx) => {
-            const features = JSON.parse(product.features || "[]");
+            const features = (() => {
+              try {
+                return JSON.parse(product.features || "[]");
+              } catch {
+                return [];
+              }
+            })();
             return (
               <div
                 key={product.id}

@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
-import { Poppins, Italianno, Boldonse } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Poppins, Italianno, Boldonse, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import ConditionalFooter from "@/components/ConditionalFooter";
+
+// Load Inter as the primary sans-serif (replaces external Fontshare General Sans)
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ['200', '300', '400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 // Load Poppins with specific variables
 const poppins = Poppins({ 
@@ -26,6 +34,12 @@ const italianno = Italianno({
   variable: "--font-italianno",
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   title: {
     default: "8K IoT Solutions",
@@ -41,10 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
-      </head>
-      <body className={`${poppins.variable} ${boldonse.variable} ${italianno.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
+      <body className={`${inter.variable} ${poppins.variable} ${boldonse.variable} ${italianno.variable} font-sans flex flex-col min-h-screen bg-brand-50 text-gray-900 antialiased`}>
         <SmoothScroll>
           <ConditionalNavbar>
             <Navbar />

@@ -100,10 +100,10 @@ const Process = memo(function Process() {
       {/* 1. Subtle Premium Background Layers (Parallax) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
         <div 
-          className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none will-change-transform" 
+          className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-brand-50/60 rounded-full blur-[120px] pointer-events-none" 
         />
         <div 
-          className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none will-change-transform" 
+          className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[100px] pointer-events-none" 
         />
       </div>
 
@@ -155,7 +155,7 @@ const Process = memo(function Process() {
 
                 {/* Content Panel (Glassmorphism Card) */}
                 <motion.div 
-                  className="relative flex-1 w-full bg-white/70 backdrop-blur-md border border-zinc-100 hover:border-brand-100/60 p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.05)] transition-all duration-500 overflow-hidden cursor-default will-change-transform"
+                  className="relative flex-1 w-full bg-white/70 backdrop-blur-md border border-zinc-100 hover:border-brand-100/60 p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.05)] transition-all duration-500 overflow-hidden cursor-default"
                   whileHover={{ 
                     y: -6, 
                     scale: 1.015,

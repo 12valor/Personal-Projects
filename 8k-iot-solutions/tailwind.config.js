@@ -21,7 +21,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['"General Sans"', 'sans-serif'], 
+        sans: ['var(--font-inter)', 'ui-sans-serif', 'system-ui', 'sans-serif'], 
         poppins: ['var(--font-poppins)', 'sans-serif'], 
         boldonse: ['var(--font-boldonse)', 'sans-serif'], 
         italianno: ['var(--font-italianno)', 'cursive'],

@@ -95,7 +95,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
-  const [activeWebsiteProjectId, setActiveWebsiteProjectId] = useState<number | null>(null);
 
   // Keyboard accessibility for Video Modal
   React.useEffect(() => {
@@ -155,10 +154,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     }
 
     return (
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-        onMouseLeave={() => setActiveWebsiteProjectId(null)}
-      >
+      <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {items.map((project, i) => (
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -174,19 +170,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             key={project.id}
             onClick={() => handleProjectClick(project)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProjectClick(project); } }}
-            onMouseEnter={() => setActiveWebsiteProjectId(project.id)}
-            onFocus={() => setActiveWebsiteProjectId(project.id)}
-            onBlur={() => setActiveWebsiteProjectId(null)}
             role="button"
             tabIndex={0}
-            className={`group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-              activeWebsiteProjectId !== null && activeWebsiteProjectId !== project.id
-                ? "grayscale"
-                : "grayscale-0"
-            }`}
+            className="website-project-card group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {/* IMAGE AREA */}
-            <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
+            <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
               {project.image_url ? (
                 <Image
                   src={project.image_url}
@@ -509,6 +498,26 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
         .marquee-container:hover {
           animation-play-state: paused;
+        }
+
+        .website-project-preview {
+          backface-visibility: hidden;
+          transform: translateZ(0);
+          transition: filter 450ms ease;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .website-project-grid:has(.website-project-card:hover)
+            .website-project-card:not(:hover)
+            .website-project-preview {
+            filter: grayscale(1);
+          }
+        }
+
+        .website-project-grid:has(.website-project-card:focus-visible)
+          .website-project-card:not(:focus-visible)
+          .website-project-preview {
+          filter: grayscale(1);
         }
 
         @keyframes slide-marquee {

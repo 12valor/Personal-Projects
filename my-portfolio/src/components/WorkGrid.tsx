@@ -95,6 +95,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+  const [activeWebsiteProjectId, setActiveWebsiteProjectId] = useState<number | null>(null);
 
   // Keyboard accessibility for Video Modal
   React.useEffect(() => {
@@ -154,7 +155,10 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+        onMouseLeave={() => setActiveWebsiteProjectId(null)}
+      >
         {items.map((project, i) => (
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -170,9 +174,16 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             key={project.id}
             onClick={() => handleProjectClick(project)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProjectClick(project); } }}
+            onMouseEnter={() => setActiveWebsiteProjectId(project.id)}
+            onFocus={() => setActiveWebsiteProjectId(project.id)}
+            onBlur={() => setActiveWebsiteProjectId(null)}
             role="button"
             tabIndex={0}
-            className="group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className={`group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              activeWebsiteProjectId !== null && activeWebsiteProjectId !== project.id
+                ? "grayscale"
+                : "grayscale-0"
+            }`}
           >
             {/* IMAGE AREA */}
             <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">

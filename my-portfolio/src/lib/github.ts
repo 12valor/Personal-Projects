@@ -70,10 +70,15 @@ export async function getGithubContributions(): Promise<GithubContributions | nu
     return null;
   }
 
+  // Keep the calendar anchored to the current day while retaining an hourly
+  // cache bucket so each page request does not consume GitHub API quota.
+  const contributionWindowEnd = new Date();
+  contributionWindowEnd.setUTCMinutes(0, 0, 0);
+
   const query = `
-    query($username: String!) {
+    query($username: String!, $to: DateTime!) {
       user(login: $username) {
-        contributionsCollection {
+        contributionsCollection(to: $to) {
           contributionCalendar {
             totalContributions
             weeks {
@@ -97,9 +102,12 @@ export async function getGithubContributions(): Promise<GithubContributions | nu
       },
       body: JSON.stringify({
         query,
-        variables: { username },
+        variables: {
+          username,
+          to: contributionWindowEnd.toISOString(),
+        },
       }),
-      next: { revalidate: 21600 }, // 6 hours
+      next: { revalidate: 3600 }, // Refresh the current contribution day hourly
     });
 
     if (!response.ok) {

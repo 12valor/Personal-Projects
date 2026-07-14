@@ -255,11 +255,11 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveVideoUrl(video.videoUrl); } }}
         role="button"
         tabIndex={0}
-        className="group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+        className="video-project-card group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
+        <div className="video-project-preview relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
           {/* Video element — plays inline on hover */}
           <video
             ref={videoRef}
@@ -302,7 +302,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
   const VideoProjectList = () => {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div className="video-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {STATIC_VIDEO_PROJECTS.map((video, i) => (
           <VideoCard key={video.id} video={video} index={i} />
         ))}
@@ -500,7 +500,8 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
           animation-play-state: paused;
         }
 
-        .website-project-preview {
+        .website-project-preview,
+        .video-project-preview {
           backface-visibility: hidden;
           transform: translateZ(0);
           transition: filter 450ms ease;
@@ -512,11 +513,23 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             .website-project-preview {
             filter: grayscale(1);
           }
+
+          .video-project-grid:has(.video-project-card:hover)
+            .video-project-card:not(:hover)
+            .video-project-preview {
+            filter: grayscale(1);
+          }
         }
 
         .website-project-grid:has(.website-project-card:focus-visible)
           .website-project-card:not(:focus-visible)
           .website-project-preview {
+          filter: grayscale(1);
+        }
+
+        .video-project-grid:has(.video-project-card:focus-visible)
+          .video-project-card:not(:focus-visible)
+          .video-project-preview {
           filter: grayscale(1);
         }
 

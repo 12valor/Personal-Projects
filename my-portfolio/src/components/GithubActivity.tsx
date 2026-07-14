@@ -172,15 +172,28 @@ async function GithubContent() {
                           day: 'numeric', 
                           year: 'numeric' 
                         });
+                        const contributionLabel = `${day.contributionCount} ${day.contributionCount === 1 ? 'contribution' : 'contributions'} on ${formattedDate}`;
+                        const tooltipVerticalPosition = dayIndex < 3 ? "top-full mt-2" : "bottom-full mb-2";
+                        const tooltipHorizontalPosition = weekIndex < 4
+                          ? "left-0"
+                          : weekIndex >= contributions.weeks.length - 4
+                            ? "right-0"
+                            : "left-1/2 -translate-x-1/2";
                         
                         return (
                           <div
                             key={dayIndex}
-                            className={`w-2.5 h-2.5 rounded-[2px] transition-colors hover:ring-2 hover:ring-primary/50 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`}
-                            title={`${day.contributionCount} contributions on ${formattedDate}`}
-                            aria-label={`${day.contributionCount} contributions on ${formattedDate}`}
-                            role="tooltip"
-                          />
+                            className={`group relative z-0 w-2.5 h-2.5 rounded-[2px] transition-colors hover:z-30 hover:ring-2 hover:ring-primary/50 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`}
+                            aria-label={contributionLabel}
+                            role="img"
+                          >
+                            <span
+                              role="tooltip"
+                              className={`pointer-events-none invisible absolute z-40 whitespace-nowrap rounded-md bg-zinc-950 px-2.5 py-1.5 text-[11px] font-medium normal-case tracking-normal text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:visible group-hover:opacity-100 dark:bg-white dark:text-zinc-950 ${tooltipVerticalPosition} ${tooltipHorizontalPosition}`}
+                            >
+                              {contributionLabel}
+                            </span>
+                          </div>
                         );
                       })}
                     </div>

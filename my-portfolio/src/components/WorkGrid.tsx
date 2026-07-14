@@ -23,6 +23,7 @@ interface WorkGridProps {
 // --- CONFIGURATION ---
 const CATEGORY_MAP: Record<string, string[]> = {
   "Web Design": ["Website", "Components"],
+  "Systems": ["System", "POS System", "Management System"],
   "Graphic Design": ["Posters/Pubmats", "GFX"],
   "Video Editing": ["Reels", "Long Form"],
 };
@@ -146,11 +147,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   };
 
   const websiteProjects = getProjectsByCategory("Web Design");
+  const systemProjects = getProjectsByCategory("Systems");
   const videoEditingProjects = getProjectsByCategory("Video Editing");
 
-  const WebsiteProjectList = ({ items }: { items: Project[] }) => {
+  const DetailedProjectList = ({ items, emptyLabel }: { items: Project[]; emptyLabel: string }) => {
     if (items.length === 0) {
-      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No website projects found.</div>;
+      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">{emptyLabel}</div>;
     }
 
     return (
@@ -445,7 +447,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             Selected Works
           </h2>
           <p className="text-muted-foreground max-w-xl text-base md:text-lg leading-relaxed">
-            Browse selected websites, visual layouts, and video edits built across design, motion, and code.
+            Browse selected websites, systems, visual layouts, and video edits built across design, motion, and code.
           </p>
         </div>
 
@@ -460,7 +462,18 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                   </h3>
                   <div className="w-12 h-px bg-border mt-6" />
                 </div>
-                <WebsiteProjectList items={websiteProjects} />
+                <DetailedProjectList items={websiteProjects} emptyLabel="No website projects found." />
+            </div>
+
+            {/* SYSTEMS */}
+            <div className="flex flex-col gap-8 md:gap-12">
+                <div className="flex flex-col items-center text-center">
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+                      Systems
+                  </h3>
+                  <div className="w-12 h-px bg-border mt-6" />
+                </div>
+                <DetailedProjectList items={systemProjects} emptyLabel="No system projects found." />
             </div>
 
 

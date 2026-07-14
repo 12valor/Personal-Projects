@@ -363,6 +363,7 @@ export default function AdminPanel() {
 
   const getCategoryColor = (cat: string) => {
     if (cat.includes("Web") || cat === "Website" || cat === "Components") return "bg-blue-50 text-blue-700 border-blue-200";
+    if (cat.includes("System")) return "bg-emerald-50 text-emerald-700 border-emerald-200";
     if (cat.includes("Video")) return "bg-purple-50 text-purple-700 border-purple-200";
     if (cat.includes("Graphic") || cat === "GFX") return "bg-orange-50 text-orange-700 border-orange-200";
     return "bg-gray-100 text-gray-700 border-gray-200";
@@ -419,6 +420,7 @@ export default function AdminPanel() {
                     <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Category</label>
                     <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black">
                       <optgroup label="Web Design"><option value="Website">Website</option><option value="Components">Components</option></optgroup>
+                      <optgroup label="Systems"><option value="Systems">Systems</option></optgroup>
                       <optgroup label="Graphic Design"><option value="Posters/Pubmats">Posters/Pubmats</option><option value="GFX">GFX</option></optgroup>
                       <optgroup label="Video Editing"><option value="Reels">Reels</option><option value="Long Form">Long Form</option></optgroup>
                     </select>

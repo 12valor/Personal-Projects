@@ -31,6 +31,7 @@ export default function Services() {
 
   return (
     <section
+      id="services"
       className="relative overflow-hidden bg-background px-4 py-20 md:px-10 md:py-32"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">

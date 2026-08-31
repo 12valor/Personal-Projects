@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Star, MessageSquare, Trash2, Mail, Lock, LogOut, Layers } from "lucide-react"; 
+import { MessageSquare, Trash2, Mail, Lock, LogOut, Layers } from "lucide-react";
 import { verifyAdminPassword, checkAuth, logout } from "../actions"; 
 
 // --- CONFIGURATION (No API Key needed) ---
@@ -38,6 +38,15 @@ interface TechStackItem {
   logo_url: string;
 }
 
+interface ClientItem {
+  id: number;
+  name: string;
+  logo_url: string;
+  website_url: string | null;
+  display_index: number;
+  is_visible: boolean;
+}
+
 const TECH_STACK_KINDS = ["Web Development", "Editing", "Tools", "Background Tools"];
 
 export default function AdminPanel() {
@@ -55,10 +64,13 @@ export default function AdminPanel() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [techStack, setTechStack] = useState<TechStackItem[]>([]);
   const [techStackError, setTechStackError] = useState("");
+  const [clients, setClients] = useState<ClientItem[]>([]);
+  const [clientsError, setClientsError] = useState("");
   
   // --- FORM STATE ---
   const [editId, setEditId] = useState<number | null>(null);
   const [techEditId, setTechEditId] = useState<number | null>(null);
+  const [clientEditId, setClientEditId] = useState<number | null>(null);
   
   // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
@@ -68,6 +80,14 @@ export default function AdminPanel() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [techFormData, setTechFormData] = useState({ name: "", kind: "Web Development", logo_url: "" });
   const [selectedTechLogo, setSelectedTechLogo] = useState<File | null>(null);
+  const [clientFormData, setClientFormData] = useState({
+    name: "",
+    logo_url: "",
+    website_url: "",
+    display_index: 0,
+    is_visible: true,
+  });
+  const [selectedClientLogo, setSelectedClientLogo] = useState<File | null>(null);
   const [existingMainImage, setExistingMainImage] = useState<string | null>(null);
   const [existingGalleryImages, setExistingGalleryImages] = useState<string[]>([]);
 
@@ -85,6 +105,7 @@ export default function AdminPanel() {
       if (activeTab === "list") fetchProjects();
       else if (activeTab === "inquiries") fetchInquiries();
       else if (activeTab === "tech-stack") fetchTechStack();
+      else if (activeTab === "clients") fetchClients();
     }
   }, [activeTab, isAuthenticated]);
 
@@ -130,6 +151,24 @@ export default function AdminPanel() {
       console.error(error);
       setTechStack([]);
       setTechStackError(error instanceof Error ? error.message : "Failed to fetch tech stack");
+    }
+  };
+
+  const fetchClients = async () => {
+    try {
+      const response = await fetch("/api/clients");
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch clients");
+      }
+
+      setClients(data);
+      setClientsError("");
+    } catch (error) {
+      console.error(error);
+      setClients([]);
+      setClientsError(error instanceof Error ? error.message : "Failed to fetch clients");
     }
   };
 
@@ -187,6 +226,36 @@ export default function AdminPanel() {
     } catch (err) { console.error(err); alert("Error deleting tech stack item."); }
   };
 
+  const handleEditClient = (item: ClientItem) => {
+    setClientEditId(item.id);
+    setClientFormData({
+      name: item.name,
+      logo_url: item.logo_url,
+      website_url: item.website_url || "",
+      display_index: item.display_index,
+      is_visible: item.is_visible,
+    });
+    setSelectedClientLogo(null);
+    window.scrollTo(0, 0);
+  };
+
+  const handleDeleteClient = async (id: number) => {
+    if (!confirm("Delete this client logo?")) return;
+    try {
+      const response = await fetch(`/api/clients/${id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to delete client");
+      }
+      await fetchClients();
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Error deleting client.");
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSelectedFiles(Array.from(e.target.files));
@@ -195,6 +264,10 @@ export default function AdminPanel() {
 
   const handleTechLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedTechLogo(e.target.files?.[0] ?? null);
+  };
+
+  const handleClientLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedClientLogo(e.target.files?.[0] ?? null);
   };
 
   // --- NEW CLIENT-SIDE UPLOAD HELPER (No API Key needed) ---
@@ -272,6 +345,63 @@ export default function AdminPanel() {
     } catch (error) {
       console.error(error);
       alert(`Error: ${error}`);
+    } finally {
+      setLoading(false);
+      setUploadStatus("");
+    }
+  };
+
+  const resetClientForm = () => {
+    setClientEditId(null);
+    setClientFormData({
+      name: "",
+      logo_url: "",
+      website_url: "",
+      display_index: 0,
+      is_visible: true,
+    });
+    setSelectedClientLogo(null);
+  };
+
+  const handleClientSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setUploadStatus("");
+
+    try {
+      let logoUrl = clientFormData.logo_url;
+
+      if (selectedClientLogo) {
+        setUploadStatus("Uploading client logo...");
+        const [uploadedLogo] = await uploadFilesClientSide([selectedClientLogo]);
+        logoUrl = uploadedLogo;
+        setUploadStatus("Upload complete!");
+      }
+
+      const response = await fetch(
+        clientEditId ? `/api/clients/${clientEditId}` : "/api/clients",
+        {
+          method: clientEditId ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...clientFormData,
+            logo_url: logoUrl,
+          }),
+        },
+      );
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to save client");
+      }
+
+      const wasEditing = clientEditId !== null;
+      resetClientForm();
+      await fetchClients();
+      alert(wasEditing ? "Client updated." : "Client added.");
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Failed to save client");
     } finally {
       setLoading(false);
       setUploadStatus("");
@@ -407,6 +537,7 @@ export default function AdminPanel() {
           <button onClick={() => { setActiveTab("add"); resetForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "add" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>{editId ? "Editing..." : "Add New"}</button>
           <button onClick={() => setActiveTab("list")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "list" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Edit Projects</button>
           <button onClick={() => { setActiveTab("tech-stack"); resetTechForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "tech-stack" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Tech Stack</button>
+          <button onClick={() => { setActiveTab("clients"); resetClientForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "clients" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Clients</button>
           <button onClick={() => setActiveTab("inquiries")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap flex items-center gap-2 ${activeTab === "inquiries" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}><MessageSquare className="w-4 h-4" /> Inquiries</button>
         </div>
 
@@ -630,6 +761,140 @@ export default function AdminPanel() {
                           <div className="flex items-center justify-end gap-4">
                             <button onClick={() => handleEditTech(item)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
                             <button onClick={() => handleDeleteTech(item.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* --- CLIENTS VIEW --- */}
+        {activeTab === "clients" && (
+          <div className="space-y-6 animate-in fade-in duration-500 text-gray-900">
+            {clientsError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {clientsError}
+              </div>
+            )}
+
+            <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm text-gray-900">
+              <form onSubmit={handleClientSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label htmlFor="client-name" className="text-xs font-bold uppercase tracking-wider text-gray-700">Client Name</label>
+                    <input
+                      id="client-name"
+                      type="text"
+                      required
+                      maxLength={120}
+                      value={clientFormData.name}
+                      onChange={(e) => setClientFormData({ ...clientFormData, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-black"
+                      placeholder="Client or brand name"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="client-website" className="text-xs font-bold uppercase tracking-wider text-gray-700">Website URL (Optional)</label>
+                    <input
+                      id="client-website"
+                      type="url"
+                      value={clientFormData.website_url}
+                      onChange={(e) => setClientFormData({ ...clientFormData, website_url: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-black"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="client-display-index" className="text-xs font-bold uppercase tracking-wider text-gray-700">Display Index</label>
+                    <input
+                      id="client-display-index"
+                      type="number"
+                      min={0}
+                      max={10000}
+                      required
+                      value={clientFormData.display_index}
+                      onChange={(e) => setClientFormData({ ...clientFormData, display_index: Number(e.target.value) || 0 })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm text-gray-900 bg-white focus:outline-none focus:border-black"
+                    />
+                    <p className="text-xs text-gray-400">Lower numbers appear earlier in the scroll.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="client-logo" className="text-xs font-bold uppercase tracking-wider text-gray-700">Logo</label>
+                    <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50 border-dashed">
+                      <input
+                        id="client-logo"
+                        type="file"
+                        accept="image/*"
+                        required={!clientFormData.logo_url}
+                        onChange={handleClientLogoChange}
+                        className="w-full text-sm text-gray-600"
+                      />
+                    </div>
+                    {clientFormData.logo_url && !selectedClientLogo && (
+                      <p className="text-xs text-gray-400">Current logo will stay unless you upload a new one.</p>
+                    )}
+                    {selectedClientLogo && (
+                      <p className="text-xs font-bold text-green-600">{selectedClientLogo.name}</p>
+                    )}
+                  </div>
+                </div>
+
+                <label className="flex w-fit items-center gap-3 text-sm font-medium text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={clientFormData.is_visible}
+                    onChange={(e) => setClientFormData({ ...clientFormData, is_visible: e.target.checked })}
+                    className="size-4 rounded border-gray-300"
+                  />
+                  Show this client on the public site
+                </label>
+
+                {uploadStatus && <p className="text-sm text-blue-600 font-medium animate-pulse">{uploadStatus}</p>}
+
+                <div className="pt-6 border-t border-gray-100 flex justify-end gap-3">
+                  {clientEditId && <button type="button" onClick={resetClientForm} className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black">Cancel</button>}
+                  <button type="submit" disabled={loading} className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm">
+                    {loading ? "Saving..." : clientEditId ? "Update Client" : "Add Client"}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm text-gray-900">
+              {clients.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No client logos yet.</p></div> : (
+                <table className="w-full min-w-[760px] text-sm text-left">
+                  <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+                    <tr><th className="px-6 py-4 font-medium text-gray-700">Logo</th><th className="px-6 py-4 font-medium text-gray-700">Client</th><th className="px-6 py-4 font-medium text-gray-700">Order</th><th className="px-6 py-4 font-medium text-gray-700">Status</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
+                  </thead>
+                  <tbody>
+                    {clients.map((item) => (
+                      <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-3 w-28">
+                          <div className="relative h-12 w-20 overflow-hidden rounded border border-gray-200 bg-gray-50">
+                            <Image src={item.logo_url} alt={`${item.name} logo`} fill className="object-contain p-1.5" sizes="80px" />
+                          </div>
+                        </td>
+                        <td className="px-6 py-3">
+                          <p className="font-medium text-gray-900 text-base">{item.name}</p>
+                          {item.website_url && <p className="max-w-60 truncate text-xs text-gray-400">{item.website_url}</p>}
+                        </td>
+                        <td className="px-6 py-3 font-mono text-gray-600">{item.display_index}</td>
+                        <td className="px-6 py-3">
+                          <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wide ${item.is_visible ? "border-green-200 bg-green-50 text-green-700" : "border-gray-200 bg-gray-50 text-gray-500"}`}>
+                            {item.is_visible ? "Visible" : "Hidden"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 text-right">
+                          <div className="flex items-center justify-end gap-4">
+                            <button onClick={() => handleEditClient(item)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
+                            <button onClick={() => handleDeleteClient(item.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
                           </div>
                         </td>
                       </tr>

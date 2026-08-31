@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -40,7 +41,11 @@ interface InfiniteSpiralProps {
   imageFit?: "cover" | "contain";
   grayscale?: number;
   className?: string;
+  scrollContainerRef?: RefObject<HTMLElement | null>;
+  scrollProgressCards?: number;
 }
+
+const EMPTY_ITEMS: (string | SpiralItem)[] = [];
 
 type SpiralStyle = CSSProperties & {
   "--infinite-spiral-card-width": string;
@@ -58,7 +63,7 @@ const smoothstep = (min: number, max: number, value: number) => {
 };
 
 export default function InfiniteSpiral({
-  items = [],
+  items = EMPTY_ITEMS,
   speed = 0.55,
   direction = "up",
   animationMode = "auto",
@@ -78,6 +83,8 @@ export default function InfiniteSpiral({
   imageFit = "cover",
   grayscale = 0,
   className = "",
+  scrollContainerRef,
+  scrollProgressCards,
 }: InfiniteSpiralProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLAnchorElement | HTMLDivElement | null)[]>([]);
@@ -110,6 +117,7 @@ export default function InfiniteSpiral({
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const scrollEnabled = animationMode === "scroll" || animationMode === "all";
     const scrollSpeedMultiplier = Math.max(speed, 0) / 0.55;
+    const directionMultiplier = direction === "down" ? -1 : 1;
     let lastScrollY = window.scrollY;
 
     const resizeObserver = new ResizeObserver(() => {
@@ -129,21 +137,41 @@ export default function InfiniteSpiral({
       const nextScrollY = window.scrollY;
       const scrollDelta = nextScrollY - lastScrollY;
       lastScrollY = nextScrollY;
-      if (
-        !scrollEnabled ||
-        !visibleRef.current ||
-        reducedMotion.matches ||
-        scrollDelta === 0
-      ) {
+      if (!scrollEnabled || !visibleRef.current || reducedMotion.matches) {
         return;
       }
+
+      const scrollContainer = scrollContainerRef?.current;
+      if (scrollContainer) {
+        const scrollDistance = Math.max(
+          scrollContainer.offsetHeight - window.innerHeight,
+          1,
+        );
+        const sectionProgress = clamp(
+          (nextScrollY - scrollContainer.offsetTop) / scrollDistance,
+          0,
+          1,
+        );
+        const progressCards = Math.max(
+          scrollProgressCards ?? normalizedItems.length - 1,
+          0,
+        );
+        targetProgressRef.current =
+          sectionProgress * progressCards * directionMultiplier;
+        return;
+      }
+
+      if (scrollDelta === 0) return;
+
       targetProgressRef.current += clamp(
-        (scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1),
+        ((scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1)) *
+          directionMultiplier,
         -1.5,
         1.5,
       );
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     const render = (time: number) => {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
@@ -151,7 +179,6 @@ export default function InfiniteSpiral({
 
       const autoEnabled = animationMode === "auto" || animationMode === "all";
       const motionPaused = draggingRef.current || (pauseOnHover && hoveredRef.current);
-      const directionMultiplier = direction === "down" ? -1 : 1;
       const desiredAutoSpeed =
         autoEnabled && visibleRef.current && !reducedMotion.matches && !motionPaused
           ? speed * directionMultiplier
@@ -235,6 +262,8 @@ export default function InfiniteSpiral({
     edgeFade,
     edgeBlur,
     pauseOnHover,
+    scrollContainerRef,
+    scrollProgressCards,
   ]);
 
   const dragEnabled = animationMode === "drag" || animationMode === "all";

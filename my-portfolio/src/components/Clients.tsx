@@ -1,7 +1,10 @@
+"use client";
+
+import { useMemo, useRef } from "react";
+import type { PortfolioClientRow } from "../lib/supabase";
 import InfiniteSpiral, { type SpiralItem } from "./InfiniteSpiral";
 
-// Replace these local wordmarks with official client artwork as it becomes available.
-const CLIENTS: SpiralItem[] = [
+const FALLBACK_CLIENTS: SpiralItem[] = [
   {
     id: "adrianos-coffee",
     src: "/clients/adrianos-coffee.svg",
@@ -24,59 +27,57 @@ const CLIENTS: SpiralItem[] = [
   },
 ];
 
-export default function Clients() {
+interface ClientsProps {
+  items: PortfolioClientRow[] | null;
+}
+
+export default function Clients({ items }: ClientsProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const clientItems = useMemo<SpiralItem[]>(
+    () =>
+      items === null
+        ? FALLBACK_CLIENTS
+        : items.map((item) => ({
+            id: item.id,
+            src: item.logo_url,
+            alt: `${item.name} logo`,
+            label: item.name,
+            href: item.website_url || undefined,
+            target: item.website_url ? "_blank" : undefined,
+          })),
+    [items],
+  );
+
+  if (clientItems.length === 0) return null;
+
+  const scrollHeight = 100 + Math.max(clientItems.length - 1, 0) * 65;
+
   return (
     <section
+      ref={sectionRef}
       id="clients"
-      aria-labelledby="clients-heading"
-      className="relative overflow-hidden border-y border-border bg-muted/20 px-4 py-16 md:px-10 md:py-24"
+      aria-label="Clients and collaborators"
+      className="relative bg-transparent motion-reduce:!h-auto"
+      style={{ height: `${scrollHeight}vh` }}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_center,hsl(var(--foreground)/0.055),transparent_68%)] lg:block"
-      />
-
-      <div className="relative mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
-        <div className="max-w-xl py-4 lg:py-10">
-          <p className="text-xs font-bold uppercase tracking-[0.28em] text-muted-foreground">
-            Clients &amp; collaborators
-          </p>
-          <h2
-            id="clients-heading"
-            className="mt-5 text-4xl font-semibold leading-[0.98] tracking-[-0.045em] text-foreground sm:text-5xl md:text-6xl"
-          >
-            Good work is built together.
-          </h2>
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
-            A selection of people, teams, and brands I&apos;ve supported across
-            design, editing, and development.
-          </p>
-
-          <div className="mt-10 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            <span aria-hidden="true" className="h-px w-10 bg-border" />
-            Scroll or drag to explore
-          </div>
-        </div>
-
-        <div className="relative h-[420px] min-w-0 overflow-hidden rounded-3xl border border-border/70 bg-background/70 md:h-[500px]">
-          <InfiniteSpiral
-            items={CLIENTS}
-            animationMode="all"
-            speed={0.32}
-            radius={178}
-            cardWidth={164}
-            cardHeight={104}
-            verticalSpacing={108}
-            perspective={1100}
-            cardRadius={14}
-            centerScale={1.08}
-            edgeFade={0.2}
-            edgeBlur={3}
-            cardsPerTurn={5}
-            pauseOnHover
-            imageFit="contain"
-          />
-        </div>
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-transparent motion-reduce:static">
+        <InfiniteSpiral
+          items={clientItems}
+          animationMode="scroll"
+          radius={280}
+          cardWidth={200}
+          cardHeight={120}
+          verticalSpacing={140}
+          perspective={1200}
+          cardRadius={14}
+          centerScale={1.12}
+          edgeFade={0.15}
+          edgeBlur={2}
+          cardsPerTurn={Math.min(Math.max(clientItems.length, 4), 7)}
+          imageFit="contain"
+          scrollContainerRef={sectionRef}
+          scrollProgressCards={clientItems.length - 1}
+        />
       </div>
     </section>
   );

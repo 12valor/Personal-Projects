@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-labelledby="title desc">
+  <title id="title">Technowatch placeholder wordmark</title>
+  <desc id="desc">A neutral placeholder to replace with the official client logo.</desc>
+  <rect width="320" height="180" rx="24" fill="#f4f4f5"/>
+  <path d="M42 62h68v18H85v47H67V80H42z" fill="#18181b"/>
+  <text x="128" y="88" fill="#18181b" font-family="Arial, sans-serif" font-size="18" font-weight="700">TECHNO</text>
+  <text x="128" y="111" fill="#71717a" font-family="Arial, sans-serif" font-size="18" font-weight="700">WATCH</text>
+</svg>

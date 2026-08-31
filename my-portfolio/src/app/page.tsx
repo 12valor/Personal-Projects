@@ -5,6 +5,7 @@ import Services from "../components/Services";
 import Contact from "../components/Contact";
 import TechStack from "../components/TechStack";
 import GithubActivity from "../components/GithubActivity";
+import Clients from "../components/Clients";
 import { serializeProject } from "../lib/project-mappers";
 import { getSupabaseServerClient, type PortfolioProjectRow, type PortfolioTechStackRow } from "../lib/supabase";
 
@@ -46,6 +47,7 @@ export default async function Home() {
         <About />
       <Services />
       <WorkGrid initialProjects={projects.map(serializeProject)} />
+      <Clients />
       <Contact />
     </main>
   );

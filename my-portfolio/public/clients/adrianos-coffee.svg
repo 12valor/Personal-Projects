@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-labelledby="title desc">
+  <title id="title">Adriano's Coffee placeholder wordmark</title>
+  <desc id="desc">A neutral placeholder to replace with the official client logo.</desc>
+  <rect width="320" height="180" rx="24" fill="#f4f4f5"/>
+  <circle cx="70" cy="90" r="31" fill="#18181b"/>
+  <text x="70" y="98" fill="#fafafa" font-family="Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">AC</text>
+  <text x="119" y="84" fill="#18181b" font-family="Arial, sans-serif" font-size="20" font-weight="700">ADRIANO'S</text>
+  <text x="119" y="108" fill="#71717a" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4">COFFEE</text>
+</svg>

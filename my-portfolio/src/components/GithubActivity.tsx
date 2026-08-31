@@ -5,7 +5,7 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { Card, CardContent } from "@/src/components/ui/card";
 
 function getIntensityClass(count: number) {
-  if (count === 0) return "bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/50";
+  if (count === 0) return "bg-zinc-200/70 dark:bg-zinc-800/80 border border-zinc-300/80 dark:border-zinc-700/70";
   if (count <= 3) return "bg-zinc-300 dark:bg-zinc-700 border border-zinc-400 dark:border-zinc-600/50";
   if (count <= 6) return "bg-zinc-500 dark:bg-zinc-500 border border-zinc-600 dark:border-zinc-400/50";
   if (count >= 50) return "bg-lime-400 dark:bg-lime-300 border border-lime-300 dark:border-lime-200 shadow-[0_0_7px_rgba(163,230,53,0.9)] dark:shadow-[0_0_9px_rgba(190,242,100,0.95)]";
@@ -205,7 +205,7 @@ async function GithubContent() {
                 <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-muted-foreground uppercase tracking-widest">
                   <span>Less</span>
                   <div className="flex gap-1">
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/50" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-200/70 dark:bg-zinc-800/80 border border-zinc-300/80 dark:border-zinc-700/70" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-300 dark:bg-zinc-700 border border-zinc-400 dark:border-zinc-600/50" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-500 dark:bg-zinc-500 border border-zinc-600 dark:border-zinc-400/50" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-black dark:bg-white border border-black dark:border-white" />

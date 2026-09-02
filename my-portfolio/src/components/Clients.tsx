@@ -26,12 +26,6 @@ const FALLBACK_CLIENTS: VerticalLogoItem[] = [
   },
 ];
 
-const SCROLLER_COLUMNS = [
-  { speed: "30s", direction: "up" as const },
-  { speed: "25s", direction: "down" as const },
-  { speed: "45s", direction: "up" as const },
-];
-
 interface ClientsProps {
   items: PortfolioClientRow[] | null;
 }
@@ -61,27 +55,12 @@ export default function Clients({ items }: ClientsProps) {
         </h2>
       </div>
 
-      <div className="mx-auto grid h-[32rem] w-full max-w-5xl grid-cols-3 gap-2 px-3 sm:h-[38rem] sm:gap-5 sm:px-6 md:gap-8">
-        {SCROLLER_COLUMNS.map((column, columnIndex) => {
-          const rotatedItems = clientItems.map(
-            (_, itemIndex) =>
-              clientItems[(itemIndex + columnIndex) % clientItems.length],
-          );
-
-          return (
-            <VerticalLogoScroller
-              key={`${column.direction}-${column.speed}`}
-              logos={rotatedItems}
-              speed={column.speed}
-              direction={column.direction}
-              className={
-                columnIndex === 0
-                  ? "motion-reduce:col-span-3"
-                  : "motion-reduce:hidden"
-              }
-            />
-          );
-        })}
+      <div className="mx-auto h-[32rem] w-full max-w-xs px-3 sm:h-[38rem] sm:max-w-sm sm:px-6">
+        <VerticalLogoScroller
+          logos={clientItems}
+          speed="30s"
+          direction="up"
+        />
       </div>
     </section>
   );

@@ -1,30 +1,35 @@
-"use client";
-
-import { useMemo, useRef } from "react";
 import type { PortfolioClientRow } from "../lib/supabase";
-import InfiniteSpiral, { type SpiralItem } from "./InfiniteSpiral";
+import VerticalLogoScroller, {
+  type VerticalLogoItem,
+} from "./ui/vertical-logo-scroller";
 
-const FALLBACK_CLIENTS: SpiralItem[] = [
+const FALLBACK_CLIENTS: VerticalLogoItem[] = [
   {
     id: "adrianos-coffee",
+    name: "Adriano's Coffee",
     src: "/clients/adrianos-coffee.svg",
-    alt: "Adriano's Coffee",
   },
   {
     id: "roastbloxx",
+    name: "RoastBloxx",
     src: "/clients/roastbloxx.svg",
-    alt: "RoastBloxx",
   },
   {
     id: "technowatch",
+    name: "Technowatch",
     src: "/clients/technowatch.svg",
-    alt: "Technowatch",
   },
   {
     id: "sherack-dojillo",
+    name: "Sherack Dojillo",
     src: "/clients/sherack-dojillo.svg",
-    alt: "Sherack Dojillo",
   },
+];
+
+const SCROLLER_COLUMNS = [
+  { speed: "30s", direction: "up" as const },
+  { speed: "25s", direction: "down" as const },
+  { speed: "45s", direction: "up" as const },
 ];
 
 interface ClientsProps {
@@ -32,52 +37,51 @@ interface ClientsProps {
 }
 
 export default function Clients({ items }: ClientsProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const clientItems = useMemo<SpiralItem[]>(
-    () =>
-      items === null
-        ? FALLBACK_CLIENTS
-        : items.map((item) => ({
-            id: item.id,
-            src: item.logo_url,
-            alt: `${item.name} logo`,
-            label: item.name,
-            href: item.website_url || undefined,
-            target: item.website_url ? "_blank" : undefined,
-          })),
-    [items],
-  );
+  const clientItems: VerticalLogoItem[] =
+    items === null
+      ? FALLBACK_CLIENTS
+      : items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          src: item.logo_url,
+          href: item.website_url || undefined,
+        }));
 
   if (clientItems.length === 0) return null;
 
-  const scrollHeight = 100 + Math.max(clientItems.length - 1, 0) * 65;
-
   return (
     <section
-      ref={sectionRef}
       id="clients"
       aria-label="Clients and collaborators"
-      className="relative bg-transparent motion-reduce:!h-auto"
-      style={{ height: `${scrollHeight}vh` }}
+      className="relative overflow-hidden bg-transparent py-20 sm:py-24 md:py-28"
     >
-      <div className="sticky top-0 h-[100svh] overflow-hidden bg-transparent motion-reduce:static">
-        <InfiniteSpiral
-          items={clientItems}
-          animationMode="scroll"
-          radius={280}
-          cardWidth={200}
-          cardHeight={120}
-          verticalSpacing={140}
-          perspective={1200}
-          cardRadius={14}
-          centerScale={1.12}
-          edgeFade={0.15}
-          edgeBlur={2}
-          cardsPerTurn={Math.min(Math.max(clientItems.length, 4), 7)}
-          imageFit="contain"
-          scrollContainerRef={sectionRef}
-          scrollProgressCards={clientItems.length - 1}
-        />
+      <div className="mx-auto mb-10 max-w-5xl px-4 text-center sm:mb-14 sm:px-6">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground sm:text-sm">
+          Trusted by clients &amp; collaborators
+        </h2>
+      </div>
+
+      <div className="mx-auto grid h-[32rem] w-full max-w-5xl grid-cols-3 gap-2 px-3 sm:h-[38rem] sm:gap-5 sm:px-6 md:gap-8">
+        {SCROLLER_COLUMNS.map((column, columnIndex) => {
+          const rotatedItems = clientItems.map(
+            (_, itemIndex) =>
+              clientItems[(itemIndex + columnIndex) % clientItems.length],
+          );
+
+          return (
+            <VerticalLogoScroller
+              key={`${column.direction}-${column.speed}`}
+              logos={rotatedItems}
+              speed={column.speed}
+              direction={column.direction}
+              className={
+                columnIndex === 0
+                  ? "motion-reduce:col-span-3"
+                  : "motion-reduce:hidden"
+              }
+            />
+          );
+        })}
       </div>
     </section>
   );

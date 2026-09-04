@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
   Check,
@@ -9,7 +9,7 @@ import {
   Github,
   Loader2,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Alert, AlertDescription } from "@/src/components/ui/alert";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
@@ -35,16 +35,6 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const containerRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-  const sectionOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.12, 0.9, 1],
-    [0, 1, 1, 0],
-  );
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(email);
@@ -87,10 +77,8 @@ export default function Contact() {
   };
 
   return (
-    <motion.section
+    <section
       id="contact"
-      ref={containerRef}
-      style={{ opacity: sectionOpacity }}
       className="relative border-t border-border bg-background px-4 py-16 md:px-10 md:py-24"
     >
       <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
@@ -234,6 +222,6 @@ export default function Contact() {
           </Card>
         </ScrollReveal>
       </div>
-    </motion.section>
+    </section>
   );
 }

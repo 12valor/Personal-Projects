@@ -2,6 +2,7 @@ import type { PortfolioClientRow } from "../lib/supabase";
 import VerticalLogoScroller, {
   type VerticalLogoItem,
 } from "./ui/vertical-logo-scroller";
+import { ScrollReveal } from "./ScrollReveal";
 
 const FALLBACK_CLIENTS: VerticalLogoItem[] = [
   {
@@ -49,19 +50,22 @@ export default function Clients({ items }: ClientsProps) {
       aria-label="Clients and collaborators"
       className="relative overflow-hidden bg-transparent py-20 sm:py-24 md:py-28"
     >
-      <div className="mx-auto mb-10 max-w-5xl px-4 text-center sm:mb-14 sm:px-6">
+      <ScrollReveal className="mx-auto mb-10 max-w-5xl px-4 text-center sm:mb-14 sm:px-6">
         <h2 className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground sm:text-sm">
           Trusted by clients &amp; collaborators
         </h2>
-      </div>
+      </ScrollReveal>
 
-      <div className="mx-auto h-[32rem] w-full max-w-xs px-3 sm:h-[38rem] sm:max-w-sm sm:px-6">
+      <ScrollReveal
+        delay={0.1}
+        className="mx-auto h-[32rem] w-full max-w-xs px-3 sm:h-[38rem] sm:max-w-sm sm:px-6"
+      >
         <VerticalLogoScroller
           logos={clientItems}
           speed="30s"
           direction="up"
         />
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

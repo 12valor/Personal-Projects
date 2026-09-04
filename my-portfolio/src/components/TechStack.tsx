@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Badge } from "@/src/components/ui/badge";
 import { Separator } from "@/src/components/ui/separator";
+import { POP_EASING } from "./ScrollReveal";
 
 export interface TechStackItem {
   id: number;
@@ -12,30 +13,29 @@ export interface TechStackItem {
   logo_url: string;
 }
 
-/* â”€â”€ animation presets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-const EASE_OUT = [0.25, 0.46, 0.45, 0.94] as const;
-
+/* ── animation presets ────────────────────────────────────────────────────────── */
 const sectionVariants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 const groupVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20, scale: 0.97 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: EASE_OUT, staggerChildren: 0.04 },
+    scale: 1,
+    transition: { duration: 0.55, ease: POP_EASING, staggerChildren: 0.05 },
   },
 };
 
 const chipVariants = {
-  hidden: { opacity: 0, scale: 0.92, y: 8 },
+  hidden: { opacity: 0, scale: 0.95, y: 12 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.35, ease: EASE_OUT },
+    transition: { duration: 0.4, ease: POP_EASING },
   },
 };
 
@@ -59,10 +59,10 @@ export default function TechStack({ items }: { items: TechStackItem[] }) {
       <div className="mx-auto max-w-7xl">
         {/* â”€â”€ header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-8%" }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.55, ease: POP_EASING }}
           className="mb-10 flex flex-col gap-3 md:mb-14 md:max-w-2xl"
         >
           <span className="text-xs font-bold uppercase tracking-[0.28em] text-foreground">

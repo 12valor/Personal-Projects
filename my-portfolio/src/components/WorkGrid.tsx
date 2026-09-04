@@ -5,6 +5,7 @@ import { Layers, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation"; 
 import GalleryModal from "./GalleryModal"; 
+import { POP_EASING, ScrollReveal } from "./ScrollReveal"; 
 
 // --- TYPES ---
 export interface Project {
@@ -186,15 +187,13 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
       <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {items.map((project, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-8%" }}
             transition={{ 
-              duration: 0.4, 
-              delay: (i % 6) * 0.05, 
-              type: "spring", 
-              stiffness: 250, 
-              damping: 25 
+              duration: 0.5, 
+              delay: (i % 6) * 0.07, 
+              ease: POP_EASING,
             }}
             key={project.id}
             onClick={() => handleProjectClick(project)}
@@ -276,10 +275,10 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
     return (
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.4, delay: (index % 6) * 0.05 }}
+        viewport={{ once: true, margin: "-8%" }}
+        transition={{ duration: 0.5, delay: (index % 6) * 0.07, ease: POP_EASING }}
         onClick={() => setActiveVideoUrl(video.videoUrl)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveVideoUrl(video.videoUrl); } }}
         role="button"
@@ -361,15 +360,13 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
           return (
             <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-8%" }}
               transition={{
-                duration: 0.4,
-                delay: (i % 8) * 0.05,
-                type: "spring",
-                stiffness: 250,
-                damping: 25,
+                duration: 0.5,
+                delay: (i % 8) * 0.07,
+                ease: POP_EASING,
               }}
               key={project.id}
               onClick={() => handleProjectClick(project)}
@@ -507,59 +504,59 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
       <div className="max-w-7xl mx-auto">
         
         {/* --- HEADER --- */}
-        <div className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
+        <ScrollReveal className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
           <h2 className="text-5xl md:text-7xl lg:text-[80px] font-medium tracking-tighter text-foreground leading-none">
             Selected Works
           </h2>
           <p className="text-muted-foreground max-w-xl text-base md:text-lg leading-relaxed">
             Browse selected websites, systems, visual layouts, and video edits built across design, motion, and code.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* --- SECTIONS --- */}
         <div className="flex flex-col gap-24 md:gap-32">
             
             {/* WEBSITES */}
             <div className="flex flex-col gap-8 md:gap-12" id="websites">
-                <div className="flex flex-col items-center text-center">
+                <ScrollReveal className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Websites
                   </h3>
                   <div className="w-12 h-px bg-border mt-6" />
-                </div>
+                </ScrollReveal>
                 <DetailedProjectList items={websiteProjects} emptyLabel="No website projects found." />
             </div>
 
             {/* SYSTEMS */}
             <div className="flex flex-col gap-8 md:gap-12" id="systems">
-                <div className="flex flex-col items-center text-center">
+                <ScrollReveal className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Systems
                   </h3>
                   <div className="w-12 h-px bg-border mt-6" />
-                </div>
+                </ScrollReveal>
                 <DetailedProjectList items={systemProjects} emptyLabel="No system projects found." />
             </div>
 
             {/* GRAPHIC DESIGNS */}
             <div className="flex flex-col gap-8 md:gap-12" id="graphic-designs">
-                <div className="flex flex-col items-center text-center">
+                <ScrollReveal className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Graphic Designs
                   </h3>
                   <div className="w-12 h-px bg-border mt-6" />
-                </div>
+                </ScrollReveal>
                 <GraphicDesignProjectList items={graphicDesignProjects} />
             </div>
 
             {/* VIDEO EDITING */}
             <div className="flex flex-col gap-8 md:gap-12" id="video-edits">
-                <div className="flex flex-col items-center text-center">
+                <ScrollReveal className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Video Edits
                   </h3>
                   <div className="w-12 h-px bg-border mt-6" />
-                </div>
+                </ScrollReveal>
                 <VideoProjectList />
             </div>
 

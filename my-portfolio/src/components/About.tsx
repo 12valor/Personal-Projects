@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { POP_EASING, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 const timelineData = [
   {
@@ -50,10 +51,10 @@ export default function About() {
     <section id="timeline" className="relative bg-background border-t border-border">
       <div className="mx-auto max-w-5xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-5%" }}
-          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-8%" }}
+          transition={{ duration: 0.55, ease: POP_EASING }}
           className="mb-16 flex flex-col gap-3 md:mb-24"
         >
           <span className="text-xs font-bold uppercase tracking-[0.28em] text-foreground">
@@ -67,9 +68,9 @@ export default function About() {
           </p>
         </motion.div>
 
-        <div className="flex flex-col border-t border-border">
+        <ScrollStagger className="flex flex-col border-t border-border">
           {timelineData.map((item, index) => (
-            <div
+            <ScrollStaggerItem
               key={item.year}
               className="group flex cursor-pointer flex-col border-b border-border transition-colors hover:bg-muted/20"
               onMouseEnter={() => setHoveredIndex(index)}
@@ -115,9 +116,9 @@ export default function About() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </ScrollStaggerItem>
           ))}
-        </div>
+        </ScrollStagger>
       </div>
 
       {/* Floating Hover Image (Desktop only) */}

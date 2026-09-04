@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getGithubProfile, getGithubContributions } from "../lib/github";
 import { ArrowUpRight, Github } from "lucide-react";
 import { Card, CardContent } from "@/src/components/ui/card";
+import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 function getIntensityClass(count: number) {
   if (count === 0) return "bg-zinc-200/70 dark:bg-zinc-800/80 border border-zinc-300/80 dark:border-zinc-700/70";
@@ -80,62 +81,65 @@ async function GithubContent() {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] xl:grid-cols-[350px_1fr] gap-6 md:gap-8">
+    <ScrollStagger className="grid grid-cols-1 lg:grid-cols-[300px_1fr] xl:grid-cols-[350px_1fr] gap-6 md:gap-8">
       {/* Profile Card */}
-      <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
-        <CardContent className="p-6 md:p-8 flex flex-col h-full gap-6">
-          <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border">
-              <Image
-                src={profile.avatar_url}
-                alt={`${profile.login} avatar`}
-                fill
-                className="object-cover"
-                sizes="64px"
-                unoptimized
-              />
+      <ScrollStaggerItem className="h-full">
+        <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col h-full">
+          <CardContent className="p-6 md:p-8 flex flex-col h-full gap-6">
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border">
+                <Image
+                  src={profile.avatar_url}
+                  alt={`${profile.login} avatar`}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                  unoptimized
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">{profile.name}</h3>
+                <p className="text-sm text-muted-foreground">@{profile.login}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-foreground">{profile.name}</h3>
-              <p className="text-sm text-muted-foreground">@{profile.login}</p>
-            </div>
-          </div>
 
-          {profile.bio && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {profile.bio}
-            </p>
-          )}
+            {profile.bio && (
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {profile.bio}
+              </p>
+            )}
 
-          <div className="grid grid-cols-3 gap-4 border-y border-border py-4 mt-auto">
-            <div className="flex flex-col gap-1">
-              <span className="text-xl font-semibold text-foreground">{profile.public_repos}</span>
-              <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Repos</span>
+            <div className="grid grid-cols-3 gap-4 border-y border-border py-4 mt-auto">
+              <div className="flex flex-col gap-1">
+                <span className="text-xl font-semibold text-foreground">{profile.public_repos}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Repos</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xl font-semibold text-foreground">{profile.followers}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Followers</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xl font-semibold text-foreground">{profile.following}</span>
+                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Following</span>
+              </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-xl font-semibold text-foreground">{profile.followers}</span>
-              <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Followers</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-xl font-semibold text-foreground">{profile.following}</span>
-              <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Following</span>
-            </div>
-          </div>
 
-          <a
-            href={profile.html_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02]"
-          >
-            View Profile
-            <ArrowUpRight className="w-4 h-4" />
-          </a>
-        </CardContent>
-      </Card>
+            <a
+              href={profile.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02]"
+            >
+              View Profile
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </CardContent>
+        </Card>
+      </ScrollStaggerItem>
 
       {/* Heatmap Card */}
-      <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col">
+      <ScrollStaggerItem className="h-full">
+        <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col h-full">
           <CardContent className="p-6 md:p-8 flex flex-col h-full justify-between gap-8">
             <div className="flex items-center justify-between">
               <div>
@@ -216,8 +220,9 @@ async function GithubContent() {
               </div>
             </div>
           </CardContent>
-      </Card>
-    </div>
+        </Card>
+      </ScrollStaggerItem>
+    </ScrollStagger>
   );
 }
 
@@ -225,14 +230,14 @@ export default function GithubActivity() {
   return (
     <section className="relative border-t border-border bg-background px-4 py-16 md:px-10 md:py-24">
       <div className="mx-auto w-full max-w-7xl">
-        <div className="flex flex-col mb-12">
+        <ScrollReveal className="flex flex-col mb-12">
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
             GitHub Activity
           </h2>
           <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
             A snapshot of my coding activity and consistency.
           </p>
-        </div>
+        </ScrollReveal>
 
         <Suspense fallback={<GithubActivitySkeleton />}>
           <GithubContent />

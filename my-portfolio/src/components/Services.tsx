@@ -5,6 +5,7 @@ import { ArrowUpRight, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 const services = [
   {
@@ -36,22 +37,22 @@ export default function Services() {
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">
         {/* Header */}
-        <div className="flex flex-col items-center text-center gap-6 max-w-3xl mx-auto">
+        <ScrollReveal className="flex flex-col items-center text-center gap-6 max-w-3xl mx-auto">
           <h2 className="text-4xl font-medium leading-[1.05] tracking-[-0.04em] text-foreground sm:text-5xl md:text-6xl">
             Services built across design, motion, and code.
           </h2>
           <p className="max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
             I work across visuals, editing, and development so every output feels connected from idea to final build.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Services List */}
-        <div className="flex flex-col border-t border-border/40">
+        <ScrollStagger className="flex flex-col border-t border-border/40">
           {services.map((service) => {
             const isActive = activeServiceId === service.id;
 
             return (
-              <div
+              <ScrollStaggerItem
                 key={service.id}
                 className="group border-b border-border/40 transition-colors hover:bg-muted/20"
               >
@@ -98,23 +99,25 @@ export default function Services() {
                       className="overflow-hidden"
                     >
                       <div className="pb-8 md:pb-12 flex flex-col lg:flex-row gap-8 lg:gap-16 pl-12 md:pl-32">
-                        {/* Middle: Description & Tags */}
-                        <div className="flex-1 flex flex-col gap-6 justify-center">
-                          <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-md">
-                            {service.description}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {service.skills.map((skill) => (
-                              <span
-                                key={skill}
-                                className="rounded-full border border-border/40 px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-                              >
-                                {skill}
-                              </span>
-                            ))}
+                        {/* Left: Description & Skills */}
+                        <div className="flex-1 flex flex-col justify-between gap-6">
+                          <div className="flex flex-col gap-6">
+                            <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+                              {service.description}
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {service.skills.map((skill) => (
+                                <span
+                                  key={skill}
+                                  className="px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border/40"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                          
-                          {/* CTA */}
+
                           <Link
                             href="#work"
                             className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-foreground mt-2 md:mt-4 w-fit group/cta transition-colors hover:text-muted-foreground"
@@ -140,12 +143,11 @@ export default function Services() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </ScrollStaggerItem>
             );
           })}
-        </div>
+        </ScrollStagger>
       </div>
     </section>
   );
 }
-

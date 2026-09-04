@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/ca
 import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
+import { ScrollReveal } from "./ScrollReveal";
 
 const email = "evangelista.agdiaz@gmail.com";
 
@@ -93,7 +94,7 @@ export default function Contact() {
       className="relative border-t border-border bg-background px-4 py-16 md:px-10 md:py-24"
     >
       <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-        <div className="flex flex-col justify-between gap-14 py-2">
+        <ScrollReveal className="flex flex-col justify-between gap-14 py-2">
           <div className="flex flex-col gap-6">
             <h2 className="max-w-3xl text-5xl font-semibold leading-[0.92] tracking-[-0.055em] text-foreground sm:text-6xl md:text-8xl">
               Have an idea?
@@ -147,91 +148,91 @@ export default function Contact() {
               })}
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        <Card className="rounded-2xl border-border/80 bg-card shadow-sm">
-          <CardHeader className="gap-2 p-6 md:p-8">
-            <CardTitle className="text-2xl tracking-tight md:text-3xl">Start a conversation</CardTitle>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              A few details are enough. I usually reply as soon as I can.
-            </p>
-          </CardHeader>
-          <CardContent className="p-6 pt-0 md:p-8 md:pt-0">
-            <form onSubmit={handleSubmit}>
-              <FieldGroup className="gap-5">
-                <Field>
-                  <FieldLabel htmlFor="name">Name</FieldLabel>
-                  <Input
-                    id="name"
-                    name="name"
-                    required
-                    autoComplete="name"
-                    placeholder="Your name"
-                    value={formState.name}
-                    onChange={handleChange}
-                    className="h-11"
-                  />
-                </Field>
+        <ScrollReveal delay={0.08}>
+          <Card className="rounded-2xl border-border/80 bg-card shadow-sm">
+            <CardHeader className="gap-2 p-6 md:p-8">
+              <CardTitle className="text-2xl tracking-tight md:text-3xl">Start a conversation</CardTitle>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                A few details are enough. I usually reply as soon as I can.
+              </p>
+            </CardHeader>
+            <CardContent className="p-6 pt-0 md:p-8 md:pt-0">
+              <form onSubmit={handleSubmit}>
+                <FieldGroup className="gap-5">
+                  <Field>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formState.name}
+                      onChange={handleChange}
+                      placeholder="Your name"
+                      required
+                      className="rounded-xl border-border/80 bg-background/50 px-4 py-3"
+                    />
+                  </Field>
 
-                <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="you@example.com"
-                    value={formState.email}
-                    onChange={handleChange}
-                    className="h-11"
-                  />
-                </Field>
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formState.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      required
+                      className="rounded-xl border-border/80 bg-background/50 px-4 py-3"
+                    />
+                  </Field>
 
-                <Field>
-                  <FieldLabel htmlFor="message">Project description</FieldLabel>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={6}
-                    placeholder="What are you hoping to create?"
-                    value={formState.message}
-                    onChange={handleChange}
-                    className="min-h-36 resize-none"
-                  />
-                </Field>
+                  <Field>
+                    <FieldLabel htmlFor="message">Message</FieldLabel>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      value={formState.message}
+                      onChange={handleChange}
+                      placeholder="What are we creating?"
+                      required
+                      rows={4}
+                      className="rounded-xl border-border/80 bg-background/50 p-4"
+                    />
+                  </Field>
 
-                <Button type="submit" size="lg" disabled={isSubmitting || isSubmitted} className="w-full">
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 data-icon="inline-start" className="animate-spin" />
-                      Sending
-                    </>
-                  ) : isSubmitted ? (
-                    <>
-                      <Check data-icon="inline-start" />
-                      Message sent
-                    </>
-                  ) : (
-                    <>
-                      Send message
-                      <ArrowUpRight data-icon="inline-end" />
-                    </>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    size="lg"
+                    className="w-full gap-2 rounded-xl text-base font-medium"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send inquiry</span>
+                        <ArrowUpRight />
+                      </>
+                    )}
+                  </Button>
+
+                  {(isSubmitted || errorMsg) && (
+                    <Alert variant={errorMsg ? "destructive" : "default"}>
+                      <AlertDescription>
+                        {errorMsg || "Thanks! I will be in touch soon."}
+                      </AlertDescription>
+                    </Alert>
                   )}
-                </Button>
-
-                {(isSubmitted || errorMsg) && (
-                  <Alert variant={errorMsg ? "destructive" : "default"}>
-                    <AlertDescription>
-                      {errorMsg || "Thanks! I will be in touch soon."}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </FieldGroup>
-            </form>
-          </CardContent>
-        </Card>
+                </FieldGroup>
+              </form>
+            </CardContent>
+          </Card>
+        </ScrollReveal>
       </div>
     </motion.section>
   );

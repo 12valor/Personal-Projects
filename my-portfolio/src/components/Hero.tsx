@@ -202,8 +202,7 @@ export default function Hero() {
           className="hidden lg:block absolute z-30 lg:bottom-[15vh] lg:right-16 lg:text-right"
         >
           <h1 
-            className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent"
-            style={{ WebkitTextStroke: "2px hsl(var(--foreground))" }}
+            className="text-[14vw] leading-[0.8] font-bold tracking-tighter uppercase text-transparent text-stroke-foreground"
           >
             <span ref={bottomHollowRef}>{bottomText}</span>
           </h1>

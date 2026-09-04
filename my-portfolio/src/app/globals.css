@@ -91,6 +91,94 @@ body {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+  .text-stroke-foreground {
+    -webkit-text-stroke: 2px hsl(var(--foreground));
+  }
+
+  .mask-edges {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+
+  .marquee-container {
+    animation: slide-marquee 40s linear infinite;
+  }
+
+  .marquee-container:hover {
+    animation-play-state: paused;
+  }
+
+  .website-project-preview,
+  .video-project-preview,
+  .graphic-project-preview {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    transition: filter 450ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .website-project-grid:has(.website-project-card:hover)
+      .website-project-card:not(:hover)
+      .website-project-preview {
+      filter: grayscale(1);
+    }
+
+    .video-project-grid:has(.video-project-card:hover)
+      .video-project-card:not(:hover)
+      .video-project-preview {
+      filter: grayscale(1);
+    }
+
+    .graphic-project-grid:has(.graphic-project-card:hover)
+      .graphic-project-card:not(:hover)
+      .graphic-project-preview {
+      filter: grayscale(1);
+    }
+  }
+
+  .website-project-grid:has(.website-project-card:focus-visible)
+    .website-project-card:not(:focus-visible)
+    .website-project-preview {
+    filter: grayscale(1);
+  }
+
+  .video-project-grid:has(.video-project-card:focus-visible)
+    .video-project-card:not(:focus-visible)
+    .video-project-preview {
+    filter: grayscale(1);
+  }
+
+  .graphic-project-grid:has(.graphic-project-card:focus-visible)
+    .graphic-project-card:not(:focus-visible)
+    .graphic-project-preview {
+    filter: grayscale(1);
+  }
+}
+
+@keyframes slide-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-container {
+    animation: none !important;
+  }
+  .marquee-wrapper {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .marquee-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+  .marquee-wrapper {
+    scrollbar-width: none;
+  }
+  .marquee-content:nth-child(2) {
+    display: none;
+  }
 }
 
 /* ---break---

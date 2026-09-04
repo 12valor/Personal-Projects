@@ -56,10 +56,6 @@ export default function Testimonials() {
       className="py-32 bg-gray-50 border-t border-gray-200 overflow-hidden"
       style={fontStyle}
     >
-      {/* Import Font within component if not global */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-      `}</style>
 
       <div className="max-w-6xl mx-auto px-6">
         

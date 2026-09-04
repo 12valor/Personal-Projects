@@ -6,7 +6,6 @@ import { Layers, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
-import { POP_EASING, ScrollReveal } from "./ScrollReveal";
 
 // --- TYPES ---
 export interface Project {
@@ -147,7 +146,7 @@ function getProjectsByCategory(projects: Project[], parentCategory: string): Pro
   });
 }
 
-// Dedicated Smooth Project Image to eliminate pop-in & blinking
+// Instant, Solid Project Image (no opacity toggle or blanking)
 function ProjectImage({
   src,
   alt,
@@ -161,27 +160,20 @@ function ProjectImage({
   sizes?: string;
   priority?: boolean;
 }) {
-  const [isLoaded, setIsLoaded] = useState(false);
-
   return (
-    <div className="relative w-full h-full bg-muted overflow-hidden">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className={`transition-opacity duration-500 ease-out ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        } ${className}`}
-        sizes={sizes}
-        priority={priority}
-        unoptimized
-        onLoad={() => setIsLoaded(true)}
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      sizes={sizes}
+      priority={priority}
+      unoptimized
+    />
   );
 }
 
-// Hoisted DetailedProjectList: stable component reference, prevents unmount/remount on re-renders
+// DetailedProjectList: renders immediately without hydration fade/blink
 interface DetailedProjectListProps {
   items: Project[];
   emptyLabel: string;
@@ -203,16 +195,8 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
 
   return (
     <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {items.map((project, i) => (
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.97 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{
-            duration: 0.5,
-            delay: (i % 6) * 0.07,
-            ease: POP_EASING,
-          }}
+      {items.map((project) => (
+        <div
           key={project.id}
           onClick={() => onProjectClick(project)}
           onKeyDown={(e) => {
@@ -223,7 +207,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
           }}
           role="button"
           tabIndex={0}
-          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {/* IMAGE AREA */}
           <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
@@ -231,9 +215,8 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
               <ProjectImage
                 src={project.image_url}
                 alt={project.title}
-                className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+                className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                priority={i < 3}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">
@@ -269,13 +252,13 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
               />
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );
 });
 
-// Hoisted VideoCard: stable component reference
+// VideoCard: solid, immediate render without opacity flash
 interface VideoCardProps {
   video: VideoProject;
   index: number;
@@ -284,7 +267,6 @@ interface VideoCardProps {
 
 const VideoCard = React.memo(function VideoCard({
   video,
-  index,
   onSelectVideo,
 }: VideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -307,11 +289,7 @@ const VideoCard = React.memo(function VideoCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.5, delay: (index % 6) * 0.07, ease: POP_EASING }}
+    <div
       onClick={() => onSelectVideo(video.videoUrl)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -325,7 +303,7 @@ const VideoCard = React.memo(function VideoCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-500 hover:shadow-md hover:border-accent/40 dark:hover:border-accent/30">
+      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-300 hover:shadow-md hover:border-accent/40 dark:hover:border-accent/30">
         <video
           ref={videoRef}
           src={video.videoUrl}
@@ -334,11 +312,11 @@ const VideoCard = React.memo(function VideoCard({
           playsInline
           loop
           preload="none"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         <div
-          className={`absolute inset-0 bg-black/10 transition-colors duration-500 z-10 ${
+          className={`absolute inset-0 bg-black/10 transition-colors duration-300 z-10 ${
             isHovered ? "bg-black/0" : ""
           }`}
         />
@@ -376,11 +354,11 @@ const VideoCard = React.memo(function VideoCard({
           {video.caption}
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 });
 
-// Hoisted VideoProjectList: stable component reference
+// VideoProjectList: solid render
 const VideoProjectList = React.memo(function VideoProjectList({
   onSelectVideo,
 }: {
@@ -400,7 +378,7 @@ const VideoProjectList = React.memo(function VideoProjectList({
   );
 });
 
-// Hoisted GraphicDesignProjectList: stable component reference
+// GraphicDesignProjectList: solid render
 interface GraphicDesignProjectListProps {
   items: Project[];
   onProjectClick: (project: Project) => void;
@@ -423,7 +401,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
 
   return (
     <div className="graphic-project-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-      {items.map((project, i) => {
+      {items.map((project) => {
         const galleryCount =
           project.gallery_urls && project.gallery_urls.length > 0
             ? project.gallery_urls.length
@@ -432,15 +410,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
             : 0;
 
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{
-              duration: 0.5,
-              delay: (i % 8) * 0.07,
-              ease: POP_EASING,
-            }}
+          <div
             key={project.id}
             onClick={() => onProjectClick(project)}
             onKeyDown={(e) => {
@@ -451,7 +421,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
             }}
             role="button"
             tabIndex={0}
-            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {/* IMAGE / PREVIEW */}
             <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-muted border-b border-border/60">
@@ -459,9 +429,8 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
                 <ProjectImage
                   src={project.image_url}
                   alt={project.title}
-                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  priority={i < 4}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs italic">
@@ -509,7 +478,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         );
       })}
     </div>
@@ -635,25 +604,25 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <ScrollReveal className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
+        <div className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
           <h2 className="text-5xl md:text-7xl lg:text-[80px] font-medium tracking-tighter text-foreground leading-none">
             Selected Works
           </h2>
           <p className="text-muted-foreground max-w-xl text-base md:text-lg leading-relaxed">
             Browse selected websites, systems, visual layouts, and video edits built across design, motion, and code.
           </p>
-        </ScrollReveal>
+        </div>
 
         {/* SECTIONS */}
         <div className="flex flex-col gap-24 md:gap-32">
           {/* WEBSITES */}
           <div className="flex flex-col gap-8 md:gap-12" id="websites">
-            <ScrollReveal className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Websites
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </ScrollReveal>
+            </div>
             <DetailedProjectList
               items={websiteProjects}
               emptyLabel="No website projects found."
@@ -663,12 +632,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
           {/* SYSTEMS */}
           <div className="flex flex-col gap-8 md:gap-12" id="systems">
-            <ScrollReveal className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Systems
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </ScrollReveal>
+            </div>
             <DetailedProjectList
               items={systemProjects}
               emptyLabel="No system projects found."
@@ -678,12 +647,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
           {/* GRAPHIC DESIGNS */}
           <div className="flex flex-col gap-8 md:gap-12" id="graphic-designs">
-            <ScrollReveal className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Graphic Designs
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </ScrollReveal>
+            </div>
             <GraphicDesignProjectList
               items={graphicDesignProjects}
               onProjectClick={handleProjectClick}
@@ -692,115 +661,17 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
           {/* VIDEO EDITING */}
           <div className="flex flex-col gap-8 md:gap-12" id="video-edits">
-            <ScrollReveal className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Video Edits
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </ScrollReveal>
+            </div>
             <VideoProjectList onSelectVideo={handleSelectVideo} />
           </div>
         </div>
       </div>
 
-      {/* Hide Scrollbar Style Helper & Marquee CSS */}
-      <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        .mask-edges {
-          -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-          mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-        }
-
-        .marquee-container {
-          animation: slide-marquee 40s linear infinite;
-        }
-
-        .marquee-container:hover {
-          animation-play-state: paused;
-        }
-
-        .website-project-preview,
-        .video-project-preview,
-        .graphic-project-preview {
-          backface-visibility: hidden;
-          transform: translateZ(0);
-          transition: filter 450ms ease;
-        }
-
-        @media (hover: hover) and (pointer: fine) {
-          .website-project-grid:has(.website-project-card:hover)
-            .website-project-card:not(:hover)
-            .website-project-preview {
-            filter: grayscale(1);
-          }
-
-          .video-project-grid:has(.video-project-card:hover)
-            .video-project-card:not(:hover)
-            .video-project-preview {
-            filter: grayscale(1);
-          }
-
-          .graphic-project-grid:has(.graphic-project-card:hover)
-            .graphic-project-card:not(:hover)
-            .graphic-project-preview {
-            filter: grayscale(1);
-          }
-        }
-
-        .website-project-grid:has(.website-project-card:focus-visible)
-          .website-project-card:not(:focus-visible)
-          .website-project-preview {
-          filter: grayscale(1);
-        }
-
-        .video-project-grid:has(.video-project-card:focus-visible)
-          .video-project-card:not(:focus-visible)
-          .video-project-preview {
-          filter: grayscale(1);
-        }
-
-        .graphic-project-grid:has(.graphic-project-card:focus-visible)
-          .graphic-project-card:not(:focus-visible)
-          .graphic-project-preview {
-          filter: grayscale(1);
-        }
-
-        @keyframes slide-marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .marquee-container {
-            animation: none !important;
-          }
-          .marquee-wrapper {
-            overflow-x: auto;
-            -webkit-mask-image: none;
-            mask-image: none;
-          }
-          .marquee-wrapper::-webkit-scrollbar {
-            display: none;
-          }
-          .marquee-wrapper {
-            scrollbar-width: none;
-          }
-          .marquee-content:nth-child(2) {
-            display: none;
-          }
-        }
-      `}</style>
     </section>
   );
 }

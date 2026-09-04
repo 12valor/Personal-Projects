@@ -24,7 +24,16 @@ interface WorkGridProps {
 const CATEGORY_MAP: Record<string, string[]> = {
   "Web Design": ["Website", "Components"],
   "Systems": ["System", "POS System", "Management System"],
-  "Graphic Design": ["Posters/Pubmats", "GFX"],
+  "Graphic Design": [
+    "Graphic Design",
+    "Posters/Pubmats",
+    "GFX",
+    "Branding",
+    "Poster",
+    "Pubmat",
+    "Graphics",
+    "Visual Design",
+  ],
   "Video Editing": ["Reels", "Long Form"],
 };
 
@@ -126,7 +135,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
   // --- HELPER LOGIC ---
   const isBatchView = (category: string) => {
     const lowerCat = category.toLowerCase();
-    return lowerCat.includes("poster") || lowerCat.includes("gfx") || lowerCat.includes("graphic");
+    return lowerCat.includes("poster") || lowerCat.includes("gfx") || lowerCat.includes("graphic") || lowerCat.includes("brand");
   };
 
   const handleProjectClick = (project: Project) => {
@@ -140,14 +149,32 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
 
   const getProjectsByCategory = (parentCategory: string) => {
     return projects.filter((project) => {
-      const pCat = project.category.trim();
+      const pCat = project.category?.trim() || "";
       const allowedSubs = CATEGORY_MAP[parentCategory] || [];
-      return pCat === parentCategory || allowedSubs.includes(pCat);
+      const matchExactOrSub =
+        pCat === parentCategory ||
+        allowedSubs.some((sub) => sub.toLowerCase() === pCat.toLowerCase());
+
+      if (matchExactOrSub) return true;
+
+      if (parentCategory === "Graphic Design") {
+        const lower = pCat.toLowerCase();
+        return (
+          lower.includes("graphic") ||
+          lower.includes("poster") ||
+          lower.includes("pubmat") ||
+          lower.includes("gfx") ||
+          lower.includes("brand")
+        );
+      }
+
+      return false;
     });
   };
 
   const websiteProjects = getProjectsByCategory("Web Design");
   const systemProjects = getProjectsByCategory("Systems");
+  const graphicDesignProjects = getProjectsByCategory("Graphic Design");
   const videoEditingProjects = getProjectsByCategory("Video Editing");
 
   const DetailedProjectList = ({ items, emptyLabel }: { items: Project[]; emptyLabel: string }) => {
@@ -312,73 +339,111 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
     );
   };
 
-  const ProjectList = ({ items }: { items: Project[] }) => {
+  const GraphicDesignProjectList = ({ items }: { items: Project[] }) => {
     if (items.length === 0) {
-      return <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">No projects found in this category.</div>;
+      return (
+        <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
+          <p className="text-sm font-medium">No graphic design projects published yet.</p>
+          <p className="text-xs text-muted-foreground/70">Add graphic designs, posters, or branding mockups from the admin panel.</p>
+        </div>
+      );
     }
 
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
-        {items.map((project, i) => (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ 
-              duration: 0.4, 
-              delay: (i % 6) * 0.05, 
-              type: "spring", 
-              stiffness: 250, 
-              damping: 25 
-            }}
-            key={project.id}
-            onClick={() => handleProjectClick(project)}
-            className="group cursor-pointer flex flex-col gap-2 md:gap-3 h-full"
-          >
-            {/* IMAGE */}
-            <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-900 rounded-lg md:rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-white/[0.05] group-hover:-translate-y-1.5 border border-border/50">
-              {project.image_url ? (
-                <Image
-                  src={project.image_url}
-                  alt={project.title}
-                  fill
-                  className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">No Preview Available</div>
-              )}
-              
-              {/* Bespoke Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-              <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 transition-colors duration-500 rounded-lg md:rounded-2xl z-20" />
-              
-              {/* Action Icons */}
-              <div className="absolute top-2 right-2 md:top-4 md:right-4 transition-all duration-500 translate-y-2 translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 z-30">
-                  {isBatchView(project.category) ? (
-                      <div className="bg-black/50 backdrop-blur-md text-white p-1.5 md:p-2 rounded-full">
-                          <Layers size={14} className="md:w-4 md:h-4" />
-                      </div>
-                  ) : (
-                      <div className="bg-white text-black p-1.5 md:p-2 rounded-full">
-                          <ArrowUpRight size={14} className="md:w-4 md:h-4" />
-                      </div>
-                  )}
-              </div>
-            </div>
+      <div className="graphic-project-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+        {items.map((project, i) => {
+          const galleryCount =
+            project.gallery_urls && project.gallery_urls.length > 0
+              ? project.gallery_urls.length
+              : project.image_url
+              ? 1
+              : 0;
 
-            {/* TEXT */}
-            <div className="px-1">
-              <h3 className="font-bold text-sm md:text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                {project.title}
-              </h3>
-              <div className="flex items-center justify-between mt-0.5 md:mt-1">
-                  <p className="text-[10px] md:text-sm text-muted-foreground font-medium">{project.category}</p>
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{
+                duration: 0.4,
+                delay: (i % 8) * 0.05,
+                type: "spring",
+                stiffness: 250,
+                damping: 25,
+              }}
+              key={project.id}
+              onClick={() => handleProjectClick(project)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleProjectClick(project);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              className="graphic-project-card group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {/* IMAGE / PREVIEW */}
+              <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
+                {project.image_url ? (
+                  <Image
+                    src={project.image_url}
+                    alt={project.title}
+                    fill
+                    className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    priority={i < 4}
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs italic">
+                    No Preview Available
+                  </div>
+                )}
+
+                {/* Subtle scrim on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                {/* Batch / Gallery Indicator Badge */}
+                <div className="absolute top-3 right-3 z-10">
+                  <div className="bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10">
+                    <Layers size={13} className="text-white/90" />
+                    <span>{galleryCount > 1 ? `${galleryCount} slides` : "Gallery"}</span>
+                  </div>
+                </div>
+
+                {/* Hover CTA Button in Center */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                  <div className="w-11 h-11 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                    <ArrowUpRight size={18} />
+                  </div>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+
+              {/* CARD DETAILS */}
+              <div className="p-5 flex flex-col justify-between flex-grow gap-3">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {project.category}
+                    </span>
+                    <span className="text-xs text-muted-foreground/80 font-medium">
+                      View Gallery
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                    {project.title}
+                  </h3>
+                  {project.description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
+                      {project.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     );
   };
@@ -455,7 +520,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         <div className="flex flex-col gap-24 md:gap-32">
             
             {/* WEBSITES */}
-            <div className="flex flex-col gap-8 md:gap-12">
+            <div className="flex flex-col gap-8 md:gap-12" id="websites">
                 <div className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Websites
@@ -466,7 +531,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             </div>
 
             {/* SYSTEMS */}
-            <div className="flex flex-col gap-8 md:gap-12">
+            <div className="flex flex-col gap-8 md:gap-12" id="systems">
                 <div className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Systems
@@ -476,9 +541,19 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
                 <DetailedProjectList items={systemProjects} emptyLabel="No system projects found." />
             </div>
 
+            {/* GRAPHIC DESIGNS */}
+            <div className="flex flex-col gap-8 md:gap-12" id="graphic-designs">
+                <div className="flex flex-col items-center text-center">
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
+                      Graphic Designs
+                  </h3>
+                  <div className="w-12 h-px bg-border mt-6" />
+                </div>
+                <GraphicDesignProjectList items={graphicDesignProjects} />
+            </div>
 
             {/* VIDEO EDITING */}
-            <div className="flex flex-col gap-8 md:gap-12">
+            <div className="flex flex-col gap-8 md:gap-12" id="video-edits">
                 <div className="flex flex-col items-center text-center">
                   <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                       Video Edits
@@ -514,7 +589,8 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         }
 
         .website-project-preview,
-        .video-project-preview {
+        .video-project-preview,
+        .graphic-project-preview {
           backface-visibility: hidden;
           transform: translateZ(0);
           transition: filter 450ms ease;
@@ -532,6 +608,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             .video-project-preview {
             filter: grayscale(1);
           }
+
+          .graphic-project-grid:has(.graphic-project-card:hover)
+            .graphic-project-card:not(:hover)
+            .graphic-project-preview {
+            filter: grayscale(1);
+          }
         }
 
         .website-project-grid:has(.website-project-card:focus-visible)
@@ -543,6 +625,12 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         .video-project-grid:has(.video-project-card:focus-visible)
           .video-project-card:not(:focus-visible)
           .video-project-preview {
+          filter: grayscale(1);
+        }
+
+        .graphic-project-grid:has(.graphic-project-card:focus-visible)
+          .graphic-project-card:not(:focus-visible)
+          .graphic-project-preview {
           filter: grayscale(1);
         }
 

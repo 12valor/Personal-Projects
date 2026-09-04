@@ -21,6 +21,7 @@ const navLinks = [
   { name: "Timeline", href: "#timeline" },
   { name: "Services", href: "#services" },
   { name: "Projects", href: "#work" },
+  { name: "Graphics", href: "#graphic-designs" },
   { name: "Contact", href: "#contact" },
 ];
 

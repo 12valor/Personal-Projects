@@ -66,6 +66,7 @@ export default function AdminPanel() {
   const [techStackError, setTechStackError] = useState("");
   const [clients, setClients] = useState<ClientItem[]>([]);
   const [clientsError, setClientsError] = useState("");
+  const [projectFilter, setProjectFilter] = useState<"all" | "website" | "systems" | "graphic" | "video">("all");
   
   // --- FORM STATE ---
   const [editId, setEditId] = useState<number | null>(null);
@@ -102,7 +103,7 @@ export default function AdminPanel() {
   // --- 2. FETCH DATA ---
   useEffect(() => {
     if (isAuthenticated) {
-      if (activeTab === "list") fetchProjects();
+      if (activeTab === "list" || activeTab === "graphic-designs") fetchProjects();
       else if (activeTab === "inquiries") fetchInquiries();
       else if (activeTab === "tech-stack") fetchTechStack();
       else if (activeTab === "clients") fetchClients();
@@ -492,10 +493,11 @@ export default function AdminPanel() {
   };
 
   const getCategoryColor = (cat: string) => {
-    if (cat.includes("Web") || cat === "Website" || cat === "Components") return "bg-blue-50 text-blue-700 border-blue-200";
-    if (cat.includes("System")) return "bg-emerald-50 text-emerald-700 border-emerald-200";
-    if (cat.includes("Video")) return "bg-purple-50 text-purple-700 border-purple-200";
-    if (cat.includes("Graphic") || cat === "GFX") return "bg-orange-50 text-orange-700 border-orange-200";
+    const lower = (cat || "").toLowerCase();
+    if (lower.includes("web") || cat === "Website" || cat === "Components") return "bg-blue-50 text-blue-700 border-blue-200";
+    if (lower.includes("system")) return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    if (lower.includes("video") || lower.includes("reel")) return "bg-purple-50 text-purple-700 border-purple-200";
+    if (lower.includes("graphic") || lower.includes("gfx") || lower.includes("poster") || lower.includes("pubmat") || lower.includes("brand")) return "bg-amber-50 text-amber-800 border-amber-200";
     return "bg-gray-100 text-gray-700 border-gray-200";
   };
 
@@ -536,6 +538,7 @@ export default function AdminPanel() {
         <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
           <button onClick={() => { setActiveTab("add"); resetForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "add" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>{editId ? "Editing..." : "Add New"}</button>
           <button onClick={() => setActiveTab("list")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "list" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Edit Projects</button>
+          <button onClick={() => { setActiveTab("graphic-designs"); resetForm(); setFormData((prev) => ({ ...prev, category: "Graphic Design" })); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "graphic-designs" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Graphic Designs</button>
           <button onClick={() => { setActiveTab("tech-stack"); resetTechForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "tech-stack" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Tech Stack</button>
           <button onClick={() => { setActiveTab("clients"); resetClientForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "clients" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Clients</button>
           <button onClick={() => setActiveTab("inquiries")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap flex items-center gap-2 ${activeTab === "inquiries" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}><MessageSquare className="w-4 h-4" /> Inquiries</button>
@@ -552,7 +555,12 @@ export default function AdminPanel() {
                     <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black">
                       <optgroup label="Web Design"><option value="Website">Website</option><option value="Components">Components</option></optgroup>
                       <optgroup label="Systems"><option value="Systems">Systems</option></optgroup>
-                      <optgroup label="Graphic Design"><option value="Posters/Pubmats">Posters/Pubmats</option><option value="GFX">GFX</option></optgroup>
+                      <optgroup label="Graphic Design">
+                        <option value="Graphic Design">Graphic Design (General)</option>
+                        <option value="Posters/Pubmats">Posters/Pubmats</option>
+                        <option value="GFX">GFX</option>
+                        <option value="Branding">Branding</option>
+                      </optgroup>
                       <optgroup label="Video Editing"><option value="Reels">Reels</option><option value="Long Form">Long Form</option></optgroup>
                     </select>
                   </div>
@@ -630,47 +638,442 @@ export default function AdminPanel() {
             </form>
           </div>
         )}
-
         {/* --- LIST VIEW --- */}
-        {activeTab === "list" && (
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm animate-in fade-in duration-500">
-            {projects.length === 0 ? <div className="p-12 text-center text-gray-400"><p>No projects found.</p></div> : (
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
-                  <tr><th className="px-6 py-4 font-medium text-gray-700">Preview</th><th className="px-6 py-4 font-medium text-gray-700">Title</th><th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th><th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th></tr>
-                </thead>
-                <tbody>
-                  {projects.map((project) => (
-                    <tr key={project.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-3 w-24">
-                        <div className="w-16 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200 group">
-                          {project.image_url ? <Image src={project.image_url} alt="" fill className="object-cover" /> : "No Img"}
-                          {project.gallery_urls && project.gallery_urls.length > 1 && (
-                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <Layers className="w-5 h-5 text-white drop-shadow-md" />
-                             </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-3 font-medium text-gray-900 text-base">{project.title}</td>
-                      <td className="px-4 py-3 text-center">
-                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">{project.display_index}</span>
-                      </td>
+        {activeTab === "list" && (() => {
+          const counts = {
+            all: projects.length,
+            website: projects.filter((p) => {
+              const c = (p.category || "").toLowerCase();
+              return c.includes("web") || c === "components";
+            }).length,
+            systems: projects.filter((p) => (p.category || "").toLowerCase().includes("system")).length,
+            graphic: projects.filter((p) => {
+              const c = (p.category || "").toLowerCase();
+              return c.includes("graphic") || c.includes("poster") || c.includes("gfx") || c.includes("brand") || c.includes("pubmat");
+            }).length,
+            video: projects.filter((p) => {
+              const c = (p.category || "").toLowerCase();
+              return c.includes("video") || c.includes("reel") || c.includes("long form");
+            }).length,
+          };
 
-                      <td className="px-6 py-3 text-right">
-                        <div className="flex items-center justify-end gap-6">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>{project.category}</span>
-                            <div className="flex items-center gap-4">
-                                <button onClick={() => handleEdit(project)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
-                                <button onClick={() => handleDelete(project.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
+          const filteredProjects = projects.filter((p) => {
+            if (projectFilter === "all") return true;
+            const cat = (p.category || "").toLowerCase();
+            if (projectFilter === "website") return cat.includes("web") || cat === "components";
+            if (projectFilter === "systems") return cat.includes("system");
+            if (projectFilter === "graphic") return cat.includes("graphic") || cat.includes("poster") || cat.includes("gfx") || cat.includes("brand") || cat.includes("pubmat");
+            if (projectFilter === "video") return cat.includes("video") || cat.includes("reel") || cat.includes("long form");
+            return true;
+          });
+
+          return (
+            <div className="space-y-6 animate-in fade-in duration-500">
+              {/* Category Filter Pills & Add Shortcut */}
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setProjectFilter("all")}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
+                      projectFilter === "all"
+                        ? "bg-black text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    All ({counts.all})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectFilter("website")}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
+                      projectFilter === "website"
+                        ? "bg-blue-600 text-white"
+                        : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                    }`}
+                  >
+                    Websites ({counts.website})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectFilter("systems")}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
+                      projectFilter === "systems"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                  >
+                    Systems ({counts.systems})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectFilter("graphic")}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
+                      projectFilter === "graphic"
+                        ? "bg-amber-600 text-white"
+                        : "bg-amber-50 text-amber-800 hover:bg-amber-100"
+                    }`}
+                  >
+                    Graphic Designs ({counts.graphic})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProjectFilter("video")}
+                    className={`px-3.5 py-1.5 rounded-md text-xs font-bold transition-all ${
+                      projectFilter === "video"
+                        ? "bg-purple-600 text-white"
+                        : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    }`}
+                  >
+                    Video Edits ({counts.video})
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    if (projectFilter === "graphic") {
+                      setFormData((prev) => ({ ...prev, category: "Graphic Design" }));
+                    } else if (projectFilter === "systems") {
+                      setFormData((prev) => ({ ...prev, category: "Systems" }));
+                    } else if (projectFilter === "website") {
+                      setFormData((prev) => ({ ...prev, category: "Website" }));
+                    }
+                    setActiveTab("add");
+                  }}
+                  className="px-4 py-1.5 bg-black text-white text-xs font-bold rounded-md hover:bg-gray-800 transition-colors shadow-sm ml-auto"
+                >
+                  + Add {projectFilter === "graphic" ? "Graphic Design" : projectFilter === "systems" ? "System" : projectFilter === "website" ? "Website" : "Project"}
+                </button>
+              </div>
+
+              {/* Table */}
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                {filteredProjects.length === 0 ? (
+                  <div className="p-12 text-center text-gray-400">
+                    <p className="font-medium text-gray-600">
+                      No {projectFilter === "graphic" ? "graphic design" : ""} projects found in this view.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetForm();
+                        if (projectFilter === "graphic") {
+                          setFormData((prev) => ({ ...prev, category: "Graphic Design" }));
+                        }
+                        setActiveTab("add");
+                      }}
+                      className="mt-4 px-4 py-2 bg-black text-white text-xs font-bold rounded hover:bg-gray-800"
+                    >
+                      Add {projectFilter === "graphic" ? "Graphic Design" : "Project"} Now
+                    </button>
+                  </div>
+                ) : (
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-6 py-4 font-medium text-gray-700">Preview</th>
+                        <th className="px-6 py-4 font-medium text-gray-700">Title</th>
+                        <th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th>
+                        <th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredProjects.map((project) => (
+                        <tr key={project.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-3 w-24">
+                            <div className="w-16 h-12 relative bg-gray-100 rounded overflow-hidden border border-gray-200 group">
+                              {project.image_url ? <Image src={project.image_url} alt="" fill className="object-cover" /> : "No Img"}
+                              {project.gallery_urls && project.gallery_urls.length > 1 && (
+                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                    <Layers className="w-5 h-5 text-white drop-shadow-md" />
+                                 </div>
+                              )}
                             </div>
+                          </td>
+                          <td className="px-6 py-3 font-medium text-gray-900 text-base">{project.title}</td>
+                          <td className="px-4 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">{project.display_index}</span>
+                          </td>
+
+                          <td className="px-6 py-3 text-right">
+                            <div className="flex items-center justify-end gap-6">
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>{project.category}</span>
+                                <div className="flex items-center gap-4">
+                                    <button onClick={() => handleEdit(project)} className="text-blue-600 hover:text-blue-800 font-bold">Edit</button>
+                                    <button onClick={() => handleDelete(project.id)} className="text-gray-400 hover:text-red-600 font-medium">Delete</button>
+                                </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* --- GRAPHIC DESIGNS DEDICATED VIEW --- */}
+        {activeTab === "graphic-designs" && (
+          <div className="space-y-8 animate-in fade-in duration-500 text-gray-900">
+            <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {editId ? "Edit Graphic Design" : "Add New Graphic Design"}
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Upload posters, pubmats, GFX, or branding mockups. Multi-image uploads create a lightbox gallery.
+                  </p>
+                </div>
+                {editId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      resetForm();
+                      setFormData((prev) => ({ ...prev, category: "Graphic Design" }));
+                    }}
+                    className="text-xs font-semibold text-gray-500 hover:text-black"
+                  >
+                    Cancel Editing
+                  </button>
+                )}
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Sub-Category</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black"
+                    >
+                      <option value="Graphic Design">Graphic Design (General)</option>
+                      <option value="Posters/Pubmats">Posters/Pubmats</option>
+                      <option value="GFX">GFX</option>
+                      <option value="Branding">Branding</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Title</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Festival Poster or Brand Identity"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Client / Role (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lead Visual Designer"
+                      value={formData.role}
+                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Year</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 2026"
+                      value={formData.year}
+                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Display Index</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={formData.display_index}
+                      onChange={(e) => setFormData({ ...formData, display_index: parseInt(e.target.value) || 0 })}
+                      className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description (Optional)</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Brief description of the design concept, tools used, or client brief..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black"
+                  />
+                </div>
+
+                {/* Existing Images */}
+                {editId && (existingMainImage || existingGalleryImages.length > 0) && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-gray-700">Existing Images</label>
+                    <div className="flex flex-wrap gap-4 mb-4">
+                      {existingMainImage && (
+                        <div className="relative w-24 h-28 border border-gray-200 rounded-lg overflow-hidden group bg-gray-50">
+                          <Image src={existingMainImage} alt="Main" fill className="object-cover" />
+                          <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded uppercase font-bold z-10">Cover</div>
+                          <button type="button" onClick={() => setExistingMainImage(null)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Remove cover image"><Trash2 className="w-3 h-3" /></button>
                         </div>
-                      </td>
+                      )}
+                      {existingGalleryImages.map((img, idx) => (
+                        <div key={idx} className="relative w-24 h-28 border border-gray-200 rounded-lg overflow-hidden group bg-gray-50">
+                          <Image src={img} alt={`Slide ${idx}`} fill className="object-cover" />
+                          <button type="button" onClick={() => setExistingGalleryImages(prev => prev.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title={`Remove slide ${idx + 1}`}><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Multi-file Upload */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                    {editId ? "Add More Design Images" : "Design Images (Posters / Slides)"}
+                  </label>
+                  <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50 border-dashed">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileChange}
+                      className="w-full text-sm text-gray-500"
+                    />
+                  </div>
+                  <div className="flex justify-between items-start mt-1">
+                    <p className="text-xs text-gray-400">* Select one or multiple images. First image serves as the card cover.</p>
+                    {selectedFiles.length > 0 && <span className="text-xs font-bold text-green-600">{selectedFiles.length} files selected</span>}
+                  </div>
+                  {uploadStatus && <p className="text-sm text-blue-600 font-medium animate-pulse mt-1">{uploadStatus}</p>}
+                </div>
+
+                <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
+                  {editId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetForm();
+                        setFormData((prev) => ({ ...prev, category: "Graphic Design" }));
+                      }}
+                      className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-black"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-8 py-2.5 bg-black text-white text-sm font-medium rounded hover:bg-gray-800 transition-colors disabled:opacity-50 shadow-sm"
+                  >
+                    {loading ? (uploadStatus ? "Processing..." : "Saving...") : editId ? "Update Graphic Design" : "Save Graphic Design"}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* List of Graphic Designs */}
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                <h3 className="font-bold text-sm text-gray-900 uppercase tracking-wider">
+                  Published Graphic Designs ({projects.filter(p => {
+                    const c = (p.category || "").toLowerCase();
+                    return c.includes("graphic") || c.includes("poster") || c.includes("gfx") || c.includes("brand") || c.includes("pubmat");
+                  }).length})
+                </h3>
+              </div>
+
+              {projects.filter(p => {
+                const c = (p.category || "").toLowerCase();
+                return c.includes("graphic") || c.includes("poster") || c.includes("gfx") || c.includes("brand") || c.includes("pubmat");
+              }).length === 0 ? (
+                <div className="p-12 text-center text-gray-400">
+                  <p>No graphic design items created yet. Use the form above to add your first design.</p>
+                </div>
+              ) : (
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 font-medium text-gray-700">Preview</th>
+                      <th className="px-6 py-4 font-medium text-gray-700">Title</th>
+                      <th className="px-4 py-4 font-medium text-gray-700 text-center">Index</th>
+                      <th className="px-6 py-4 font-medium text-right text-gray-700">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  </thead>
+                  <tbody>
+                    {projects
+                      .filter(p => {
+                        const c = (p.category || "").toLowerCase();
+                        return c.includes("graphic") || c.includes("poster") || c.includes("gfx") || c.includes("brand") || c.includes("pubmat");
+                      })
+                      .map((project) => (
+                        <tr key={project.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-3 w-24">
+                            <div className="w-16 h-20 relative bg-gray-100 rounded overflow-hidden border border-gray-200 group">
+                              {project.image_url ? (
+                                <Image src={project.image_url} alt="" fill className="object-cover" />
+                              ) : (
+                                "No Img"
+                              )}
+                              {project.gallery_urls && project.gallery_urls.length > 1 && (
+                                <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1 py-0.5 rounded font-mono flex items-center gap-0.5">
+                                  <Layers size={9} /> {project.gallery_urls.length}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-3">
+                            <p className="font-medium text-gray-900 text-base">{project.title}</p>
+                            {project.role && <p className="text-xs text-gray-400">{project.role} {project.year ? `(${project.year})` : ""}</p>}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">
+                              {project.display_index}
+                            </span>
+                          </td>
+                          <td className="px-6 py-3 text-right">
+                            <div className="flex items-center justify-end gap-6">
+                              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${getCategoryColor(project.category)}`}>
+                                {project.category}
+                              </span>
+                              <div className="flex items-center gap-4">
+                                <button
+                                  onClick={() => {
+                                    handleEdit(project);
+                                    setActiveTab("graphic-designs");
+                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 font-bold"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(project.id)}
+                                  className="text-gray-400 hover:text-red-600 font-medium"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         )}
 

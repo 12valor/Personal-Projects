@@ -207,7 +207,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
           }}
           role="button"
           tabIndex={0}
-          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {/* IMAGE AREA */}
           <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
@@ -233,7 +233,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
                   {project.category}
                 </p>
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-accent transition-colors">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
                 {project.title}
               </h3>
               {project.description && (
@@ -244,7 +244,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
             </div>
 
             {/* CTA */}
-            <div className="flex items-center text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
+            <div className="flex items-center text-sm font-semibold text-muted-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
               View Project
               <ArrowUpRight
                 size={16}
@@ -303,7 +303,7 @@ const VideoCard = React.memo(function VideoCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-300 hover:shadow-md hover:border-accent/40 dark:hover:border-accent/30">
+      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-300 hover:shadow-md hover:border-black/30 dark:hover:border-white/30">
         <video
           ref={videoRef}
           src={video.videoUrl}
@@ -347,7 +347,7 @@ const VideoCard = React.memo(function VideoCard({
       </div>
 
       <div className="px-1">
-        <h3 className="font-bold text-base text-foreground group-hover:text-accent transition-colors line-clamp-1">
+        <h3 className="font-bold text-base text-foreground group-hover:text-black dark:group-hover:text-white transition-colors line-clamp-1">
           {video.title}
         </h3>
         <p className="text-xs text-muted-foreground mt-0.5 font-medium line-clamp-1">
@@ -421,7 +421,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
             }}
             role="button"
             tabIndex={0}
-            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {/* IMAGE / PREVIEW */}
             <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-muted border-b border-border/60">
@@ -468,7 +468,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
                     View Gallery
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-accent transition-colors line-clamp-1">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors line-clamp-1">
                   {project.title}
                 </h3>
                 {project.description && (

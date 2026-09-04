@@ -120,7 +120,7 @@ export default function Services() {
 
                           <Link
                             href="#work"
-                            className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-foreground mt-2 md:mt-4 w-fit group/cta transition-colors hover:text-accent"
+                            className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-foreground mt-2 md:mt-4 w-fit group/cta transition-colors hover:text-black dark:hover:text-white"
                           >
                             <span>View projects</span>
                             <ArrowUpRight className="size-4 transition-transform duration-300 group-hover/cta:-translate-y-0.5 group-hover/cta:translate-x-0.5" />

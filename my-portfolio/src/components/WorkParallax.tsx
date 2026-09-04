@@ -76,7 +76,7 @@ const ParallaxCard = ({
             {project.category}
           </span>
           <div className="flex items-center gap-4 w-full">
-            <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight group-hover:text-accent transition-colors duration-300">
+            <h3 className="text-2xl md:text-3xl font-medium text-foreground leading-tight group-hover:text-black dark:group-hover:text-white transition-colors duration-300">
               {project.title}
             </h3>
             {project.project_url ? (

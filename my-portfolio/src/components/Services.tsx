@@ -110,7 +110,7 @@ export default function Services() {
                               {service.skills.map((skill) => (
                                 <span
                                   key={skill}
-                                  className="px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border/40"
+                                  className="px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground border border-border/60"
                                 >
                                   {skill}
                                 </span>
@@ -120,7 +120,7 @@ export default function Services() {
 
                           <Link
                             href="#work"
-                            className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-foreground mt-2 md:mt-4 w-fit group/cta transition-colors hover:text-muted-foreground"
+                            className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-foreground mt-2 md:mt-4 w-fit group/cta transition-colors hover:text-accent"
                           >
                             <span>View projects</span>
                             <ArrowUpRight className="size-4 transition-transform duration-300 group-hover/cta:-translate-y-0.5 group-hover/cta:translate-x-0.5" />

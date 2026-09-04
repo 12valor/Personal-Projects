@@ -37,30 +37,30 @@
     --radius: 0.5rem;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --background: 228 10% 5.5%;       /* #0C0D10: Deep obsidian canvas */
+    --foreground: 45 15% 96%;         /* #F7F6F2: Crisp bone-white typography */
+    --card: 228 9% 8.5%;              /* #13151A: Elevated warm titanium surface */
+    --card-foreground: 45 15% 96%;
+    --popover: 228 8% 11.5%;          /* #191B22: Distinct floating layer */
+    --popover-foreground: 45 15% 96%;
+    --primary: 45 15% 96%;            /* #F7F6F2: Crisp bone-white primary CTA */
+    --primary-foreground: 228 10% 5.5%;
+    --secondary: 228 8% 13%;          /* #1C1E26: Secondary button / pill surface */
+    --secondary-foreground: 45 15% 92%;
+    --muted: 228 8% 11%;              /* #171921: Inset wells & media placeholders */
+    --muted-foreground: 225 7% 64%;   /* #9498A6: High-clarity titanium secondary text */
+    --accent: 36 32% 62%;             /* #C8AD7F: Warm champagne bronze micro-accent */
+    --accent-foreground: 228 10% 5.5%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 228 8% 16%;             /* #222530: Warm titanium hairline border */
+    --input: 228 8% 16%;
+    --ring: 36 35% 65%;               /* Warm champagne bronze focus ring */
+    --chart-1: 36 40% 65%;
+    --chart-2: 160 30% 50%;
+    --chart-3: 215 30% 55%;
+    --chart-4: 280 30% 60%;
+    --chart-5: 12 40% 60%;
   }
 }
 
@@ -104,3 +104,17 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Tactile Micro-Grain Film Overlay (anti-slop physical texture for dark mode) */
+.dark body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.026;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+

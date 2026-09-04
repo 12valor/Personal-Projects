@@ -57,7 +57,7 @@ export default function About() {
           transition={{ duration: 0.55, ease: POP_EASING }}
           className="mb-16 flex flex-col gap-3 md:mb-24"
         >
-          <span className="text-xs font-bold uppercase tracking-[0.28em] text-foreground">
+          <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
             Timeline
           </span>
           <h2 className="text-4xl font-semibold tracking-tight text-foreground md:text-6xl">

@@ -6,11 +6,11 @@ import { Card, CardContent } from "@/src/components/ui/card";
 import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 function getIntensityClass(count: number) {
-  if (count === 0) return "bg-zinc-200/70 dark:bg-zinc-800/80 border border-zinc-300/80 dark:border-zinc-700/70";
-  if (count <= 3) return "bg-zinc-300 dark:bg-zinc-700 border border-zinc-400 dark:border-zinc-600/50";
-  if (count <= 6) return "bg-zinc-500 dark:bg-zinc-500 border border-zinc-600 dark:border-zinc-400/50";
-  if (count >= 50) return "bg-lime-400 dark:bg-lime-300 border border-lime-300 dark:border-lime-200 shadow-[0_0_7px_rgba(163,230,53,0.9)] dark:shadow-[0_0_9px_rgba(190,242,100,0.95)]";
-  return "bg-black dark:bg-white border border-black dark:border-white";
+  if (count === 0) return "bg-muted/70 dark:bg-muted/80 border border-border/60";
+  if (count <= 3) return "bg-zinc-300 dark:bg-secondary border border-border";
+  if (count <= 6) return "bg-zinc-400 dark:bg-accent/40 border border-accent/30";
+  if (count >= 50) return "bg-amber-400 dark:bg-accent border border-accent shadow-[0_0_8px_hsl(36_32%_62%/0.4)]";
+  return "bg-zinc-800 dark:bg-accent/80 border border-accent/70";
 }
 
 function GithubActivitySkeleton() {
@@ -19,17 +19,17 @@ function GithubActivitySkeleton() {
       <Card className="rounded-2xl border-border/80 bg-card shadow-sm h-[350px]">
         <CardContent className="p-6 md:p-8 flex flex-col h-full gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="w-16 h-16 rounded-full bg-muted" />
             <div className="flex flex-col gap-2">
-              <div className="w-32 h-5 rounded-md bg-zinc-200 dark:bg-zinc-800" />
-              <div className="w-24 h-4 rounded-md bg-zinc-200 dark:bg-zinc-800" />
+              <div className="w-32 h-5 rounded-md bg-muted" />
+              <div className="w-24 h-4 rounded-md bg-muted" />
             </div>
           </div>
-          <div className="w-full h-12 rounded-md bg-zinc-200 dark:bg-zinc-800 mt-2" />
+          <div className="w-full h-12 rounded-md bg-muted mt-2" />
           <div className="grid grid-cols-3 gap-4 border-y border-border py-4 mt-auto">
-            <div className="h-10 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
-            <div className="h-10 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
-            <div className="h-10 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+            <div className="h-10 bg-muted rounded-md" />
+            <div className="h-10 bg-muted rounded-md" />
+            <div className="h-10 bg-muted rounded-md" />
           </div>
         </CardContent>
       </Card>
@@ -37,12 +37,12 @@ function GithubActivitySkeleton() {
         <CardContent className="p-6 md:p-8 flex flex-col h-full justify-between gap-8">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <div className="w-40 h-6 rounded-md bg-zinc-200 dark:bg-zinc-800" />
-              <div className="w-48 h-4 rounded-md bg-zinc-200 dark:bg-zinc-800" />
+              <div className="w-40 h-6 rounded-md bg-muted" />
+              <div className="w-48 h-4 rounded-md bg-muted" />
             </div>
-            <div className="w-6 h-6 rounded-md bg-zinc-200 dark:bg-zinc-800" />
+            <div className="w-6 h-6 rounded-md bg-muted" />
           </div>
-          <div className="w-full h-40 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+          <div className="w-full h-40 bg-muted rounded-md" />
         </CardContent>
       </Card>
     </div>
@@ -188,13 +188,13 @@ async function GithubContent() {
                         return (
                           <div
                             key={dayIndex}
-                            className={`group relative z-0 w-2.5 h-2.5 rounded-[2px] transition-colors hover:z-30 hover:ring-2 hover:ring-primary/50 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`}
+                            className={`group relative z-0 w-2.5 h-2.5 rounded-[2px] transition-colors hover:z-30 hover:ring-2 hover:ring-accent/60 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`}
                             aria-label={contributionLabel}
                             role="img"
                           >
                             <span
                               role="tooltip"
-                              className={`pointer-events-none invisible absolute z-40 whitespace-nowrap rounded-md bg-zinc-950 px-2.5 py-1.5 text-[11px] font-medium normal-case tracking-normal text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:visible group-hover:opacity-100 dark:bg-white dark:text-zinc-950 ${tooltipVerticalPosition} ${tooltipHorizontalPosition}`}
+                              className={`pointer-events-none invisible absolute z-40 whitespace-nowrap rounded-md bg-popover border border-border px-2.5 py-1.5 text-[11px] font-medium normal-case tracking-normal text-popover-foreground opacity-0 shadow-xl transition-opacity duration-150 group-hover:visible group-hover:opacity-100 ${tooltipVerticalPosition} ${tooltipHorizontalPosition}`}
                             >
                               {contributionLabel}
                             </span>
@@ -209,11 +209,11 @@ async function GithubContent() {
                 <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-muted-foreground uppercase tracking-widest">
                   <span>Less</span>
                   <div className="flex gap-1">
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-200/70 dark:bg-zinc-800/80 border border-zinc-300/80 dark:border-zinc-700/70" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-300 dark:bg-zinc-700 border border-zinc-400 dark:border-zinc-600/50" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-500 dark:bg-zinc-500 border border-zinc-600 dark:border-zinc-400/50" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-black dark:bg-white border border-black dark:border-white" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-lime-400 dark:bg-lime-300 border border-lime-300 dark:border-lime-200 shadow-[0_0_7px_rgba(163,230,53,0.9)] dark:shadow-[0_0_9px_rgba(190,242,100,0.95)]" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/70 dark:bg-muted/80 border border-border/60" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-300 dark:bg-secondary border border-border" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-400 dark:bg-accent/40 border border-accent/30" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-800 dark:bg-accent/80 border border-accent/70" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-amber-400 dark:bg-accent border border-accent shadow-[0_0_8px_hsl(36_32%_62%/0.4)]" />
                   </div>
                   <span>More</span>
                 </div>

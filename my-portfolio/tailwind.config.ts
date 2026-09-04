@@ -20,8 +20,8 @@ const config: Config = {
   			foreground: 'hsl(var(--foreground))',
   			accent: {
   				DEFAULT: 'hsl(var(--accent))',
-  				hover: '#244A32',
-  				light: '#E8F0EA',
+  				hover: 'hsl(var(--accent) / 0.85)',
+  				light: 'hsl(var(--accent) / 0.15)',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
   			border: 'hsl(var(--border))',

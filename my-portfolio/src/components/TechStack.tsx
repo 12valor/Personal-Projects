@@ -65,7 +65,7 @@ export default function TechStack({ items }: { items: TechStackItem[] }) {
           transition={{ duration: 0.55, ease: POP_EASING }}
           className="mb-10 flex flex-col gap-3 md:mb-14 md:max-w-2xl"
         >
-          <span className="text-xs font-bold uppercase tracking-[0.28em] text-foreground">
+          <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
             Tech Stack
           </span>
           <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
@@ -73,7 +73,7 @@ export default function TechStack({ items }: { items: TechStackItem[] }) {
           </h2>
         </motion.div>
 
-        {/* â”€â”€ categories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── categories ────────────────────────────────────────────────────────────── */}
         <motion.div
           variants={sectionVariants}
           initial="hidden"
@@ -97,7 +97,7 @@ export default function TechStack({ items }: { items: TechStackItem[] }) {
                   <motion.div key={item.id} variants={chipVariants}>
                     <Badge
                       variant="outline"
-                      className="group gap-3 rounded-full bg-card px-4 py-2.5 text-sm font-medium shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md"
+                      className="group gap-3 rounded-full bg-card px-4 py-2.5 text-sm font-medium shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md"
                     >
                       <span className="relative size-7 shrink-0 overflow-hidden rounded-full bg-muted">
                         <Image

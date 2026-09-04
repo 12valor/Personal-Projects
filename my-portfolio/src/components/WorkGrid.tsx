@@ -164,7 +164,7 @@ function ProjectImage({
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <div className="relative w-full h-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+    <div className="relative w-full h-full bg-muted overflow-hidden">
       <Image
         src={src}
         alt={alt}
@@ -223,10 +223,10 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
           }}
           role="button"
           tabIndex={0}
-          className="website-project-card group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {/* IMAGE AREA */}
-          <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
+          <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
             {project.image_url ? (
               <ProjectImage
                 src={project.image_url}
@@ -250,7 +250,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
                   {project.category}
                 </p>
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-accent transition-colors">
                 {project.title}
               </h3>
               {project.description && (
@@ -261,7 +261,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
             </div>
 
             {/* CTA */}
-            <div className="flex items-center text-sm font-semibold text-foreground">
+            <div className="flex items-center text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
               View Project
               <ArrowUpRight
                 size={16}
@@ -325,7 +325,7 @@ const VideoCard = React.memo(function VideoCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="video-project-preview relative aspect-[9/16] bg-zinc-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 shadow-sm transition-all duration-500 hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700">
+      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-500 hover:shadow-md hover:border-accent/40 dark:hover:border-accent/30">
         <video
           ref={videoRef}
           src={video.videoUrl}
@@ -369,7 +369,7 @@ const VideoCard = React.memo(function VideoCard({
       </div>
 
       <div className="px-1">
-        <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+        <h3 className="font-bold text-base text-foreground group-hover:text-accent transition-colors line-clamp-1">
           {video.title}
         </h3>
         <p className="text-xs text-muted-foreground mt-0.5 font-medium line-clamp-1">
@@ -451,10 +451,10 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
             }}
             role="button"
             tabIndex={0}
-            className="graphic-project-card group cursor-pointer flex flex-col bg-white dark:bg-zinc-950 transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-500 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-accent/40 dark:hover:border-accent/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {/* IMAGE / PREVIEW */}
-            <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800/50">
+            <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-muted border-b border-border/60">
               {project.image_url ? (
                 <ProjectImage
                   src={project.image_url}
@@ -482,7 +482,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
 
               {/* Hover CTA Button in Center */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
-                <div className="w-11 h-11 rounded-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                <div className="w-11 h-11 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
                   <ArrowUpRight size={18} />
                 </div>
               </div>
@@ -499,7 +499,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
                     View Gallery
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-accent transition-colors line-clamp-1">
                   {project.title}
                 </h3>
                 {project.description && (

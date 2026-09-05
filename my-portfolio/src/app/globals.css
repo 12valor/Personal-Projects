@@ -92,8 +92,12 @@ body {
     scrollbar-width: none;  /* Firefox */
   }
 
+  .text-stroke-white {
+    -webkit-text-stroke: 2px #ffffff;
+  }
+
   .text-stroke-foreground {
-    -webkit-text-stroke: 2px hsl(var(--foreground));
+    -webkit-text-stroke: 2px #ffffff;
   }
 
   .mask-edges {

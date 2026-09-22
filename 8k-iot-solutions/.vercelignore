@@ -1,0 +1,95 @@
+# ==============================================================================
+# Vercel Deployment Ignore - 8k-iot-solutions
+# Optimized for Next.js 16 + Prisma deployment on Vercel
+# ==============================================================================
+
+# Dependencies & Package Managers
+node_modules/
+.pnp
+.pnp.js
+
+# Git & Version Control
+.git/
+.github/
+
+# IDE, OS & Local Tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+Desktop.ini
+
+# Local Environment & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript & Build Caches
+*.tsbuildinfo
+.tmp/
+
+# Local Dev Debug Dumps & Linters
+eslint-*.json
+eslint-*.txt
+build-error.txt
+diff.txt
+prisma_out.txt
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Standalone Seed & Diagnostic Scripts (Not used in Next.js bundle)
+seed-products.ts
+seed-team.ts
+check-prisma.ts
+
+# Test Coverage & Testing Artifacts
+coverage/
+.nyc_output/
+
+# Documentation & Internal Notes
+README.md
+docs/
+screenshots/
+design/
+mockups/
+
+# Design Source Files & Archives
+*.psd
+*.ai
+*.fig
+*.sketch
+*.xd
+*.zip
+*.rar
+*.7z
+
+# Temporary / Backup Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Local Database Files & Secrets
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+prisma/dev.db*
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+creds.json
+credentials.json
+service-account*.json

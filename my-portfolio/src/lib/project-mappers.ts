@@ -15,6 +15,7 @@ export function serializeProject(project: PortfolioProjectRow) {
     description: project.description ?? "",
     image_url: project.image_url ?? "",
     gallery_urls: project.gallery_urls ?? [],
+    preview_video_url: project.preview_video_url ?? "",
     is_featured: project.is_featured,
     project_url: project.project_url ?? "",
     display_index: project.display_index ?? 0,

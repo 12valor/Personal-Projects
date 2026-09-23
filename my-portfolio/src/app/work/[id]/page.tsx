@@ -62,8 +62,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       </nav>
 
       {/* --- IMMERSIVE HERO SECTION --- */}
-      <section className="relative w-full aspect-[4/3] md:aspect-[21/9]">
-        {project.image_url ? (
+      <section className="relative w-full aspect-[4/3] md:aspect-[21/9] overflow-hidden">
+        {project.preview_video_url ? (
+          <>
+            <video
+              src={project.preview_video_url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={project.image_url || undefined}
+              className="w-full h-full object-cover object-top"
+            />
+            {/* Vignette Overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.4)_100%)] pointer-events-none" />
+          </>
+        ) : project.image_url ? (
           <>
             <Image 
               src={project.image_url}

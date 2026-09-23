@@ -15,6 +15,7 @@ export interface Project {
   image_url: string;
   gallery_urls: string[] | null;
   description: string;
+  preview_video_url?: string | null;
 }
 
 interface WorkGridProps {
@@ -173,6 +174,125 @@ function ProjectImage({
   );
 }
 
+// WebsiteProjectCard: renders static thumbnail and crossfades to video on hover
+interface WebsiteProjectCardProps {
+  project: Project;
+  canHover: boolean;
+  onProjectClick: (project: Project) => void;
+}
+
+const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
+  project,
+  canHover,
+  onProjectClick,
+}: WebsiteProjectCardProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoActive, setIsVideoActive] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+
+  const hasVideo = Boolean(project.preview_video_url && !videoError);
+
+  const handleMouseEnter = () => {
+    if (!canHover || !hasVideo) return;
+    setIsVideoActive(true);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Gracefully ignore play interruption/browser policy
+        });
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!canHover || !hasVideo) return;
+    setIsVideoActive(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <div
+      onClick={() => onProjectClick(project)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onProjectClick(project);
+        }
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      role="button"
+      tabIndex={0}
+      className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {/* IMAGE / VIDEO PREVIEW AREA */}
+      <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
+        {project.image_url ? (
+          <ProjectImage
+            src={project.image_url}
+            alt={project.title}
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">
+            No Preview Available
+          </div>
+        )}
+
+        {/* HOVER VIDEO OVERLAY */}
+        {hasVideo && (
+          <video
+            ref={videoRef}
+            src={project.preview_video_url!}
+            muted
+            loop
+            playsInline
+            preload="none"
+            onError={() => setVideoError(true)}
+            className={`absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-300 pointer-events-none ${
+              isVideoActive ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
+      </div>
+
+      {/* CONTENT AREA */}
+      <div className="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
+        <div className="flex flex-col gap-2 md:gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              {project.category}
+            </p>
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
+            {project.title}
+          </h3>
+          {project.description && (
+            <p className="text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed">
+              {project.description}
+            </p>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="flex items-center text-sm font-semibold text-muted-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
+          View Project
+          <ArrowUpRight
+            size={16}
+            className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+          />
+        </div>
+      </div>
+    </div>
+  );
+});
+
 // DetailedProjectList: renders immediately without hydration fade/blink
 interface DetailedProjectListProps {
   items: Project[];
@@ -185,6 +305,19 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
   emptyLabel,
   onProjectClick,
 }: DetailedProjectListProps) {
+  const [canHover, setCanHover] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setCanHover(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setCanHover(e.matches);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, []);
+
   if (items.length === 0) {
     return (
       <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">
@@ -196,63 +329,12 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
   return (
     <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       {items.map((project) => (
-        <div
+        <WebsiteProjectCard
           key={project.id}
-          onClick={() => onProjectClick(project)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onProjectClick(project);
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {/* IMAGE AREA */}
-          <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
-            {project.image_url ? (
-              <ProjectImage
-                src={project.image_url}
-                alt={project.title}
-                className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">
-                No Preview Available
-              </div>
-            )}
-          </div>
-
-          {/* CONTENT AREA */}
-          <div className="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
-            <div className="flex flex-col gap-2 md:gap-3">
-              <div className="flex items-center justify-between">
-                <p className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  {project.category}
-                </p>
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
-                {project.title}
-              </h3>
-              {project.description && (
-                <p className="text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed">
-                  {project.description}
-                </p>
-              )}
-            </div>
-
-            {/* CTA */}
-            <div className="flex items-center text-sm font-semibold text-muted-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
-              View Project
-              <ArrowUpRight
-                size={16}
-                className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-              />
-            </div>
-          </div>
-        </div>
+          project={project}
+          canHover={canHover}
+          onProjectClick={onProjectClick}
+        />
       ))}
     </div>
   );

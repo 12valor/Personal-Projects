@@ -9,6 +9,7 @@ export type PortfolioProjectRow = {
   description: string | null;
   image_url: string | null;
   gallery_urls: string[] | null;
+  preview_video_url?: string | null;
   is_featured: boolean;
   project_url: string | null;
   display_index: number;

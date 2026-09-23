@@ -18,6 +18,7 @@ interface Project {
   description: string;
   image_url: string;
   gallery_urls: string[] | null;
+  preview_video_url?: string | null;
   is_featured: boolean;
   project_url?: string;
   display_index: number;
@@ -75,10 +76,11 @@ export default function AdminPanel() {
   
   // FIX: Changed default category to "Website" so it matches the dropdown's first option
   const [formData, setFormData] = useState({
-    title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0,
+    title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0, preview_video_url: "",
   });
   
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
   const [techFormData, setTechFormData] = useState({ name: "", kind: "Web Development", logo_url: "" });
   const [selectedTechLogo, setSelectedTechLogo] = useState<File | null>(null);
   const [clientFormData, setClientFormData] = useState({
@@ -176,12 +178,20 @@ export default function AdminPanel() {
   const handleEdit = (project: Project) => {
     setEditId(project.id);
     setFormData({
-      title: project.title, category: project.category, role: project.role || "", year: project.year || "", description: project.description || "", is_featured: project.is_featured || false,
-      project_url: project.project_url || "", display_index: project.display_index ?? 0,
+      title: project.title,
+      category: project.category,
+      role: project.role || "",
+      year: project.year || "",
+      description: project.description || "",
+      is_featured: project.is_featured || false,
+      project_url: project.project_url || "",
+      display_index: project.display_index ?? 0,
+      preview_video_url: project.preview_video_url || "",
     });
     setExistingMainImage(project.image_url || null);
     setExistingGalleryImages(project.gallery_urls || []);
     setSelectedFiles([]); 
+    setSelectedVideoFile(null);
     setActiveTab("add");
     window.scrollTo(0, 0);
   };
@@ -297,6 +307,27 @@ export default function AdminPanel() {
 
     // Run all uploads simultaneously
     return Promise.all(uploadPromises);
+  };
+
+  const uploadVideoClientSide = async (file: File) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", CLOUDINARY_PRESET);
+
+    setUploadStatus("Uploading preview video...");
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
+      { method: "POST", body: data }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || "Video upload failed");
+    }
+
+    const result = await res.json();
+    return result.secure_url as string;
   };
 
   const resetTechForm = () => {
@@ -418,10 +449,19 @@ export default function AdminPanel() {
     try {
       let finalMainImage = existingMainImage;
       let finalGallery = [...existingGalleryImages];
-      
-      // 1. UPLOAD FILES (Client-Side)
+      let finalPreviewVideo = formData.preview_video_url.trim();
+
+      // 1. UPLOAD PREVIEW VIDEO (if selected)
+      if (selectedVideoFile) {
+        setUploadStatus("Uploading preview video...");
+        const uploadedVideoUrl = await uploadVideoClientSide(selectedVideoFile);
+        finalPreviewVideo = uploadedVideoUrl;
+        setUploadStatus("Video upload complete!");
+      }
+
+      // 2. UPLOAD FILES (Client-Side)
       if (selectedFiles.length > 0) {
-          setUploadStatus("Starting uploads...");
+          setUploadStatus("Starting image uploads...");
           
           const newUrls = await uploadFilesClientSide(selectedFiles);
           
@@ -433,10 +473,10 @@ export default function AdminPanel() {
                  finalGallery = [...finalGallery, ...newUrls];
              }
           }
-          setUploadStatus("Upload complete!");
+          setUploadStatus("Image upload complete!");
       }
 
-      // 2. SAVE PROJECT
+      // 3. SAVE PROJECT
       const payload = {
           title: formData.title,
           category: formData.category,
@@ -445,6 +485,7 @@ export default function AdminPanel() {
           description: formData.description,
           image_url: finalMainImage || "",     
           gallery_urls: finalGallery,   
+          preview_video_url: finalPreviewVideo || null,
           is_featured: formData.is_featured,
           project_url: formData.project_url,
           display_index: formData.display_index,
@@ -486,8 +527,19 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setEditId(null);
-    setFormData({ title: "", category: "Website", role: "", year: "", description: "", is_featured: false, project_url: "", display_index: 0 });
+    setFormData({
+      title: "",
+      category: "Website",
+      role: "",
+      year: "",
+      description: "",
+      is_featured: false,
+      project_url: "",
+      display_index: 0,
+      preview_video_url: "",
+    });
     setSelectedFiles([]);
+    setSelectedVideoFile(null);
     setExistingMainImage(null);
     setExistingGalleryImages([]);
   };
@@ -584,6 +636,67 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-wider text-gray-700">Description</label><textarea rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-black" /></div>
+              </div>
+
+              {/* HOVER PREVIEW VIDEO */}
+              <div className="space-y-4 border border-dashed border-gray-300 rounded-lg p-5 bg-gray-50/60">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block">
+                    Hover Preview Video (Optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Plays muted on hover in the Websites &amp; Systems showcase. Provide a hosted MP4/WebM URL or upload a video file.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-600">Video URL</label>
+                    <input
+                      type="text"
+                      value={formData.preview_video_url}
+                      onChange={(e) => setFormData({ ...formData, preview_video_url: e.target.value })}
+                      className="w-full border border-gray-300 rounded px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-black"
+                      placeholder="https://res.cloudinary.com/.../preview.mp4"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-600">Or Upload Video File (.mp4, .webm)</label>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setSelectedVideoFile(file);
+                      }}
+                      className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300"
+                    />
+                    {selectedVideoFile && (
+                      <span className="text-xs text-green-600 font-semibold block mt-1">
+                        Selected: {selectedVideoFile.name} ({(selectedVideoFile.size / (1024 * 1024)).toFixed(1)} MB)
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {formData.preview_video_url && (
+                  <div className="flex items-center gap-3 pt-2">
+                    <video
+                      src={formData.preview_video_url}
+                      muted
+                      playsInline
+                      className="w-32 h-20 object-cover rounded border border-gray-200 bg-black"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, preview_video_url: "" })}
+                      className="text-xs text-red-600 hover:text-red-800 font-medium"
+                    >
+                      Clear Preview Video
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* EXISTING IMAGES */}
@@ -792,7 +905,16 @@ export default function AdminPanel() {
                               )}
                             </div>
                           </td>
-                          <td className="px-6 py-3 font-medium text-gray-900 text-base">{project.title}</td>
+                          <td className="px-6 py-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-gray-900 text-base">{project.title}</span>
+                              {project.preview_video_url && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 border border-purple-200">
+                                  Video
+                                </span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-4 py-3 text-center">
                             <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-700 text-sm font-bold border border-gray-200">{project.display_index}</span>
                           </td>

@@ -1,41 +1,33 @@
 # Roadmap: Premium Portfolio Evolution
 
-Refining the `my-portfolio` project with advanced Next.js 15/16 patterns and high-performance motion design.
+Refining the `my-portfolio` project with advanced Next.js 15/16 patterns, React 19 architecture, and high-performance motion design.
 
-## 1. Project Case Study Interception
+## Completed Features
 
-**Skill:** Next.js Best Practices + Scroll Experience
+### 1. Project Case Study Interception
+- **Status:** Completed
+- **Architecture:** `@modal/(.)work/[id]/page.tsx` + `src/app/@modal/default.tsx` + `RootLayout` parallel route slot.
+- **Experience:** Clicking project cards seamlessly opens a slide-up centered case study dialog with backdrop blur, full hero media, metadata, and unrolled gallery while maintaining URL and scroll position. Hard refreshes route to the full standalone case study page.
 
-- **Feature:** Implement "Intercepted Routes" for project details. When clicking a project, a full-screen case study slides up as a modal (maintaining the URL), but a hard refresh loads a dedicated page.
-- **Action:** Use `@modal/(.)projects/[id]` structure.
-- **Impact:** Cinematic navigation that keeps the user context while deep-linking content.
+### 2. Server-Side Contact Engine (React 19)
+- **Status:** Completed
+- **Architecture:** `submitContactAction` Server Action with Zod schema validation and direct Supabase insertion.
+- **Experience:** Wired into React 19 `useActionState` with inline field-level validation feedback and a studio-quality animated checkmark confirmation card with a "Send another message" reset button.
 
-## 2. Server-Side Contact Engine (React 19)
+### 3. Magnetic Interaction System
+- **Status:** Completed
+- **Architecture:** `useMagnetic` hook and `<Magnetic>` spring-physics wrapper.
+- **Experience:** Smooth spring transforms on desktop pointers (`pointer: fine`) for Navbar action pills, theme toggle, social media buttons, and contact submit actions, automatically deactivating on touch/coarse devices for accessibility.
 
-**Skill:** Kaizen + Next.js Best Practices
-
-- **Feature:** Refactor the current Contact form to use **Server Actions** and the new React 19 `useActionState`.
-- **Action:** Implement a `submitContact` action with Zod validation. Add a studio-quality "Success" animation that replaces the form upon completion.
-- **Impact:** Robust, zero-JS-interactable (progressive enhancement) form with premium feedback.
-
-## 3. Magnetic Interaction System
-
-**Skill:** Frontend Design + Scroll Experience
-
-- **Feature:** Implement "Magnetic" hitboxes for high-priority CTAs (Navbar links, Social icons, Contact button).
-- **Action:** Add a high-performance hook that calculates proximity and applies a subtle "pull" transform to elements as the cursor nears.
-- **Impact:** Makes the interface feel tactile and highly responsive to user intent.
-
-## 4. Performance & Semantic Hardening
-
-**Skill:** SEO Audit + Kaizen
-
-- **Feature:** Implement dynamic OpenGraph images and JSON-LD schema.
-- **Action:** Add `app/api/og/route.tsx` to generate bespoke social sharing cards for every project.
-- **Impact:** Professional social presence and elite search engine visibility for "Graphic Designer / Video Editor" keywords.
+### 4. Performance & Semantic Hardening
+- **Status:** Completed
+- **Architecture:** Dynamic OpenGraph image generation route at `/api/og` using `next/og` `ImageResponse`.
+- **Experience:** Dynamic 1200x630 cards with custom dark branding, category badges, and typography wired into `work/[id]/page.tsx` via `generateMetadata`. Added `Person` JSON-LD structured data and OpenGraph/Twitter card metadata to `RootLayout`.
 
 ---
 
-### Which of these would you like to tackle first?
+## Next Horizon: Continuous Kaizen
 
-I recommend starting with **#1 (Project Interception)** as it has the biggest "WOW" factor for potential clients.
+1. **Client Logo Cache & Pre-generation:** Add ISR/caching layers for client brand assets.
+2. **Admin Dashboard Analytics:** Add view counters or inquiry metrics chart using Recharts.
+3. **PWA & Offline Manifest:** Add web app manifest and asset caching strategies.

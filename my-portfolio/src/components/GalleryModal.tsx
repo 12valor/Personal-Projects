@@ -22,12 +22,24 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
     if (isOpen) setCurrentIndex(0);
   }, [isOpen]);
 
+  const nextSlide = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (safeImages.length === 0) return;
+    setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
+  }, [safeImages.length]);
+
+  const prevSlide = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (safeImages.length === 0) return;
+    setCurrentIndex((prev) => (prev === 0 ? safeImages.length - 1 : prev - 1));
+  }, [safeImages.length]);
+
   // Handle Keyboard Navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onClose();
     if (e.key === "ArrowRight") nextSlide();
     if (e.key === "ArrowLeft") prevSlide();
-  }, [onClose, currentIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [onClose, nextSlide, prevSlide]);
 
   useEffect(() => {
     if (isOpen) {
@@ -41,18 +53,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
     };
   }, [isOpen, handleKeyDown]);
 
-
   if (!isOpen || safeImages.length === 0) return null;
-
-  const nextSlide = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevSlide = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? safeImages.length - 1 : prev - 1));
-  };
 
   return (
     <AnimatePresence>

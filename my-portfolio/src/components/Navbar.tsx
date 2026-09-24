@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { Magnetic } from "./ui/Magnetic";
 
 const navLinks = [
   { name: "Timeline", href: "#timeline" },
@@ -142,23 +143,27 @@ export default function Navbar() {
         <div className="absolute left-1/2 hidden -translate-x-1/2 items-center rounded-full border border-border/80 bg-background/80 p-1.5 shadow-sm backdrop-blur pointer-events-auto md:flex">
           <div className="flex items-center gap-1">
             {navLinks.map((link) => (
-              <Button key={link.name} asChild variant="ghost" size="sm" className="rounded-full px-4 text-sm">
-                <Link 
-                  href={pathname === "/" ? link.href : `/${link.href}`}
-                  onClick={(e) => {
-                    if (pathname === "/" && link.href.startsWith("#") && lenis) {
-                      e.preventDefault();
-                      lenis.scrollTo(link.href, { offset: 0 });
-                    }
-                  }}
-                >
-                  {link.name}
-                </Link>
-              </Button>
+              <Magnetic key={link.name} strength={0.25}>
+                <Button asChild variant="ghost" size="sm" className="rounded-full px-4 text-sm">
+                  <Link 
+                    href={pathname === "/" ? link.href : `/${link.href}`}
+                    onClick={(e) => {
+                      if (pathname === "/" && link.href.startsWith("#") && lenis) {
+                        e.preventDefault();
+                        lenis.scrollTo(link.href, { offset: 0 });
+                      }
+                    }}
+                  >
+                    {link.name}
+                  </Link>
+                </Button>
+              </Magnetic>
             ))}
           </div>
           <div className="ml-2 flex items-center border-l border-border/60 pl-2 pr-0.5">
-            <ThemeToggle className="border-none bg-transparent shadow-none" />
+            <Magnetic strength={0.3}>
+              <ThemeToggle className="border-none bg-transparent shadow-none" />
+            </Magnetic>
           </div>
         </div>
 

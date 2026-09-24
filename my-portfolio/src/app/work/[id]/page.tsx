@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { serializeProject } from "../../../lib/project-mappers";
 import { getSupabaseServerClient, type PortfolioProjectRow } from "../../../lib/supabase";
 import { notFound } from "next/navigation";
@@ -6,6 +7,57 @@ import React from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import Image from "next/image";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const projectId = Number(id);
+
+  if (Number.isNaN(projectId)) {
+    return { title: "Project Not Found" };
+  }
+
+  const supabase = getSupabaseServerClient();
+  const { data: projectRecord } = await supabase
+    .from("projects")
+    .select("title, description, category, role")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  if (!projectRecord) {
+    return { title: "Project Not Found" };
+  }
+
+  const ogUrl = `/api/og?title=${encodeURIComponent(projectRecord.title)}&category=${encodeURIComponent(
+    projectRecord.category || "Case Study"
+  )}&role=${encodeURIComponent(projectRecord.role || "Developer / Designer")}`;
+
+  return {
+    title: `${projectRecord.title} — AG Diaz Evangelista`,
+    description: projectRecord.description || `Case study for ${projectRecord.title}`,
+    openGraph: {
+      title: projectRecord.title,
+      description: projectRecord.description || `Case study for ${projectRecord.title}`,
+      images: [
+        {
+          url: ogUrl,
+          width: 1200,
+          height: 630,
+          alt: projectRecord.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: projectRecord.title,
+      description: projectRecord.description || `Case study for ${projectRecord.title}`,
+      images: [ogUrl],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   try {

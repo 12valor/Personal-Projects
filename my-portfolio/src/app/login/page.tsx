@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center mt-8 text-xs text-gray-400">
-          <a href="/" className="hover:text-foreground transition-colors">← Back to Portfolio</a>
+          <Link href="/" className="hover:text-foreground transition-colors">← Back to Portfolio</Link>
         </p>
 
       </div>

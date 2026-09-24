@@ -113,13 +113,13 @@ function Card({ item }: { item: typeof feedback[0] }) {
 
       {/* Main Insight */}
       <p className="text-lg text-gray-700 leading-relaxed font-normal mb-8">
-        "{item.insight}"
+        &ldquo;{item.insight}&rdquo;
       </p>
 
       {/* Footer / Quote */}
       <div className="pt-6 border-t border-gray-50">
         <p className="text-xs text-gray-400 italic">
-          "{item.quote}"
+          &ldquo;{item.quote}&rdquo;
         </p>
       </div>
     </motion.div>

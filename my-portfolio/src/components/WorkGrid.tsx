@@ -599,7 +599,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
         setSelectedProject(project);
         setIsGalleryOpen(true);
       } else {
-        router.push(`/work/${project.id}`);
+        router.push(`/work/${project.id}`, { scroll: false });
       }
     },
     [router]

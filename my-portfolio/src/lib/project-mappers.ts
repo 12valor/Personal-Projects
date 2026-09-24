@@ -33,3 +33,7 @@ export function serializeInquiry(inquiry: PortfolioInquiryRow) {
     message: inquiry.message,
   };
 }
+
+export type SerializedProject = ReturnType<typeof serializeProject>;
+export type SerializedInquiry = ReturnType<typeof serializeInquiry>;
+

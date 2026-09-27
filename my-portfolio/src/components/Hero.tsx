@@ -115,7 +115,6 @@ export default function Hero() {
 
   return (
     <section 
-      id="hero"
       ref={containerRef} 
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >

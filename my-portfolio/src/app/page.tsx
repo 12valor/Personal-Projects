@@ -7,7 +7,6 @@ import TechStack from "../components/TechStack";
 import GithubActivity from "../components/GithubActivity";
 import Clients from "../components/Clients";
 import HardwareProjects from "../components/HardwareProjects";
-import Footer from "../components/Footer";
 import { serializeProject } from "../lib/project-mappers";
 import {
   getSupabaseServerClient,
@@ -87,7 +86,6 @@ export default async function Home() {
       <HardwareProjects projects={serializedProjects} />
       <Clients items={clients} />
       <Contact />
-      <Footer />
     </main>
   );
 }

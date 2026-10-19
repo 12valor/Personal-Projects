@@ -126,11 +126,6 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
       <div className="mx-auto flex max-w-7xl flex-col gap-12 md:gap-20">
         {/* Section Header */}
         <ScrollReveal className="flex flex-col items-center text-center gap-5 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/30 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Systems &amp; Circuits</span>
-          </div>
-
           <h2 className="text-4xl font-medium leading-[1.05] tracking-[-0.04em] text-foreground sm:text-5xl md:text-6xl">
             Hardware Projects
           </h2>

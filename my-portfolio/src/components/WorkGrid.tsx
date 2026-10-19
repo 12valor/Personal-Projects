@@ -460,7 +460,98 @@ const VideoProjectList = React.memo(function VideoProjectList({
   );
 });
 
-// GraphicDesignProjectList: solid render
+// GraphicDesignCollage: editorial asymmetric collage with rhythmic row layout
+interface GraphicDesignCollageRow {
+  rowType: "pair" | "triplet" | "hero";
+  pairVariant?: "wide-first" | "wide-second";
+  heightClass: string;
+  items: Project[];
+}
+
+function partitionGraphicDesignRows(items: Project[]): GraphicDesignCollageRow[] {
+  const n = items.length;
+  if (n === 0) return [];
+
+  // When n = 3: A wide pair (7/5) + a hero (12) gives a rich asymmetric collage
+  if (n === 3) {
+    return [
+      {
+        rowType: "pair",
+        pairVariant: "wide-first",
+        heightClass: "h-[360px] sm:h-[420px] lg:h-[480px]",
+        items: items.slice(0, 2),
+      },
+      {
+        rowType: "hero",
+        heightClass: "h-[360px] sm:h-[420px] lg:h-[480px]",
+        items: items.slice(2, 3),
+      },
+    ];
+  }
+
+  // General rhythmic editorial cycle:
+  // Pair (7/5), Triad (4/4/4), Pair (5/7), Hero (12), Triad (4/4/4)
+  const targetCycle: Array<"pair" | "triplet" | "hero"> = [
+    "pair",
+    "triplet",
+    "pair",
+    "hero",
+    "triplet",
+  ];
+
+  const rows: GraphicDesignCollageRow[] = [];
+  let i = 0;
+  let cycleIdx = 0;
+  let pairCount = 0;
+
+  while (i < n) {
+    const remaining = n - i;
+    const preferredType = targetCycle[cycleIdx % targetCycle.length];
+    let chosenType: "pair" | "triplet" | "hero" = preferredType;
+
+    if (remaining === 1) {
+      chosenType = "hero";
+    } else if (remaining === 2) {
+      chosenType = "pair";
+    } else if (remaining === 3) {
+      chosenType = "triplet";
+    } else if (remaining === 4) {
+      chosenType = preferredType === "hero" ? "hero" : "pair";
+    } else if (remaining === 5) {
+      chosenType = preferredType === "triplet" ? "triplet" : "pair";
+    }
+
+    let take = 1;
+    let heightClass = "h-[380px] sm:h-[440px] lg:h-[500px]";
+    let pairVariant: "wide-first" | "wide-second" | undefined;
+
+    if (chosenType === "pair") {
+      take = 2;
+      heightClass = "h-[360px] sm:h-[420px] lg:h-[480px]";
+      pairVariant = pairCount % 2 === 0 ? "wide-first" : "wide-second";
+      pairCount++;
+    } else if (chosenType === "triplet") {
+      take = 3;
+      heightClass = "h-[320px] sm:h-[380px] lg:h-[430px]";
+    } else {
+      take = 1;
+      heightClass = "h-[380px] sm:h-[440px] lg:h-[500px]";
+    }
+
+    const chunk = items.slice(i, i + take);
+    rows.push({
+      rowType: chosenType,
+      pairVariant,
+      heightClass,
+      items: chunk,
+    });
+    i += take;
+    cycleIdx++;
+  }
+
+  return rows;
+}
+
 interface GraphicDesignProjectListProps {
   items: Project[];
   onProjectClick: (project: Project) => void;
@@ -470,6 +561,8 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   items,
   onProjectClick,
 }: GraphicDesignProjectListProps) {
+  const rows = useMemo(() => partitionGraphicDesignRows(items), [items]);
+
   if (items.length === 0) {
     return (
       <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
@@ -482,87 +575,128 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   }
 
   return (
-    <div className="graphic-project-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-      {items.map((project) => {
-        const galleryCount =
-          project.gallery_urls && project.gallery_urls.length > 0
-            ? project.gallery_urls.length
-            : project.image_url
-            ? 1
-            : 0;
+    <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`graphic-row-${rowIdx}`}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-stretch"
+        >
+          {row.items.map((project, itemIdx) => {
+            const galleryCount =
+              project.gallery_urls && project.gallery_urls.length > 0
+                ? project.gallery_urls.length
+                : project.image_url
+                ? 1
+                : 0;
 
-        return (
-          <div
-            key={project.id}
-            onClick={() => onProjectClick(project)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onProjectClick(project);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            className="graphic-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            {/* IMAGE / PREVIEW */}
-            <div className="graphic-project-preview relative aspect-[4/5] overflow-hidden bg-muted border-b border-border/60">
-              {project.image_url ? (
-                <ProjectImage
-                  src={project.image_url}
-                  alt={project.title}
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs italic">
-                  No Preview Available
+            let colSpanClass = "";
+            let titleSizeClass = "";
+
+            if (row.rowType === "hero") {
+              colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
+              titleSizeClass = "text-2xl sm:text-3xl lg:text-4xl max-w-2xl";
+            } else if (row.rowType === "pair") {
+              const isWideFirst = row.pairVariant === "wide-first";
+              const isFirst = itemIdx === 0;
+              const isWide = isWideFirst ? isFirst : !isFirst;
+
+              colSpanClass = isWide
+                ? "col-span-1 sm:col-span-1 lg:col-span-7"
+                : "col-span-1 sm:col-span-1 lg:col-span-5";
+
+              titleSizeClass = isWide
+                ? "text-xl sm:text-2xl lg:text-3xl max-w-xl"
+                : "text-lg sm:text-xl lg:text-2xl max-w-md";
+            } else {
+              // Triplet
+              colSpanClass =
+                itemIdx === 2
+                  ? "col-span-1 sm:col-span-2 lg:col-span-4"
+                  : "col-span-1 sm:col-span-1 lg:col-span-4";
+              titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+            }
+
+            return (
+              <div
+                key={project.id}
+                onClick={() => onProjectClick(project)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onProjectClick(project);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${colSpanClass} ${row.heightClass}`}
+              >
+                {/* Background Artwork */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden">
+                  {project.image_url ? (
+                    <Image
+                      src={project.image_url}
+                      alt={project.title}
+                      fill
+                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transform-none"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 58vw, 100vw"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
+                      <Layers className="w-16 h-16 stroke-1" />
+                    </div>
+                  )}
+
+                  {/* Gradient Scrim for high contrast text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/95 group-hover:via-black/45" />
                 </div>
-              )}
 
-              {/* Subtle scrim on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
-              {/* Batch / Gallery Indicator Badge */}
-              <div className="absolute top-3 right-3 z-10">
-                <div className="bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10">
-                  <Layers size={13} className="text-white/90" />
-                  <span>{galleryCount > 1 ? `${galleryCount} slides` : "Gallery"}</span>
-                </div>
-              </div>
-
-              {/* Hover CTA Button in Center */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
-                <div className="w-11 h-11 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
-                  <ArrowUpRight size={18} />
-                </div>
-              </div>
-            </div>
-
-            {/* CARD DETAILS */}
-            <div className="p-5 flex flex-col justify-between flex-grow gap-3">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                {/* Top Badges */}
+                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/50 backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
                     {project.category}
                   </span>
-                  <span className="text-xs text-muted-foreground/80 font-medium">
-                    View Gallery
-                  </span>
                 </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors line-clamp-1">
-                  {project.title}
-                </h3>
-                {project.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
-                    {project.description}
-                  </p>
-                )}
+
+                <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide bg-black/60 backdrop-blur-md text-white border border-white/15 shadow-sm">
+                    <Layers size={13} className="text-white/80" />
+                    <span>{galleryCount > 1 ? `${galleryCount} slides` : "Gallery"}</span>
+                  </div>
+                </div>
+
+                {/* Hover Center Indicator */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+                  <div className="w-12 h-12 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                    <ArrowUpRight size={20} />
+                  </div>
+                </div>
+
+                {/* Bottom Text Overlay */}
+                <div className="relative z-10 p-5 sm:p-6 lg:p-8 flex flex-col gap-1.5">
+                  <h3
+                    className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
+                  >
+                    {project.title}
+                  </h3>
+                  {project.description && (
+                    <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
+                      {project.description}
+                    </p>
+                  )}
+                  <div className="flex items-center text-xs font-medium text-white/90 gap-1 mt-1 transition-colors group-hover:text-white">
+                    <span>View in Lightbox</span>
+                    <ArrowUpRight
+                      size={14}
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 });

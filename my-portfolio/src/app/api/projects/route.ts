@@ -122,9 +122,6 @@ export async function POST(request: Request) {
   }
 
   revalidatePath("/");
-  if (slug) {
-    revalidatePath(`/hardware/${slug}`);
-  }
 
   return NextResponse.json(serializeProject(project), { status: 201 });
 }

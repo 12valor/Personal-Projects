@@ -96,9 +96,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
   const serialized = serializeProject(project);
-  if (serialized.slug) {
-    revalidatePath(`/hardware/${serialized.slug}`);
-  }
 
   return NextResponse.json(serialized);
 }

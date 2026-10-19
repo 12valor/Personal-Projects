@@ -2,8 +2,7 @@
 
 import React, { useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRight, Cpu, Layers } from "lucide-react";
+import { Cpu, Layers } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import type { SerializedProject } from "../lib/project-mappers";
 
@@ -30,19 +29,11 @@ export function isHardwareProject(project: { category?: string | null }): boolea
 type LayoutPreset = "feature" | "landscape" | "portrait" | "compact";
 
 function getEffectivePreset(project: SerializedProject, index: number): LayoutPreset {
-  // If the admin has chosen an explicit preset in the case study, respect it
   const explicit = project.case_study?.layout_preset;
   if (explicit && ["feature", "landscape", "portrait", "compact"].includes(explicit)) {
     return explicit;
   }
 
-  // Otherwise, distribute through an intentional editorial rhythm:
-  // 0: Feature (hero build)
-  // 1: Portrait (tall contrast)
-  // 2: Compact (clean supporting)
-  // 3: Landscape (wide panoramic)
-  // 4: Portrait
-  // 5: Feature
   const sequence: LayoutPreset[] = [
     "feature",
     "portrait",
@@ -66,7 +57,7 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
   return (
     <section
       id="hardware"
-      aria-label="Hardware Projects & Case Studies"
+      aria-label="Hardware Projects"
       className="relative overflow-hidden bg-background px-4 py-20 sm:px-6 md:px-10 md:py-32 border-t border-border/40"
     >
       <div className="mx-auto flex max-w-7xl flex-col gap-12 md:gap-20">
@@ -94,18 +85,13 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
             </div>
             <h3 className="text-lg font-medium text-foreground">No Hardware Projects Yet</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              New physical computing builds, firmware architectures, and PCB case studies will be published here soon.
+              New physical computing builds and hardware photography will be displayed here soon.
             </p>
           </ScrollReveal>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 md:gap-7 auto-rows-fr">
             {hardwareItems.map((project, index) => {
-              const caseStudy = project.case_study;
               const preset = getEffectivePreset(project, index);
-              const status = caseStudy?.status || "Working Prototype";
-              const components = caseStudy?.hardware_components || [];
-              const slugOrId = project.slug || project.id;
-              const href = `/hardware/${slugOrId}`;
 
               // Grid Span Classes based on Layout Preset
               let gridSpanClasses = "";
@@ -113,23 +99,19 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
 
               switch (preset) {
                 case "feature":
-                  // Dominant anchor: 8 cols out of 12 on desktop, tall aspect
                   gridSpanClasses = "col-span-1 sm:col-span-2 lg:col-span-8";
                   minHeightClass = "min-h-[460px] sm:min-h-[520px] lg:min-h-[560px]";
                   break;
                 case "portrait":
-                  // Tall vertical showcase: 4 cols out of 12 on desktop
                   gridSpanClasses = "col-span-1 sm:col-span-1 lg:col-span-4";
                   minHeightClass = "min-h-[460px] sm:min-h-[520px] lg:min-h-[560px]";
                   break;
                 case "landscape":
-                  // Wide cinematic showcase: 8 cols out of 12 on desktop
                   gridSpanClasses = "col-span-1 sm:col-span-2 lg:col-span-8";
                   minHeightClass = "min-h-[340px] sm:min-h-[380px] lg:min-h-[400px]";
                   break;
                 case "compact":
                 default:
-                  // Supporting balanced piece: 4 cols out of 12 on desktop
                   gridSpanClasses = "col-span-1 sm:col-span-1 lg:col-span-4";
                   minHeightClass = "min-h-[340px] sm:min-h-[380px] lg:min-h-[400px]";
                   break;
@@ -170,48 +152,14 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
                       </div>
                     )}
 
-                    {/* Gradient Overlay: subtle gradient to keep images vibrant while ensuring high contrast for text */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/95 group-hover:via-black/55" />
+                    {/* Gradient Overlay for high-contrast legible title */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/90 group-hover:via-black/35" />
                   </div>
 
-                  {/* Top Badges */}
-                  <div className="relative z-10 p-5 sm:p-6 md:p-7 flex items-start justify-between gap-3 pointer-events-none">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 backdrop-blur-md px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-white shadow-sm">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      {project.category}
-                    </span>
-
-                    {status && (
-                      <span className="hidden sm:inline-flex rounded-full border border-white/10 bg-black/30 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-mono text-white/80">
-                        {status}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom Text Content & Action */}
-                  <div className="relative z-10 mt-auto p-5 sm:p-6 md:p-8 flex flex-col justify-end">
-                    {/* Component Chips */}
-                    {components.length > 0 && (
-                      <div className="mb-3 flex flex-wrap gap-1.5">
-                        {components.slice(0, isFeature ? 4 : isPortrait ? 2 : 3).map((comp, idx) => (
-                          <span
-                            key={idx}
-                            className="rounded border border-white/15 bg-white/10 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/90"
-                          >
-                            {comp.name}
-                          </span>
-                        ))}
-                        {components.length > (isFeature ? 4 : isPortrait ? 2 : 3) && (
-                          <span className="rounded border border-white/10 bg-black/30 backdrop-blur-md px-1.5 py-0.5 text-[10px] font-mono text-white/60">
-                            +{components.length - (isFeature ? 4 : isPortrait ? 2 : 3)}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Project Title */}
+                  {/* Bottom: Only Project Name */}
+                  <div className="relative z-10 p-6 sm:p-8">
                     <h3
-                      className={`font-medium tracking-tight text-white leading-tight transition-colors duration-300 group-hover:text-accent-hover ${
+                      className={`font-medium tracking-tight text-white leading-tight drop-shadow-sm ${
                         isFeature
                           ? "text-2xl sm:text-3xl lg:text-4xl"
                           : isPortrait
@@ -219,29 +167,8 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
                           : "text-xl sm:text-2xl"
                       }`}
                     >
-                      <Link href={href} className="focus:outline-none after:absolute after:inset-0">
-                        {project.title}
-                      </Link>
+                      {project.title}
                     </h3>
-
-                    {/* Short Description */}
-                    {project.description && (
-                      <p className="mt-2 text-xs sm:text-sm leading-relaxed text-gray-300 line-clamp-2 max-w-xl font-normal">
-                        {project.description}
-                      </p>
-                    )}
-
-                    {/* Editorial Action Footer */}
-                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/15 pointer-events-none">
-                      <span className="text-[11px] font-mono text-gray-400">
-                        {project.year || (caseStudy?.duration ? caseStudy.duration : "Hardware Case Study")}
-                      </span>
-
-                      <span className="inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-white group-hover:text-accent-hover transition-colors">
-                        <span>View case study</span>
-                        <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none" />
-                      </span>
-                    </div>
                   </div>
                 </div>
               );

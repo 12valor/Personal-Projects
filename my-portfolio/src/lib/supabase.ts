@@ -36,6 +36,7 @@ export interface GalleryMediaItem {
 export interface HardwareCaseStudyData {
   status?: string; // e.g. "Working Prototype", "Completed", "Field Tested", "In Development"
   duration?: string;
+  layout_preset?: "feature" | "landscape" | "portrait" | "compact";
   problem_statement?: string;
   objectives?: string[];
   system_design?: {

@@ -84,9 +84,9 @@ export default async function Home() {
       <About />
       <Services />
       <WorkGrid initialProjects={serializedProjects} />
+      <HardwareProjects projects={serializedProjects} />
       <Clients items={clients} />
       <Contact />
-      <HardwareProjects projects={serializedProjects} />
       <Footer />
     </main>
   );

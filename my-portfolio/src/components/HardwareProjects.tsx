@@ -4,8 +4,7 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Cpu, Layers } from "lucide-react";
-import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
-import { Magnetic } from "./ui/Magnetic";
+import { ScrollReveal } from "./ScrollReveal";
 import type { SerializedProject } from "../lib/project-mappers";
 
 interface HardwareProjectsProps {
@@ -28,6 +27,34 @@ export function isHardwareProject(project: { category?: string | null }): boolea
   return HARDWARE_CATEGORIES.some((c) => cat.includes(c.toLowerCase()));
 }
 
+type LayoutPreset = "feature" | "landscape" | "portrait" | "compact";
+
+function getEffectivePreset(project: SerializedProject, index: number): LayoutPreset {
+  // If the admin has chosen an explicit preset in the case study, respect it
+  const explicit = project.case_study?.layout_preset;
+  if (explicit && ["feature", "landscape", "portrait", "compact"].includes(explicit)) {
+    return explicit;
+  }
+
+  // Otherwise, distribute through an intentional editorial rhythm:
+  // 0: Feature (hero build)
+  // 1: Portrait (tall contrast)
+  // 2: Compact (clean supporting)
+  // 3: Landscape (wide panoramic)
+  // 4: Portrait
+  // 5: Feature
+  const sequence: LayoutPreset[] = [
+    "feature",
+    "portrait",
+    "compact",
+    "landscape",
+    "portrait",
+    "compact",
+    "feature",
+  ];
+  return sequence[index % sequence.length];
+}
+
 export default function HardwareProjects({ projects }: HardwareProjectsProps) {
   // Only display published hardware projects sorted by display_index
   const hardwareItems = useMemo(() => {
@@ -40,11 +67,11 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
     <section
       id="hardware"
       aria-label="Hardware Projects & Case Studies"
-      className="relative overflow-hidden bg-background px-4 py-20 md:px-10 md:py-32 border-t border-border/40"
+      className="relative overflow-hidden bg-background px-4 py-20 sm:px-6 md:px-10 md:py-32 border-t border-border/40"
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-16 md:gap-24">
+      <div className="mx-auto flex max-w-7xl flex-col gap-12 md:gap-20">
         {/* Section Header */}
-        <ScrollReveal className="flex flex-col items-center text-center gap-6 max-w-3xl mx-auto">
+        <ScrollReveal className="flex flex-col items-center text-center gap-5 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/30 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             <Cpu className="w-3.5 h-3.5" />
             <span>Systems &amp; Circuits</span>
@@ -59,7 +86,7 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
           </p>
         </ScrollReveal>
 
-        {/* Content / Grid */}
+        {/* Asymmetric Editorial Collage Grid */}
         {hardwareItems.length === 0 ? (
           <ScrollReveal className="mx-auto w-full max-w-2xl rounded-2xl border border-dashed border-border/80 bg-muted/10 p-12 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50 text-muted-foreground">
@@ -71,128 +98,155 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
             </p>
           </ScrollReveal>
         ) : (
-          <ScrollStagger className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-            {hardwareItems.map((project) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 md:gap-7 auto-rows-fr">
+            {hardwareItems.map((project, index) => {
               const caseStudy = project.case_study;
-              const status = caseStudy?.status || "Prototype";
+              const preset = getEffectivePreset(project, index);
+              const status = caseStudy?.status || "Working Prototype";
               const components = caseStudy?.hardware_components || [];
-              const tools = caseStudy?.software_tools || [];
               const slugOrId = project.slug || project.id;
               const href = `/hardware/${slugOrId}`;
 
+              // Grid Span Classes based on Layout Preset
+              let gridSpanClasses = "";
+              let minHeightClass = "";
+
+              switch (preset) {
+                case "feature":
+                  // Dominant anchor: 8 cols out of 12 on desktop, tall aspect
+                  gridSpanClasses = "col-span-1 sm:col-span-2 lg:col-span-8";
+                  minHeightClass = "min-h-[460px] sm:min-h-[520px] lg:min-h-[560px]";
+                  break;
+                case "portrait":
+                  // Tall vertical showcase: 4 cols out of 12 on desktop
+                  gridSpanClasses = "col-span-1 sm:col-span-1 lg:col-span-4";
+                  minHeightClass = "min-h-[460px] sm:min-h-[520px] lg:min-h-[560px]";
+                  break;
+                case "landscape":
+                  // Wide cinematic showcase: 8 cols out of 12 on desktop
+                  gridSpanClasses = "col-span-1 sm:col-span-2 lg:col-span-8";
+                  minHeightClass = "min-h-[340px] sm:min-h-[380px] lg:min-h-[400px]";
+                  break;
+                case "compact":
+                default:
+                  // Supporting balanced piece: 4 cols out of 12 on desktop
+                  gridSpanClasses = "col-span-1 sm:col-span-1 lg:col-span-4";
+                  minHeightClass = "min-h-[340px] sm:min-h-[380px] lg:min-h-[400px]";
+                  break;
+              }
+
+              const isFeature = preset === "feature";
+              const isPortrait = preset === "portrait";
+
               return (
-                <ScrollStaggerItem key={project.id}>
-                  <article className="group relative flex flex-col h-full rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-border hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20">
-                    {/* Media Container */}
-                    <Link
-                      href={href}
-                      className="relative block w-full aspect-[16/10] overflow-hidden bg-muted/40"
-                    >
-                      {project.preview_video_url ? (
-                        <video
-                          src={project.preview_video_url}
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          poster={project.image_url || undefined}
-                          className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      ) : project.image_url ? (
-                        <Image
-                          src={project.image_url}
-                          alt={project.title}
-                          fill
-                          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-muted/30">
-                          <Cpu className="h-10 w-10 text-muted-foreground/40" />
-                        </div>
-                      )}
+                <div
+                  key={project.id}
+                  className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 ${gridSpanClasses} ${minHeightClass}`}
+                >
+                  {/* Background Project Photography */}
+                  <div className="absolute inset-0 w-full h-full overflow-hidden">
+                    {project.preview_video_url ? (
+                      <video
+                        src={project.preview_video_url}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster={project.image_url || undefined}
+                        className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                      />
+                    ) : project.image_url ? (
+                      <Image
+                        src={project.image_url}
+                        alt={project.title}
+                        fill
+                        className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
+                        <Cpu className="w-20 h-20 stroke-1" />
+                      </div>
+                    )}
 
-                      {/* Status & Category Overlay Badges */}
-                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 pointer-events-none">
-                        <span className="rounded-full border border-border/80 bg-background/80 backdrop-blur-md px-3 py-1 text-[11px] font-medium tracking-wide text-foreground shadow-sm">
-                          {project.category}
-                        </span>
+                    {/* Gradient Overlay: subtle gradient to keep images vibrant while ensuring high contrast for text */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/95 group-hover:via-black/55" />
+                  </div>
 
-                        {status && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-background/80 backdrop-blur-md px-2.5 py-1 text-[11px] font-mono font-medium text-emerald-600 dark:text-emerald-400 shadow-sm">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            {status}
+                  {/* Top Badges */}
+                  <div className="relative z-10 p-5 sm:p-6 md:p-7 flex items-start justify-between gap-3 pointer-events-none">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 backdrop-blur-md px-3 py-1 text-[11px] font-mono uppercase tracking-wider text-white shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      {project.category}
+                    </span>
+
+                    {status && (
+                      <span className="hidden sm:inline-flex rounded-full border border-white/10 bg-black/30 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-mono text-white/80">
+                        {status}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Bottom Text Content & Action */}
+                  <div className="relative z-10 mt-auto p-5 sm:p-6 md:p-8 flex flex-col justify-end">
+                    {/* Component Chips */}
+                    {components.length > 0 && (
+                      <div className="mb-3 flex flex-wrap gap-1.5">
+                        {components.slice(0, isFeature ? 4 : isPortrait ? 2 : 3).map((comp, idx) => (
+                          <span
+                            key={idx}
+                            className="rounded border border-white/15 bg-white/10 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-white/90"
+                          >
+                            {comp.name}
+                          </span>
+                        ))}
+                        {components.length > (isFeature ? 4 : isPortrait ? 2 : 3) && (
+                          <span className="rounded border border-white/10 bg-black/30 backdrop-blur-md px-1.5 py-0.5 text-[10px] font-mono text-white/60">
+                            +{components.length - (isFeature ? 4 : isPortrait ? 2 : 3)}
                           </span>
                         )}
                       </div>
-                    </Link>
+                    )}
 
-                    {/* Card Content */}
-                    <div className="flex flex-1 flex-col p-6 sm:p-8">
-                      <div className="flex-1">
-                        <h3 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground transition-colors group-hover:text-accent-hover">
-                          <Link href={href} className="focus:outline-none">
-                            {project.title}
-                          </Link>
-                        </h3>
+                    {/* Project Title */}
+                    <h3
+                      className={`font-medium tracking-tight text-white leading-tight transition-colors duration-300 group-hover:text-accent-hover ${
+                        isFeature
+                          ? "text-2xl sm:text-3xl lg:text-4xl"
+                          : isPortrait
+                          ? "text-xl sm:text-2xl lg:text-3xl"
+                          : "text-xl sm:text-2xl"
+                      }`}
+                    >
+                      <Link href={href} className="focus:outline-none after:absolute after:inset-0">
+                        {project.title}
+                      </Link>
+                    </h3>
 
-                        {project.description && (
-                          <p className="mt-3 text-sm sm:text-base leading-relaxed text-muted-foreground line-clamp-3">
-                            {project.description}
-                          </p>
-                        )}
+                    {/* Short Description */}
+                    {project.description && (
+                      <p className="mt-2 text-xs sm:text-sm leading-relaxed text-gray-300 line-clamp-2 max-w-xl font-normal">
+                        {project.description}
+                      </p>
+                    )}
 
-                        {/* Hardware Components / Tech Chips */}
-                        {(components.length > 0 || tools.length > 0) && (
-                          <div className="mt-6 flex flex-wrap gap-1.5 pt-4 border-t border-border/40">
-                            {components.slice(0, 4).map((comp, idx) => (
-                              <span
-                                key={`comp-${idx}`}
-                                className="rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground"
-                              >
-                                {comp.name}
-                              </span>
-                            ))}
-                            {tools.slice(0, 2).map((tool, idx) => (
-                              <span
-                                key={`tool-${idx}`}
-                                className="rounded-md border border-border/70 bg-background px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground"
-                              >
-                                {tool}
-                              </span>
-                            ))}
-                            {components.length > 4 && (
-                              <span className="rounded-md border border-border/50 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground/70">
-                                +{components.length - 4} more
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                    {/* Editorial Action Footer */}
+                    <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/15 pointer-events-none">
+                      <span className="text-[11px] font-mono text-gray-400">
+                        {project.year || (caseStudy?.duration ? caseStudy.duration : "Hardware Case Study")}
+                      </span>
 
-                      {/* Card Footer: Action */}
-                      <div className="mt-8 flex items-center justify-between pt-4 border-t border-border/40">
-                        <span className="text-xs font-mono text-muted-foreground/70">
-                          {project.year || (caseStudy?.duration ? caseStudy.duration : "Hardware Case Study")}
-                        </span>
-
-                        <Magnetic strength={0.3}>
-                          <Link
-                            href={href}
-                            className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors group-hover:text-accent-hover hover:underline"
-                          >
-                            <span>View case study</span>
-                            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                          </Link>
-                        </Magnetic>
-                      </div>
+                      <span className="inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-white group-hover:text-accent-hover transition-colors">
+                        <span>View case study</span>
+                        <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none" />
+                      </span>
                     </div>
-                  </article>
-                </ScrollStaggerItem>
+                  </div>
+                </div>
               );
             })}
-          </ScrollStagger>
+          </div>
         )}
       </div>
     </section>

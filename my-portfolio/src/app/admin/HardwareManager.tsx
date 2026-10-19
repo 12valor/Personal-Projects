@@ -76,6 +76,7 @@ export default function HardwareManager({
   const [manualSlug, setManualSlug] = useState(false);
   const [category, setCategory] = useState("Embedded Systems");
   const [status, setStatus] = useState("Working Prototype");
+  const [layoutPreset, setLayoutPreset] = useState<"feature" | "landscape" | "portrait" | "compact">("compact");
   const [role, setRole] = useState("Hardware Designer & Firmware Developer");
   const [duration, setDuration] = useState("");
   const [displayIndex, setDisplayIndex] = useState(0);
@@ -133,6 +134,7 @@ export default function HardwareManager({
     setManualSlug(false);
     setCategory("Embedded Systems");
     setStatus("Working Prototype");
+    setLayoutPreset("compact");
     setRole("Hardware Designer & Firmware Developer");
     setDuration("");
     setDisplayIndex(0);
@@ -184,6 +186,7 @@ export default function HardwareManager({
 
     const cs: HardwareCaseStudyData = project.case_study || {};
     setStatus(cs.status || "Working Prototype");
+    setLayoutPreset(cs.layout_preset || "compact");
     if (cs.duration) setDuration(cs.duration);
     setProblemStatement(cs.problem_statement || "");
     setObjectives(cs.objectives && cs.objectives.length > 0 ? cs.objectives : [""]);

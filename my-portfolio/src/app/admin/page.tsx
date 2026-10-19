@@ -1087,7 +1087,7 @@ export default function AdminPanel() {
                 {/* Multi-file Upload */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
-                    {editId ? "Add More Design Images" : "Design Images (Posters / Slides)"}
+                    {editId ? "Add More Design Images" : "Design Images (Posters / Graphics)"}
                   </label>
                   <div className="border border-gray-300 rounded px-4 py-3 bg-gray-50 border-dashed">
                     <input
@@ -1099,7 +1099,7 @@ export default function AdminPanel() {
                     />
                   </div>
                   <div className="flex justify-between items-start mt-1">
-                    <p className="text-xs text-gray-400">* Select one or multiple images. First image serves as the card cover.</p>
+                    <p className="text-xs text-gray-400">* Select one or multiple images. Each image will be displayed individually in the collage.</p>
                     {selectedFiles.length > 0 && <span className="text-xs font-bold text-green-600">{selectedFiles.length} files selected</span>}
                   </div>
                   {uploadStatus && <p className="text-sm text-blue-600 font-medium animate-pulse mt-1">{uploadStatus}</p>}

@@ -460,7 +460,7 @@ const VideoProjectList = React.memo(function VideoProjectList({
   );
 });
 
-// GraphicDesignCollage: Orientation-aware editorial collage that preserves natural image dimensions
+// GraphicDesignCollage: Orientation-aware editorial collage displaying individual graphics
 export type ImageOrientation = "portrait" | "square" | "landscape";
 
 export interface ImageDimension {
@@ -470,10 +470,23 @@ export interface ImageDimension {
   orientation: ImageOrientation;
 }
 
-const KNOWN_DIMENSIONS: Record<number, ImageDimension> = {
-  8: { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
-  36: { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
-  9: { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
+export interface IndividualGraphicItem {
+  id: string;
+  projectId: number;
+  title: string;
+  category: string;
+  image_url: string;
+  description?: string;
+}
+
+const KNOWN_URL_DIMENSIONS: Record<string, ImageDimension> = {
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445266/t9jdt3l4adotiyxhuy6z.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445475/jfrky0ikmqgeyagknnxd.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445295/ug0qpsrv6kvjevi8rzjx.jpg": { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445401/xpcu7zleegn3l8cd2ndd.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/d2jf5uucmzqxk7jbktft.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/hrrcivt4kizffyg78cnk.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1788553758/tdbh5mnmpctvaef4knvw.jpg": { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
 };
 
 function calculateOrientation(width: number, height: number): { ratio: number; orientation: ImageOrientation } {
@@ -486,29 +499,61 @@ function calculateOrientation(width: number, height: number): { ratio: number; o
 
 interface GraphicDesignProjectListProps {
   items: Project[];
-  onProjectClick: (project: Project) => void;
 }
 
 const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   items,
-  onProjectClick,
 }: GraphicDesignProjectListProps) {
-  const [dimensions, setDimensions] = useState<Record<number, ImageDimension>>(() => ({
-    ...KNOWN_DIMENSIONS,
+  const [dimensions, setDimensions] = useState<Record<string, ImageDimension>>(() => ({
+    ...KNOWN_URL_DIMENSIONS,
   }));
 
-  // Probe image dimensions client-side for dynamic/newly uploaded projects
-  useEffect(() => {
+  // Flatten projects and gallery images into individual graphic items
+  const individualGraphics = useMemo(() => {
+    const list: IndividualGraphicItem[] = [];
     items.forEach((p) => {
-      if (!p.image_url || dimensions[p.id]) return;
+      // 1. Main cover image
+      if (p.image_url) {
+        list.push({
+          id: `${p.id}-main`,
+          projectId: p.id,
+          title: p.title,
+          category: p.category,
+          image_url: p.image_url,
+          description: p.description,
+        });
+      }
+      // 2. All additional images are displayed as their own individual graphics
+      if (p.gallery_urls && Array.isArray(p.gallery_urls)) {
+        p.gallery_urls.forEach((url, i) => {
+          if (url && url !== p.image_url) {
+            list.push({
+              id: `${p.id}-extra-${i}`,
+              projectId: p.id,
+              title: p.title,
+              category: p.category,
+              image_url: url,
+              description: p.description,
+            });
+          }
+        });
+      }
+    });
+    return list;
+  }, [items]);
+
+  // Probe image dimensions client-side for dynamic/newly uploaded graphics
+  useEffect(() => {
+    individualGraphics.forEach((g) => {
+      if (!g.image_url || dimensions[g.image_url]) return;
       const img = new window.Image();
-      img.src = p.image_url;
+      img.src = g.image_url;
       const onDone = () => {
         if (!img.naturalWidth || !img.naturalHeight) return;
         const { ratio, orientation } = calculateOrientation(img.naturalWidth, img.naturalHeight);
         setDimensions((prev) => ({
           ...prev,
-          [p.id]: {
+          [g.image_url]: {
             width: img.naturalWidth,
             height: img.naturalHeight,
             ratio,
@@ -519,9 +564,9 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
       if (img.complete) onDone();
       else img.onload = onDone;
     });
-  }, [items, dimensions]);
+  }, [individualGraphics, dimensions]);
 
-  if (items.length === 0) {
+  if (individualGraphics.length === 0) {
     return (
       <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
         <p className="text-sm font-medium">No graphic design projects published yet.</p>
@@ -532,21 +577,14 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
     );
   }
 
-  const total = items.length;
+  const total = individualGraphics.length;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-start grid-flow-row-dense">
-      {items.map((project) => {
-        const dim = dimensions[project.id];
+      {individualGraphics.map((graphic) => {
+        const dim = dimensions[graphic.image_url];
         const orientation = dim?.orientation || "square";
         const ratio = dim?.ratio || 1.0;
-
-        const galleryCount =
-          project.gallery_urls && project.gallery_urls.length > 0
-            ? project.gallery_urls.length
-            : project.image_url
-            ? 1
-            : 0;
 
         // Auto column span based on orientation and layout context
         let colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
@@ -578,57 +616,42 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
 
         return (
           <div
-            key={project.id}
-            onClick={() => onProjectClick(project)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onProjectClick(project);
-              }
-            }}
-            role="button"
-            tabIndex={0}
+            key={graphic.id}
             style={{
               aspectRatio: `${ratio}`,
               maxHeight: "720px",
               minHeight: "260px",
             }}
-            className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full ${colSpanClass}`}
+            className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 w-full ${colSpanClass}`}
           >
             {/* Background Artwork - Uncropped & Perfectly Fitted */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
-              {project.image_url ? (
-                <Image
-                  src={project.image_url}
-                  alt={project.title}
-                  fill
-                  className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                  onLoad={(e) => {
-                    const img = e.currentTarget;
-                    if (img.naturalWidth && img.naturalHeight && !dimensions[project.id]) {
-                      const { ratio: r, orientation: o } = calculateOrientation(
-                        img.naturalWidth,
-                        img.naturalHeight
-                      );
-                      setDimensions((prev) => ({
-                        ...prev,
-                        [project.id]: {
-                          width: img.naturalWidth,
-                          height: img.naturalHeight,
-                          ratio: r,
-                          orientation: o,
-                        },
-                      }));
-                    }
-                  }}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 66vw, 100vw"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
-                  <Layers className="w-16 h-16 stroke-1" />
-                </div>
-              )}
+              <Image
+                src={graphic.image_url}
+                alt={graphic.title}
+                fill
+                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth && img.naturalHeight && !dimensions[graphic.image_url]) {
+                    const { ratio: r, orientation: o } = calculateOrientation(
+                      img.naturalWidth,
+                      img.naturalHeight
+                    );
+                    setDimensions((prev) => ({
+                      ...prev,
+                      [graphic.image_url]: {
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                        ratio: r,
+                        orientation: o,
+                      },
+                    }));
+                  }
+                }}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 66vw, 100vw"
+                unoptimized
+              />
 
               {/* Gradient Scrim for high contrast text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/45" />
@@ -637,7 +660,7 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
             {/* Top Badges */}
             <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10 flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/50 backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
-                {project.category}
+                {graphic.category}
               </span>
             </div>
 
@@ -646,21 +669,6 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
               <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-black/45 backdrop-blur-md text-white/75 border border-white/10 shadow-sm">
                 {orientation}
               </span>
-
-              {/* Gallery Slide Count */}
-              {galleryCount > 1 && (
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide bg-black/60 backdrop-blur-md text-white border border-white/15 shadow-sm">
-                  <Layers size={13} className="text-white/80" />
-                  <span>{galleryCount} slides</span>
-                </div>
-              )}
-            </div>
-
-            {/* Hover Center Indicator */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
-              <div className="w-12 h-12 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                <ArrowUpRight size={20} />
-              </div>
             </div>
 
             {/* Bottom Text Overlay */}
@@ -668,20 +676,13 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
               <h3
                 className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
               >
-                {project.title}
+                {graphic.title}
               </h3>
-              {project.description && (
+              {graphic.description && (
                 <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
-                  {project.description}
+                  {graphic.description}
                 </p>
               )}
-              <div className="flex items-center text-xs font-medium text-white/90 gap-1 mt-1 transition-colors group-hover:text-white">
-                <span>View in Lightbox</span>
-                <ArrowUpRight
-                  size={14}
-                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                />
-              </div>
             </div>
           </div>
         );
@@ -860,7 +861,6 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             </div>
             <GraphicDesignProjectList
               items={graphicDesignProjects}
-              onProjectClick={handleProjectClick}
             />
           </div>
 

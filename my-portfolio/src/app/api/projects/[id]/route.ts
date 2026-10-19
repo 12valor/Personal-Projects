@@ -138,9 +138,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
-  if (serialized.slug) {
-    revalidatePath(`/hardware/${serialized.slug}`);
-  }
 
   return NextResponse.json({ success: true });
 }

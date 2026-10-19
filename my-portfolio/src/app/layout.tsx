@@ -55,6 +55,16 @@ export const metadata: Metadata = {
       "Full-stack products, interface experiments, video editing, and practical systems.",
     images: ["/api/og"],
   },
+  icons: {
+    icon: [
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
 };
 
 const jsonLd = {

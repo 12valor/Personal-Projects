@@ -18,6 +18,8 @@ import {
   CheckCircle2,
   FileText,
   Loader2,
+  ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 import type {
   HardwareCaseStudyData,
@@ -52,6 +54,38 @@ const STATUS_OPTIONS = [
   "Field Tested",
   "In Development",
   "Concept / Design",
+];
+
+export const LAYOUT_PRESETS: {
+  id: "feature" | "landscape" | "portrait" | "compact";
+  title: string;
+  span: string;
+  description: string;
+}[] = [
+  {
+    id: "feature",
+    title: "Feature",
+    span: "8 Cols / Hero",
+    description: "Dominant hero presentation. Large footprint for complex builds with deep schematics.",
+  },
+  {
+    id: "portrait",
+    title: "Portrait",
+    span: "4 Cols / Tall",
+    description: "Vertical orientation. Perfect for tower enclosures, tall PCBs, or handheld units.",
+  },
+  {
+    id: "landscape",
+    title: "Landscape",
+    span: "8 Cols / Wide",
+    description: "Cinematic horizontal layout. Ideal for desktop instruments and wide breadboards.",
+  },
+  {
+    id: "compact",
+    title: "Compact",
+    span: "4 Cols / Standard",
+    description: "Balanced supporting card. Clean, modular footprint for focused micro-modules.",
+  },
 ];
 
 interface GalleryItem {
@@ -356,6 +390,7 @@ export default function HardwareManager({
       // Construct structured case study object
       const caseStudyPayload: HardwareCaseStudyData = {
         status,
+        layout_preset: layoutPreset,
         duration: duration.trim() || undefined,
         problem_statement: problemStatement.trim() || undefined,
         objectives: objectives.map((o) => o.trim()).filter(Boolean),
@@ -514,6 +549,7 @@ export default function HardwareManager({
                   <tr>
                     <th className="px-4 py-3">Project</th>
                     <th className="px-4 py-3">Category &amp; Status</th>
+                    <th className="px-4 py-3 text-center">Collage Preset</th>
                     <th className="px-4 py-3 text-center">Order</th>
                     <th className="px-4 py-3 text-center">Publication</th>
                     <th className="px-4 py-3 text-right">Actions</th>
@@ -523,6 +559,7 @@ export default function HardwareManager({
                   {hardwareProjects.map((proj) => {
                     const isPub = proj.is_published !== false;
                     const cs = proj.case_study;
+                    const currentPreset = cs?.layout_preset || "compact";
 
                     return (
                       <tr key={proj.id} className="hover:bg-gray-50/80 transition-colors">
@@ -561,6 +598,27 @@ export default function HardwareManager({
                               {cs?.status || "Prototype"}
                             </span>
                           </div>
+                        </td>
+
+                        {/* Collage Preset Badge */}
+                        <td className="px-4 py-3.5 text-center">
+                          {(() => {
+                            const badgeStyles: Record<string, string> = {
+                              feature: "bg-blue-50 text-blue-700 border-blue-200",
+                              portrait: "bg-purple-50 text-purple-700 border-purple-200",
+                              landscape: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                              compact: "bg-gray-100 text-gray-700 border-gray-200",
+                            };
+                            return (
+                              <span
+                                className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-mono font-semibold uppercase border ${
+                                  badgeStyles[currentPreset] || badgeStyles.compact
+                                }`}
+                              >
+                                {currentPreset}
+                              </span>
+                            );
+                          })()}
                         </td>
 
                         {/* Display Index */}
@@ -751,6 +809,60 @@ export default function HardwareManager({
               </div>
             </div>
 
+            {/* Collage Layout Preset Selector */}
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-gray-700" />
+                  <span>Collage Layout Preset *</span>
+                </label>
+                <span className="text-[11px] text-gray-500 font-mono">
+                  Controls item size &amp; editorial emphasis in the 12-col homepage collage
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {LAYOUT_PRESETS.map((preset) => {
+                  const isSelected = layoutPreset === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setLayoutPreset(preset.id)}
+                      className={`relative flex flex-col items-start p-4 rounded-xl border text-left transition-all ${
+                        isSelected
+                          ? "border-black bg-gray-950 text-white shadow-md ring-2 ring-black"
+                          : "border-gray-200 bg-gray-50/50 text-gray-800 hover:border-gray-400 hover:bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1.5">
+                        <span className="font-bold text-sm tracking-tight">{preset.title}</span>
+                        <span
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded ${
+                            isSelected
+                              ? "bg-white/20 text-white"
+                              : "bg-gray-200 text-gray-700"
+                          }`}
+                        >
+                          {preset.span}
+                        </span>
+                      </div>
+                      <p
+                        className={`text-xs leading-relaxed ${
+                          isSelected ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {preset.description}
+                      </p>
+                      {isSelected && (
+                        <div className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-emerald-400" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
                 Short Summary (For Grid Previews &amp; SEO)
@@ -853,6 +965,140 @@ export default function HardwareManager({
                   className="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
                 />
               </div>
+            </div>
+
+            {/* Live Collage Card Preview */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4 sm:p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-gray-700" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-900">
+                    Live Collage Card Preview
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono text-gray-500">
+                    Preset: <strong className="uppercase text-gray-800">{layoutPreset}</strong> (
+                    {layoutPreset === "feature" || layoutPreset === "landscape"
+                      ? "8-col desktop span"
+                      : "4-col desktop span"}
+                    )
+                  </span>
+                </div>
+              </div>
+
+              {/* Preview Canvas */}
+              <div className="flex justify-center p-2 sm:p-4 bg-gray-900/5 rounded-xl border border-dashed border-gray-300">
+                <div
+                  className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-gray-950 shadow-2xl transition-all w-full ${
+                    layoutPreset === "feature"
+                      ? "max-w-2xl min-h-[380px] sm:min-h-[440px]"
+                      : layoutPreset === "landscape"
+                      ? "max-w-2xl min-h-[280px] sm:min-h-[320px]"
+                      : layoutPreset === "portrait"
+                      ? "max-w-sm min-h-[460px]"
+                      : "max-w-md min-h-[320px]"
+                  }`}
+                >
+                  {/* Media Background */}
+                  <div className="absolute inset-0 w-full h-full">
+                    {previewVideoUrl ? (
+                      <video
+                        src={previewVideoUrl}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover object-center"
+                      />
+                    ) : imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt="Preview Card"
+                        fill
+                        className="object-cover object-center"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black text-gray-600 gap-2 p-6 text-center">
+                        <Cpu className="w-12 h-12 stroke-[1.25] text-gray-500" />
+                        <span className="text-xs font-mono text-gray-400">
+                          Upload cover photography above to preview real textures
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Contrast Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/20 z-10 pointer-events-none" />
+
+                  {/* Top Meta Bar */}
+                  <div className="relative z-20 flex items-center justify-between gap-2 p-4 sm:p-5 w-full">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-black/70 backdrop-blur-md px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-white/90 border border-white/10">
+                        {category}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-black/70 backdrop-blur-md px-2.5 py-0.5 font-mono text-[10px] text-white/80 border border-white/10">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>{status}</span>
+                      </span>
+                    </div>
+
+                    <span className="rounded bg-white/10 backdrop-blur-md px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/70 border border-white/10">
+                      {layoutPreset}
+                    </span>
+                  </div>
+
+                  {/* Bottom Content Overlay */}
+                  <div className="relative z-20 flex flex-col gap-3 p-4 sm:p-6 w-full">
+                    <div className="space-y-1">
+                      <h4 className="text-lg sm:text-xl font-bold tracking-tight text-white drop-shadow-sm">
+                        {title || "Untitled Hardware Project"}
+                      </h4>
+                      <p className="text-xs text-gray-200/90 line-clamp-2 leading-relaxed">
+                        {description ||
+                          "High-level engineering summary of the hardware build, circuits, and prototype results..."}
+                      </p>
+                    </div>
+
+                    {/* Component Chips Preview */}
+                    {hardwareComponents.filter((c) => c.name.trim()).length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {hardwareComponents
+                          .filter((c) => c.name.trim())
+                          .slice(0, 3)
+                          .map((c, i) => (
+                            <span
+                              key={i}
+                              className="rounded bg-white/10 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono text-white/80 border border-white/10"
+                            >
+                              {c.name}
+                            </span>
+                          ))}
+                        {hardwareComponents.filter((c) => c.name.trim()).length > 3 && (
+                          <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-white/60">
+                            +{hardwareComponents.filter((c) => c.name.trim()).length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* View Action Preview */}
+                    <div className="pt-2 flex items-center justify-between border-t border-white/10">
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-white/90">
+                        <span>View case study</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-white/70" />
+                      </span>
+                      <span className="text-[10px] font-mono text-white/50">
+                        /hardware/{slug || "slug"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-[11px] text-gray-500 italic text-center">
+                This preview renders using the exact CSS gradient overlay, micro-chips, and typography applied in the public homepage collage.
+              </p>
             </div>
           </div>
 

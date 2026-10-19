@@ -1,5 +1,61 @@
 import { createClient } from "@supabase/supabase-js";
 
+export interface HardwareComponent {
+  name: string;
+  role?: string;
+  spec?: string;
+  count?: number;
+  link?: string;
+}
+
+export interface ImplementationStep {
+  step_number?: number;
+  title: string;
+  description: string;
+  image_url?: string;
+  caption?: string;
+}
+
+export interface ChallengeSolution {
+  challenge: string;
+  solution: string;
+}
+
+export interface TestingResult {
+  test: string;
+  result: string;
+  verified?: boolean;
+}
+
+export interface GalleryMediaItem {
+  url: string;
+  caption?: string;
+  media_type?: "image" | "video";
+}
+
+export interface HardwareCaseStudyData {
+  status?: string; // e.g. "Working Prototype", "Completed", "Field Tested", "In Development"
+  duration?: string;
+  problem_statement?: string;
+  objectives?: string[];
+  system_design?: {
+    architecture?: string;
+    operating_principle?: string;
+    block_diagram_url?: string;
+    schematic_url?: string;
+  };
+  hardware_components?: HardwareComponent[];
+  software_tools?: string[];
+  implementation_steps?: ImplementationStep[];
+  challenges_solutions?: ChallengeSolution[];
+  testing_results?: TestingResult[];
+  gallery_media?: GalleryMediaItem[];
+  reflection_and_improvements?: string;
+  seo_title?: string;
+  seo_description?: string;
+  related_project_ids?: number[];
+}
+
 export type PortfolioProjectRow = {
   id: number;
   title: string;
@@ -13,6 +69,9 @@ export type PortfolioProjectRow = {
   is_featured: boolean;
   project_url: string | null;
   display_index: number;
+  slug?: string | null;
+  is_published?: boolean;
+  case_study?: HardwareCaseStudyData | null;
   created_at: string | Date | null;
   updated_at: string | Date | null;
 };

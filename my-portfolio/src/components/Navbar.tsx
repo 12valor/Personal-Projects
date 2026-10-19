@@ -23,6 +23,7 @@ const navLinks = [
   { name: "Services", href: "#services" },
   { name: "Projects", href: "#work" },
   { name: "Graphics", href: "#graphic-designs" },
+  { name: "Hardware", href: "#hardware" },
   { name: "Contact", href: "#contact" },
 ];
 

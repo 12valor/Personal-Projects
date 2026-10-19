@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { MessageSquare, Trash2, Mail, Lock, LogOut, Layers } from "lucide-react";
+import { MessageSquare, Trash2, Mail, Lock, LogOut, Layers, Cpu } from "lucide-react";
 import { verifyAdminPassword, checkAuth, logout } from "../actions"; 
+import HardwareManager from "./HardwareManager";
 
 // --- CONFIGURATION (No API Key needed) ---
 const CLOUDINARY_CLOUD_NAME = "ddjrj0ymx";
@@ -22,6 +23,9 @@ interface Project {
   is_featured: boolean;
   project_url?: string;
   display_index: number;
+  slug?: string;
+  is_published?: boolean;
+  case_study?: any;
 }
 
 interface Inquiry {
@@ -105,7 +109,7 @@ export default function AdminPanel() {
   // --- 2. FETCH DATA ---
   useEffect(() => {
     if (isAuthenticated) {
-      if (activeTab === "list" || activeTab === "graphic-designs") fetchProjects();
+      if (activeTab === "list" || activeTab === "graphic-designs" || activeTab === "hardware") fetchProjects();
       else if (activeTab === "inquiries") fetchInquiries();
       else if (activeTab === "tech-stack") fetchTechStack();
       else if (activeTab === "clients") fetchClients();
@@ -126,7 +130,7 @@ export default function AdminPanel() {
   };
 
   const fetchProjects = async () => {
-    const response = await fetch("/api/projects");
+    const response = await fetch("/api/projects?drafts=true");
     if (!response.ok) throw new Error("Failed to fetch projects");
     const data = await response.json();
     setProjects(data);
@@ -590,6 +594,7 @@ export default function AdminPanel() {
         <div className="flex border-b border-gray-200 mb-8 overflow-x-auto">
           <button onClick={() => { setActiveTab("add"); resetForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "add" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>{editId ? "Editing..." : "Add New"}</button>
           <button onClick={() => setActiveTab("list")} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "list" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Edit Projects</button>
+          <button onClick={() => { setActiveTab("hardware"); resetForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap flex items-center gap-1.5 ${activeTab === "hardware" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}><Cpu className="w-4 h-4" /> Hardware Projects</button>
           <button onClick={() => { setActiveTab("graphic-designs"); resetForm(); setFormData((prev) => ({ ...prev, category: "Graphic Design" })); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "graphic-designs" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Graphic Designs</button>
           <button onClick={() => { setActiveTab("tech-stack"); resetTechForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "tech-stack" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Tech Stack</button>
           <button onClick={() => { setActiveTab("clients"); resetClientForm(); }} className={`pb-3 px-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${activeTab === "clients" ? "border-black text-black" : "border-transparent text-gray-500 hover:text-black"}`}>Clients</button>
@@ -607,6 +612,14 @@ export default function AdminPanel() {
                     <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full border border-gray-300 rounded px-4 py-3 text-sm bg-white focus:outline-none focus:border-black">
                       <optgroup label="Web Design"><option value="Website">Website</option><option value="Components">Components</option></optgroup>
                       <optgroup label="Systems"><option value="Systems">Systems</option></optgroup>
+                      <optgroup label="Hardware">
+                        <option value="Embedded Systems">Embedded Systems</option>
+                        <option value="IoT">IoT</option>
+                        <option value="Arduino">Arduino</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Robotics">Robotics</option>
+                        <option value="Hardware">Hardware</option>
+                      </optgroup>
                       <optgroup label="Graphic Design">
                         <option value="Graphic Design">Graphic Design (General)</option>
                         <option value="Posters/Pubmats">Posters/Pubmats</option>
@@ -937,6 +950,16 @@ export default function AdminPanel() {
             </div>
           );
         })()}
+
+        {/* --- HARDWARE PROJECTS DEDICATED VIEW --- */}
+        {activeTab === "hardware" && (
+          <HardwareManager
+            projects={projects as any}
+            onRefreshProjects={fetchProjects}
+            uploadFilesClientSide={uploadFilesClientSide}
+            uploadVideoClientSide={uploadVideoClientSide}
+          />
+        )}
 
         {/* --- GRAPHIC DESIGNS DEDICATED VIEW --- */}
         {activeTab === "graphic-designs" && (

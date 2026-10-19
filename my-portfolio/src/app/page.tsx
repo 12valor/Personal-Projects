@@ -6,6 +6,8 @@ import Contact from "../components/Contact";
 import TechStack from "../components/TechStack";
 import GithubActivity from "../components/GithubActivity";
 import Clients from "../components/Clients";
+import HardwareProjects from "../components/HardwareProjects";
+import Footer from "../components/Footer";
 import { serializeProject } from "../lib/project-mappers";
 import {
   getSupabaseServerClient,
@@ -72,6 +74,8 @@ export default async function Home() {
     );
   }
 
+  const serializedProjects = projects.map(serializeProject);
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Hero />
@@ -79,9 +83,11 @@ export default async function Home() {
       <TechStack items={techStack} />
       <About />
       <Services />
-      <WorkGrid initialProjects={projects.map(serializeProject)} />
+      <WorkGrid initialProjects={serializedProjects} />
       <Clients items={clients} />
       <Contact />
+      <HardwareProjects projects={serializedProjects} />
+      <Footer />
     </main>
   );
 }

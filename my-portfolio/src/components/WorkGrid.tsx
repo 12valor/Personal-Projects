@@ -460,96 +460,28 @@ const VideoProjectList = React.memo(function VideoProjectList({
   );
 });
 
-// GraphicDesignCollage: editorial asymmetric collage with rhythmic row layout
-interface GraphicDesignCollageRow {
-  rowType: "pair" | "triplet" | "hero";
-  pairVariant?: "wide-first" | "wide-second";
-  heightClass: string;
-  items: Project[];
+// GraphicDesignCollage: Orientation-aware editorial collage that preserves natural image dimensions
+export type ImageOrientation = "portrait" | "square" | "landscape";
+
+export interface ImageDimension {
+  width: number;
+  height: number;
+  ratio: number;
+  orientation: ImageOrientation;
 }
 
-function partitionGraphicDesignRows(items: Project[]): GraphicDesignCollageRow[] {
-  const n = items.length;
-  if (n === 0) return [];
+const KNOWN_DIMENSIONS: Record<number, ImageDimension> = {
+  8: { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
+  36: { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
+  9: { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
+};
 
-  // When n = 3: A wide pair (7/5) + a hero (12) gives a rich asymmetric collage
-  if (n === 3) {
-    return [
-      {
-        rowType: "pair",
-        pairVariant: "wide-first",
-        heightClass: "h-[360px] sm:h-[420px] lg:h-[480px]",
-        items: items.slice(0, 2),
-      },
-      {
-        rowType: "hero",
-        heightClass: "h-[360px] sm:h-[420px] lg:h-[480px]",
-        items: items.slice(2, 3),
-      },
-    ];
-  }
-
-  // General rhythmic editorial cycle:
-  // Pair (7/5), Triad (4/4/4), Pair (5/7), Hero (12), Triad (4/4/4)
-  const targetCycle: Array<"pair" | "triplet" | "hero"> = [
-    "pair",
-    "triplet",
-    "pair",
-    "hero",
-    "triplet",
-  ];
-
-  const rows: GraphicDesignCollageRow[] = [];
-  let i = 0;
-  let cycleIdx = 0;
-  let pairCount = 0;
-
-  while (i < n) {
-    const remaining = n - i;
-    const preferredType = targetCycle[cycleIdx % targetCycle.length];
-    let chosenType: "pair" | "triplet" | "hero" = preferredType;
-
-    if (remaining === 1) {
-      chosenType = "hero";
-    } else if (remaining === 2) {
-      chosenType = "pair";
-    } else if (remaining === 3) {
-      chosenType = "triplet";
-    } else if (remaining === 4) {
-      chosenType = preferredType === "hero" ? "hero" : "pair";
-    } else if (remaining === 5) {
-      chosenType = preferredType === "triplet" ? "triplet" : "pair";
-    }
-
-    let take = 1;
-    let heightClass = "h-[380px] sm:h-[440px] lg:h-[500px]";
-    let pairVariant: "wide-first" | "wide-second" | undefined;
-
-    if (chosenType === "pair") {
-      take = 2;
-      heightClass = "h-[360px] sm:h-[420px] lg:h-[480px]";
-      pairVariant = pairCount % 2 === 0 ? "wide-first" : "wide-second";
-      pairCount++;
-    } else if (chosenType === "triplet") {
-      take = 3;
-      heightClass = "h-[320px] sm:h-[380px] lg:h-[430px]";
-    } else {
-      take = 1;
-      heightClass = "h-[380px] sm:h-[440px] lg:h-[500px]";
-    }
-
-    const chunk = items.slice(i, i + take);
-    rows.push({
-      rowType: chosenType,
-      pairVariant,
-      heightClass,
-      items: chunk,
-    });
-    i += take;
-    cycleIdx++;
-  }
-
-  return rows;
+function calculateOrientation(width: number, height: number): { ratio: number; orientation: ImageOrientation } {
+  const ratio = width / height;
+  let orientation: ImageOrientation = "square";
+  if (ratio < 0.88) orientation = "portrait";
+  else if (ratio > 1.18) orientation = "landscape";
+  return { ratio, orientation };
 }
 
 interface GraphicDesignProjectListProps {
@@ -561,7 +493,33 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   items,
   onProjectClick,
 }: GraphicDesignProjectListProps) {
-  const rows = useMemo(() => partitionGraphicDesignRows(items), [items]);
+  const [dimensions, setDimensions] = useState<Record<number, ImageDimension>>(() => ({
+    ...KNOWN_DIMENSIONS,
+  }));
+
+  // Probe image dimensions client-side for dynamic/newly uploaded projects
+  useEffect(() => {
+    items.forEach((p) => {
+      if (!p.image_url || dimensions[p.id]) return;
+      const img = new window.Image();
+      img.src = p.image_url;
+      const onDone = () => {
+        if (!img.naturalWidth || !img.naturalHeight) return;
+        const { ratio, orientation } = calculateOrientation(img.naturalWidth, img.naturalHeight);
+        setDimensions((prev) => ({
+          ...prev,
+          [p.id]: {
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+            ratio,
+            orientation,
+          },
+        }));
+      };
+      if (img.complete) onDone();
+      else img.onload = onDone;
+    });
+  }, [items, dimensions]);
 
   if (items.length === 0) {
     return (
@@ -574,129 +532,160 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
     );
   }
 
+  const total = items.length;
+
   return (
-    <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
-      {rows.map((row, rowIdx) => (
-        <div
-          key={`graphic-row-${rowIdx}`}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-stretch"
-        >
-          {row.items.map((project, itemIdx) => {
-            const galleryCount =
-              project.gallery_urls && project.gallery_urls.length > 0
-                ? project.gallery_urls.length
-                : project.image_url
-                ? 1
-                : 0;
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-start grid-flow-row-dense">
+      {items.map((project) => {
+        const dim = dimensions[project.id];
+        const orientation = dim?.orientation || "square";
+        const ratio = dim?.ratio || 1.0;
 
-            let colSpanClass = "";
-            let titleSizeClass = "";
+        const galleryCount =
+          project.gallery_urls && project.gallery_urls.length > 0
+            ? project.gallery_urls.length
+            : project.image_url
+            ? 1
+            : 0;
 
-            if (row.rowType === "hero") {
-              colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
-              titleSizeClass = "text-2xl sm:text-3xl lg:text-4xl max-w-2xl";
-            } else if (row.rowType === "pair") {
-              const isWideFirst = row.pairVariant === "wide-first";
-              const isFirst = itemIdx === 0;
-              const isWide = isWideFirst ? isFirst : !isFirst;
+        // Auto column span based on orientation and layout context
+        let colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+        let titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
 
-              colSpanClass = isWide
-                ? "col-span-1 sm:col-span-1 lg:col-span-7"
-                : "col-span-1 sm:col-span-1 lg:col-span-5";
+        if (orientation === "landscape") {
+          if (ratio >= 2.0) {
+            // Ultra-wide banner: full width
+            colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
+            titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-2xl";
+          } else {
+            // Standard landscape: spans 8 columns on desktop
+            colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-8";
+            titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-xl";
+          }
+        } else if (orientation === "portrait") {
+          // Portrait (vertical poster/pubmat): spans 4 columns on desktop
+          colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+          titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+        } else {
+          // Square:
+          if (total === 2) {
+            colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-6";
+          } else {
+            colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+          }
+          titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+        }
 
-              titleSizeClass = isWide
-                ? "text-xl sm:text-2xl lg:text-3xl max-w-xl"
-                : "text-lg sm:text-xl lg:text-2xl max-w-md";
-            } else {
-              // Triplet
-              colSpanClass =
-                itemIdx === 2
-                  ? "col-span-1 sm:col-span-2 lg:col-span-4"
-                  : "col-span-1 sm:col-span-1 lg:col-span-4";
-              titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-            }
-
-            return (
-              <div
-                key={project.id}
-                onClick={() => onProjectClick(project)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onProjectClick(project);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${colSpanClass} ${row.heightClass}`}
-              >
-                {/* Background Artwork */}
-                <div className="absolute inset-0 w-full h-full overflow-hidden">
-                  {project.image_url ? (
-                    <Image
-                      src={project.image_url}
-                      alt={project.title}
-                      fill
-                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transform-none"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 58vw, 100vw"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
-                      <Layers className="w-16 h-16 stroke-1" />
-                    </div>
-                  )}
-
-                  {/* Gradient Scrim for high contrast text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/95 group-hover:via-black/45" />
+        return (
+          <div
+            key={project.id}
+            onClick={() => onProjectClick(project)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onProjectClick(project);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            style={{
+              aspectRatio: `${ratio}`,
+              maxHeight: "720px",
+              minHeight: "260px",
+            }}
+            className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full ${colSpanClass}`}
+          >
+            {/* Background Artwork - Uncropped & Perfectly Fitted */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+              {project.image_url ? (
+                <Image
+                  src={project.image_url}
+                  alt={project.title}
+                  fill
+                  className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (img.naturalWidth && img.naturalHeight && !dimensions[project.id]) {
+                      const { ratio: r, orientation: o } = calculateOrientation(
+                        img.naturalWidth,
+                        img.naturalHeight
+                      );
+                      setDimensions((prev) => ({
+                        ...prev,
+                        [project.id]: {
+                          width: img.naturalWidth,
+                          height: img.naturalHeight,
+                          ratio: r,
+                          orientation: o,
+                        },
+                      }));
+                    }
+                  }}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 66vw, 100vw"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
+                  <Layers className="w-16 h-16 stroke-1" />
                 </div>
+              )}
 
-                {/* Top Badges */}
-                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/50 backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
-                    {project.category}
-                  </span>
-                </div>
+              {/* Gradient Scrim for high contrast text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/45" />
+            </div>
 
-                <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide bg-black/60 backdrop-blur-md text-white border border-white/15 shadow-sm">
-                    <Layers size={13} className="text-white/80" />
-                    <span>{galleryCount > 1 ? `${galleryCount} slides` : "Gallery"}</span>
-                  </div>
-                </div>
+            {/* Top Badges */}
+            <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10 flex items-center gap-2">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/50 backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
+                {project.category}
+              </span>
+            </div>
 
-                {/* Hover Center Indicator */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
-                  <div className="w-12 h-12 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                    <ArrowUpRight size={20} />
-                  </div>
-                </div>
+            <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10 flex items-center gap-1.5">
+              {/* Orientation Tag */}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-black/45 backdrop-blur-md text-white/75 border border-white/10 shadow-sm">
+                {orientation}
+              </span>
 
-                {/* Bottom Text Overlay */}
-                <div className="relative z-10 p-5 sm:p-6 lg:p-8 flex flex-col gap-1.5">
-                  <h3
-                    className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
-                  >
-                    {project.title}
-                  </h3>
-                  {project.description && (
-                    <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
-                      {project.description}
-                    </p>
-                  )}
-                  <div className="flex items-center text-xs font-medium text-white/90 gap-1 mt-1 transition-colors group-hover:text-white">
-                    <span>View in Lightbox</span>
-                    <ArrowUpRight
-                      size={14}
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    />
-                  </div>
+              {/* Gallery Slide Count */}
+              {galleryCount > 1 && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide bg-black/60 backdrop-blur-md text-white border border-white/15 shadow-sm">
+                  <Layers size={13} className="text-white/80" />
+                  <span>{galleryCount} slides</span>
                 </div>
+              )}
+            </div>
+
+            {/* Hover Center Indicator */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+              <div className="w-12 h-12 rounded-full bg-white/95 dark:bg-card/95 backdrop-blur-md flex items-center justify-center text-foreground shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                <ArrowUpRight size={20} />
               </div>
-            );
-          })}
-        </div>
-      ))}
+            </div>
+
+            {/* Bottom Text Overlay */}
+            <div className="relative z-10 p-5 sm:p-6 lg:p-7 flex flex-col gap-1.5">
+              <h3
+                className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
+              >
+                {project.title}
+              </h3>
+              {project.description && (
+                <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
+                  {project.description}
+                </p>
+              )}
+              <div className="flex items-center text-xs font-medium text-white/90 gap-1 mt-1 transition-colors group-hover:text-white">
+                <span>View in Lightbox</span>
+                <ArrowUpRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 });

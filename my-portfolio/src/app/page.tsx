@@ -7,7 +7,7 @@ import TechStack from "../components/TechStack";
 import GithubActivity from "../components/GithubActivity";
 import Clients from "../components/Clients";
 import HardwareProjects from "../components/HardwareProjects";
-import { serializeProject } from "../lib/project-mappers";
+import { resolveGraphicDimensions, serializeProject } from "../lib/project-mappers";
 import {
   getSupabaseServerClient,
   type PortfolioClientRow,
@@ -74,6 +74,7 @@ export default async function Home() {
   }
 
   const serializedProjects = projects.map(serializeProject);
+  const initialGraphicDimensions = await resolveGraphicDimensions(serializedProjects);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -82,7 +83,10 @@ export default async function Home() {
       <TechStack items={techStack} />
       <About />
       <Services />
-      <WorkGrid initialProjects={serializedProjects} />
+      <WorkGrid
+        initialProjects={serializedProjects}
+        initialGraphicDimensions={initialGraphicDimensions}
+      />
       <HardwareProjects projects={serializedProjects} />
       <Clients items={clients} />
       <Contact />

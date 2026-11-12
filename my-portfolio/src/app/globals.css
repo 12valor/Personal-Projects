@@ -116,8 +116,6 @@ body {
   .website-project-preview,
   .video-project-preview,
   .graphic-project-preview {
-    backface-visibility: hidden;
-    transform: translateZ(0);
     transition: filter 450ms ease;
   }
 
@@ -166,6 +164,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .website-project-preview,
+  .video-project-preview,
+  .graphic-project-preview {
+    transition: none;
+  }
   .marquee-container {
     animation: none !important;
   }
@@ -197,16 +200,19 @@ body {
   }
 }
 
-/* Tactile Micro-Grain Film Overlay (anti-slop physical texture for dark mode) */
-.dark body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.026;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+/* Tactile Micro-Grain Film Overlay (composited 200px tile on desktop; skipped on small touchscreens for 60fps scroll) */
+@media (min-width: 768px) {
+  .dark body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.026;
+    transform: translateZ(0);
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
 }
 

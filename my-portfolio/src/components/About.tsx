@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 import Image from "next/image";
 import { POP_EASING, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
@@ -33,15 +33,18 @@ const timelineData = [
 export default function About() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
   useEffect(() => {
+    if (hoveredIndex === null) return;
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX + 24);
+      mouseY.set(e.clientY + 24);
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [hoveredIndex, mouseX, mouseY]);
 
   const toggleAccordion = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -73,7 +76,11 @@ export default function About() {
             <ScrollStaggerItem
               key={item.year}
               className="group flex cursor-pointer flex-col border-b border-border transition-colors hover:bg-muted/20"
-              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseEnter={(e) => {
+                mouseX.set(e.clientX + 24);
+                mouseY.set(e.clientY + 24);
+                setHoveredIndex(index);
+              }}
               onMouseLeave={() => setHoveredIndex(null)}
               onClick={() => toggleAccordion(index)}
             >
@@ -129,12 +136,10 @@ export default function About() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="pointer-events-none fixed z-50 hidden overflow-hidden rounded-lg border border-border shadow-2xl sm:block"
+            className="pointer-events-none fixed left-0 top-0 z-50 hidden overflow-hidden rounded-lg border border-border shadow-2xl sm:block"
             style={{
-              left: mousePos.x,
-              top: mousePos.y,
-              x: 24,
-              y: 24,
+              x: mouseX,
+              y: mouseY,
               width: "320px",
               height: "200px",
             }}

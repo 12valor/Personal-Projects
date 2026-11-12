@@ -47,7 +47,7 @@ const useSyncScramble = (text: string, refs: React.RefObject<HTMLSpanElement | n
 };
 
 export default function Hero() {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLElement>(null);
 
   // --- TEXT CYCLING LOGIC ---
   const [index, setIndex] = useState(0);
@@ -57,6 +57,7 @@ export default function Hero() {
   ];
 
   const [animReady, setAnimReady] = useState(false);
+  const [isInView, setIsInView] = useState(true);
 
   useEffect(() => {
     // Small delay to let the component mount before starting animations
@@ -65,12 +66,23 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    if (!animReady) return;
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!animReady || !isInView) return;
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % phrases.length);
-    }, 4500); 
+    }, 4500);
     return () => clearInterval(interval);
-  }, [animReady, phrases.length]);
+  }, [animReady, isInView, phrases.length]);
 
   const topText = phrases[index][0];
   const bottomText = phrases[index][1];
@@ -80,9 +92,9 @@ export default function Hero() {
   const bottomSolidRef = useRef<HTMLSpanElement>(null);
   const bottomHollowRef = useRef<HTMLSpanElement>(null);
 
-  // Unified scramble animations
-  useSyncScramble(topText, [topSolidRef], animReady);
-  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef], animReady);
+  // Unified scramble animations (paused automatically when Hero is off-screen)
+  useSyncScramble(topText, [topSolidRef], animReady && isInView);
+  useSyncScramble(bottomText, [bottomSolidRef, bottomHollowRef], animReady && isInView);
 
   // --- PARALLAX & ANIMATION ---
   const { scrollYProgress } = useScroll({

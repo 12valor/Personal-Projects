@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Layers } from "lucide-react";
 import Image from "next/image";
+import { isOptimizableImageSrc, optimizeCloudinaryUrl } from "../lib/project-mappers";
 
 interface GalleryModalProps {
   isOpen: boolean;
@@ -42,14 +43,13 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
   }, [onClose, nextSlide, prevSlide]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      // Prevent scrolling on body when modal is open
-      document.body.style.overflow = "hidden";
-    }
+    if (!isOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = prevOverflow;
     };
   }, [isOpen, handleKeyDown]);
 
@@ -109,12 +109,13 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
               className="relative w-full h-full max-w-7xl max-h-[80vh] flex items-center justify-center"
             >
               <Image
-                src={safeImages[currentIndex]}
+                src={optimizeCloudinaryUrl(safeImages[currentIndex], 1600)}
                 alt={`${title} - image ${currentIndex + 1}`}
                 fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
                 className="object-contain shadow-2xl drop-shadow-2xl"
                 priority
-                unoptimized
+                unoptimized={!isOptimizableImageSrc(safeImages[currentIndex])}
               />
             </motion.div>
 
@@ -143,7 +144,14 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
                         : "opacity-40 hover:opacity-80 hover:scale-105"
                     }`}
                 >
-                    <Image src={img} alt="thumbnail" fill className="object-cover" unoptimized />
+                    <Image
+                      src={optimizeCloudinaryUrl(img, 200)}
+                      alt="thumbnail"
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                      unoptimized={!isOptimizableImageSrc(img)}
+                    />
                 </button>
                 ))}
             </div>

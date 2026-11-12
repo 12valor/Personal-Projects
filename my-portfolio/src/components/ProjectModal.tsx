@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { X, ExternalLink, ArrowUpRight } from "lucide-react";
-import type { SerializedProject } from "../lib/project-mappers";
+import {
+  isOptimizableImageSrc,
+  optimizeCloudinaryUrl,
+  type SerializedProject,
+} from "../lib/project-mappers";
 import { Button } from "./ui/button";
 
 interface ProjectModalProps {
@@ -98,11 +102,12 @@ export default function ProjectModal({ project }: ProjectModalProps) {
             />
           ) : project.image_url ? (
             <Image
-              src={project.image_url}
+              src={optimizeCloudinaryUrl(project.image_url, 1400)}
               alt={project.title}
               fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
               className="object-cover object-top"
-              unoptimized
+              unoptimized={!isOptimizableImageSrc(project.image_url)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs uppercase tracking-widest">
@@ -176,11 +181,14 @@ export default function ProjectModal({ project }: ProjectModalProps) {
                     className="relative w-full aspect-[16/10] overflow-hidden rounded-xl md:rounded-2xl bg-muted border border-border/50"
                   >
                     <Image
-                      src={url}
+                      src={optimizeCloudinaryUrl(url, 1200)}
                       alt={`${project.title} screenshot ${index + 1}`}
                       fill
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 1024px) 100vw, 960px"
                       className="object-cover object-top"
-                      unoptimized
+                      unoptimized={!isOptimizableImageSrc(url)}
                     />
                   </div>
                 ))}

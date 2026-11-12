@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Cpu, Layers } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
-import type { SerializedProject } from "../lib/project-mappers";
+import {
+  isOptimizableImageSrc,
+  optimizeCloudinaryUrl,
+  type SerializedProject,
+} from "../lib/project-mappers";
 
 interface HardwareProjectsProps {
   projects: SerializedProject[];
@@ -105,6 +109,76 @@ function partitionIntoEditorialRows(items: SerializedProject[]): CollageRowConfi
   return rows;
 }
 
+function HardwareVideoPreview({
+  videoUrl,
+  posterUrl,
+  title,
+  sizes,
+  maxWidth,
+}: {
+  videoUrl: string;
+  posterUrl: string;
+  title: string;
+  sizes: string;
+  maxWidth: number;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          videoRef.current?.play().catch(() => {});
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { rootMargin: "150px 0px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const optimizedPoster = posterUrl ? optimizeCloudinaryUrl(posterUrl, maxWidth) : "";
+
+  return (
+    <div ref={containerRef} className="relative w-full h-full">
+      {optimizedPoster && (
+        <Image
+          src={optimizedPoster}
+          alt={title}
+          fill
+          loading="lazy"
+          decoding="async"
+          sizes={sizes}
+          unoptimized={!isOptimizableImageSrc(optimizedPoster)}
+          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+        />
+      )}
+      {shouldLoad && (
+        <video
+          ref={videoRef}
+          src={optimizeCloudinaryUrl(videoUrl, maxWidth, "video")}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="none"
+          className="relative w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+        />
+      )}
+    </div>
+  );
+}
+
 export default function HardwareProjects({ projects }: HardwareProjectsProps) {
   // Only display published hardware projects sorted by display_index
   const hardwareItems = useMemo(() => {
@@ -151,15 +225,19 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
             {rows.map((row, rowIdx) => (
               <div
                 key={`row-${rowIdx}`}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-stretch"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-stretch [content-visibility:auto] [contain-intrinsic-size:auto_420px]"
               >
                 {row.items.map((project, itemIdx) => {
                   let colSpanClass = "";
                   let titleSizeClass = "";
+                  let sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+                  let maxWidth = 800;
 
                   if (row.rowType === "hero") {
                     colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
                     titleSizeClass = "text-2xl sm:text-3xl lg:text-4xl max-w-2xl";
+                    sizes = "(max-width: 1280px) 100vw, 1280px";
+                    maxWidth = 1280;
                   } else if (row.rowType === "pair") {
                     const isWideFirst = row.pairVariant === "wide-first";
                     const isFirst = itemIdx === 0;
@@ -172,6 +250,11 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
                     titleSizeClass = isWide
                       ? "text-xl sm:text-2xl lg:text-3xl max-w-xl"
                       : "text-lg sm:text-xl lg:text-2xl max-w-md";
+
+                    sizes = isWide
+                      ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 58vw"
+                      : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 42vw";
+                    maxWidth = isWide ? 1000 : 800;
                   } else {
                     // Triplet: 3 items across on desktop
                     // On tablet: item 0 and 1 take sm:col-span-1, item 2 spans full sm:col-span-2 for seamless balance
@@ -183,31 +266,35 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
                     titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
                   }
 
+                  const optimizedImage = project.image_url
+                    ? optimizeCloudinaryUrl(project.image_url, maxWidth)
+                    : "";
+
                   return (
                     <div
                       key={project.id}
-                      className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 ${colSpanClass} ${row.heightClass}`}
+                      className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 transition-[border-color,box-shadow] duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 [contain:layout_style] ${colSpanClass} ${row.heightClass}`}
                     >
                       {/* Background Project Photography */}
                       <div className="absolute inset-0 w-full h-full overflow-hidden">
                         {project.preview_video_url ? (
-                          <video
-                            src={project.preview_video_url}
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            poster={project.image_url || undefined}
-                            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                          <HardwareVideoPreview
+                            videoUrl={project.preview_video_url}
+                            posterUrl={project.image_url}
+                            title={project.title}
+                            sizes={sizes}
+                            maxWidth={maxWidth}
                           />
-                        ) : project.image_url ? (
+                        ) : optimizedImage ? (
                           <Image
-                            src={project.image_url}
+                            src={optimizedImage}
                             alt={project.title}
                             fill
+                            loading="lazy"
+                            decoding="async"
                             className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 58vw, 66vw"
-                            unoptimized
+                            sizes={sizes}
+                            unoptimized={!isOptimizableImageSrc(optimizedImage)}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">

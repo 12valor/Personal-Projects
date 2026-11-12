@@ -125,54 +125,6 @@ export default function InfiniteSpiral({
     });
     resizeObserver.observe(root);
 
-    const intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        visibleRef.current = entry.isIntersecting;
-      },
-      { threshold: 0.02 },
-    );
-    intersectionObserver.observe(root);
-
-    const handleScroll = () => {
-      const nextScrollY = window.scrollY;
-      const scrollDelta = nextScrollY - lastScrollY;
-      lastScrollY = nextScrollY;
-      if (!scrollEnabled || !visibleRef.current || reducedMotion.matches) {
-        return;
-      }
-
-      const scrollContainer = scrollContainerRef?.current;
-      if (scrollContainer) {
-        const scrollDistance = Math.max(
-          scrollContainer.offsetHeight - window.innerHeight,
-          1,
-        );
-        const sectionProgress = clamp(
-          (nextScrollY - scrollContainer.offsetTop) / scrollDistance,
-          0,
-          1,
-        );
-        const progressCards = Math.max(
-          scrollProgressCards ?? normalizedItems.length - 1,
-          0,
-        );
-        targetProgressRef.current =
-          sectionProgress * progressCards * directionMultiplier;
-        return;
-      }
-
-      if (scrollDelta === 0) return;
-
-      targetProgressRef.current += clamp(
-        ((scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1)) *
-          directionMultiplier,
-        -1.5,
-        1.5,
-      );
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
     const render = (time: number) => {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
@@ -234,8 +186,66 @@ export default function InfiniteSpiral({
         card.style.pointerEvents = opacity > 0.25 ? "auto" : "none";
       });
 
-      frameId = requestAnimationFrame(render);
+      if (visibleRef.current) {
+        frameId = requestAnimationFrame(render);
+      } else {
+        frameId = 0;
+      }
     };
+
+    const handleScroll = () => {
+      const nextScrollY = window.scrollY;
+      const scrollDelta = nextScrollY - lastScrollY;
+      lastScrollY = nextScrollY;
+      if (!scrollEnabled || !visibleRef.current || reducedMotion.matches) {
+        return;
+      }
+
+      const scrollContainer = scrollContainerRef?.current;
+      if (scrollContainer) {
+        const scrollDistance = Math.max(
+          scrollContainer.offsetHeight - window.innerHeight,
+          1,
+        );
+        const sectionProgress = clamp(
+          (nextScrollY - scrollContainer.offsetTop) / scrollDistance,
+          0,
+          1,
+        );
+        const progressCards = Math.max(
+          scrollProgressCards ?? normalizedItems.length - 1,
+          0,
+        );
+        targetProgressRef.current =
+          sectionProgress * progressCards * directionMultiplier;
+        return;
+      }
+
+      if (scrollDelta === 0) return;
+
+      targetProgressRef.current += clamp(
+        ((scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1)) *
+          directionMultiplier,
+        -1.5,
+        1.5,
+      );
+    };
+    if (scrollEnabled) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll();
+    }
+
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && frameId === 0) {
+          previousTime = performance.now();
+          frameId = requestAnimationFrame(render);
+        }
+      },
+      { threshold: 0.02 },
+    );
+    intersectionObserver.observe(root);
 
     frameId = requestAnimationFrame(render);
 
@@ -243,7 +253,9 @@ export default function InfiniteSpiral({
       cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
-      window.removeEventListener("scroll", handleScroll);
+      if (scrollEnabled) {
+        window.removeEventListener("scroll", handleScroll);
+      }
     };
   }, [
     normalizedItems,

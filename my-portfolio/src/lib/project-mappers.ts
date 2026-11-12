@@ -95,3 +95,137 @@ export function serializeInquiry(inquiry: PortfolioInquiryRow) {
 export type SerializedProject = ReturnType<typeof serializeProject>;
 export type SerializedInquiry = ReturnType<typeof serializeInquiry>;
 
+export type ImageOrientation = "portrait" | "square" | "landscape";
+
+export interface ImageDimension {
+  width: number;
+  height: number;
+  ratio: number;
+  orientation: ImageOrientation;
+}
+
+export const KNOWN_URL_DIMENSIONS: Record<string, ImageDimension> = {
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445266/t9jdt3l4adotiyxhuy6z.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445475/jfrky0ikmqgeyagknnxd.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445295/ug0qpsrv6kvjevi8rzjx.jpg": { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445401/xpcu7zleegn3l8cd2ndd.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/d2jf5uucmzqxk7jbktft.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/hrrcivt4kizffyg78cnk.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1788553758/tdbh5mnmpctvaef4knvw.jpg": { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
+};
+
+export function calculateImageOrientation(
+  width: number,
+  height: number
+): { ratio: number; orientation: ImageOrientation } {
+  const ratio = width / height;
+  let orientation: ImageOrientation = "square";
+  if (ratio < 0.88) orientation = "portrait";
+  else if (ratio > 1.18) orientation = "landscape";
+  return { ratio, orientation };
+}
+
+const OPTIMIZABLE_HOSTS = new Set([
+  "images.unsplash.com",
+  "i.scdn.co",
+  "res.cloudinary.com",
+  "drive.google.com",
+  "lh3.googleusercontent.com",
+  "avatars.githubusercontent.com",
+]);
+
+export function isOptimizableImageSrc(src: string): boolean {
+  if (!src) return false;
+  if (src.startsWith("/")) return true;
+  try {
+    const { protocol, hostname } = new URL(src);
+    if (protocol !== "https:") return false;
+    return OPTIMIZABLE_HOSTS.has(hostname) || hostname.endsWith(".supabase.co");
+  } catch {
+    return false;
+  }
+}
+
+export function optimizeCloudinaryUrl(
+  url: string,
+  maxWidth = 1200,
+  kind: "image" | "video" = "image"
+): string {
+  if (!url) return url;
+  const marker = kind === "video" ? "/video/upload/" : "/image/upload/";
+  if (!url.includes("res.cloudinary.com") || !url.includes(marker)) {
+    return url;
+  }
+
+  const [prefix, rest] = url.split(marker);
+  if (!rest) return url;
+
+  // Skip if transformations are already present (e.g. w_600,q_auto)
+  if (!/^v\d+\//.test(rest)) {
+    return url;
+  }
+
+  const transform =
+    kind === "video"
+      ? `q_auto,w_${maxWidth},c_limit`
+      : `f_auto,q_auto,w_${maxWidth},c_limit`;
+
+  return `${prefix}${marker}${transform}/${rest}`;
+}
+
+export async function resolveGraphicDimensions(
+  projects: SerializedProject[]
+): Promise<Record<string, ImageDimension>> {
+  const result: Record<string, ImageDimension> = { ...KNOWN_URL_DIMENSIONS };
+  const graphicCategories = ["graphic", "poster", "pubmat", "gfx", "brand", "visual design"];
+  const urlsToProbe = new Set<string>();
+
+  for (const project of projects) {
+    const cat = (project.category || "").toLowerCase();
+    if (!graphicCategories.some((c) => cat.includes(c))) continue;
+    if (project.image_url && !result[project.image_url]) {
+      urlsToProbe.add(project.image_url);
+    }
+    if (Array.isArray(project.gallery_urls)) {
+      for (const url of project.gallery_urls) {
+        if (url && !result[url]) {
+          urlsToProbe.add(url);
+        }
+      }
+    }
+  }
+
+  const cloudinaryUrls = Array.from(urlsToProbe).filter(
+    (url) => url.includes("res.cloudinary.com") && url.includes("/image/upload/")
+  );
+
+  if (cloudinaryUrls.length === 0) return result;
+
+  await Promise.allSettled(
+    cloudinaryUrls.map(async (url) => {
+      const infoUrl = url.replace("/image/upload/", "/image/upload/fl_getinfo/");
+      try {
+        const res = await fetch(infoUrl, {
+          next: { revalidate: 3600 },
+          signal: AbortSignal.timeout(1500),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          output?: { width?: number; height?: number };
+          input?: { width?: number; height?: number };
+        };
+        const width = data.output?.width ?? data.input?.width;
+        const height = data.output?.height ?? data.input?.height;
+        if (width && height) {
+          const { ratio, orientation } = calculateImageOrientation(width, height);
+          result[url] = { width, height, ratio, orientation };
+        }
+      } catch {
+        // Ignore timeout/network failures; client onLoad remains as fallback.
+      }
+    })
+  );
+
+  return result;
+}
+

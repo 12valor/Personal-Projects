@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { Layers, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
+import {
+  KNOWN_URL_DIMENSIONS,
+  calculateImageOrientation,
+  isOptimizableImageSrc,
+  optimizeCloudinaryUrl,
+  type ImageDimension,
+  type ImageOrientation,
+} from "../lib/project-mappers";
 
 // --- TYPES ---
 export interface Project {
@@ -20,6 +28,7 @@ export interface Project {
 
 interface WorkGridProps {
   initialProjects: Project[];
+  initialGraphicDimensions?: Record<string, ImageDimension>;
 }
 
 export interface VideoProject {
@@ -56,7 +65,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782387591/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_11_nafj9z.jpg",
     duration: "",
   },
   {
@@ -66,7 +75,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389688/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_9_endrwm.jpg",
     duration: "",
   },
   {
@@ -76,7 +85,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_1_lphzsh.jpg",
     duration: "",
   },
   {
@@ -86,7 +95,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_5_ibsr29.jpg",
     duration: "",
   },
   {
@@ -96,7 +105,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389691/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_3_l5tzql.jpg",
     duration: "",
   },
   {
@@ -106,7 +115,7 @@ const STATIC_VIDEO_PROJECTS: VideoProject[] = [
     videoUrl:
       "https://res.cloudinary.com/ddjrj0ymx/video/upload/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.mp4",
     posterUrl:
-      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_jpg/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.jpg",
+      "https://res.cloudinary.com/ddjrj0ymx/video/upload/w_600,h_1067,c_fill,q_auto,f_auto/v1782389729/1110_2_-copy_1_-copy_1_-copy-copy-copy-cop_zsuvwl.jpg",
     duration: "",
   },
 ];
@@ -147,53 +156,64 @@ function getProjectsByCategory(projects: Project[], parentCategory: string): Pro
   });
 }
 
-// Instant, Solid Project Image (no opacity toggle or blanking)
+// Instant, Solid Project Image with Cloudinary + Next.js responsive optimization
 function ProjectImage({
   src,
   alt,
   className = "",
   sizes,
   priority = false,
+  maxWidth = 1000,
 }: {
   src: string;
   alt: string;
   className?: string;
   sizes?: string;
   priority?: boolean;
+  maxWidth?: number;
 }) {
+  const optimizedSrc = optimizeCloudinaryUrl(src, maxWidth);
   return (
     <Image
-      src={src}
+      src={optimizedSrc}
       alt={alt}
       fill
       className={className}
       sizes={sizes}
       priority={priority}
-      unoptimized
+      loading={priority ? undefined : "lazy"}
+      decoding="async"
+      unoptimized={!isOptimizableImageSrc(optimizedSrc)}
     />
   );
 }
 
-// WebsiteProjectCard: renders static thumbnail and crossfades to video on hover
+// WebsiteProjectCard: renders static thumbnail and mounts hover video only on hover-capable desktop
 interface WebsiteProjectCardProps {
   project: Project;
   canHover: boolean;
+  reducedMotion: boolean;
   onProjectClick: (project: Project) => void;
 }
 
 const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
   project,
   canHover,
+  reducedMotion,
   onProjectClick,
 }: WebsiteProjectCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasHovered, setHasHovered] = useState(false);
   const [isVideoActive, setIsVideoActive] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
-  const hasVideo = Boolean(project.preview_video_url && !videoError);
+  const hasVideo = Boolean(
+    canHover && !reducedMotion && project.preview_video_url && !videoError
+  );
 
   const handleMouseEnter = () => {
-    if (!canHover || !hasVideo) return;
+    if (!hasVideo) return;
+    if (!hasHovered) setHasHovered(true);
     setIsVideoActive(true);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
@@ -207,7 +227,7 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
   };
 
   const handleMouseLeave = () => {
-    if (!canHover || !hasVideo) return;
+    if (!hasVideo) return;
     setIsVideoActive(false);
     if (videoRef.current) {
       videoRef.current.pause();
@@ -228,7 +248,7 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
       onMouseLeave={handleMouseLeave}
       role="button"
       tabIndex={0}
-      className="website-project-card group cursor-pointer flex flex-col bg-card transition-all duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="website-project-card group cursor-pointer flex flex-col bg-card transition-[border-color,box-shadow] duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_420px]"
     >
       {/* IMAGE / VIDEO PREVIEW AREA */}
       <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
@@ -236,8 +256,9 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
           <ProjectImage
             src={project.image_url}
             alt={project.title}
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            maxWidth={1000}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">
@@ -245,11 +266,12 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
           </div>
         )}
 
-        {/* HOVER VIDEO OVERLAY */}
-        {hasVideo && (
+        {/* HOVER VIDEO OVERLAY: mounted lazily on first desktop hover */}
+        {hasVideo && hasHovered && (
           <video
             ref={videoRef}
-            src={project.preview_video_url!}
+            src={optimizeCloudinaryUrl(project.preview_video_url!, 900, "video")}
+            autoPlay
             muted
             loop
             playsInline
@@ -285,7 +307,7 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
           View Project
           <ArrowUpRight
             size={16}
-            className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+            className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 motion-reduce:transform-none"
           />
         </div>
       </div>
@@ -297,27 +319,18 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
 interface DetailedProjectListProps {
   items: Project[];
   emptyLabel: string;
+  canHover: boolean;
+  reducedMotion: boolean;
   onProjectClick: (project: Project) => void;
 }
 
 const DetailedProjectList = React.memo(function DetailedProjectList({
   items,
   emptyLabel,
+  canHover,
+  reducedMotion,
   onProjectClick,
 }: DetailedProjectListProps) {
-  const [canHover, setCanHover] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setCanHover(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => setCanHover(e.matches);
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
-    }
-  }, []);
-
   if (items.length === 0) {
     return (
       <div className="h-32 flex items-center justify-center text-muted-foreground border border-dashed border-border rounded-2xl">
@@ -333,6 +346,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
           key={project.id}
           project={project}
           canHover={canHover}
+          reducedMotion={reducedMotion}
           onProjectClick={onProjectClick}
         />
       ))}
@@ -340,34 +354,30 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
   );
 });
 
-// VideoCard: solid, immediate render without opacity flash
+// VideoCard: renders lightweight lazy Image poster and mounts <video> only on desktop hover
 interface VideoCardProps {
   video: VideoProject;
-  index: number;
+  canHover: boolean;
+  reducedMotion: boolean;
   onSelectVideo: (url: string) => void;
 }
 
 const VideoCard = React.memo(function VideoCard({
   video,
+  canHover,
+  reducedMotion,
   onSelectVideo,
 }: VideoCardProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
+    if (!canHover || reducedMotion) return;
     setIsHovered(true);
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
   };
 
   const handleMouseLeave = () => {
+    if (!canHover || reducedMotion) return;
     setIsHovered(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
   };
 
   return (
@@ -381,34 +391,45 @@ const VideoCard = React.memo(function VideoCard({
       }}
       role="button"
       tabIndex={0}
-      className="video-project-card group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+      className="video-project-card group cursor-pointer flex flex-col gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-2xl [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_520px]"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-all duration-300 hover:shadow-md hover:border-black/30 dark:hover:border-white/30">
-        <video
-          ref={videoRef}
-          src={video.videoUrl}
-          poster={video.posterUrl}
-          muted
-          playsInline
-          loop
-          preload="none"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      <div className="video-project-preview relative aspect-[9/16] bg-muted rounded-2xl overflow-hidden border border-border shadow-sm transition-[border-color,box-shadow] duration-300 hover:shadow-md hover:border-black/30 dark:hover:border-white/30">
+        <Image
+          src={video.posterUrl}
+          alt={video.title}
+          fill
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          unoptimized={!isOptimizableImageSrc(video.posterUrl)}
+          className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
         />
 
+        {canHover && !reducedMotion && isHovered && (
+          <video
+            src={optimizeCloudinaryUrl(video.videoUrl, 720, "video")}
+            autoPlay
+            muted
+            playsInline
+            loop
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
+          />
+        )}
+
         <div
-          className={`absolute inset-0 bg-black/10 transition-colors duration-300 z-10 ${
+          className={`absolute inset-0 bg-black/10 transition-colors duration-300 z-10 pointer-events-none ${
             isHovered ? "bg-black/0" : ""
           }`}
         />
 
         <div
-          className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ${
+          className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 pointer-events-none ${
             isHovered ? "opacity-0" : "opacity-100"
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg">
+          <div className="w-12 h-12 rounded-full bg-black/45 md:bg-white/20 md:backdrop-blur-md flex items-center justify-center text-white shadow-lg">
             <svg
               width="18"
               height="18"
@@ -422,7 +443,7 @@ const VideoCard = React.memo(function VideoCard({
         </div>
 
         {video.duration && (
-          <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md z-20">
+          <div className="absolute bottom-3 right-3 bg-black/75 md:bg-black/60 md:backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md z-20">
             {video.duration}
           </div>
         )}
@@ -442,17 +463,22 @@ const VideoCard = React.memo(function VideoCard({
 
 // VideoProjectList: solid render
 const VideoProjectList = React.memo(function VideoProjectList({
+  canHover,
+  reducedMotion,
   onSelectVideo,
 }: {
+  canHover: boolean;
+  reducedMotion: boolean;
   onSelectVideo: (url: string) => void;
 }) {
   return (
     <div className="video-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {STATIC_VIDEO_PROJECTS.map((video, i) => (
+      {STATIC_VIDEO_PROJECTS.map((video) => (
         <VideoCard
           key={video.id}
           video={video}
-          index={i}
+          canHover={canHover}
+          reducedMotion={reducedMotion}
           onSelectVideo={onSelectVideo}
         />
       ))}
@@ -461,14 +487,7 @@ const VideoProjectList = React.memo(function VideoProjectList({
 });
 
 // GraphicDesignCollage: Orientation-aware editorial collage displaying individual graphics
-export type ImageOrientation = "portrait" | "square" | "landscape";
-
-export interface ImageDimension {
-  width: number;
-  height: number;
-  ratio: number;
-  orientation: ImageOrientation;
-}
+export type { ImageDimension, ImageOrientation };
 
 export interface IndividualGraphicItem {
   id: string;
@@ -479,40 +498,142 @@ export interface IndividualGraphicItem {
   description?: string;
 }
 
-const KNOWN_URL_DIMENSIONS: Record<string, ImageDimension> = {
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445266/t9jdt3l4adotiyxhuy6z.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445475/jfrky0ikmqgeyagknnxd.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445295/ug0qpsrv6kvjevi8rzjx.jpg": { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445401/xpcu7zleegn3l8cd2ndd.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/d2jf5uucmzqxk7jbktft.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/hrrcivt4kizffyg78cnk.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1788553758/tdbh5mnmpctvaef4knvw.jpg": { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
-};
-
-function calculateOrientation(width: number, height: number): { ratio: number; orientation: ImageOrientation } {
-  const ratio = width / height;
-  let orientation: ImageOrientation = "square";
-  if (ratio < 0.88) orientation = "portrait";
-  else if (ratio > 1.18) orientation = "landscape";
-  return { ratio, orientation };
+interface GraphicDesignCardProps {
+  graphic: IndividualGraphicItem;
+  initialDimension?: ImageDimension;
+  total: number;
 }
+
+const GraphicDesignCard = React.memo(function GraphicDesignCard({
+  graphic,
+  initialDimension,
+  total,
+}: GraphicDesignCardProps) {
+  const [dim, setDim] = useState<ImageDimension | undefined>(
+    () => initialDimension ?? KNOWN_URL_DIMENSIONS[graphic.image_url]
+  );
+
+  const orientation = dim?.orientation || "square";
+  const ratio = dim?.ratio || 1.0;
+
+  let colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+  let titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+  let sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+  let maxImgWidth = 900;
+
+  if (orientation === "landscape") {
+    if (ratio >= 2.0) {
+      colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
+      titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-2xl";
+      sizes = "(max-width: 1280px) 100vw, 1280px";
+      maxImgWidth = 1280;
+    } else {
+      colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-8";
+      titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-xl";
+      sizes = "(max-width: 1024px) 100vw, 66vw";
+      maxImgWidth = 1000;
+    }
+  } else if (orientation === "portrait") {
+    colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+    titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+  } else {
+    if (total === 2) {
+      colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-6";
+      sizes = "(max-width: 640px) 100vw, 50vw";
+    } else {
+      colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
+    }
+    titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
+  }
+
+  const optimizedSrc = optimizeCloudinaryUrl(graphic.image_url, maxImgWidth);
+
+  return (
+    <div
+      style={{
+        aspectRatio: `${ratio}`,
+        maxHeight: "720px",
+        minHeight: "260px",
+      }}
+      className={`graphic-project-card group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 transition-[border-color,box-shadow] duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 w-full [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_380px] ${colSpanClass}`}
+    >
+      {/* Background Artwork - Uncropped & Perfectly Fitted */}
+      <div className="graphic-project-preview absolute inset-0 w-full h-full overflow-hidden">
+        <Image
+          src={optimizedSrc}
+          alt={graphic.title}
+          fill
+          loading="lazy"
+          decoding="async"
+          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+          onLoad={(e) => {
+            if (dim) return;
+            const img = e.currentTarget;
+            if (img.naturalWidth && img.naturalHeight) {
+              const { ratio: r, orientation: o } = calculateImageOrientation(
+                img.naturalWidth,
+                img.naturalHeight
+              );
+              setDim({
+                width: img.naturalWidth,
+                height: img.naturalHeight,
+                ratio: r,
+                orientation: o,
+              });
+            }
+          }}
+          sizes={sizes}
+          unoptimized={!isOptimizableImageSrc(optimizedSrc)}
+        />
+
+        {/* Gradient Scrim for high contrast text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/45" />
+      </div>
+
+      {/* Top Badges */}
+      <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10 flex items-center gap-2">
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/70 md:bg-black/50 md:backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
+          {graphic.category}
+        </span>
+      </div>
+
+      <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10 flex items-center gap-1.5">
+        {/* Orientation Tag */}
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-black/65 md:bg-black/45 md:backdrop-blur-md text-white/75 border border-white/10 shadow-sm">
+          {orientation}
+        </span>
+      </div>
+
+      {/* Bottom Text Overlay */}
+      <div className="relative z-10 p-5 sm:p-6 lg:p-7 flex flex-col gap-1.5">
+        <h3
+          className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
+        >
+          {graphic.title}
+        </h3>
+        {graphic.description && (
+          <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
+            {graphic.description}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+});
 
 interface GraphicDesignProjectListProps {
   items: Project[];
+  initialDimensions: Record<string, ImageDimension>;
 }
 
 const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   items,
+  initialDimensions,
 }: GraphicDesignProjectListProps) {
-  const [dimensions, setDimensions] = useState<Record<string, ImageDimension>>(() => ({
-    ...KNOWN_URL_DIMENSIONS,
-  }));
-
   // Flatten projects and gallery images into individual graphic items
   const individualGraphics = useMemo(() => {
     const list: IndividualGraphicItem[] = [];
     items.forEach((p) => {
-      // 1. Main cover image
       if (p.image_url) {
         list.push({
           id: `${p.id}-main`,
@@ -523,7 +644,6 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
           description: p.description,
         });
       }
-      // 2. All additional images are displayed as their own individual graphics
       if (p.gallery_urls && Array.isArray(p.gallery_urls)) {
         p.gallery_urls.forEach((url, i) => {
           if (url && url !== p.image_url) {
@@ -542,30 +662,6 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
     return list;
   }, [items]);
 
-  // Probe image dimensions client-side for dynamic/newly uploaded graphics
-  useEffect(() => {
-    individualGraphics.forEach((g) => {
-      if (!g.image_url || dimensions[g.image_url]) return;
-      const img = new window.Image();
-      img.src = g.image_url;
-      const onDone = () => {
-        if (!img.naturalWidth || !img.naturalHeight) return;
-        const { ratio, orientation } = calculateOrientation(img.naturalWidth, img.naturalHeight);
-        setDimensions((prev) => ({
-          ...prev,
-          [g.image_url]: {
-            width: img.naturalWidth,
-            height: img.naturalHeight,
-            ratio,
-            orientation,
-          },
-        }));
-      };
-      if (img.complete) onDone();
-      else img.onload = onDone;
-    });
-  }, [individualGraphics, dimensions]);
-
   if (individualGraphics.length === 0) {
     return (
       <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
@@ -580,140 +676,60 @@ const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
   const total = individualGraphics.length;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-start grid-flow-row-dense">
-      {individualGraphics.map((graphic) => {
-        const dim = dimensions[graphic.image_url];
-        const orientation = dim?.orientation || "square";
-        const ratio = dim?.ratio || 1.0;
-
-        // Auto column span based on orientation and layout context
-        let colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-        let titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-
-        if (orientation === "landscape") {
-          if (ratio >= 2.0) {
-            // Ultra-wide banner: full width
-            colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
-            titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-2xl";
-          } else {
-            // Standard landscape: spans 8 columns on desktop
-            colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-8";
-            titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-xl";
-          }
-        } else if (orientation === "portrait") {
-          // Portrait (vertical poster/pubmat): spans 4 columns on desktop
-          colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-          titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-        } else {
-          // Square:
-          if (total === 2) {
-            colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-6";
-          } else {
-            colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-          }
-          titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-        }
-
-        return (
-          <div
-            key={graphic.id}
-            style={{
-              aspectRatio: `${ratio}`,
-              maxHeight: "720px",
-              minHeight: "260px",
-            }}
-            className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 backdrop-blur-sm transition-all duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 w-full ${colSpanClass}`}
-          >
-            {/* Background Artwork - Uncropped & Perfectly Fitted */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden">
-              <Image
-                src={graphic.image_url}
-                alt={graphic.title}
-                fill
-                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                onLoad={(e) => {
-                  const img = e.currentTarget;
-                  if (img.naturalWidth && img.naturalHeight && !dimensions[graphic.image_url]) {
-                    const { ratio: r, orientation: o } = calculateOrientation(
-                      img.naturalWidth,
-                      img.naturalHeight
-                    );
-                    setDimensions((prev) => ({
-                      ...prev,
-                      [graphic.image_url]: {
-                        width: img.naturalWidth,
-                        height: img.naturalHeight,
-                        ratio: r,
-                        orientation: o,
-                      },
-                    }));
-                  }
-                }}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 66vw, 100vw"
-                unoptimized
-              />
-
-              {/* Gradient Scrim for high contrast text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/45" />
-            </div>
-
-            {/* Top Badges */}
-            <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10 flex items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/50 backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
-                {graphic.category}
-              </span>
-            </div>
-
-            <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10 flex items-center gap-1.5">
-              {/* Orientation Tag */}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-black/45 backdrop-blur-md text-white/75 border border-white/10 shadow-sm">
-                {orientation}
-              </span>
-            </div>
-
-            {/* Bottom Text Overlay */}
-            <div className="relative z-10 p-5 sm:p-6 lg:p-7 flex flex-col gap-1.5">
-              <h3
-                className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
-              >
-                {graphic.title}
-              </h3>
-              {graphic.description && (
-                <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
-                  {graphic.description}
-                </p>
-              )}
-            </div>
-          </div>
-        );
-      })}
+    <div className="graphic-project-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-start grid-flow-row-dense">
+      {individualGraphics.map((graphic) => (
+        <GraphicDesignCard
+          key={graphic.id}
+          graphic={graphic}
+          initialDimension={initialDimensions[graphic.image_url]}
+          total={total}
+        />
+      ))}
     </div>
   );
 });
 
+const EMPTY_DIMENSIONS: Record<string, ImageDimension> = {};
+
+function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      if (typeof window === "undefined") return () => {};
+      const mql = window.matchMedia(query);
+      mql.addEventListener?.("change", onStoreChange);
+      return () => mql.removeEventListener?.("change", onStoreChange);
+    },
+    () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false),
+    () => false
+  );
+}
+
 // Main WorkGrid Component
-export default function WorkGrid({ initialProjects }: WorkGridProps) {
+export default function WorkGrid({
+  initialProjects,
+  initialGraphicDimensions = EMPTY_DIMENSIONS,
+}: WorkGridProps) {
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+  const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   const router = useRouter();
 
   // Keyboard accessibility for Video Modal
   useEffect(() => {
+    if (!activeVideoUrl) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActiveVideoUrl(null);
     };
-    if (activeVideoUrl) {
-      window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    const prevOverflow = document.body.style.overflow;
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = prevOverflow;
     };
   }, [activeVideoUrl]);
 
@@ -832,6 +848,8 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             <DetailedProjectList
               items={websiteProjects}
               emptyLabel="No website projects found."
+              canHover={canHover}
+              reducedMotion={reducedMotion}
               onProjectClick={handleProjectClick}
             />
           </div>
@@ -847,6 +865,8 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             <DetailedProjectList
               items={systemProjects}
               emptyLabel="No system projects found."
+              canHover={canHover}
+              reducedMotion={reducedMotion}
               onProjectClick={handleProjectClick}
             />
           </div>
@@ -861,6 +881,7 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
             </div>
             <GraphicDesignProjectList
               items={graphicDesignProjects}
+              initialDimensions={initialGraphicDimensions}
             />
           </div>
 
@@ -872,7 +893,11 @@ export default function WorkGrid({ initialProjects }: WorkGridProps) {
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
             </div>
-            <VideoProjectList onSelectVideo={handleSelectVideo} />
+            <VideoProjectList
+              canHover={canHover}
+              reducedMotion={reducedMotion}
+              onSelectVideo={handleSelectVideo}
+            />
           </div>
         </div>
       </div>

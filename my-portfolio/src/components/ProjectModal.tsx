@@ -72,7 +72,7 @@ export default function ProjectModal({ project }: ProjectModalProps) {
 
           <div className="flex items-center gap-2">
             <Link
-              href={`/work/${project.id}`}
+              href={`/work/${project.slug || project.id}`}
               className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-muted"
             >
               Standalone View <ArrowUpRight className="w-3.5 h-3.5" />

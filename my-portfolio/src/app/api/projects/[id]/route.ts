@@ -93,9 +93,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: error?.message || "Failed to update project" }, { status: 500 });
   }
 
+  const serialized = serializeProject(project);
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
-  const serialized = serializeProject(project);
+  revalidatePath(`/work/${serialized.slug}`);
 
   return NextResponse.json(serialized);
 }
@@ -138,6 +139,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
   revalidatePath("/");
   revalidatePath(`/work/${id}`);
+  revalidatePath(`/work/${serialized.slug}`);
 
   return NextResponse.json({ success: true });
 }

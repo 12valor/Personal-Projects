@@ -8,6 +8,7 @@ import GalleryModal from "./GalleryModal"; // Ensure you import this here too!
 
 interface Project {
   id: number;
+  slug?: string;
   title: string;
   category: string;
   image_url: string;
@@ -116,7 +117,7 @@ const ParallaxCard = ({
             {CardContent}
         </div>
       ) : (
-        <Link href={`/work/${project.id}`} className="block w-full">
+        <Link href={`/work/${project.slug || project.id}`} className="block w-full">
             {CardContent}
         </Link>
       )}

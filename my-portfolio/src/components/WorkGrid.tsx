@@ -18,6 +18,7 @@ import {
 // --- TYPES ---
 export interface Project {
   id: number;
+  slug?: string;
   title: string;
   category: string;
   image_url: string;
@@ -739,7 +740,7 @@ export default function WorkGrid({
         setSelectedProject(project);
         setIsGalleryOpen(true);
       } else {
-        router.push(`/work/${project.id}`, { scroll: false });
+        router.push(`/work/${project.slug || project.id}`, { scroll: false });
       }
     },
     [router]

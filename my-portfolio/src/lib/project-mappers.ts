@@ -173,41 +173,30 @@ export function optimizeCloudinaryUrl(
   return `${prefix}${marker}${transform}/${rest}`;
 }
 
-export async function resolveGraphicDimensions(
-  projects: SerializedProject[]
+export async function resolveImageDimensions(
+  urls: string[]
 ): Promise<Record<string, ImageDimension>> {
-  const result: Record<string, ImageDimension> = { ...KNOWN_URL_DIMENSIONS };
-  const graphicCategories = ["graphic", "poster", "pubmat", "gfx", "brand", "visual design"];
+  const result: Record<string, ImageDimension> = {};
   const urlsToProbe = new Set<string>();
 
-  for (const project of projects) {
-    const cat = (project.category || "").toLowerCase();
-    if (!graphicCategories.some((c) => cat.includes(c))) continue;
-    if (project.image_url && !result[project.image_url]) {
-      urlsToProbe.add(project.image_url);
-    }
-    if (Array.isArray(project.gallery_urls)) {
-      for (const url of project.gallery_urls) {
-        if (url && !result[url]) {
-          urlsToProbe.add(url);
-        }
-      }
+  for (const url of urls) {
+    if (!url) continue;
+    if (KNOWN_URL_DIMENSIONS[url]) {
+      result[url] = KNOWN_URL_DIMENSIONS[url];
+    } else if (url.includes("res.cloudinary.com") && url.includes("/image/upload/")) {
+      urlsToProbe.add(url);
     }
   }
 
-  const cloudinaryUrls = Array.from(urlsToProbe).filter(
-    (url) => url.includes("res.cloudinary.com") && url.includes("/image/upload/")
-  );
-
-  if (cloudinaryUrls.length === 0) return result;
+  if (urlsToProbe.size === 0) return result;
 
   await Promise.allSettled(
-    cloudinaryUrls.map(async (url) => {
+    Array.from(urlsToProbe).map(async (url) => {
       const infoUrl = url.replace("/image/upload/", "/image/upload/fl_getinfo/");
       try {
         const res = await fetch(infoUrl, {
           next: { revalidate: 3600 },
-          signal: AbortSignal.timeout(1500),
+          signal: AbortSignal.timeout(4500),
         });
         if (!res.ok) return;
         const data = (await res.json()) as {
@@ -221,11 +210,254 @@ export async function resolveGraphicDimensions(
           result[url] = { width, height, ratio, orientation };
         }
       } catch {
-        // Ignore timeout/network failures; client onLoad remains as fallback.
+        // Ignore timeout/network failures; layout falls back to default aspect ratio.
       }
     })
   );
 
   return result;
+}
+
+export async function resolveGraphicDimensions(
+  projects: SerializedProject[]
+): Promise<Record<string, ImageDimension>> {
+  const graphicCategories = ["graphic", "poster", "pubmat", "gfx", "brand", "visual design"];
+  const urls: string[] = [];
+
+  for (const project of projects) {
+    const cat = (project.category || "").toLowerCase();
+    if (!graphicCategories.some((c) => cat.includes(c))) continue;
+    if (project.image_url) urls.push(project.image_url);
+    if (Array.isArray(project.gallery_urls)) {
+      for (const url of project.gallery_urls) {
+        if (url) urls.push(url);
+      }
+    }
+  }
+
+  const resolved = await resolveImageDimensions(urls);
+  return { ...KNOWN_URL_DIMENSIONS, ...resolved };
+}
+
+export function isBatchOrHardwareCategory(category: string): boolean {
+  const lower = (category || "").toLowerCase();
+  return (
+    lower.includes("poster") ||
+    lower.includes("gfx") ||
+    lower.includes("graphic") ||
+    lower.includes("brand") ||
+    lower.includes("pubmat") ||
+    lower.includes("hardware") ||
+    lower.includes("embedded") ||
+    lower.includes("iot") ||
+    lower.includes("arduino") ||
+    lower.includes("electronics") ||
+    lower.includes("robotics") ||
+    lower.includes("firmware")
+  );
+}
+
+export interface ProjectFeatureItem {
+  title: string;
+  description: string;
+}
+
+export interface ProjectEditorialContent {
+  summary: string;
+  overview: string;
+  challenge: string;
+  solution: string;
+  role: string;
+  technologies: string[];
+  tags: string[];
+  features: ProjectFeatureItem[];
+  status: string;
+  screenshots: Array<{ url: string; caption?: string }>;
+}
+
+function cleanNarrativeText(value: string): string {
+  return value
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/^\s*>\s?/, "").trim())
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+export function buildProjectEditorialContent(
+  project: SerializedProject
+): ProjectEditorialContent {
+  const cs = project.case_study;
+  const cleanedDescription = cleanNarrativeText(project.description || "");
+  const sentences = splitSentences(cleanedDescription);
+
+  const summary =
+    sentences[0] ||
+    `${project.title} — ${project.category.toLowerCase()} build designed with a focus on clarity, usability, and dependable execution.`;
+
+  const overview =
+    cs?.system_design?.operating_principle?.trim() ||
+    cleanedDescription ||
+    `${project.title} is a ${project.category.toLowerCase()} project built to deliver a structured, reliable workflow with minimal friction.`;
+
+  const isSystem = project.category.toLowerCase().includes("system");
+
+  const challenge =
+    cs?.problem_statement?.trim() ||
+    cs?.challenges_solutions?.[0]?.challenge?.trim() ||
+    (isSystem
+      ? `Structuring multi-step operational records, validation, and role-specific workflows inside ${project.title} without adding unnecessary interface complexity.`
+      : `Organizing information hierarchy, responsive layout structure, and clear user journeys for ${project.title} across desktop and mobile viewports.`);
+
+  const solution =
+    cs?.system_design?.architecture?.trim() ||
+    cs?.challenges_solutions?.[0]?.solution?.trim() ||
+    (sentences.length > 1 ? sentences.slice(1).join(" ") : "") ||
+    (isSystem
+      ? `Designed a clear interface and structured workflow around core tasks so users can navigate, record, and review operational data efficiently.`
+      : `Focused on clean typography, straightforward navigation, and a restrained visual system so core content and actions stay immediately accessible.`);
+
+  const role = project.role?.trim() || "Developer & Designer";
+
+  const explicitTech = [
+    ...(cs?.software_tools ?? []),
+    ...(cs?.hardware_components?.map((item) => item.name) ?? []),
+  ]
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const technologies = Array.from(new Set(explicitTech));
+
+  const tags =
+    technologies.length > 0
+      ? technologies.slice(0, 6)
+      : [
+          project.category,
+          role,
+          project.project_url ? "Live Web" : "Product Build",
+        ].filter(Boolean);
+
+  const features: ProjectFeatureItem[] = [];
+
+  if (cs?.implementation_steps && cs.implementation_steps.length > 0) {
+    for (const step of cs.implementation_steps.slice(0, 6)) {
+      if (step.title?.trim() || step.description?.trim()) {
+        features.push({
+          title: step.title?.trim() || "Key Capability",
+          description: step.description?.trim() || "",
+        });
+      }
+    }
+  } else if (cs?.objectives && cs.objectives.length > 0) {
+    for (const objective of cs.objectives.slice(0, 6)) {
+      const text = objective.trim();
+      if (!text) continue;
+      const colonIdx = text.indexOf(":");
+      if (colonIdx > 0 && colonIdx < 48) {
+        features.push({
+          title: text.slice(0, colonIdx).trim(),
+          description: text.slice(colonIdx + 1).trim(),
+        });
+      } else {
+        features.push({
+          title: text,
+          description: "",
+        });
+      }
+    }
+  } else {
+    // Derive concise, truthful feature highlights grounded in category & description
+    const lowerDesc = cleanedDescription.toLowerCase();
+    if (lowerDesc.includes("real-time")) {
+      features.push({
+        title: "Real-Time Workflow",
+        description: "Supports live updates and immediate coordination across active users.",
+      });
+    }
+    if (lowerDesc.includes("analytics") || lowerDesc.includes("computation") || lowerDesc.includes("payroll")) {
+      features.push({
+        title: "Structured Calculations & Reporting",
+        description: "Automates domain calculations and turns raw entries into readable summaries.",
+      });
+    }
+    if (lowerDesc.includes("prototype") || lowerDesc.includes("revamp")) {
+      features.push({
+        title: "Refined Interface Architecture",
+        description: "Reworks layout hierarchy and visual consistency to improve clarity and flow.",
+      });
+    }
+
+    const baselineFeatures: ProjectFeatureItem[] = [
+      {
+        title: "Focused Information Hierarchy",
+        description: "Prioritizes key content and primary actions with restrained typography and clear spacing.",
+      },
+      {
+        title: "Responsive Layout System",
+        description: "Adapts cleanly across desktop, tablet, and mobile viewports without horizontal overflow.",
+      },
+      {
+        title: isSystem ? "Role-Centered Structure" : "Fast Asset Delivery",
+        description: isSystem
+          ? "Separates day-to-day workflows so each stakeholder sees only relevant actions."
+          : "Optimizes images and media loading so pages remain responsive on everyday connections.",
+      },
+      {
+        title: "Maintainable Component Setup",
+        description: "Built with reusable patterns so future content and feature updates stay predictable.",
+      },
+    ];
+
+    for (const item of baselineFeatures) {
+      if (features.length >= 4) break;
+      if (!features.some((existing) => existing.title === item.title)) {
+        features.push(item);
+      }
+    }
+  }
+
+  const seenUrls = new Set<string>();
+  const heroPrimaryImage = project.preview_video_url ? "" : project.image_url;
+  if (heroPrimaryImage) {
+    seenUrls.add(heroPrimaryImage);
+  }
+
+  const screenshots: Array<{ url: string; caption?: string }> = [];
+
+  if (cs?.gallery_media && cs.gallery_media.length > 0) {
+    for (const item of cs.gallery_media) {
+      if (item.media_type === "video" || !item.url || seenUrls.has(item.url)) continue;
+      seenUrls.add(item.url);
+      screenshots.push({ url: item.url, caption: item.caption });
+    }
+  }
+
+  for (const url of project.gallery_urls ?? []) {
+    if (!url || seenUrls.has(url)) continue;
+    seenUrls.add(url);
+    screenshots.push({ url });
+  }
+
+  return {
+    summary,
+    overview,
+    challenge,
+    solution,
+    role,
+    technologies,
+    tags,
+    features,
+    status: cs?.status?.trim() || (project.project_url ? "Live" : "Completed"),
+    screenshots,
+  };
 }
 

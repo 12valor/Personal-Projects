@@ -1,4 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
+import {
+  isBatchOrHardwareCategory,
+  serializeProject,
+  slugify,
+  type SerializedProject,
+} from "./project-mappers";
 
 export interface HardwareComponent {
   name: string;
@@ -119,4 +125,65 @@ export function getSupabaseServerClient() {
       persistSession: false,
     },
   });
+}
+
+export async function getPublishedProjects(): Promise<SerializedProject[]> {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("display_index", { ascending: true })
+    .order("id", { ascending: false })
+    .returns<PortfolioProjectRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? [])
+    .map(serializeProject)
+    .filter((p) => p.is_published !== false);
+}
+
+export async function getProjectDetailBySlugOrId(slugOrId: string): Promise<{
+  project: SerializedProject | null;
+  previousProject: SerializedProject | null;
+  nextProject: SerializedProject | null;
+}> {
+  const projects = await getPublishedProjects();
+  const normalized = decodeURIComponent(slugOrId).trim().toLowerCase();
+  const numericId = /^\d+$/.test(normalized) ? Number(normalized) : null;
+
+  const project =
+    projects.find((p) => p.slug.toLowerCase() === normalized) ??
+    (numericId !== null ? projects.find((p) => p.id === numericId) : undefined) ??
+    projects.find((p) => slugify(p.title) === normalized) ??
+    null;
+
+  if (!project) {
+    return { project: null, previousProject: null, nextProject: null };
+  }
+
+  const isDetailGroup = !isBatchOrHardwareCategory(project.category);
+  const siblings = projects.filter((p) =>
+    isDetailGroup
+      ? !isBatchOrHardwareCategory(p.category)
+      : p.category.toLowerCase() === project.category.toLowerCase()
+  );
+
+  const currentIdx = siblings.findIndex((p) => p.id === project.id);
+  const previousProject =
+    currentIdx > 0
+      ? siblings[currentIdx - 1]
+      : siblings.length > 1
+        ? siblings[siblings.length - 1]
+        : null;
+  const nextProject =
+    currentIdx >= 0 && currentIdx < siblings.length - 1
+      ? siblings[currentIdx + 1]
+      : siblings.length > 1
+        ? siblings[0]
+        : null;
+
+  return { project, previousProject, nextProject };
 }

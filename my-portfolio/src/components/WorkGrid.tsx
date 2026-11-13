@@ -24,6 +24,9 @@ export interface Project {
   image_url: string;
   gallery_urls: string[] | null;
   description: string;
+  role?: string | null;
+  year?: string | null;
+  project_url?: string | null;
   preview_video_url?: string | null;
 }
 
@@ -249,20 +252,41 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
       onMouseLeave={handleMouseLeave}
       role="button"
       tabIndex={0}
-      className="website-project-card group cursor-pointer flex flex-col bg-card transition-[border-color,box-shadow] duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_420px]"
+      className="website-project-card group cursor-pointer flex flex-col bg-card transition-[border-color,box-shadow,transform] duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border/80 hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_460px]"
     >
+      {/* BROWSER FRAME HEADER */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-muted/60 border-b border-border/60 text-[11px] text-muted-foreground select-none">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-red-400/70 transition-colors" />
+          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-amber-400/70 transition-colors" />
+          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-emerald-400/70 transition-colors" />
+        </div>
+        <div className="px-2.5 py-0.5 rounded-full bg-background/80 border border-border/50 text-[10px] font-mono text-muted-foreground/80 truncate max-w-[200px]">
+          {project.project_url
+            ? (() => {
+                try {
+                  return new URL(project.project_url).hostname.replace("www.", "");
+                } catch {
+                  return "preview";
+                }
+              })()
+            : `${project.title.toLowerCase().replace(/[^\w]/g, "")}.app`}
+        </div>
+        <div className="w-6" />
+      </div>
+
       {/* IMAGE / VIDEO PREVIEW AREA */}
-      <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted border-b border-border/60">
+      <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted/30 border-b border-border/60">
         {project.image_url ? (
           <ProjectImage
             src={project.image_url}
             alt={project.title}
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            maxWidth={1000}
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            maxWidth={1200}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs italic">
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs italic">
             No Preview Available
           </div>
         )}
@@ -287,13 +311,18 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
 
       {/* CONTENT AREA */}
       <div className="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
-        <div className="flex flex-col gap-2 md:gap-3">
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-semibold uppercase tracking-[0.16em] text-sky-600 dark:text-sky-400">
               {project.category}
-            </p>
+            </span>
+            {project.year && (
+              <span className="font-mono text-muted-foreground">
+                {project.year}
+              </span>
+            )}
           </div>
-          <h3 className="text-xl md:text-2xl font-bold text-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
+          <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-200">
             {project.title}
           </h3>
           {project.description && (
@@ -303,13 +332,20 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
           )}
         </div>
 
-        {/* CTA */}
-        <div className="flex items-center text-sm font-semibold text-muted-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
-          View Project
-          <ArrowUpRight
-            size={16}
-            className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 motion-reduce:transform-none"
-          />
+        {/* CTA ROW */}
+        <div className="flex items-center justify-between pt-4 border-t border-border/50 text-xs font-semibold text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 group-hover:text-foreground transition-colors">
+            View Case Study
+            <ArrowUpRight
+              size={15}
+              className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 motion-reduce:transform-none"
+            />
+          </span>
+          {project.project_url && (
+            <span className="text-[11px] font-medium text-sky-600 dark:text-sky-400">
+              Live Website
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -341,7 +377,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
   }
 
   return (
-    <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+    <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
       {items.map((project) => (
         <WebsiteProjectCard
           key={project.id}

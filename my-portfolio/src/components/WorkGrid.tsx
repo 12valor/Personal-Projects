@@ -6,9 +6,8 @@ import { ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
+import GraphicDesignGallery from "./GraphicDesignGallery";
 import {
-  KNOWN_URL_DIMENSIONS,
-  calculateImageOrientation,
   isOptimizableImageSrc,
   optimizeCloudinaryUrl,
   type ImageDimension,
@@ -523,208 +522,8 @@ const VideoProjectList = React.memo(function VideoProjectList({
   );
 });
 
-// GraphicDesignCollage: Orientation-aware editorial collage displaying individual graphics
+// Compatibility export
 export type { ImageDimension, ImageOrientation };
-
-export interface IndividualGraphicItem {
-  id: string;
-  projectId: number;
-  title: string;
-  category: string;
-  image_url: string;
-  description?: string;
-}
-
-interface GraphicDesignCardProps {
-  graphic: IndividualGraphicItem;
-  initialDimension?: ImageDimension;
-  total: number;
-}
-
-const GraphicDesignCard = React.memo(function GraphicDesignCard({
-  graphic,
-  initialDimension,
-  total,
-}: GraphicDesignCardProps) {
-  const [dim, setDim] = useState<ImageDimension | undefined>(
-    () => initialDimension ?? KNOWN_URL_DIMENSIONS[graphic.image_url]
-  );
-
-  const orientation = dim?.orientation || "square";
-  const ratio = dim?.ratio || 1.0;
-
-  let colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-  let titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-  let sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
-  let maxImgWidth = 900;
-
-  if (orientation === "landscape") {
-    if (ratio >= 2.0) {
-      colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-12";
-      titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-2xl";
-      sizes = "(max-width: 1280px) 100vw, 1280px";
-      maxImgWidth = 1280;
-    } else {
-      colSpanClass = "col-span-1 sm:col-span-2 lg:col-span-8";
-      titleSizeClass = "text-xl sm:text-2xl lg:text-3xl max-w-xl";
-      sizes = "(max-width: 1024px) 100vw, 66vw";
-      maxImgWidth = 1000;
-    }
-  } else if (orientation === "portrait") {
-    colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-    titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-  } else {
-    if (total === 2) {
-      colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-6";
-      sizes = "(max-width: 640px) 100vw, 50vw";
-    } else {
-      colSpanClass = "col-span-1 sm:col-span-1 lg:col-span-4";
-    }
-    titleSizeClass = "text-lg sm:text-xl lg:text-2xl";
-  }
-
-  const optimizedSrc = optimizeCloudinaryUrl(graphic.image_url, maxImgWidth);
-
-  return (
-    <div
-      style={{
-        aspectRatio: `${ratio}`,
-        maxHeight: "720px",
-        minHeight: "260px",
-      }}
-      className={`graphic-project-card group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 transition-[border-color,box-shadow] duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 w-full [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_380px] ${colSpanClass}`}
-    >
-      {/* Background Artwork - Uncropped & Perfectly Fitted */}
-      <div className="graphic-project-preview absolute inset-0 w-full h-full overflow-hidden">
-        <Image
-          src={optimizedSrc}
-          alt={graphic.title}
-          fill
-          loading="lazy"
-          decoding="async"
-          className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-          onLoad={(e) => {
-            if (dim) return;
-            const img = e.currentTarget;
-            if (img.naturalWidth && img.naturalHeight) {
-              const { ratio: r, orientation: o } = calculateImageOrientation(
-                img.naturalWidth,
-                img.naturalHeight
-              );
-              setDim({
-                width: img.naturalWidth,
-                height: img.naturalHeight,
-                ratio: r,
-                orientation: o,
-              });
-            }
-          }}
-          sizes={sizes}
-          unoptimized={!isOptimizableImageSrc(optimizedSrc)}
-        />
-
-        {/* Gradient Scrim for high contrast text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/15 pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/45" />
-      </div>
-
-      {/* Top Badges */}
-      <div className="absolute top-4 left-4 sm:top-5 sm:left-5 z-10 flex items-center gap-2">
-        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-black/70 md:bg-black/50 md:backdrop-blur-md text-white/90 border border-white/10 shadow-sm">
-          {graphic.category}
-        </span>
-      </div>
-
-      <div className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10 flex items-center gap-1.5">
-        {/* Orientation Tag */}
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-black/65 md:bg-black/45 md:backdrop-blur-md text-white/75 border border-white/10 shadow-sm">
-          {orientation}
-        </span>
-      </div>
-
-      {/* Bottom Text Overlay */}
-      <div className="relative z-10 p-5 sm:p-6 lg:p-7 flex flex-col gap-1.5">
-        <h3
-          className={`font-semibold tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
-        >
-          {graphic.title}
-        </h3>
-        {graphic.description && (
-          <p className="text-xs sm:text-sm text-white/80 line-clamp-1 max-w-xl font-normal leading-relaxed">
-            {graphic.description}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-});
-
-interface GraphicDesignProjectListProps {
-  items: Project[];
-  initialDimensions: Record<string, ImageDimension>;
-}
-
-const GraphicDesignProjectList = React.memo(function GraphicDesignProjectList({
-  items,
-  initialDimensions,
-}: GraphicDesignProjectListProps) {
-  // Flatten projects and gallery images into individual graphic items
-  const individualGraphics = useMemo(() => {
-    const list: IndividualGraphicItem[] = [];
-    items.forEach((p) => {
-      if (p.image_url) {
-        list.push({
-          id: `${p.id}-main`,
-          projectId: p.id,
-          title: p.title,
-          category: p.category,
-          image_url: p.image_url,
-          description: p.description,
-        });
-      }
-      if (p.gallery_urls && Array.isArray(p.gallery_urls)) {
-        p.gallery_urls.forEach((url, i) => {
-          if (url && url !== p.image_url) {
-            list.push({
-              id: `${p.id}-extra-${i}`,
-              projectId: p.id,
-              title: p.title,
-              category: p.category,
-              image_url: url,
-              description: p.description,
-            });
-          }
-        });
-      }
-    });
-    return list;
-  }, [items]);
-
-  if (individualGraphics.length === 0) {
-    return (
-      <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
-        <p className="text-sm font-medium">No graphic design projects published yet.</p>
-        <p className="text-xs text-muted-foreground/70">
-          Add graphic designs, posters, or branding mockups from the admin panel.
-        </p>
-      </div>
-    );
-  }
-
-  const total = individualGraphics.length;
-
-  return (
-    <div className="graphic-project-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-7 items-start grid-flow-row-dense">
-      {individualGraphics.map((graphic) => (
-        <GraphicDesignCard
-          key={graphic.id}
-          graphic={graphic}
-          initialDimension={initialDimensions[graphic.image_url]}
-          total={total}
-        />
-      ))}
-    </div>
-  );
-});
 
 const EMPTY_DIMENSIONS: Record<string, ImageDimension> = {};
 
@@ -910,13 +709,7 @@ export default function WorkGrid({
 
           {/* GRAPHIC DESIGNS */}
           <div className="flex flex-col gap-8 md:gap-12" id="graphic-designs">
-            <div className="flex flex-col items-center text-center">
-              <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
-                Graphic Designs
-              </h3>
-              <div className="w-12 h-px bg-border mt-6" />
-            </div>
-            <GraphicDesignProjectList
+            <GraphicDesignGallery
               items={graphicDesignProjects}
               initialDimensions={initialGraphicDimensions}
             />

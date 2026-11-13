@@ -405,6 +405,7 @@ export default function ProjectShowcase({
       {/* Lightbox Zoom Overlay when activated */}
       {zoomImage && (
         <ImageZoomLightbox
+          key={zoomImage.url}
           image={zoomImage}
           onClose={() => setZoomImage(null)}
         />

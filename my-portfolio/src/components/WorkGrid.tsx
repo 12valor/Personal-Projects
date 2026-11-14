@@ -27,6 +27,7 @@ export interface Project {
   year?: string | null;
   project_url?: string | null;
   preview_video_url?: string | null;
+  is_featured?: boolean;
 }
 
 interface WorkGridProps {

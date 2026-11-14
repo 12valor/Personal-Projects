@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Layers } from "lucide-react";
 import Image from "next/image";
 import { isOptimizableImageSrc, optimizeCloudinaryUrl } from "../lib/project-mappers";
+import { useSmoothScroll } from "./SmoothScrollProvider";
 
 interface GalleryModalProps {
   isOpen: boolean;
@@ -42,16 +43,20 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
     if (e.key === "ArrowLeft") prevSlide();
   }, [onClose, nextSlide, prevSlide]);
 
+  const lenis = useSmoothScroll();
+
   useEffect(() => {
     if (!isOpen) return;
+    lenis?.stop();
     document.addEventListener("keydown", handleKeyDown);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = prevOverflow;
+      lenis?.start();
     };
-  }, [isOpen, handleKeyDown]);
+  }, [isOpen, handleKeyDown, lenis]);
 
   if (!isOpen || safeImages.length === 0) return null;
 
@@ -63,6 +68,7 @@ export default function GalleryModal({ isOpen, onClose, images, title }: Gallery
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
+          data-lenis-prevent="true"
           // Use Poppins font, deeper blurred background for a cleaner look
           className="fixed inset-0 z-[100] bg-zinc-950/90 backdrop-blur-xl flex items-center justify-center font-poppins"
           onClick={onClose} // Close when clicking background

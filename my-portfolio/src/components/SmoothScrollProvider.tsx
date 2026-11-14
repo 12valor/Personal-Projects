@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 
@@ -16,6 +17,7 @@ export default function SmoothScrollProvider({
   children: React.ReactNode;
 }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -53,6 +55,12 @@ export default function SmoothScrollProvider({
       setLenis(null);
     };
   }, []);
+
+  // Update Lenis scroll boundaries on route changes
+  useEffect(() => {
+    if (!lenis) return;
+    lenis.resize();
+  }, [pathname, lenis]);
 
   return (
     <MotionConfig reducedMotion="user">

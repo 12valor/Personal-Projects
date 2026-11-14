@@ -23,6 +23,7 @@ import {
   type SerializedProject,
   type ImageDimension,
 } from "../lib/project-mappers";
+import { useSmoothScroll } from "./SmoothScrollProvider";
 
 interface ZoomImageState {
   url: string;
@@ -105,6 +106,7 @@ function ImageZoomLightbox({
       role="dialog"
       aria-modal="true"
       aria-label="Image zoom inspection"
+      data-lenis-prevent="true"
       className="fixed inset-0 z-[120] flex flex-col bg-black/95 backdrop-blur-xl text-white animate-in fade-in duration-200 select-none"
       onClick={() => {
         if (scale === 1) onClose();
@@ -333,6 +335,8 @@ export default function ProjectShowcase({
   initialDimensions = {},
 }: ProjectShowcaseProps) {
   const router = useRouter();
+  const lenis = useSmoothScroll();
+  const articleRef = useRef<HTMLElement>(null);
   const [zoomImage, setZoomImage] = useState<ZoomImageState | null>(null);
 
   const handleClose = useCallback(() => {
@@ -343,17 +347,26 @@ export default function ProjectShowcase({
     }
   }, [isModal, router]);
 
-  // Lock body scroll while modal or lightbox is active
+  // Lock body scroll while modal or lightbox is active, and pause Lenis to allow natural modal scrolling
   useEffect(() => {
     if (!isModal && !zoomImage) return;
+
+    // Pause Lenis so it does not intercept scroll/wheel events intended for the modal
+    lenis?.stop();
 
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    // Auto-focus the modal container so Page Up/Down, Space, and Arrow keys scroll it immediately
+    if (isModal && articleRef.current) {
+      articleRef.current.focus({ preventScroll: true });
+    }
+
     return () => {
       document.body.style.overflow = originalOverflow;
+      lenis?.start();
     };
-  }, [isModal, zoomImage]);
+  }, [isModal, zoomImage, lenis]);
 
   // Escape key closes modal if lightbox is not active
   useEffect(() => {
@@ -397,10 +410,13 @@ export default function ProjectShowcase({
 
   return (
     <article
+      ref={articleRef}
       role={isModal ? "dialog" : undefined}
       aria-modal={isModal ? "true" : undefined}
       aria-label={project.title}
-      className={`${containerClasses} font-sans selection:bg-sky-500/20`}
+      tabIndex={isModal ? -1 : undefined}
+      data-lenis-prevent={isModal ? "true" : undefined}
+      className={`${containerClasses} font-sans selection:bg-sky-500/20 focus:outline-none`}
     >
       {/* Lightbox Zoom Overlay when activated */}
       {zoomImage && (

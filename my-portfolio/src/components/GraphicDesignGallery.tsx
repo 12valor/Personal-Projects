@@ -18,6 +18,7 @@ import {
   type ImageDimension,
 } from "../lib/project-mappers";
 import type { Project } from "./WorkGrid";
+import { useSmoothScroll } from "./SmoothScrollProvider";
 
 export interface IndividualGraphicItem {
   id: string;
@@ -74,6 +75,7 @@ function ArtworkViewer({
   const [scale, setScale] = useState<number>(1);
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const lenis = useSmoothScroll();
 
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -146,6 +148,7 @@ function ArtworkViewer({
       }
     };
 
+    lenis?.stop();
     window.addEventListener("keydown", handleKeyDown);
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -153,8 +156,9 @@ function ArtworkViewer({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow;
+      lenis?.start();
     };
-  }, [onClose, handlePrev, handleNext, handleZoomIn, handleZoomOut, handleResetZoom, scale]);
+  }, [onClose, handlePrev, handleNext, handleZoomIn, handleZoomOut, handleResetZoom, scale, lenis]);
 
   // Auto-scroll active thumbnail into view
   useEffect(() => {
@@ -277,6 +281,7 @@ function ArtworkViewer({
       role="dialog"
       aria-modal="true"
       aria-label={currentGraphic.title}
+      data-lenis-prevent="true"
       className="fixed inset-0 z-[150] flex flex-col bg-black/95 backdrop-blur-2xl text-white select-none animate-in fade-in duration-200 font-sans"
       onClick={() => {
         if (scale === 1) onClose();

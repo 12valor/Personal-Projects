@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
@@ -239,6 +239,33 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
     }
   };
 
+  const domainLabel = useMemo(() => {
+    if (project.project_url) {
+      try {
+        return new URL(project.project_url).hostname.replace(/^www\./, "");
+      } catch {
+        // Fallback below
+      }
+    }
+    return `${project.title.toLowerCase().replace(/[^\w]/g, "")}.app`;
+  }, [project.project_url, project.title]);
+
+  const summaryText = useMemo(() => {
+    if (!project.description) return "";
+    const clean = project.description.replace(/\s+/g, " ").trim();
+    // If the description has a multi-sentence structure where the first sentence
+    // is a complete, well-formed 75-150 character summary (e.g. WebSystemBuilders),
+    // extract it so it doesn't get awkwardly clipped at sentence 2 boundary.
+    const sentences = clean.match(/[^.!?]+[.!?]+(?:\s|$)/g);
+    if (sentences && sentences.length > 1) {
+      const s1 = sentences[0].trim();
+      if (s1.length >= 75 && s1.length <= 150) {
+        return s1;
+      }
+    }
+    return clean;
+  }, [project.description]);
+
   return (
     <div
       onClick={() => onProjectClick(project)}
@@ -252,38 +279,37 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
       onMouseLeave={handleMouseLeave}
       role="button"
       tabIndex={0}
-      className="website-project-card group cursor-pointer flex flex-col bg-card transition-[border-color,box-shadow,transform] duration-300 rounded-2xl md:rounded-3xl overflow-hidden border border-border/80 hover:border-black/30 dark:hover:border-white/30 h-full shadow-sm hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_460px]"
+      aria-label={`View case study for ${project.title}`}
+      className="website-project-card group cursor-pointer flex flex-col bg-card transition-[border-color,box-shadow,transform] duration-300 ease-out rounded-xl sm:rounded-2xl overflow-hidden border border-border/80 dark:border-border/60 hover:border-foreground/25 dark:hover:border-white/25 h-full shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_28px_-6px_rgba(0,0,0,0.08),0_4px_12px_-2px_rgba(0,0,0,0.03)] dark:hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.6)] hover:-translate-y-1 motion-reduce:hover:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_420px]"
     >
       {/* BROWSER FRAME HEADER */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-muted/60 border-b border-border/60 text-[11px] text-muted-foreground select-none">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-red-400/70 transition-colors" />
-          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-amber-400/70 transition-colors" />
-          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-emerald-400/70 transition-colors" />
+      <div className="flex items-center justify-between px-3.5 sm:px-4 py-2.5 bg-muted/40 dark:bg-muted/30 border-b border-border/70 dark:border-border/50 text-[11px] text-muted-foreground select-none">
+        {/* Subtle window controls */}
+        <div className="flex items-center gap-1.5 w-10">
+          <span className="w-2.5 h-2.5 rounded-full bg-border dark:bg-white/20 group-hover:bg-[#FF5F56]/80 transition-colors duration-200" />
+          <span className="w-2.5 h-2.5 rounded-full bg-border dark:bg-white/20 group-hover:bg-[#FFBD2E]/80 transition-colors duration-200" />
+          <span className="w-2.5 h-2.5 rounded-full bg-border dark:bg-white/20 group-hover:bg-[#27C93F]/80 transition-colors duration-200" />
         </div>
-        <div className="px-2.5 py-0.5 rounded-full bg-background/80 border border-border/50 text-[10px] font-mono text-muted-foreground/80 truncate max-w-[200px]">
-          {project.project_url
-            ? (() => {
-                try {
-                  return new URL(project.project_url).hostname.replace("www.", "");
-                } catch {
-                  return "preview";
-                }
-              })()
-            : `${project.title.toLowerCase().replace(/[^\w]/g, "")}.app`}
+
+        {/* Centered domain label pill */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-background/90 dark:bg-background/70 border border-border/60 dark:border-border/40 text-[11px] font-mono tracking-tight text-muted-foreground/90 max-w-[210px] sm:max-w-[260px] truncate shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+          <Lock className="w-2.5 h-2.5 shrink-0 opacity-45" />
+          <span className="truncate">{domainLabel}</span>
         </div>
-        <div className="w-6" />
+
+        {/* Balancing spacer */}
+        <div className="w-10 shrink-0" aria-hidden="true" />
       </div>
 
       {/* IMAGE / VIDEO PREVIEW AREA */}
-      <div className="website-project-preview relative aspect-[16/10] overflow-hidden bg-muted/30 border-b border-border/60">
+      <div className="website-project-preview relative aspect-[16/8.2] w-full overflow-hidden bg-muted/20 border-b border-border/70 dark:border-border/50">
         {project.image_url ? (
           <ProjectImage
             src={project.image_url}
             alt={project.title}
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            maxWidth={1200}
+            className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.018] motion-reduce:transform-none"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+            maxWidth={1400}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs italic">
@@ -295,7 +321,7 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
         {hasVideo && hasHovered && (
           <video
             ref={videoRef}
-            src={optimizeCloudinaryUrl(project.preview_video_url!, 900, "video")}
+            src={optimizeCloudinaryUrl(project.preview_video_url!, 1200, "video")}
             autoPlay
             muted
             loop
@@ -310,41 +336,58 @@ const WebsiteProjectCard = React.memo(function WebsiteProjectCard({
       </div>
 
       {/* CONTENT AREA */}
-      <div className="p-6 md:p-8 flex flex-col flex-grow justify-between gap-6">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold uppercase tracking-[0.16em] text-sky-600 dark:text-sky-400">
+      <div className="p-5 sm:p-5.5 lg:p-6 flex flex-col flex-1 justify-between gap-5">
+        <div className="flex flex-col gap-2.5">
+          {/* CATEGORY & YEAR */}
+          <div className="flex items-center justify-between text-[11px] font-mono tracking-wider text-muted-foreground/80">
+            <span className="uppercase font-medium text-foreground/75 dark:text-foreground/80">
               {project.category}
             </span>
             {project.year && (
-              <span className="font-mono text-muted-foreground">
+              <span className="tabular-nums text-muted-foreground/60">
                 {project.year}
               </span>
             )}
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-200">
+
+          {/* PROJECT TITLE */}
+          <h3 className="text-xl sm:text-[22px] md:text-2xl font-semibold tracking-[-0.015em] text-foreground group-hover:text-foreground transition-colors duration-200 leading-snug">
             {project.title}
           </h3>
-          {project.description && (
-            <p className="text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed">
-              {project.description}
+
+          {/* PROJECT DESCRIPTION */}
+          {summaryText && (
+            <p className="text-[13px] sm:text-[13.5px] lg:text-sm text-muted-foreground leading-relaxed line-clamp-3">
+              {summaryText}
             </p>
           )}
         </div>
 
         {/* CTA ROW */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/50 text-xs font-semibold text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5 group-hover:text-foreground transition-colors">
-            View Case Study
+        <div className="flex items-center justify-between pt-4 border-t border-border/50 text-xs mt-auto">
+          {/* Primary Action */}
+          <span className="inline-flex items-center gap-1.5 font-medium text-foreground group-hover:text-foreground transition-colors">
+            <span>View Case Study</span>
             <ArrowUpRight
               size={15}
-              className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 motion-reduce:transform-none"
+              className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none"
             />
           </span>
+
+          {/* Secondary Action: Independent Live Website */}
           {project.project_url && (
-            <span className="text-[11px] font-medium text-sky-600 dark:text-sky-400">
-              Live Website
-            </span>
+            <a
+              href={project.project_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground hover:text-foreground px-2.5 py-1 rounded-md bg-muted/40 hover:bg-muted border border-border/40 hover:border-border/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`Visit live website for ${project.title}`}
+            >
+              <span>Live Website</span>
+              <ExternalLink size={12} className="shrink-0 opacity-70" />
+            </a>
           )}
         </div>
       </div>
@@ -377,7 +420,7 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
   }
 
   return (
-    <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
+    <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 lg:gap-10 items-stretch">
       {items.map((project) => (
         <WebsiteProjectCard
           key={project.id}
@@ -602,7 +645,7 @@ export default function WorkGrid({
   return (
     <section
       id="work"
-      className="relative px-4 py-14 md:px-16 md:py-20 bg-background border-t border-border font-poppins"
+      className="relative px-4 py-14 sm:px-6 md:px-10 lg:px-16 md:py-20 bg-background border-t border-border font-poppins"
     >
       {/* GALLERY MODAL */}
       <GalleryModal
@@ -675,7 +718,7 @@ export default function WorkGrid({
         {/* SECTIONS */}
         <div className="flex flex-col gap-24 md:gap-32">
           {/* WEBSITES */}
-          <div className="flex flex-col gap-8 md:gap-12" id="websites">
+          <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="websites">
             <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Websites
@@ -692,7 +735,7 @@ export default function WorkGrid({
           </div>
 
           {/* SYSTEMS */}
-          <div className="flex flex-col gap-8 md:gap-12" id="systems">
+          <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="systems">
             <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Systems
@@ -709,7 +752,7 @@ export default function WorkGrid({
           </div>
 
           {/* GRAPHIC DESIGNS */}
-          <div className="flex flex-col gap-8 md:gap-12" id="graphic-designs">
+          <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="graphic-designs">
             <GraphicDesignGallery
               items={graphicDesignProjects}
               initialDimensions={initialGraphicDimensions}
@@ -717,7 +760,7 @@ export default function WorkGrid({
           </div>
 
           {/* VIDEO EDITING */}
-          <div className="flex flex-col gap-8 md:gap-12" id="video-edits">
+          <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="video-edits">
             <div className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Video Edits

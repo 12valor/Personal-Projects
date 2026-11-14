@@ -10,7 +10,6 @@ import {
   ZoomOut,
   RotateCcw,
   Maximize2,
-  Sparkles,
 } from "lucide-react";
 import {
   isOptimizableImageSrc,
@@ -30,7 +29,6 @@ export interface IndividualGraphicItem {
   ratio: number;
   width?: number;
   height?: number;
-  tags: string[];
   is_featured?: boolean;
 }
 
@@ -39,46 +37,25 @@ interface GraphicDesignGalleryProps {
   initialDimensions?: Record<string, ImageDimension>;
 }
 
-// Derive tags from item content to support real category filtering
-function getGraphicTags(item: {
-  title: string;
-  category: string;
-  description?: string | null;
-}): string[] {
-  const text = `${item.title} ${item.category} ${item.description || ""}`.toLowerCase();
-  const tags: string[] = [];
+// Curated visual order for balanced editorial flow across 3 columns (desktop) and 2 columns (tablet)
+const CURATED_GRAPHIC_ORDER: string[] = [
+  "56-main",      // Summer Beach Festival (Portrait)
+  "54-main",      // DP Blast 4 (Square)
+  "40-main",      // Technowatch AKWE Day 1 (Square)
+  "8-main",       // Departmental Shirt (Square)
+  "50-main",      // Technowatch Pubmat (Landscape)
 
-  if (text.includes("poster") || text.includes("tupv day")) {
-    tags.push("Posters");
-  }
-  if (text.includes("pubmat") || text.includes("blast")) {
-    tags.push("Pubmats");
-  }
-  if (
-    text.includes("festival") ||
-    text.includes("day") ||
-    text.includes("akwe") ||
-    text.includes("graduation") ||
-    text.includes("blast")
-  ) {
-    tags.push("Events");
-  }
-  if (
-    text.includes("shirt") ||
-    text.includes("apparel") ||
-    text.includes("club shirt") ||
-    text.includes("departmental")
-  ) {
-    tags.push("Apparel");
-  }
+  "42-main",      // TUPV Day Trophy (Portrait)
+  "52-main",      // DP Blast 3 Take Off (Square)
+  "38-main",      // Technowatch AKWE WhatsApp (Square)
+  "9-main",       // Club Shirt (Square)
 
-  if (tags.length === 0) {
-    if (item.category.toLowerCase().includes("poster")) tags.push("Posters");
-    else tags.push("Pubmats");
-  }
-
-  return tags;
-}
+  "46-main",      // Graduation Pubmat Agus (Portrait)
+  "48-main",      // Signature Hunt (Square)
+  "36-main",      // Technowatch AKWE Golden Mirror (Square)
+  "8-variant-0",  // Departmental Shirt Chinese Collar (Square)
+  "44-main",      // DP Blast 2 Computer Eng Tech (Square)
+];
 
 // --- FULL-SCREEN ARTWORK VIEWER WITH ZOOM, PAN, TOUCH AND KEYBOARD NAVIGATION ---
 interface ArtworkViewerProps {
@@ -536,11 +513,10 @@ export default function GraphicDesignGallery({
   items,
   initialDimensions = {},
 }: GraphicDesignGalleryProps) {
-  const [activeFilter, setActiveFilter] = useState<string>("All");
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [loadedDimensions, setLoadedDimensions] = useState<Record<string, { ratio: number }>>({});
 
-  // Flatten projects and gallery variants into individual graphic items with calculated ratios and tags
+  // Flatten projects and gallery variants into individual graphic items with calculated ratios
   const allGraphics = useMemo(() => {
     const list: IndividualGraphicItem[] = [];
 
@@ -549,11 +525,6 @@ export default function GraphicDesignGallery({
         const dim = initialDimensions[p.image_url] ?? KNOWN_URL_DIMENSIONS[p.image_url];
         const dynamicRatio = loadedDimensions[p.image_url]?.ratio;
         const ratio = dynamicRatio || dim?.ratio || 1.0;
-        const tags = getGraphicTags({
-          title: p.title,
-          category: p.category,
-          description: p.description,
-        });
 
         list.push({
           id: `${p.id}-main`,
@@ -565,7 +536,6 @@ export default function GraphicDesignGallery({
           ratio,
           width: dim?.width,
           height: dim?.height,
-          tags,
           is_featured: p.is_featured,
         });
       }
@@ -576,11 +546,6 @@ export default function GraphicDesignGallery({
             const dim = initialDimensions[url] ?? KNOWN_URL_DIMENSIONS[url];
             const dynamicRatio = loadedDimensions[url]?.ratio;
             const ratio = dynamicRatio || dim?.ratio || 1.0;
-            const tags = getGraphicTags({
-              title: `${p.title} (Variant ${i + 1})`,
-              category: p.category,
-              description: p.description,
-            });
 
             list.push({
               id: `${p.id}-variant-${i}`,
@@ -592,7 +557,6 @@ export default function GraphicDesignGallery({
               ratio,
               width: dim?.width,
               height: dim?.height,
-              tags,
               is_featured: p.is_featured,
             });
           }
@@ -603,23 +567,17 @@ export default function GraphicDesignGallery({
     return list;
   }, [items, initialDimensions, loadedDimensions]);
 
-  // Compute category counts for understated filter tabs
-  const filterCategories = useMemo(() => {
-    const categories = ["All", "Posters", "Pubmats", "Events", "Apparel"];
-    return categories.map((cat) => {
-      const count =
-        cat === "All"
-          ? allGraphics.length
-          : allGraphics.filter((g) => g.tags.includes(cat)).length;
-      return { name: cat, count };
+  // Sort graphics into a curated, balanced sequence that distributes heights harmoniously across columns
+  const sortedGraphics = useMemo(() => {
+    const orderMap = new Map<string, number>();
+    CURATED_GRAPHIC_ORDER.forEach((id, idx) => orderMap.set(id, idx));
+
+    return [...allGraphics].sort((a, b) => {
+      const idxA = orderMap.has(a.id) ? orderMap.get(a.id)! : 999;
+      const idxB = orderMap.has(b.id) ? orderMap.get(b.id)! : 999;
+      return idxA - idxB;
     });
   }, [allGraphics]);
-
-  // Filtered graphic list
-  const filteredGraphics = useMemo(() => {
-    if (activeFilter === "All") return allGraphics;
-    return allGraphics.filter((g) => g.tags.includes(activeFilter));
-  }, [allGraphics, activeFilter]);
 
   // Dynamic image load handler to ensure zero cropping for any unknown dimensions
   const handleImageLoad = useCallback((url: string, naturalWidth: number, naturalHeight: number) => {
@@ -632,7 +590,7 @@ export default function GraphicDesignGallery({
     }
   }, []);
 
-  if (allGraphics.length === 0) {
+  if (sortedGraphics.length === 0) {
     return (
       <div className="h-40 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-xl p-6 text-center">
         <p className="text-sm font-medium">No graphic design projects published yet.</p>
@@ -648,80 +606,32 @@ export default function GraphicDesignGallery({
       {/* Full-Screen Artwork Viewer */}
       {viewerIndex !== null && (
         <ArtworkViewer
-          key={filteredGraphics[viewerIndex]?.id || viewerIndex}
-          graphics={filteredGraphics}
+          key={sortedGraphics[viewerIndex]?.id || viewerIndex}
+          graphics={sortedGraphics}
           currentIndex={viewerIndex}
           onClose={() => setViewerIndex(null)}
           onNavigate={(newIdx) => setViewerIndex(newIdx)}
         />
       )}
 
-      {/* --- SECTION HEADER: REFINED SWISS EDITORIAL HIERARCHY --- */}
-      <div className="flex flex-col items-center text-center gap-4 max-w-3xl mx-auto px-4">
-        {/* Subtle Mono Eyebrow */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/80 bg-muted/40 text-muted-foreground text-[11px] font-mono uppercase tracking-[0.2em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-foreground/60" />
-          <span>Visual Arts & Exhibition</span>
-        </div>
-
-        {/* Strong Heading */}
-        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground font-sans">
+      {/* --- SECTION HEADER: CLEAN & EDITORIAL (SWISS MINIMALISM) --- */}
+      <div className="flex flex-col items-center text-center">
+        <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
           Graphic Designs
         </h3>
-
-        {/* Tasteful Short Introduction */}
-        <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl font-normal">
-          A curated exhibition of posters, event publication materials, digital graphics, and apparel. Each work emphasizes disciplined grid structures, bold typography, and visual clarity.
-        </p>
-
-        {/* --- UNDERSTATED CATEGORY FILTERING --- */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-3">
-          {filterCategories.map((filter) => {
-            if (filter.count === 0 && filter.name !== "All") return null;
-            const isActive = activeFilter === filter.name;
-            return (
-              <button
-                key={filter.name}
-                type="button"
-                onClick={() => setActiveFilter(filter.name)}
-                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 border ${
-                  isActive
-                    ? "bg-foreground text-background border-foreground shadow-sm scale-105"
-                    : "bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border-border/70 hover:border-foreground/30"
-                }`}
-              >
-                <span>{filter.name}</span>
-                <span
-                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                    isActive
-                      ? "bg-background/25 text-background font-semibold"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {filter.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <div className="w-12 h-px bg-border mt-6" />
       </div>
 
-      {/* --- REFINED RESPONSIVE MASONRY-STYLE GALLERY --- */}
+      {/* --- REFINED RESPONSIVE EDITORIAL GALLERY --- */}
       {/* 
-        Desktop: 3 columns with varied visual heights & occasional standout spans
+        Desktop: 3 columns with balanced heights and no oversized billboard breaks
         Tablet: 2 columns
         Mobile: 1 column
-        Consistent gutters and zero empty gaps
+        Consistent gutters, pure aspect ratio containment, and subtle interactions
       */}
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 [column-fill:_balance]">
-        {filteredGraphics.map((graphic, index) => {
-          // Identify standout designs: wide-format pubmats (ratio > 1.4) or explicitly featured items
-          const isWideStandout = graphic.ratio > 1.4;
-          const isStandout = isWideStandout && activeFilter === "All";
-          const optimizedSrc = optimizeCloudinaryUrl(
-            graphic.image_url,
-            isStandout ? 1800 : 1200
-          );
+        {sortedGraphics.map((graphic, index) => {
+          const optimizedSrc = optimizeCloudinaryUrl(graphic.image_url, 1200);
 
           return (
             <div
@@ -736,13 +646,7 @@ export default function GraphicDesignGallery({
               role="button"
               tabIndex={0}
               aria-label={`View full size artwork: ${graphic.title}`}
-              style={{
-                columnSpan: isStandout ? "all" : undefined,
-                WebkitColumnSpan: isStandout ? "all" : undefined,
-              }}
-              className={`break-inside-avoid mb-6 md:mb-8 group relative rounded-xl md:rounded-2xl overflow-hidden border border-border/70 bg-card hover:border-foreground/40 hover:shadow-2xl transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                isStandout ? "w-full my-4 md:my-6" : ""
-              }`}
+              className="break-inside-avoid mb-6 md:mb-8 group relative rounded-xl sm:rounded-2xl overflow-hidden border border-border/70 bg-card hover:border-foreground/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {/* Artwork Container at 100% Exact Aspect Ratio (Contain-Fit, Zero Cropping) */}
               <div
@@ -755,11 +659,7 @@ export default function GraphicDesignGallery({
                   src={optimizedSrc}
                   alt={graphic.title}
                   fill
-                  sizes={
-                    isStandout
-                      ? "(max-width: 1024px) 100vw, 1280px"
-                      : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
-                  }
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
                   className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                   loading="lazy"
                   decoding="async"
@@ -772,20 +672,12 @@ export default function GraphicDesignGallery({
                   }}
                 />
 
-                {/* Subtle Standout Badge if Featured Widescreen Banner */}
-                {isStandout && (
-                  <div className="absolute top-4 left-4 z-10 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono tracking-widest uppercase shadow-lg">
-                    <Sparkles className="w-3 h-3 text-amber-400" />
-                    <span>Featured Panorama</span>
-                  </div>
-                )}
-
-                {/* Elegant Minimalist Hover Reveal (Swiss Style Scrim) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
+                {/* Elegant Minimalist Hover/Focus Reveal (Swiss Style Scrim) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
                   <span className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-zinc-300 mb-1">
                     {graphic.category}
                   </span>
-                  <h4 className="text-base sm:text-lg font-bold tracking-tight text-white leading-snug drop-shadow-sm">
+                  <h4 className="text-base sm:text-lg font-semibold tracking-tight text-white leading-snug drop-shadow-sm">
                     {graphic.title}
                   </h4>
                   {graphic.description && (
@@ -795,22 +687,9 @@ export default function GraphicDesignGallery({
                   )}
                   <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-300">
                     <Maximize2 className="w-3 h-3 text-white/90" />
-                    <span>Inspect full size</span>
+                    <span>Inspect artwork</span>
                   </div>
                 </div>
-              </div>
-
-              {/* Mobile Subtle Caption Footer (Visible on Small Screens for Touch Clarity) */}
-              <div className="sm:hidden px-4 py-3 flex items-center justify-between border-t border-border/40 bg-card/60">
-                <div className="flex flex-col truncate pr-2">
-                  <span className="text-xs font-semibold text-foreground truncate">
-                    {graphic.title}
-                  </span>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                    {graphic.category}
-                  </span>
-                </div>
-                <Maximize2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               </div>
             </div>
           );

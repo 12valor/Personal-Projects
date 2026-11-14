@@ -127,7 +127,8 @@ export default function Hero() {
 
   return (
     <section 
-      ref={containerRef} 
+      ref={containerRef}
+      style={{ fontFamily: "var(--font-poppins), sans-serif" }}
       className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-background border-b border-border"
     >
 

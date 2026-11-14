@@ -82,7 +82,7 @@ export default async function Home() {
       <Hero />
       <GithubActivity />
       <TechStack items={techStack} />
-      <AboutCylinder />
+      <AboutCylinder projects={serializedProjects} />
       <About />
       <Services />
       <WorkGrid

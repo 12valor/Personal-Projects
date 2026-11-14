@@ -19,7 +19,7 @@ import {
 } from "../lib/project-mappers";
 import type { Project } from "./WorkGrid";
 import { useSmoothScroll } from "./SmoothScrollProvider";
-import { ProjectCardReveal } from "./ScrollReveal";
+import { ProjectCardReveal, ScrollReveal } from "./ScrollReveal";
 
 export interface IndividualGraphicItem {
   id: string;
@@ -621,12 +621,12 @@ export default function GraphicDesignGallery({
       )}
 
       {/* --- SECTION HEADER: CLEAN & EDITORIAL (SWISS MINIMALISM) --- */}
-      <div className="flex flex-col items-center text-center">
+      <ScrollReveal className="flex flex-col items-center text-center">
         <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
           Graphic Designs
         </h3>
         <div className="w-12 h-px bg-border mt-6" />
-      </div>
+      </ScrollReveal>
 
       {/* --- REFINED RESPONSIVE EDITORIAL GALLERY --- */}
       {/* 

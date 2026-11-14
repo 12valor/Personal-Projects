@@ -2,225 +2,87 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import { getGithubProfile, getGithubContributions } from "../lib/github";
 import { ArrowUpRight, Github } from "lucide-react";
-import { Card, CardContent } from "@/src/components/ui/card";
 import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 function getIntensityClass(count: number) {
-  if (count === 0) return "bg-muted/70 dark:bg-muted/80 border border-border/60";
-  if (count <= 3) return "bg-zinc-300 dark:bg-secondary border border-border";
-  if (count <= 6) return "bg-zinc-400 dark:bg-accent/40 border border-accent/30";
-  if (count >= 50) return "bg-amber-400 dark:bg-accent border border-accent shadow-[0_0_8px_hsl(36_32%_62%/0.4)]";
-  return "bg-zinc-800 dark:bg-accent/80 border border-accent/70";
+  if (count === 0) return "bg-muted border-border/70";
+  if (count <= 3) return "bg-zinc-300 border-zinc-300 dark:bg-zinc-700 dark:border-zinc-700";
+  if (count <= 6) return "bg-zinc-400 border-zinc-400 dark:bg-zinc-500 dark:border-zinc-500";
+  if (count < 50) return "bg-zinc-600 border-zinc-600 dark:bg-zinc-300 dark:border-zinc-300";
+  return "bg-zinc-900 border-zinc-900 dark:bg-white dark:border-white";
 }
 
 function GithubActivitySkeleton() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] xl:grid-cols-[350px_1fr] gap-6 md:gap-8 animate-pulse">
-      <Card className="rounded-2xl border-border/80 bg-card shadow-sm h-[350px]">
-        <CardContent className="p-6 md:p-8 flex flex-col h-full gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-muted" />
-            <div className="flex flex-col gap-2">
-              <div className="w-32 h-5 rounded-md bg-muted" />
-              <div className="w-24 h-4 rounded-md bg-muted" />
-            </div>
-          </div>
-          <div className="w-full h-12 rounded-md bg-muted mt-2" />
-          <div className="grid grid-cols-3 gap-4 border-y border-border py-4 mt-auto">
-            <div className="h-10 bg-muted rounded-md" />
-            <div className="h-10 bg-muted rounded-md" />
-            <div className="h-10 bg-muted rounded-md" />
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="rounded-2xl border-border/80 bg-card shadow-sm h-[350px]">
-        <CardContent className="p-6 md:p-8 flex flex-col h-full justify-between gap-8">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-2">
-              <div className="w-40 h-6 rounded-md bg-muted" />
-              <div className="w-48 h-4 rounded-md bg-muted" />
-            </div>
-            <div className="w-6 h-6 rounded-md bg-muted" />
-          </div>
-          <div className="w-full h-40 bg-muted rounded-md" />
-        </CardContent>
-      </Card>
+    <div aria-hidden="true" className="grid gap-4 lg:grid-cols-[minmax(250px,0.8fr)_minmax(0,2fr)]">
+      <div className="min-h-[268px] border border-border p-6 sm:p-7">
+        <div className="flex items-center gap-4"><div className="size-14 rounded-full bg-muted" /><div className="space-y-2"><div className="h-5 w-32 bg-muted" /><div className="h-4 w-20 bg-muted" /></div></div>
+        <div className="mt-6 h-9 w-4/5 bg-muted" /><div className="mt-6 h-12 border-t border-border bg-muted/40" />
+      </div>
+      <div className="min-h-[268px] border border-border p-6 sm:p-7"><div className="h-5 w-40 bg-muted" /><div className="mt-3 h-4 w-48 bg-muted" /><div className="mt-9 h-28 w-full bg-muted/40" /></div>
     </div>
   );
 }
 
 async function GithubContent() {
-  const [profile, contributions] = await Promise.all([
-    getGithubProfile(),
-    getGithubContributions()
-  ]);
+  const [profile, contributions] = await Promise.all([getGithubProfile(), getGithubContributions()]);
 
   if (!profile || !contributions) {
-    return (
-      <div className="w-full flex flex-col items-center justify-center gap-4 py-12 text-muted-foreground border border-dashed border-border rounded-2xl">
-        <Github className="h-8 w-8 opacity-50" />
-        <p>Unable to load GitHub activity at the moment.</p>
-      </div>
-    );
+    return <div className="flex min-h-[268px] flex-col items-center justify-center gap-4 border border-dashed border-border text-muted-foreground"><Github className="h-7 w-7" /><p>Unable to load GitHub activity at the moment.</p></div>;
   }
 
-  // Extract month labels based on the first day of each month
   const months: { label: string; colIndex: number }[] = [];
   contributions.weeks.forEach((week, index) => {
     const firstDay = week.contributionDays[0];
-    if (firstDay) {
-      const date = new Date(firstDay.date);
-      // Only push if it's roughly the first week of the month, or we haven't tracked this month recently
-      if (date.getDate() <= 7) {
-        const monthLabel = date.toLocaleString("default", { month: "short" });
-        if (!months.length || months[months.length - 1].label !== monthLabel) {
-          months.push({ label: monthLabel, colIndex: index });
-        }
-      }
+    if (!firstDay) return;
+    const date = new Date(`${firstDay.date}T00:00:00Z`);
+    if (date.getUTCDate() <= 7) {
+      months.push({ label: date.toLocaleString("en", { month: "short", timeZone: "UTC" }), colIndex: index });
     }
   });
 
   return (
-    <ScrollStagger className="grid grid-cols-1 lg:grid-cols-[300px_1fr] xl:grid-cols-[350px_1fr] gap-6 md:gap-8">
-      {/* Profile Card */}
+    <ScrollStagger className="grid gap-4 lg:grid-cols-[minmax(250px,0.8fr)_minmax(0,2fr)]">
       <ScrollStaggerItem className="h-full">
-        <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col h-full">
-          <CardContent className="p-6 md:p-8 flex flex-col h-full gap-6">
-            <div className="flex items-center gap-4">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border">
-                <Image
-                  src={profile.avatar_url}
-                  alt={`${profile.login} avatar`}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                  unoptimized
-                />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">{profile.name}</h3>
-                <p className="text-sm text-muted-foreground">@{profile.login}</p>
-              </div>
+        <div className="group flex h-full min-h-[268px] flex-col border border-border p-6 transition-colors duration-300 hover:border-foreground/40 sm:p-7">
+          <div className="flex items-center gap-4">
+            <div className="relative size-14 shrink-0 overflow-hidden rounded-full border border-border">
+              <Image src={profile.avatar_url} alt="" fill className="object-cover" sizes="56px" unoptimized />
             </div>
-
-            {profile.bio && (
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {profile.bio}
-              </p>
-            )}
-
-            <div className="grid grid-cols-3 gap-4 border-y border-border py-4 mt-auto">
-              <div className="flex flex-col gap-1">
-                <span className="text-xl font-semibold text-foreground">{profile.public_repos}</span>
-                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Repos</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xl font-semibold text-foreground">{profile.followers}</span>
-                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Followers</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-xl font-semibold text-foreground">{profile.following}</span>
-                <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">Following</span>
-              </div>
-            </div>
-
-            <a
-              href={profile.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background px-4 py-3 text-sm font-medium transition-transform hover:scale-[1.02]"
-            >
-              View Profile
-              <ArrowUpRight className="w-4 h-4" />
+            <div className="min-w-0"><h3 className="text-lg font-semibold tracking-tight text-foreground">{profile.name}</h3><p className="text-sm text-muted-foreground">@{profile.login}</p></div>
+          </div>
+          {profile.bio && <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{profile.bio}</p>}
+          <div className="mt-auto pt-6">
+            <dl className="grid grid-cols-3 gap-2 border-t border-border pt-4">
+              {[['Repositories', profile.public_repos], ['Followers', profile.followers], ['Following', profile.following]].map(([label, value]) => <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt><dd className="mt-1 text-lg font-semibold tabular-nums text-foreground">{value}</dd></div>)}
+            </dl>
+            <a href={profile.html_url} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+              View GitHub profile <ArrowUpRight aria-hidden="true" className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none" /><span className="sr-only"> (opens in a new tab)</span>
             </a>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </ScrollStaggerItem>
-
-      {/* Heatmap Card */}
-      <ScrollStaggerItem className="h-full">
-        <Card className="rounded-2xl border-border/80 bg-card shadow-sm overflow-hidden flex flex-col h-full">
-          <CardContent className="p-6 md:p-8 flex flex-col h-full justify-between gap-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Contributions</h3>
-                <p className="text-sm text-muted-foreground">
-                  {contributions.totalContributions} contributions in the last year
-                </p>
+      <ScrollStaggerItem className="min-w-0 h-full">
+        <div className="flex h-full min-h-[268px] flex-col border border-border p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-4">
+            <div><h3 className="text-lg font-semibold tracking-tight">Contribution activity</h3><p className="mt-1 text-sm text-muted-foreground"><strong className="font-semibold tabular-nums text-foreground">{contributions.totalContributions.toLocaleString("en-US")}</strong> contributions in the last year</p></div>
+            <Github aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
+          </div>
+          <div className="mt-7 min-w-0 overflow-x-auto pb-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" tabIndex={0} role="region" aria-label="Contribution calendar, scroll horizontally to see all dates">
+            <div className="w-max min-w-full">
+              <div className="relative h-5 text-[11px] text-muted-foreground" aria-hidden="true">{months.map((month) => <span key={`${month.label}-${month.colIndex}`} className="absolute" style={{ left: `${month.colIndex * 13}px` }}>{month.label}</span>)}</div>
+              <div className="flex gap-[3px]">
+                {contributions.weeks.map((week, weekIndex) => <div key={weekIndex} className="flex flex-col gap-[3px]" style={{ paddingTop: week.contributionDays[0] ? new Date(`${week.contributionDays[0].date}T00:00:00Z`).getUTCDay() * 13 : 0 }}>{week.contributionDays.map((day) => {
+                  const date = new Date(`${day.date}T00:00:00Z`).toLocaleDateString("en", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+                  const label = `${day.contributionCount} ${day.contributionCount === 1 ? "contribution" : "contributions"} on ${date}`;
+                  return <div key={day.date} role="img" aria-label={label} title={label} className={`size-2.5 rounded-[2px] border transition-colors hover:ring-2 hover:ring-foreground/50 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`} />;
+                })}</div>)}
               </div>
-              <Github className="w-6 h-6 text-muted-foreground opacity-50" />
+              <div className="mt-3 flex items-center justify-end gap-2 text-[11px] text-muted-foreground"><span>Less</span><div className="flex gap-[3px]" aria-hidden="true">{[0, 1, 4, 7, 50].map((count) => <span key={count} className={`size-2.5 rounded-[2px] border ${getIntensityClass(count)}`} />)}</div><span>More</span></div>
             </div>
-
-            <div className="w-full overflow-x-auto pb-4 no-scrollbar -mx-2 px-2 md:mx-0 md:px-0">
-              <div className="min-w-[700px] flex flex-col gap-2">
-                {/* Months Header */}
-                <div className="flex text-[10px] text-muted-foreground/70 uppercase tracking-widest relative h-4">
-                  {months.map((month, i) => (
-                    <div 
-                      key={i} 
-                      className="absolute"
-                      style={{ left: `calc(${month.colIndex} * (10px + 4px))` }} // 10px width + 4px gap
-                    >
-                      {month.label}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Heatmap Grid */}
-                <div className="flex gap-1">
-                  {contributions.weeks.map((week, weekIndex) => (
-                    <div key={weekIndex} className="flex flex-col gap-1">
-                      {week.contributionDays.map((day, dayIndex) => {
-                        const date = new Date(day.date);
-                        const formattedDate = date.toLocaleDateString(undefined, { 
-                          month: 'long', 
-                          day: 'numeric', 
-                          year: 'numeric' 
-                        });
-                        const contributionLabel = `${day.contributionCount} ${day.contributionCount === 1 ? 'contribution' : 'contributions'} on ${formattedDate}`;
-                        const tooltipVerticalPosition = dayIndex < 3 ? "top-full mt-2" : "bottom-full mb-2";
-                        const tooltipHorizontalPosition = weekIndex < 4
-                          ? "left-0"
-                          : weekIndex >= contributions.weeks.length - 4
-                            ? "right-0"
-                            : "left-1/2 -translate-x-1/2";
-                        
-                        return (
-                          <div
-                            key={dayIndex}
-                            className={`group relative z-0 w-2.5 h-2.5 rounded-[2px] transition-colors hover:z-30 hover:ring-2 hover:ring-accent/60 hover:ring-offset-1 hover:ring-offset-background ${getIntensityClass(day.contributionCount)}`}
-                            aria-label={contributionLabel}
-                            role="img"
-                          >
-                            <span
-                              role="tooltip"
-                              className={`pointer-events-none invisible absolute z-40 whitespace-nowrap rounded-md bg-popover border border-border px-2.5 py-1.5 text-[11px] font-medium normal-case tracking-normal text-popover-foreground opacity-0 shadow-xl transition-opacity duration-150 group-hover:visible group-hover:opacity-100 ${tooltipVerticalPosition} ${tooltipHorizontalPosition}`}
-                            >
-                              {contributionLabel}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Legend */}
-                <div className="flex items-center justify-end gap-2 mt-2 text-[10px] text-muted-foreground uppercase tracking-widest">
-                  <span>Less</span>
-                  <div className="flex gap-1">
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-muted/70 dark:bg-muted/80 border border-border/60" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-300 dark:bg-secondary border border-border" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-400 dark:bg-accent/40 border border-accent/30" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-zinc-800 dark:bg-accent/80 border border-accent/70" />
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-amber-400 dark:bg-accent border border-accent shadow-[0_0_8px_hsl(36_32%_62%/0.4)]" />
-                  </div>
-                  <span>More</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground lg:hidden">Scroll horizontally to explore the full year.</p>
+        </div>
       </ScrollStaggerItem>
     </ScrollStagger>
   );
@@ -230,18 +92,11 @@ export default function GithubActivity() {
   return (
     <section className="relative border-t border-border bg-background px-4 py-16 md:px-10 md:py-24">
       <div className="mx-auto w-full max-w-7xl">
-        <ScrollReveal className="flex flex-col mb-12">
-          <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-            GitHub Activity
-          </h2>
-          <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
-            A snapshot of my coding activity and consistency.
-          </p>
+        <ScrollReveal className="mb-10 flex flex-col md:mb-12">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-5xl">GitHub Activity</h2>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">A snapshot of my coding activity and consistency.</p>
         </ScrollReveal>
-
-        <Suspense fallback={<GithubActivitySkeleton />}>
-          <GithubContent />
-        </Suspense>
+        <Suspense fallback={<GithubActivitySkeleton />}><GithubContent /></Suspense>
       </div>
     </section>
   );

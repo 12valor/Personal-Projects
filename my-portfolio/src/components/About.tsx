@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 import Image from "next/image";
-import { POP_EASING, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
+import { ScrollReveal, ScrollStagger, ScrollStaggerItem } from "./ScrollReveal";
 
 const timelineData = [
   {
@@ -53,11 +53,7 @@ export default function About() {
   return (
     <section id="timeline" className="relative bg-background border-t border-border">
       <div className="mx-auto max-w-5xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.97 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-8%" }}
-          transition={{ duration: 0.55, ease: POP_EASING }}
+        <ScrollReveal
           className="mb-16 flex flex-col gap-3 md:mb-24"
         >
           <span className="text-xs font-bold uppercase tracking-[0.28em] text-accent">
@@ -69,7 +65,7 @@ export default function About() {
           <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             A chronological view of how my work moved from visual design into motion and web development.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         <ScrollStagger className="flex flex-col border-t border-border">
           {timelineData.map((item, index) => (

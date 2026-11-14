@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
 import GraphicDesignGallery from "./GraphicDesignGallery";
-import { ProjectCardReveal } from "./ScrollReveal";
+import { ProjectCardReveal, ScrollReveal } from "./ScrollReveal";
 import {
   isOptimizableImageSrc,
   optimizeCloudinaryUrl,
@@ -719,25 +719,25 @@ export default function WorkGrid({
 
       <div className="max-w-7xl mx-auto">
         {/* HEADER */}
-        <div className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
+        <ScrollReveal className="flex flex-col items-center text-center gap-6 mb-16 md:mb-24">
           <h2 className="text-5xl md:text-7xl lg:text-[80px] font-medium tracking-tighter text-foreground leading-none">
             Selected Works
           </h2>
           <p className="text-muted-foreground max-w-xl text-base md:text-lg leading-relaxed">
             Browse selected websites, systems, visual layouts, and video edits built across design, motion, and code.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* SECTIONS */}
         <div className="flex flex-col gap-24 md:gap-32">
           {/* WEBSITES */}
           <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="websites">
-            <div className="flex flex-col items-center text-center">
+            <ScrollReveal className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Websites
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </div>
+            </ScrollReveal>
             <DetailedProjectList
               items={websiteProjects}
               emptyLabel="No website projects found."
@@ -749,12 +749,12 @@ export default function WorkGrid({
 
           {/* SYSTEMS */}
           <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="systems">
-            <div className="flex flex-col items-center text-center">
+            <ScrollReveal className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Systems
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </div>
+            </ScrollReveal>
             <DetailedProjectList
               items={systemProjects}
               emptyLabel="No system projects found."
@@ -774,12 +774,12 @@ export default function WorkGrid({
 
           {/* VIDEO EDITING */}
           <div className="flex flex-col gap-8 md:gap-12 scroll-mt-28" id="video-edits">
-            <div className="flex flex-col items-center text-center">
+            <ScrollReveal className="flex flex-col items-center text-center">
               <h3 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground">
                 Video Edits
               </h3>
               <div className="w-12 h-px bg-border mt-6" />
-            </div>
+            </ScrollReveal>
             <VideoProjectList
               canHover={canHover}
               reducedMotion={reducedMotion}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import SmoothScrollProvider from "../components/SmoothScrollProvider";
@@ -9,6 +9,8 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-poppins",
 });
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://12valor.vercel.app"),
@@ -117,7 +119,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${poppins.className} antialiased bg-background text-foreground`}>
+      <body className={`${inter.className} ${inter.variable} ${poppins.variable} antialiased bg-background text-foreground`}>
         <SmoothScrollProvider>
           <Navbar />
           {children}

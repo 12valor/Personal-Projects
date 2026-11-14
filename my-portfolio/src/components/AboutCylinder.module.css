@@ -1,0 +1,29 @@
+.section { position: relative; border-top: 1px solid hsl(var(--border)); background: hsl(var(--background)); }
+.sticky { position: sticky; top: 0; min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
+.inner { position: relative; width: min(100% - 3rem, 1100px); margin: auto; padding: 7rem 0 4rem; }
+.heading span { color: hsl(var(--accent)); font-size: .75rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; }
+.heading h2 { margin-top: 1rem; color: hsl(var(--foreground)); font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.12; font-weight: 600; letter-spacing: -.04em; }
+.staticText, .measure, .line { font-size: clamp(1.05rem, 2.15vw, 1.8rem); line-height: 1.55; font-weight: 400; letter-spacing: -.025em; }
+.staticText { max-width: 1000px; margin-top: 3rem; color: hsl(var(--foreground)); }
+.semantic { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.measure { position: absolute; visibility: hidden; pointer-events: none; width: min(100%, 1000px); }
+.viewport { position: relative; height: min(48svh, 420px); margin-top: 1.5rem; overflow: hidden; perspective: 1000px; perspective-origin: 50% 50%; mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent); }
+.cylinder { position: absolute; left: 0; top: 50%; width: min(100%, 1000px); transform-style: preserve-3d; }
+.line { position: absolute; top: 0; left: 0; width: 100%; margin-top: -.775em; color: hsl(var(--foreground)); white-space: nowrap; backface-visibility: hidden; transform-style: preserve-3d; }
+.hint { display: block; margin-top: 1rem; color: hsl(var(--muted-foreground)); font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.hint span { margin-left: .5rem; }
+@media (max-width: 600px) {
+  .inner { width: calc(100% - 2rem); padding: 6rem 0 3rem; }
+  .heading h2 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  .viewport { height: 44svh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky { position: relative; min-height: auto; }
+  .inner { padding-top: 6rem; padding-bottom: 6rem; }
+}
+:global(body):has(.section) { overflow-x: clip; }
+
+.staticText strong, .measure strong, .line strong { color: hsl(var(--accent)); font-weight: 600; }
+
+.website { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.measure [data-word] { display: inline-block; }

@@ -1,5 +1,6 @@
 import Hero from "../components/Hero";
 import About from "../components/About";
+import AboutCylinder from "../components/AboutCylinder";
 import WorkGrid from "../components/WorkGrid";
 import Services from "../components/Services";
 import Contact from "../components/Contact";
@@ -81,6 +82,7 @@ export default async function Home() {
       <Hero />
       <GithubActivity />
       <TechStack items={techStack} />
+      <AboutCylinder />
       <About />
       <Services />
       <WorkGrid
@@ -93,3 +95,4 @@ export default async function Home() {
     </main>
   );
 }
+

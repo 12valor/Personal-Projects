@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import GalleryModal from "./GalleryModal";
 import GraphicDesignGallery from "./GraphicDesignGallery";
+import { ProjectCardReveal } from "./ScrollReveal";
 import {
   isOptimizableImageSrc,
   optimizeCloudinaryUrl,
@@ -421,14 +422,20 @@ const DetailedProjectList = React.memo(function DetailedProjectList({
 
   return (
     <div className="website-project-grid grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 lg:gap-10 items-stretch">
-      {items.map((project) => (
-        <WebsiteProjectCard
+      {items.map((project, index) => (
+        <ProjectCardReveal
           key={project.id}
-          project={project}
-          canHover={canHover}
-          reducedMotion={reducedMotion}
-          onProjectClick={onProjectClick}
-        />
+          index={index}
+          staggerGroupSize={2}
+          className="h-full flex flex-col"
+        >
+          <WebsiteProjectCard
+            project={project}
+            canHover={canHover}
+            reducedMotion={reducedMotion}
+            onProjectClick={onProjectClick}
+          />
+        </ProjectCardReveal>
       ))}
     </div>
   );
@@ -553,14 +560,20 @@ const VideoProjectList = React.memo(function VideoProjectList({
 }) {
   return (
     <div className="video-project-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {STATIC_VIDEO_PROJECTS.map((video) => (
-        <VideoCard
+      {STATIC_VIDEO_PROJECTS.map((video, index) => (
+        <ProjectCardReveal
           key={video.id}
-          video={video}
-          canHover={canHover}
-          reducedMotion={reducedMotion}
-          onSelectVideo={onSelectVideo}
-        />
+          index={index}
+          staggerGroupSize={3}
+          className="h-full flex flex-col"
+        >
+          <VideoCard
+            video={video}
+            canHover={canHover}
+            reducedMotion={reducedMotion}
+            onSelectVideo={onSelectVideo}
+          />
+        </ProjectCardReveal>
       ))}
     </div>
   );

@@ -115,7 +115,8 @@ body {
 
   .website-project-preview,
   .video-project-preview,
-  .graphic-project-preview {
+  .graphic-project-preview,
+  .hardware-project-preview {
     transition: filter 450ms ease;
   }
 
@@ -137,6 +138,12 @@ body {
       .graphic-project-preview {
       filter: grayscale(1);
     }
+
+    .hardware-project-grid:has(.hardware-project-card:hover)
+      .hardware-project-card:not(:hover)
+      .hardware-project-preview {
+      filter: grayscale(1);
+    }
   }
 
   .website-project-grid:has(.website-project-card:focus-visible)
@@ -156,6 +163,12 @@ body {
     .graphic-project-preview {
     filter: grayscale(1);
   }
+
+  .hardware-project-grid:has(.hardware-project-card:focus-visible)
+    .hardware-project-card:not(:focus-visible)
+    .hardware-project-preview {
+    filter: grayscale(1);
+  }
 }
 
 @keyframes slide-marquee {
@@ -166,7 +179,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .website-project-preview,
   .video-project-preview,
-  .graphic-project-preview {
+  .graphic-project-preview,
+  .hardware-project-preview {
     transition: none;
   }
   .marquee-container {

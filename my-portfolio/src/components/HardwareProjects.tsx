@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Cpu, Layers } from "lucide-react";
-import { ScrollReveal } from "./ScrollReveal";
+import { ScrollReveal, ProjectCardReveal } from "./ScrollReveal";
 import {
   isOptimizableImageSrc,
   optimizeCloudinaryUrl,
@@ -221,7 +221,7 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
             </p>
           </ScrollReveal>
         ) : (
-          <div className="flex flex-col gap-5 sm:gap-6 lg:gap-7">
+          <div className="hardware-project-grid flex flex-col gap-5 sm:gap-6 lg:gap-7">
             {rows.map((row, rowIdx) => (
               <div
                 key={`row-${rowIdx}`}
@@ -271,50 +271,56 @@ export default function HardwareProjects({ projects }: HardwareProjectsProps) {
                     : "";
 
                   return (
-                    <div
+                    <ProjectCardReveal
                       key={project.id}
-                      className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 transition-[border-color,box-shadow] duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 [contain:layout_style] ${colSpanClass} ${row.heightClass}`}
+                      index={itemIdx}
+                      staggerGroupSize={row.items.length}
+                      className={`${colSpanClass} ${row.heightClass}`}
                     >
-                      {/* Background Project Photography */}
-                      <div className="absolute inset-0 w-full h-full overflow-hidden">
-                        {project.preview_video_url ? (
-                          <HardwareVideoPreview
-                            videoUrl={project.preview_video_url}
-                            posterUrl={project.image_url}
-                            title={project.title}
-                            sizes={sizes}
-                            maxWidth={maxWidth}
-                          />
-                        ) : optimizedImage ? (
-                          <Image
-                            src={optimizedImage}
-                            alt={project.title}
-                            fill
-                            loading="lazy"
-                            decoding="async"
-                            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-                            sizes={sizes}
-                            unoptimized={!isOptimizableImageSrc(optimizedImage)}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
-                            <Cpu className="w-20 h-20 stroke-1" />
-                          </div>
-                        )}
+                      <div
+                        className="hardware-project-card group relative flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl border border-border/60 bg-muted/20 transition-[border-color,box-shadow] duration-500 hover:border-border hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40 [contain:layout_style] w-full h-full"
+                      >
+                        {/* Background Project Photography */}
+                        <div className="hardware-project-preview absolute inset-0 w-full h-full overflow-hidden">
+                          {project.preview_video_url ? (
+                            <HardwareVideoPreview
+                              videoUrl={project.preview_video_url}
+                              posterUrl={project.image_url}
+                              title={project.title}
+                              sizes={sizes}
+                              maxWidth={maxWidth}
+                            />
+                          ) : optimizedImage ? (
+                            <Image
+                              src={optimizedImage}
+                              alt={project.title}
+                              fill
+                              loading="lazy"
+                              decoding="async"
+                              className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+                              sizes={sizes}
+                              unoptimized={!isOptimizableImageSrc(optimizedImage)}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-muted/40 text-muted-foreground/30">
+                              <Cpu className="w-20 h-20 stroke-1" />
+                            </div>
+                          )}
 
-                        {/* High-contrast gradient overlay ensuring typography readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/40" />
-                      </div>
+                          {/* High-contrast gradient overlay ensuring typography readability */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none transition-opacity duration-300 group-hover:from-black/92 group-hover:via-black/40" />
+                        </div>
 
-                      {/* Bottom Text Overlay: Project Name */}
-                      <div className="relative z-10 p-6 sm:p-7 lg:p-8">
-                        <h3
-                          className={`font-medium tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
-                        >
-                          {project.title}
-                        </h3>
+                        {/* Bottom Text Overlay: Project Name */}
+                        <div className="relative z-10 p-6 sm:p-7 lg:p-8">
+                          <h3
+                            className={`font-medium tracking-tight text-white leading-tight drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 motion-reduce:transform-none ${titleSizeClass}`}
+                          >
+                            {project.title}
+                          </h3>
+                        </div>
                       </div>
-                    </div>
+                    </ProjectCardReveal>
                   );
                 })}
               </div>

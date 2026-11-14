@@ -19,6 +19,7 @@ import {
 } from "../lib/project-mappers";
 import type { Project } from "./WorkGrid";
 import { useSmoothScroll } from "./SmoothScrollProvider";
+import { ProjectCardReveal } from "./ScrollReveal";
 
 export interface IndividualGraphicItem {
   id: string;
@@ -634,69 +635,75 @@ export default function GraphicDesignGallery({
         Mobile: 1 column
         Consistent gutters, pure aspect ratio containment, and subtle interactions
       */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 [column-fill:_balance]">
+      <div className="graphic-project-grid columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 [column-fill:_balance]">
         {sortedGraphics.map((graphic, index) => {
           const optimizedSrc = optimizeCloudinaryUrl(graphic.image_url, 1200);
 
           return (
-            <div
+            <ProjectCardReveal
               key={graphic.id}
-              onClick={() => setViewerIndex(index)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setViewerIndex(index);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label={`View full size artwork: ${graphic.title}`}
-              className="break-inside-avoid mb-6 md:mb-8 group relative rounded-xl sm:rounded-2xl overflow-hidden border border-border/70 bg-card hover:border-foreground/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              index={index}
+              staggerGroupSize={3}
+              className="break-inside-avoid mb-6 md:mb-8"
             >
-              {/* Artwork Container at 100% Exact Aspect Ratio (Contain-Fit, Zero Cropping) */}
               <div
-                className="relative w-full overflow-hidden bg-muted/20"
-                style={{
-                  aspectRatio: `${graphic.ratio}`,
+                onClick={() => setViewerIndex(index)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setViewerIndex(index);
+                  }
                 }}
+                role="button"
+                tabIndex={0}
+                aria-label={`View full size artwork: ${graphic.title}`}
+                className="graphic-project-card group relative rounded-xl sm:rounded-2xl overflow-hidden border border-border/70 bg-card hover:border-foreground/40 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Image
-                  src={optimizedSrc}
-                  alt={graphic.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
-                  className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  loading="lazy"
-                  decoding="async"
-                  unoptimized={!isOptimizableImageSrc(optimizedSrc)}
-                  onLoad={(e) => {
-                    const img = e.currentTarget;
-                    if (img.naturalWidth && img.naturalHeight) {
-                      handleImageLoad(graphic.image_url, img.naturalWidth, img.naturalHeight);
-                    }
+                {/* Artwork Container at 100% Exact Aspect Ratio (Contain-Fit, Zero Cropping) */}
+                <div
+                  className="graphic-project-preview relative w-full overflow-hidden bg-muted/20"
+                  style={{
+                    aspectRatio: `${graphic.ratio}`,
                   }}
-                />
+                >
+                  <Image
+                    src={optimizedSrc}
+                    alt={graphic.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
+                    className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    loading="lazy"
+                    decoding="async"
+                    unoptimized={!isOptimizableImageSrc(optimizedSrc)}
+                    onLoad={(e) => {
+                      const img = e.currentTarget;
+                      if (img.naturalWidth && img.naturalHeight) {
+                        handleImageLoad(graphic.image_url, img.naturalWidth, img.naturalHeight);
+                      }
+                    }}
+                  />
 
-                {/* Elegant Minimalist Hover/Focus Reveal (Swiss Style Scrim) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
-                  <span className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-zinc-300 mb-1">
-                    {graphic.category}
-                  </span>
-                  <h4 className="text-base sm:text-lg font-semibold tracking-tight text-white leading-snug drop-shadow-sm">
-                    {graphic.title}
-                  </h4>
-                  {graphic.description && (
-                    <p className="text-xs text-zinc-200/90 line-clamp-1 mt-1 font-normal font-sans">
-                      {graphic.description}
-                    </p>
-                  )}
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-300">
-                    <Maximize2 className="w-3 h-3 text-white/90" />
-                    <span>Inspect artwork</span>
+                  {/* Elegant Minimalist Hover/Focus Reveal (Swiss Style Scrim) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
+                    <span className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-zinc-300 mb-1">
+                      {graphic.category}
+                    </span>
+                    <h4 className="text-base sm:text-lg font-semibold tracking-tight text-white leading-snug drop-shadow-sm">
+                      {graphic.title}
+                    </h4>
+                    {graphic.description && (
+                      <p className="text-xs text-zinc-200/90 line-clamp-1 mt-1 font-normal font-sans">
+                        {graphic.description}
+                      </p>
+                    )}
+                    <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-300">
+                      <Maximize2 className="w-3 h-3 text-white/90" />
+                      <span>Inspect artwork</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </ProjectCardReveal>
           );
         })}
       </div>

@@ -105,13 +105,28 @@ export interface ImageDimension {
 }
 
 export const KNOWN_URL_DIMENSIONS: Record<string, ImageDimension> = {
+  // Portrait Posters & Pubmats
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792450178/eztpvqee2ktlckqzukgd.png": { width: 1587, height: 2245, ratio: 0.7069, orientation: "portrait" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449824/ugbi20jufmjgodh29vcc.png": { width: 1587, height: 2245, ratio: 0.7069, orientation: "portrait" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449859/arkjqhbn5lnc98zcussd.png": { width: 1080, height: 1350, ratio: 0.8, orientation: "portrait" },
+
+  // Widescreen / Landscape Pubmats
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792450069/wxgtwykamtsbsti79hx8.png": { width: 1640, height: 924, ratio: 1.7749, orientation: "landscape" },
+
+  // Square Blast, Apparel & Event Graphics
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449843/njfn8fruzmrf6ozjfkcu.jpg": { width: 3456, height: 3456, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792450102/xyqv3dncjgofey0fid2l.png": { width: 3456, height: 3456, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792450148/k0n9cinanteoillw161o.jpg": { width: 2419, height: 2419, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449975/o7rbaysdklqyjaspv3lc.png": { width: 1800, height: 1800, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445295/ug0qpsrv6kvjevi8rzjx.jpg": { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449657/vtih3308s7zn5zd9gg8i.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792449680/jeo1j1x31bmspfg1af2i.png": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
   "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445266/t9jdt3l4adotiyxhuy6z.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
   "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445475/jfrky0ikmqgeyagknnxd.jpg": { width: 3000, height: 3000, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445295/ug0qpsrv6kvjevi8rzjx.jpg": { width: 2048, height: 2048, ratio: 1.0, orientation: "square" },
+  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1788553758/tdbh5mnmpctvaef4knvw.jpg": { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
   "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445401/xpcu7zleegn3l8cd2ndd.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
   "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/d2jf5uucmzqxk7jbktft.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
   "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1792445403/hrrcivt4kizffyg78cnk.jpg": { width: 1080, height: 1080, ratio: 1.0, orientation: "square" },
-  "https://res.cloudinary.com/ddjrj0ymx/image/upload/v1788553758/tdbh5mnmpctvaef4knvw.jpg": { width: 4000, height: 4000, ratio: 1.0, orientation: "square" },
 };
 
 export function calculateImageOrientation(

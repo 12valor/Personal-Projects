@@ -10,6 +10,7 @@ import {
   ZoomOut,
   RotateCcw,
   Maximize2,
+  Sparkles,
 } from "lucide-react";
 import {
   isOptimizableImageSrc,
@@ -30,6 +31,7 @@ export interface IndividualGraphicItem {
   width?: number;
   height?: number;
   tags: string[];
+  is_featured?: boolean;
 }
 
 interface GraphicDesignGalleryProps {
@@ -78,7 +80,7 @@ function getGraphicTags(item: {
   return tags;
 }
 
-// --- FULL-SCREEN ARTWORK VIEWER WITH ZOOM, PAN, AND KEYBOARD NAVIGATION ---
+// --- FULL-SCREEN ARTWORK VIEWER WITH ZOOM, PAN, TOUCH AND KEYBOARD NAVIGATION ---
 interface ArtworkViewerProps {
   graphics: IndividualGraphicItem[];
   currentIndex: number;
@@ -93,24 +95,64 @@ function ArtworkViewer({
   onNavigate,
 }: ArtworkViewerProps) {
   const [scale, setScale] = useState<number>(1);
-  const touchStartX = useRef<number>(0);
+  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const touchStartRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
+  const touchDistanceRef = useRef<number | null>(null);
+  const activeThumbRef = useRef<HTMLButtonElement | null>(null);
+
   const currentGraphic = graphics[currentIndex];
   const total = graphics.length;
 
   const handlePrev = useCallback(() => {
+    setScale(1);
+    setPan({ x: 0, y: 0 });
     onNavigate((currentIndex - 1 + total) % total);
   }, [currentIndex, total, onNavigate]);
 
   const handleNext = useCallback(() => {
+    setScale(1);
+    setPan({ x: 0, y: 0 });
     onNavigate((currentIndex + 1) % total);
   }, [currentIndex, total, onNavigate]);
 
-  // Keyboard navigation
+  const handleResetZoom = useCallback(() => {
+    setScale(1);
+    setPan({ x: 0, y: 0 });
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    setScale((prev) => Math.min(Number((prev + 0.5).toFixed(1)), 3.5));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setScale((prev) => {
+      const next = Math.max(Number((prev - 0.5).toFixed(1)), 1);
+      if (next === 1) setPan({ x: 0, y: 0 });
+      return next;
+    });
+  }, []);
+
+  const handleToggleZoom = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setScale((prev) => {
+      if (prev > 1) {
+        setPan({ x: 0, y: 0 });
+        return 1;
+      }
+      return 2;
+    });
+  }, []);
+
+  // Keyboard navigation & Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (scale > 1) {
-          setScale(1);
+          handleResetZoom();
         } else {
           onClose();
         }
@@ -119,11 +161,11 @@ function ArtworkViewer({
       } else if (e.key === "ArrowRight") {
         handleNext();
       } else if (e.key === "+" || e.key === "=") {
-        setScale((prev) => Math.min(prev + 0.5, 3));
+        handleZoomIn();
       } else if (e.key === "-" || e.key === "_") {
-        setScale((prev) => Math.max(prev - 0.5, 1));
+        handleZoomOut();
       } else if (e.key === "0") {
-        setScale(1);
+        handleResetZoom();
       }
     };
 
@@ -135,24 +177,118 @@ function ArtworkViewer({
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = originalOverflow;
     };
-  }, [onClose, handlePrev, handleNext, scale]);
+  }, [onClose, handlePrev, handleNext, handleZoomIn, handleZoomOut, handleResetZoom, scale]);
 
-  // Mobile touch swipe handling
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+  // Auto-scroll active thumbnail into view
+  useEffect(() => {
+    if (activeThumbRef.current) {
+      activeThumbRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, [currentIndex]);
+
+  // Mouse pan handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale <= 1) return;
+    e.preventDefault();
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    panStartRef.current = { ...pan };
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diff = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) handlePrev();
-      else handleNext();
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || scale <= 1) return;
+    e.preventDefault();
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    setPan({
+      x: panStartRef.current.x + dx,
+      y: panStartRef.current.y + dy,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Wheel zoom
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey || Math.abs(e.deltaY) > 20) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        handleZoomIn();
+      } else {
+        handleZoomOut();
+      }
     }
   };
 
-  const handleToggleZoom = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setScale((prev) => (prev > 1 ? 1 : 2));
+  // Mobile touch interactions (pan when zoomed, swipe when 1x, pinch-to-zoom)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        time: Date.now(),
+      };
+      if (scale > 1) {
+        setIsDragging(true);
+        dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        panStartRef.current = { ...pan };
+      }
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchDistanceRef.current = dist;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 1 && scale > 1 && isDragging) {
+      const dx = e.touches[0].clientX - dragStartRef.current.x;
+      const dy = e.touches[0].clientY - dragStartRef.current.y;
+      setPan({
+        x: panStartRef.current.x + dx,
+        y: panStartRef.current.y + dy,
+      });
+    } else if (e.touches.length === 2 && touchDistanceRef.current !== null) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const delta = dist - touchDistanceRef.current;
+      if (Math.abs(delta) > 12) {
+        if (delta > 0) {
+          setScale((prev) => Math.min(prev + 0.05, 3.5));
+        } else {
+          setScale((prev) => {
+            const next = Math.max(prev - 0.05, 1);
+            if (next === 1) setPan({ x: 0, y: 0 });
+            return next;
+          });
+        }
+        touchDistanceRef.current = dist;
+      }
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsDragging(false);
+    touchDistanceRef.current = null;
+    if (scale === 1 && e.changedTouches.length === 1) {
+      const deltaX = e.changedTouches[0].clientX - touchStartRef.current.x;
+      const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
+      const deltaTime = Date.now() - touchStartRef.current.time;
+      if (Math.abs(deltaX) > 45 && Math.abs(deltaY) < 65 && deltaTime < 400) {
+        if (deltaX > 0) handlePrev();
+        else handleNext();
+      }
+    }
   };
 
   if (!currentGraphic) return null;
@@ -164,40 +300,44 @@ function ArtworkViewer({
       role="dialog"
       aria-modal="true"
       aria-label={currentGraphic.title}
-      className="fixed inset-0 z-[120] flex flex-col bg-black/95 backdrop-blur-2xl text-white select-none animate-in fade-in duration-200 font-sans"
+      className="fixed inset-0 z-[150] flex flex-col bg-black/95 backdrop-blur-2xl text-white select-none animate-in fade-in duration-200 font-sans"
       onClick={() => {
         if (scale === 1) onClose();
       }}
+      onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onWheel={handleWheel}
     >
-      {/* --- TOP BAR --- */}
+      {/* --- TOP BAR: SWISS EDITORIAL METADATA & CLOSE --- */}
       <div
-        className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-white/10 bg-black/50 backdrop-blur-md z-30"
+        className="flex items-center justify-between px-4 sm:px-8 py-3.5 border-b border-white/10 bg-black/60 backdrop-blur-md z-30"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 sm:gap-4 truncate">
-          <span className="font-mono text-xs text-zinc-400 shrink-0">
+          <span className="font-mono text-xs text-zinc-400 tracking-wider shrink-0">
             {String(currentIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
           <span className="w-px h-3.5 bg-white/20 shrink-0" />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-sky-400 shrink-0 hidden sm:inline">
+          <span className="text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-zinc-400 shrink-0 hidden sm:inline">
             {currentGraphic.category}
           </span>
-          <span className="text-sm font-semibold text-white truncate max-w-xs sm:max-w-md">
+          <span className="w-px h-3.5 bg-white/20 shrink-0 hidden sm:inline" />
+          <span className="text-sm sm:text-base font-semibold text-white tracking-tight truncate max-w-xs sm:max-w-md">
             {currentGraphic.title}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <span className="text-xs font-mono text-zinc-400 mr-2 hidden md:inline">
-            Use ← → arrows to browse · Esc to close
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs font-mono text-zinc-400 mr-2 hidden lg:inline">
+            ← → to browse · Esc to close · drag to pan
           </span>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close viewer"
-            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            aria-label="Close artwork viewer"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <X className="w-4 h-4" />
           </button>
@@ -205,8 +345,12 @@ function ArtworkViewer({
       </div>
 
       {/* --- MAIN ARTWORK VIEWPORT (CONTAIN-FIT, ZERO CROPPING) --- */}
-      <div className="relative flex-1 w-full overflow-auto flex items-center justify-center p-3 sm:p-6 md:p-10">
-        {/* Previous Button */}
+      <div
+        className="relative flex-1 w-full overflow-hidden flex items-center justify-center p-3 sm:p-6 md:p-8"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+      >
+        {/* Previous Navigation Button */}
         {total > 1 && (
           <button
             type="button"
@@ -215,21 +359,28 @@ function ArtworkViewer({
               handlePrev();
             }}
             aria-label="Previous artwork"
-            className="absolute left-2 sm:left-6 z-40 p-3 rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 shadow-xl transition-all hover:scale-110"
+            className="absolute left-3 sm:left-6 z-40 p-3 rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 shadow-2xl transition-all hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         )}
 
-        {/* The Contain-Fit Image */}
+        {/* The Contain-Fit Image with Zoom & Pan */}
         <div
-          onClick={handleToggleZoom}
+          onClick={scale === 1 ? handleToggleZoom : undefined}
+          onDoubleClick={handleToggleZoom}
           style={{
-            transform: `scale(${scale})`,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
             transformOrigin: "center center",
-            transition: "transform 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+            transition: isDragging ? "none" : "transform 240ms cubic-bezier(0.16, 1, 0.3, 1)",
           }}
-          className={`relative max-w-full max-h-full cursor-${scale > 1 ? "zoom-out" : "zoom-in"} will-change-transform shadow-2xl flex items-center justify-center`}
+          className={`relative max-w-full max-h-full ${
+            scale > 1
+              ? isDragging
+                ? "cursor-grabbing"
+                : "cursor-grab"
+              : "cursor-zoom-in"
+          } will-change-transform flex items-center justify-center`}
         >
           {currentGraphic.width && currentGraphic.height ? (
             <Image
@@ -239,12 +390,13 @@ function ArtworkViewer({
               height={currentGraphic.height}
               sizes="100vw"
               priority
-              className="max-h-[76vh] w-auto max-w-full object-contain rounded-sm"
+              draggable={false}
+              className="max-h-[75vh] w-auto max-w-full object-contain rounded-md shadow-2xl pointer-events-none select-none"
               unoptimized={!isOptimizableImageSrc(highResUrl)}
             />
           ) : (
             <div
-              className="relative w-[88vw] max-w-5xl max-h-[76vh]"
+              className="relative w-[90vw] max-w-5xl max-h-[75vh]"
               style={{ aspectRatio: `${currentGraphic.ratio}` }}
             >
               <Image
@@ -253,14 +405,15 @@ function ArtworkViewer({
                 fill
                 sizes="100vw"
                 priority
-                className="object-contain rounded-sm"
+                draggable={false}
+                className="object-contain rounded-md shadow-2xl pointer-events-none select-none"
                 unoptimized={!isOptimizableImageSrc(highResUrl)}
               />
             </div>
           )}
         </div>
 
-        {/* Next Button */}
+        {/* Next Navigation Button */}
         {total > 1 && (
           <button
             type="button"
@@ -269,7 +422,7 @@ function ArtworkViewer({
               handleNext();
             }}
             aria-label="Next artwork"
-            className="absolute right-2 sm:right-6 z-40 p-3 rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 shadow-xl transition-all hover:scale-110"
+            className="absolute right-3 sm:right-6 z-40 p-3 rounded-full bg-black/60 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-md border border-white/10 shadow-2xl transition-all hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
@@ -281,22 +434,22 @@ function ArtworkViewer({
         className="pb-4 sm:pb-6 pt-2 flex flex-col items-center gap-3 z-30 bg-gradient-to-t from-black via-black/80 to-transparent"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Floating Zoom Toolbar */}
+        {/* Floating Zoom & Pan Toolbar */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/90 border border-white/15 backdrop-blur-md shadow-2xl text-xs">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setScale((prev) => Math.max(prev - 0.5, 1));
+              handleZoomOut();
             }}
             disabled={scale <= 1}
             aria-label="Zoom out"
-            className="p-1.5 rounded-full hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent transition-colors"
+            className="p-1.5 rounded-full hover:bg-white/10 disabled:opacity-35 disabled:hover:bg-transparent transition-colors"
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
 
-          <span className="font-mono text-zinc-300 px-2 min-w-[3.5rem] text-center">
+          <span className="font-mono text-zinc-300 px-2 min-w-[3.5rem] text-center text-xs">
             {Math.round(scale * 100)}%
           </span>
 
@@ -304,11 +457,11 @@ function ArtworkViewer({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setScale((prev) => Math.min(prev + 0.5, 3));
+              handleZoomIn();
             }}
-            disabled={scale >= 3}
+            disabled={scale >= 3.5}
             aria-label="Zoom in"
-            className="p-1.5 rounded-full hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent transition-colors"
+            className="p-1.5 rounded-full hover:bg-white/10 disabled:opacity-35 disabled:hover:bg-transparent transition-colors"
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
@@ -319,10 +472,10 @@ function ArtworkViewer({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setScale(1);
+              handleResetZoom();
             }}
-            aria-label="Reset zoom"
-            className="p-1.5 rounded-full hover:bg-white/10 text-zinc-300 hover:text-white transition-colors flex items-center gap-1 text-[11px] px-2"
+            aria-label="Reset zoom and fit to screen"
+            className="p-1.5 rounded-full hover:bg-white/10 text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-mono px-2"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Fit</span>
@@ -331,30 +484,33 @@ function ArtworkViewer({
 
         {/* Artwork Description if available */}
         {currentGraphic.description && (
-          <p className="text-xs text-zinc-300 text-center max-w-xl px-4 truncate">
+          <p className="text-xs text-zinc-300/90 text-center max-w-xl px-6 truncate font-normal">
             {currentGraphic.description}
           </p>
         )}
 
         {/* Thumbnail Carousel Strip */}
         {total > 1 && (
-          <div className="flex gap-2 sm:gap-2.5 overflow-x-auto max-w-[92vw] px-4 py-1 no-scrollbar items-center">
+          <div className="flex gap-2 sm:gap-2.5 overflow-x-auto max-w-[94vw] px-4 py-1 no-scrollbar items-center">
             {graphics.map((item, idx) => {
               const thumbSrc = optimizeCloudinaryUrl(item.image_url, 180);
               const isActive = idx === currentIndex;
               return (
                 <button
                   key={item.id}
+                  ref={isActive ? activeThumbRef : null}
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
+                    setScale(1);
+                    setPan({ x: 0, y: 0 });
                     onNavigate(idx);
                   }}
                   aria-label={`Jump to ${item.title}`}
                   className={`relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-md overflow-hidden transition-all duration-200 border ${
                     isActive
-                      ? "ring-2 ring-sky-400 border-sky-400 opacity-100 scale-105 shadow-md"
-                      : "border-white/20 opacity-40 hover:opacity-80 hover:scale-105"
+                      ? "ring-2 ring-white border-white opacity-100 scale-105 shadow-lg"
+                      : "border-white/20 opacity-40 hover:opacity-85 hover:scale-105"
                   }`}
                 >
                   <Image
@@ -382,6 +538,7 @@ export default function GraphicDesignGallery({
 }: GraphicDesignGalleryProps) {
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [loadedDimensions, setLoadedDimensions] = useState<Record<string, { ratio: number }>>({});
 
   // Flatten projects and gallery variants into individual graphic items with calculated ratios and tags
   const allGraphics = useMemo(() => {
@@ -390,7 +547,8 @@ export default function GraphicDesignGallery({
     items.forEach((p) => {
       if (p.image_url) {
         const dim = initialDimensions[p.image_url] ?? KNOWN_URL_DIMENSIONS[p.image_url];
-        const ratio = dim?.ratio || 1.0;
+        const dynamicRatio = loadedDimensions[p.image_url]?.ratio;
+        const ratio = dynamicRatio || dim?.ratio || 1.0;
         const tags = getGraphicTags({
           title: p.title,
           category: p.category,
@@ -408,6 +566,7 @@ export default function GraphicDesignGallery({
           width: dim?.width,
           height: dim?.height,
           tags,
+          is_featured: p.is_featured,
         });
       }
 
@@ -415,7 +574,8 @@ export default function GraphicDesignGallery({
         p.gallery_urls.forEach((url, i) => {
           if (url && url !== p.image_url) {
             const dim = initialDimensions[url] ?? KNOWN_URL_DIMENSIONS[url];
-            const ratio = dim?.ratio || 1.0;
+            const dynamicRatio = loadedDimensions[url]?.ratio;
+            const ratio = dynamicRatio || dim?.ratio || 1.0;
             const tags = getGraphicTags({
               title: `${p.title} (Variant ${i + 1})`,
               category: p.category,
@@ -425,7 +585,7 @@ export default function GraphicDesignGallery({
             list.push({
               id: `${p.id}-variant-${i}`,
               projectId: p.id,
-              title: `${p.title} (Variant)`,
+              title: `${p.title} (Variant ${i + 1})`,
               category: p.category,
               image_url: url,
               description: p.description,
@@ -433,6 +593,7 @@ export default function GraphicDesignGallery({
               width: dim?.width,
               height: dim?.height,
               tags,
+              is_featured: p.is_featured,
             });
           }
         });
@@ -440,7 +601,7 @@ export default function GraphicDesignGallery({
     });
 
     return list;
-  }, [items, initialDimensions]);
+  }, [items, initialDimensions, loadedDimensions]);
 
   // Compute category counts for understated filter tabs
   const filterCategories = useMemo(() => {
@@ -460,12 +621,23 @@ export default function GraphicDesignGallery({
     return allGraphics.filter((g) => g.tags.includes(activeFilter));
   }, [allGraphics, activeFilter]);
 
+  // Dynamic image load handler to ensure zero cropping for any unknown dimensions
+  const handleImageLoad = useCallback((url: string, naturalWidth: number, naturalHeight: number) => {
+    if (naturalWidth && naturalHeight) {
+      const naturalRatio = naturalWidth / naturalHeight;
+      setLoadedDimensions((prev) => {
+        if (prev[url] && Math.abs(prev[url].ratio - naturalRatio) < 0.01) return prev;
+        return { ...prev, [url]: { ratio: naturalRatio } };
+      });
+    }
+  }, []);
+
   if (allGraphics.length === 0) {
     return (
-      <div className="h-36 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-2xl p-6 text-center">
+      <div className="h-40 flex flex-col items-center justify-center gap-2 text-muted-foreground border border-dashed border-border rounded-xl p-6 text-center">
         <p className="text-sm font-medium">No graphic design projects published yet.</p>
         <p className="text-xs text-muted-foreground/70">
-          Add graphic designs, posters, or branding mockups from the admin panel.
+          Add graphic designs, posters, or publication materials from the admin panel.
         </p>
       </div>
     );
@@ -484,20 +656,26 @@ export default function GraphicDesignGallery({
         />
       )}
 
-      {/* --- SECTION HEADER & INTRODUCTION --- */}
+      {/* --- SECTION HEADER: REFINED SWISS EDITORIAL HIERARCHY --- */}
       <div className="flex flex-col items-center text-center gap-4 max-w-3xl mx-auto px-4">
-        <span className="text-xs uppercase tracking-[0.2em] font-semibold text-sky-600 dark:text-sky-400">
-          Visual Design & Art Direction
-        </span>
-        <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+        {/* Subtle Mono Eyebrow */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/80 bg-muted/40 text-muted-foreground text-[11px] font-mono uppercase tracking-[0.2em]">
+          <span className="w-1.5 h-1.5 rounded-full bg-foreground/60" />
+          <span>Visual Arts & Exhibition</span>
+        </div>
+
+        {/* Strong Heading */}
+        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground font-sans">
           Graphic Designs
         </h3>
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-          A curated exhibition of posters, event publication materials, digital graphics, and apparel created with a focus on bold typography, dynamic composition, and visual storytelling.
+
+        {/* Tasteful Short Introduction */}
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl font-normal">
+          A curated exhibition of posters, event publication materials, digital graphics, and apparel. Each work emphasizes disciplined grid structures, bold typography, and visual clarity.
         </p>
 
         {/* --- UNDERSTATED CATEGORY FILTERING --- */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-3">
           {filterCategories.map((filter) => {
             if (filter.count === 0 && filter.name !== "All") return null;
             const isActive = activeFilter === filter.name;
@@ -506,17 +684,17 @@ export default function GraphicDesignGallery({
                 key={filter.name}
                 type="button"
                 onClick={() => setActiveFilter(filter.name)}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 border ${
+                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 border ${
                   isActive
                     ? "bg-foreground text-background border-foreground shadow-sm scale-105"
-                    : "bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border-border/60"
+                    : "bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border-border/70 hover:border-foreground/30"
                 }`}
               >
                 <span>{filter.name}</span>
                 <span
                   className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
                     isActive
-                      ? "bg-background/20 text-background"
+                      ? "bg-background/25 text-background font-semibold"
                       : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -529,9 +707,21 @@ export default function GraphicDesignGallery({
       </div>
 
       {/* --- REFINED RESPONSIVE MASONRY-STYLE GALLERY --- */}
+      {/* 
+        Desktop: 3 columns with varied visual heights & occasional standout spans
+        Tablet: 2 columns
+        Mobile: 1 column
+        Consistent gutters and zero empty gaps
+      */}
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 [column-fill:_balance]">
         {filteredGraphics.map((graphic, index) => {
-          const optimizedSrc = optimizeCloudinaryUrl(graphic.image_url, 1200);
+          // Identify standout designs: wide-format pubmats (ratio > 1.4) or explicitly featured items
+          const isWideStandout = graphic.ratio > 1.4;
+          const isStandout = isWideStandout && activeFilter === "All";
+          const optimizedSrc = optimizeCloudinaryUrl(
+            graphic.image_url,
+            isStandout ? 1800 : 1200
+          );
 
           return (
             <div
@@ -545,10 +735,16 @@ export default function GraphicDesignGallery({
               }}
               role="button"
               tabIndex={0}
-              aria-label={`View ${graphic.title}`}
-              className="break-inside-avoid mb-6 md:mb-8 group relative rounded-xl md:rounded-2xl overflow-hidden border border-border/80 bg-card hover:border-foreground/30 hover:shadow-2xl transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring [contain:layout_style] [content-visibility:auto] [contain-intrinsic-size:auto_380px]"
+              aria-label={`View full size artwork: ${graphic.title}`}
+              style={{
+                columnSpan: isStandout ? "all" : undefined,
+                WebkitColumnSpan: isStandout ? "all" : undefined,
+              }}
+              className={`break-inside-avoid mb-6 md:mb-8 group relative rounded-xl md:rounded-2xl overflow-hidden border border-border/70 bg-card hover:border-foreground/40 hover:shadow-2xl transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                isStandout ? "w-full my-4 md:my-6" : ""
+              }`}
             >
-              {/* Artwork Container at Natural Aspect Ratio (Zero Cropping!) */}
+              {/* Artwork Container at 100% Exact Aspect Ratio (Contain-Fit, Zero Cropping) */}
               <div
                 className="relative w-full overflow-hidden bg-muted/20"
                 style={{
@@ -559,31 +755,62 @@ export default function GraphicDesignGallery({
                   src={optimizedSrc}
                   alt={graphic.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
+                  sizes={
+                    isStandout
+                      ? "(max-width: 1024px) 100vw, 1280px"
+                      : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
+                  }
+                  className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                   loading="lazy"
                   decoding="async"
                   unoptimized={!isOptimizableImageSrc(optimizedSrc)}
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (img.naturalWidth && img.naturalHeight) {
+                      handleImageLoad(graphic.image_url, img.naturalWidth, img.naturalHeight);
+                    }
+                  }}
                 />
 
-                {/* Elegant Hover Overlay Reveal (Unobtrusive & Pure When Inactive) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-400 mb-1">
+                {/* Subtle Standout Badge if Featured Widescreen Banner */}
+                {isStandout && (
+                  <div className="absolute top-4 left-4 z-10 hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono tracking-widest uppercase shadow-lg">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span>Featured Panorama</span>
+                  </div>
+                )}
+
+                {/* Elegant Minimalist Hover Reveal (Swiss Style Scrim) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 md:p-6 text-white pointer-events-none">
+                  <span className="text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] text-zinc-300 mb-1">
                     {graphic.category}
                   </span>
                   <h4 className="text-base sm:text-lg font-bold tracking-tight text-white leading-snug drop-shadow-sm">
                     {graphic.title}
                   </h4>
                   {graphic.description && (
-                    <p className="text-xs text-white/80 line-clamp-1 mt-1 font-normal">
+                    <p className="text-xs text-zinc-200/90 line-clamp-1 mt-1 font-normal font-sans">
                       {graphic.description}
                     </p>
                   )}
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-white/90">
-                    <Maximize2 className="w-3.5 h-3.5" />
-                    <span>Click to inspect full size</span>
+                  <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-300">
+                    <Maximize2 className="w-3 h-3 text-white/90" />
+                    <span>Inspect full size</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Mobile Subtle Caption Footer (Visible on Small Screens for Touch Clarity) */}
+              <div className="sm:hidden px-4 py-3 flex items-center justify-between border-t border-border/40 bg-card/60">
+                <div className="flex flex-col truncate pr-2">
+                  <span className="text-xs font-semibold text-foreground truncate">
+                    {graphic.title}
+                  </span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    {graphic.category}
+                  </span>
+                </div>
+                <Maximize2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               </div>
             </div>
           );
